@@ -26,6 +26,8 @@ typedef SynastrySummaryReader =
       Future<void> cancel,
     );
 
+final _snapshotId = RegExp(r'^[a-f0-9]{64}$');
+
 enum SynastrySide { a, b }
 
 enum OwnSynastryChartStatus {
@@ -173,17 +175,20 @@ class SynastryPageController extends ChangeNotifier {
   Future<void> readOwnChart() async {
     final session = account?.authorizedSession;
     if (session == null || !member || busy) return;
-    final previousStatus = ownChartStatus;
-    ownChartStatus = OwnSynastryChartStatus.loading;
+    final previousStatus = aFromArchive
+        ? OwnSynastryChartStatus.idle
+        : ownChartStatus;
+    _unavailableOwnChart(OwnSynastryChartStatus.loading);
     final job = _start();
     try {
       final value = await account!.reports.latestSynastrySnapshot(session.id);
       if (!_current(job) || !_scope(session.scope)) return;
       switch (value) {
         case {
-          'status': 'available',
-          'snapshot': final Map<String, Object?> chart,
-        }:
+              'status': 'available',
+              'snapshot': final Map<String, Object?> chart,
+            }
+            when _isOwnedChartSnapshot(chart):
           if (_unknownTime(chart)) {
             _unavailableOwnChart(OwnSynastryChartStatus.unknownTime);
           } else {
@@ -201,7 +206,9 @@ class SynastryPageController extends ChangeNotifier {
           throw const FormatException('Invalid chart snapshot.');
       }
     } catch (_) {
-      if (_current(job)) ownChartStatus = OwnSynastryChartStatus.failed;
+      if (_current(job) && _scope(session.scope)) {
+        ownChartStatus = OwnSynastryChartStatus.failed;
+      }
     } finally {
       if (_current(job) && ownChartStatus == OwnSynastryChartStatus.loading) {
         ownChartStatus = previousStatus;
@@ -503,6 +510,23 @@ class SynastryPageController extends ChangeNotifier {
     busy = false;
     notifyListeners();
   }
+
+  bool _isOwnedChartSnapshot(Map<String, Object?> chart) => switch (chart) {
+    {
+      'schemaVersion': 1,
+      'archiveId': final String archiveId,
+      'snapshotId': final String snapshotId,
+      'calculatedAt': final String calculatedAt,
+      'timeKnown': bool _,
+      'bazi': Map _,
+      'ziwei': Map _,
+      'western': Map _,
+    } =>
+      archiveId == snapshotId &&
+          _snapshotId.hasMatch(snapshotId) &&
+          DateTime.tryParse(calculatedAt) != null,
+    _ => false,
+  };
 
   bool _unknownTime(Map<String, Object?> chart) =>
       chart['timeKnown'] == false ||

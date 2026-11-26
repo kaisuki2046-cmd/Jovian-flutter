@@ -9,6 +9,7 @@ import '../../auth/control/account_controller.dart';
 import '../../auth/model/session.dart';
 import '../../reading-profile/control/reading_profile_controller.dart';
 import '../../reading-profile/view/reading_profile_panel.dart';
+import '../../view/account_section_links.dart';
 
 class ProfileEditorPage extends StatefulWidget {
   const ProfileEditorPage({
@@ -46,6 +47,7 @@ class _ProfileEditorPageState extends State<ProfileEditorPage> {
     _reading,
   ]);
   DialogRoute<_LeaveChoice>? _leaveDialog;
+  VoidCallback? _unregisterHistoryGuard;
   bool _saving = false;
   bool _savingToLeave = false;
   String? _feedback;
@@ -66,7 +68,18 @@ class _ProfileEditorPageState extends State<ProfileEditorPage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _unregisterHistoryGuard?.call();
+    _unregisterHistoryGuard = AccountSectionLinks.registerLeaveGuard(
+      context,
+      _allowLeave,
+    );
+  }
+
+  @override
   void dispose() {
+    _unregisterHistoryGuard?.call();
     if (_leaveDialog case final route?) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (route.isActive) route.navigator?.removeRoute(route);
@@ -126,9 +139,15 @@ class _ProfileEditorPageState extends State<ProfileEditorPage> {
   }
 
   Future<void> _confirmLeave() async {
-    if (_leaveDialog != null || !_current || _busy || !_dirty) return;
+    final navigator = Navigator.of(context);
+    if (await _allowLeave() && mounted && _current) navigator.pop();
+  }
+
+  Future<bool> _allowLeave() async {
+    if (!mounted || !_current) return true;
+    if (_leaveDialog != null || _busy) return false;
+    if (!_dirty) return true;
     FocusManager.instance.primaryFocus?.unfocus();
-    final pageNavigator = Navigator.of(context);
     final dialogNavigator = Navigator.of(context, rootNavigator: true);
     final route = DialogRoute<_LeaveChoice>(
       context: context,
@@ -154,19 +173,20 @@ class _ProfileEditorPageState extends State<ProfileEditorPage> {
     _leaveDialog = route;
     final choice = await dialogNavigator.push(route);
     _leaveDialog = null;
-    if (!mounted || !_current || choice == null) return;
+    if (!mounted || !_current) return true;
+    if (choice == null) return false;
     if (choice == _LeaveChoice.save) {
       setState(() => _savingToLeave = true);
       try {
-        if (_basicDirty && !await _save()) return;
-        if (!mounted || !_current) return;
+        if (_basicDirty && !await _save()) return !mounted || !_current;
+        if (!mounted || !_current) return true;
         if (_reading.dirty) await _reading.save();
-        if (!mounted || !_current || _dirty) return;
+        return !mounted || !_current || !_dirty;
       } finally {
         if (mounted) setState(() => _savingToLeave = false);
       }
     }
-    pageNavigator.pop();
+    return true;
   }
 
   @override

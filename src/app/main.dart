@@ -69,8 +69,9 @@ class _JovianAppState extends State<JovianApp> {
     shell: _shellPage,
     fortune: _fortunePage,
   );
-  late final _routeInformation = PlatformRouteInformationProvider(
+  late final _routeInformation = JovianRouteInformationProvider(
     initialRouteInformation: initialJovianRoute(widget.initialTab),
+    navigation: _navigation,
   );
   late final _router = RouterConfig<JovianLocation>(
     routeInformationProvider: _routeInformation,
@@ -227,6 +228,7 @@ class _JovianAppState extends State<JovianApp> {
   Widget _shellPage(JovianLocation location) => _accountEntry(
     AccountSectionLinks(
       open: _navigation.openAccountSection,
+      protectFromHistory: _navigation.protectAccountSection,
       child: _AppHome(
         key: ObjectKey(widget.account),
         account: widget.account,

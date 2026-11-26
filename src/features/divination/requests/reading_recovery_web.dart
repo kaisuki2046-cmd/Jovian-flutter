@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:jovian_divination/jovian_divination.dart';
 import 'package:web/web.dart' as web;
 
+import 'legacy_reading_archive_codec.dart';
 import 'reading_history_codec.dart';
 
 const _activePrefix = 'jovian.divination.active.v2.';
@@ -80,7 +81,8 @@ Future<void> clearMemberReadingData(String owner) async {
 GuideRecoveryStore createReadingRecovery(Uri base, {String? ownerScope}) =>
     _BrowserReadingRecovery(base, ownerScope);
 
-class _BrowserReadingRecovery implements GuideHistoryStore {
+class _BrowserReadingRecovery
+    implements GuideHistoryStore, LegacyGuideArchiveStore {
   _BrowserReadingRecovery(Uri base, String? ownerScope)
     : _ownerScope = ownerScope,
       _key = ownerScope == null
@@ -153,6 +155,21 @@ class _BrowserReadingRecovery implements GuideHistoryStore {
       // The current controller still has the conversations it has seen.
     }
     return entries.values.toList();
+  }
+
+  @override
+  Future<List<LegacyGuideArchive>> readLegacyArchives() async {
+    final owner = _legacyOwner;
+    if (owner == null) return const [];
+    try {
+      final stored = web.window.localStorage.getItem(
+        '$_legacyHistoryPrefix$owner',
+      );
+      return decodeLegacyGuideArchives(stored).toList();
+    } catch (_) {
+      // Archived records are optional when browser storage is unavailable.
+      return const [];
+    }
   }
 
   @override

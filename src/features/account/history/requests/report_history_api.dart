@@ -15,7 +15,11 @@ class ReportHistoryApi {
       authenticated: true,
       query: {'expectedOwnerId': owner},
     );
-    return record == null ? null : ArchivedDestinyCharts.fromJson(record);
+    if (record == null) return null;
+    if (archiveId != null && record['id'] != archiveId) {
+      throw const FormatException('Unexpected destiny archive.');
+    }
+    return ArchivedDestinyCharts.fromJson(record);
   }
 
   Future<Map<String, Object?>> latestSynastrySnapshot(String owner) =>

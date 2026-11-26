@@ -8,7 +8,9 @@ import '../../../../ui/interface_language.dart';
 import '../../../../ui/theme.dart';
 import '../../auth/control/account_controller.dart';
 import '../../auth/model/session.dart';
+import '../../model/account_section.dart';
 import '../../profile/view/profile_editor_page.dart';
+import '../../view/account_section_links.dart';
 import '../control/privacy_requests_controller.dart';
 import '../model/privacy_request.dart';
 
@@ -217,12 +219,12 @@ class _PrivacyRightsPanelState extends State<_PrivacyRightsPanel> {
                 title: const Text('查看或更正基础资料'),
                 subtitle: const Text('昵称、简介和出生资料'),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () => Navigator.of(context).push<void>(
-                  MaterialPageRoute(
-                    builder: (_) => ProfileEditorPage(
-                      account: widget.account,
-                      member: widget.member,
-                    ),
+                onTap: () => AccountSectionLinks.openPage(
+                  context,
+                  AccountSection.profile,
+                  () => ProfileEditorPage(
+                    account: widget.account,
+                    member: widget.member,
                   ),
                 ),
               ),

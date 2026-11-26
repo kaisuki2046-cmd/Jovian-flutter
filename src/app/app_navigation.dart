@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../features/account/account.dart';
+import 'app_browser_history.dart';
 import 'app_shell.dart';
 
 class JovianLocation {
@@ -118,7 +119,12 @@ RouteInformation initialJovianRoute(JovianTab fallback) {
     WidgetsBinding.instance.platformDispatcher.defaultRouteName,
   );
   if (platformRoute != null && platformRoute.path != '/') {
-    return RouteInformation(uri: platformRoute);
+    return RouteInformation(
+      uri: platformRoute,
+      state: _fortunePaths.contains(_routePath(platformRoute))
+          ? currentBrowserRouteState()
+          : null,
+    );
   }
   if (kIsWeb && Uri.base.fragment.isEmpty) {
     final base = Uri.base;
@@ -258,6 +264,111 @@ class JovianRouteParser extends RouteInformationParser<JovianLocation> {
   }
 }
 
+class JovianRouteInformationProvider extends PlatformRouteInformationProvider {
+  JovianRouteInformationProvider({
+    required super.initialRouteInformation,
+    required this.navigation,
+  }) : _reportedUri = initialRouteInformation.uri,
+       _acceptedEntry = kIsWeb ? currentBrowserEntry() ?? 0 : null;
+
+  final JovianRouter navigation;
+  Uri _reportedUri;
+  int? _acceptedEntry;
+  ({RouteInformation route, int? entry})? _pending;
+  bool _deciding = false;
+  bool _returning = false;
+  bool _closed = false;
+
+  RouteInformation _unwrap(RouteInformation information) {
+    final state = information.state;
+    return state is Map && state['jovianEntry'] is num
+        ? RouteInformation(uri: information.uri, state: state['routeState'])
+        : information;
+  }
+
+  @override
+  RouteInformation get value => _unwrap(super.value);
+
+  @override
+  void routerReportsNewRouteInformation(
+    RouteInformation route, {
+    RouteInformationReportingType type = RouteInformationReportingType.none,
+  }) {
+    if (_deciding || _returning) return;
+    final entry = _acceptedEntry;
+    if (entry == null) {
+      super.routerReportsNewRouteInformation(route, type: type);
+      return;
+    }
+    final replace = switch (type) {
+      RouteInformationReportingType.neglect => true,
+      RouteInformationReportingType.navigate => false,
+      RouteInformationReportingType.none => _reportedUri == route.uri,
+    };
+    _reportedUri = route.uri;
+    _acceptedEntry = replace ? entry : entry + 1;
+    super.routerReportsNewRouteInformation(
+      RouteInformation(
+        uri: route.uri,
+        state: {'jovianEntry': _acceptedEntry, 'routeState': route.state},
+      ),
+      type: replace
+          ? RouteInformationReportingType.neglect
+          : RouteInformationReportingType.navigate,
+    );
+  }
+
+  @override
+  Future<bool> didPushRouteInformation(RouteInformation route) async {
+    if (_returning || _closed) return true;
+    _pending = (route: _unwrap(route), entry: currentBrowserEntry());
+    if (_deciding) return true;
+    _deciding = true;
+    final confirmed = <AccountDestination>{};
+    var requested = _pending!;
+    var permission = await navigation._allowHistoryNavigation(
+      const JovianRouteParser()._read(requested.route),
+      confirmed,
+    );
+    while (!_closed && permission && !identical(requested, _pending)) {
+      requested = _pending!;
+      permission = await navigation._allowHistoryNavigation(
+        const JovianRouteParser()._read(requested.route),
+        confirmed,
+      );
+    }
+    _deciding = false;
+    if (_closed) return true;
+    requested = _pending!;
+    _pending = null;
+
+    if (!permission) {
+      final from = requested.entry;
+      final to = _acceptedEntry;
+      if (from != null && to != null && from != to) {
+        // Keep the browser stack intact on cancellation, including Forward.
+        _returning = true;
+        try {
+          await moveBrowserHistory(to - from);
+        } finally {
+          _returning = false;
+        }
+      }
+      return true;
+    }
+
+    _reportedUri = requested.route.uri;
+    _acceptedEntry = requested.entry ?? _acceptedEntry;
+    return super.didPushRouteInformation(requested.route);
+  }
+
+  @override
+  void dispose() {
+    _closed = true;
+    super.dispose();
+  }
+}
+
 class JovianRouter extends RouterDelegate<JovianLocation>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<JovianLocation> {
   JovianRouter({required this.shell, required this.fortune});
@@ -274,6 +385,38 @@ class JovianRouter extends RouterDelegate<JovianLocation>
   JovianLocation? _welcomeOrigin;
   final _sectionsByTab = <JovianTab, List<AccountDestination>>{};
   final _pendingSections = <(JovianTab, AccountDestination), Completer<void>>{};
+  final _accountLeaveGuards = <AccountDestination, Future<bool> Function()>{};
+
+  VoidCallback protectAccountSection(
+    AccountDestination section,
+    Future<bool> Function() guard,
+  ) {
+    _accountLeaveGuards[section] = guard;
+    return () {
+      if (identical(_accountLeaveGuards[section], guard)) {
+        _accountLeaveGuards.remove(section);
+      }
+    };
+  }
+
+  Future<bool> _allowHistoryNavigation(
+    JovianLocation next,
+    Set<AccountDestination> confirmed,
+  ) async {
+    if (_accountLeaveGuards.isEmpty || _location == next) return true;
+    final removed = next.welcome
+        ? _accountLeaveGuards.keys.toList()
+        : sectionsFor(
+            next.tab,
+          ).where((section) => !next.sections.contains(section)).toList();
+    for (final section in removed.reversed) {
+      final guard = _accountLeaveGuards[section];
+      if (guard == null || confirmed.contains(section)) continue;
+      if (!await guard()) return false;
+      confirmed.add(section);
+    }
+    return true;
+  }
 
   @override
   JovianLocation get currentConfiguration => _location;

@@ -143,10 +143,12 @@ class GuideFollowUpReply extends StatefulWidget {
     super.key,
     required this.followUp,
     required this.evidence,
+    this.label,
   });
 
   final ReadingFollowUp followUp;
   final List<ReadingEvidence> evidence;
+  final String? label;
 
   @override
   State<GuideFollowUpReply> createState() => _GuideFollowUpReplyState();
@@ -169,6 +171,8 @@ class _GuideFollowUpReplyState extends State<GuideFollowUpReply> {
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 10,
           children: [
+            if (widget.label case final label?)
+              UiText(label, style: theme.textTheme.labelMedium),
             Semantics(
               header: true,
               child: Text(turn.answer, style: theme.textTheme.titleMedium),

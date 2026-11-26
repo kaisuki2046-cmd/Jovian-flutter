@@ -8,6 +8,7 @@ import '../../../ui/interface_language.dart';
 import 'composer_attachment.dart';
 import 'guide_composer.dart';
 import 'guide_conversation.dart';
+import 'legacy_reading_archive_view.dart';
 import 'liuyao_form.dart';
 import 'meihua_page.dart';
 import 'reading_report.dart';
@@ -45,6 +46,7 @@ class _GuideFormState extends State<GuideForm>
   StreamSubscription<void>? _onlineChanges;
   DialogRoute<void>? _ritualRoute;
   GuideRitualPresentation? _presentation;
+  LegacyGuideArchive? _openArchive;
   final _clarifications =
       <
         ({String question, String reply, List<ComposerAttachment> attachments})
@@ -326,9 +328,17 @@ class _GuideFormState extends State<GuideForm>
     final online = widget.online;
     if (online == null || online.busy) return;
     _closeHistory();
-    if (online.activeHistoryId == id) return;
+    if (online.activeHistoryId == id) {
+      if (_openArchive != null) setState(() => _openArchive = null);
+      return;
+    }
     setState(_clearDraft);
     unawaited(online.openHistory(id));
+  }
+
+  void _selectArchive(LegacyGuideArchive archive) {
+    _closeHistory();
+    setState(() => _openArchive = archive);
   }
 
   void _closeHistory() {
@@ -342,6 +352,7 @@ class _GuideFormState extends State<GuideForm>
     _question.clear();
     _followUp.clear();
     _pendingQuestion = null;
+    _openArchive = null;
     _clarifications.clear();
     _releaseAttachments();
     _draftAttachments.clear();
@@ -394,8 +405,10 @@ class _GuideFormState extends State<GuideForm>
       drawerEnableOpenDragGesture: false,
       drawer: GuideConversationHistory(
         entries: online?.history ?? const [],
-        activeId: online?.activeHistoryId,
+        archives: online?.legacyArchives ?? const [],
+        activeId: _openArchive?.id ?? online?.activeHistoryId,
         open: online?.busy == true ? null : _selectHistory,
+        openArchive: online?.busy == true ? null : _selectArchive,
         back: _closeHistory,
       ),
       appBar: AppBar(
@@ -437,6 +450,13 @@ class _GuideFormState extends State<GuideForm>
   }
 
   Widget _conversationBody(BuildContext context) {
+    if (_openArchive case final archive?) {
+      return LegacyReadingArchiveView(
+        key: ValueKey(archive.id),
+        archive: archive,
+        close: () => setState(() => _openArchive = null),
+      );
+    }
     final online = widget.online;
     final busy = online?.busy ?? false;
     final ritual = _snapshot;

@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:jovian_divination_model/iching.dart' show Hexagram;
 import 'package:jovian_divination_model/pro_report.dart';
 
 import 'guide_ritual.dart';
+import 'meihua.dart';
+import 'tarot.dart';
 
 typedef ReadingConfirmation = ({
   String focus,
@@ -26,6 +29,34 @@ typedef ReadingEvidence = ({
   String source,
   int? catalogVersion,
 });
+
+enum LegacyGuideMethod { combined, tarot, liuyao, meihua }
+
+typedef LegacyLiuYaoChart = ({
+  Hexagram primary,
+  Hexagram changed,
+  List<int> moving,
+  String? interpretation,
+});
+
+typedef LegacyGuideArchive = ({
+  String id,
+  DateTime updatedAt,
+  String question,
+  String focus,
+  LegacyGuideMethod method,
+  ReadingFollowUp? report,
+  String? reportSource,
+  List<ReadingFollowUp> followUps,
+  List<ReadingEvidence> evidence,
+  TarotDraw? tarot,
+  LegacyLiuYaoChart? liuyao,
+  MeihuaReading? meihua,
+});
+
+abstract interface class LegacyGuideArchiveStore {
+  Future<List<LegacyGuideArchive>> readLegacyArchives();
+}
 
 class OnlineReading {
   const OnlineReading(
@@ -234,6 +265,7 @@ class OnlineGuideController {
   final _changes = StreamController<void>.broadcast(sync: true);
   final _clock = Stopwatch()..start();
   final _history = <String, GuideHistoryEntry>{};
+  List<LegacyGuideArchive> _legacyArchives = const [];
   final _clockSession = guideEventId();
   String? _token;
   String? _threadId;
@@ -252,6 +284,7 @@ class OnlineGuideController {
   String? get activeHistoryId => _threadId;
   String? get previousQuestion => _previousQuestion;
   bool get canContinue => _token != null;
+  List<LegacyGuideArchive> get legacyArchives => _legacyArchives;
   List<GuideHistoryEntry> get history =>
       _history.values.toList()
         ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
@@ -270,6 +303,9 @@ class OnlineGuideController {
     final history = await _historyStore?.readHistory();
     if (history != null)
       _history.addEntries(history.map((entry) => MapEntry(entry.id, entry)));
+    if (_recovery case final LegacyGuideArchiveStore store) {
+      _legacyArchives = List.unmodifiable(await store.readLegacyArchives());
+    }
     final recovered = await _recovery.read();
     if (recovered == null) return;
     _threadId = recovered.threadId ?? guideEventId();

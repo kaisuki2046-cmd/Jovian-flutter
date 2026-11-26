@@ -137,20 +137,31 @@ class GuideConversationHistory extends StatefulWidget {
   const GuideConversationHistory({
     super.key,
     required this.entries,
+    required this.archives,
     required this.activeId,
     required this.open,
+    required this.openArchive,
     required this.back,
   });
 
   final List<GuideHistoryEntry> entries;
+  final List<LegacyGuideArchive> archives;
   final String? activeId;
   final ValueChanged<String>? open;
+  final ValueChanged<LegacyGuideArchive>? openArchive;
   final VoidCallback back;
 
   @override
   State<GuideConversationHistory> createState() =>
       _GuideConversationHistoryState();
 }
+
+typedef _GuideHistoryRow = ({
+  String id,
+  String question,
+  DateTime updatedAt,
+  VoidCallback? open,
+});
 
 class _GuideConversationHistoryState extends State<GuideConversationHistory> {
   String _query = '';
@@ -160,9 +171,32 @@ class _GuideConversationHistoryState extends State<GuideConversationHistory> {
     final width = (MediaQuery.sizeOf(context).width * .84).clamp(0.0, 320.0);
     final now = DateTime.now();
     final theme = Theme.of(context);
-    final groups = <String, List<GuideHistoryEntry>>{};
-    for (final entry in widget.entries) {
-      if (!_matches(entry.reading)) continue;
+    final entries = <_GuideHistoryRow>[
+      for (final entry in widget.entries)
+        if (_matches(
+          entry.reading.snapshot.question,
+          entry.reading.snapshot.focus,
+          entry.reading.followUps,
+        ))
+          (
+            id: entry.id,
+            question: entry.reading.snapshot.question,
+            updatedAt: entry.updatedAt,
+            open: widget.open == null ? null : () => widget.open!(entry.id),
+          ),
+      for (final archive in widget.archives)
+        if (_matches(archive.question, archive.focus, archive.followUps))
+          (
+            id: archive.id,
+            question: archive.question,
+            updatedAt: archive.updatedAt,
+            open: widget.openArchive == null
+                ? null
+                : () => widget.openArchive!(archive),
+          ),
+    ]..sort((left, right) => right.updatedAt.compareTo(left.updatedAt));
+    final groups = <String, List<_GuideHistoryRow>>{};
+    for (final entry in entries) {
       final date = entry.updatedAt.toLocal();
       final label = DateUtils.isSameDay(date, now)
           ? '今天'
@@ -234,13 +268,11 @@ class _GuideConversationHistoryState extends State<GuideConversationHistory> {
                               borderRadius: BorderRadius.circular(11),
                             ),
                             title: Text(
-                              entry.reading.snapshot.question,
+                              entry.question,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
-                            onTap: widget.open == null
-                                ? null
-                                : () => widget.open!(entry.id),
+                            onTap: entry.open,
                           ),
                       ],
                     ],
@@ -253,11 +285,15 @@ class _GuideConversationHistoryState extends State<GuideConversationHistory> {
     );
   }
 
-  bool _matches(OnlineReading reading) =>
+  bool _matches(
+    String question,
+    String focus,
+    List<ReadingFollowUp> followUps,
+  ) =>
       _query.isEmpty ||
-      reading.snapshot.question.toLowerCase().contains(_query) ||
-      reading.snapshot.focus.toLowerCase().contains(_query) ||
-      reading.followUps.any(
+      question.toLowerCase().contains(_query) ||
+      focus.toLowerCase().contains(_query) ||
+      followUps.any(
         (turn) =>
             turn.question.toLowerCase().contains(_query) ||
             turn.answer.toLowerCase().contains(_query),

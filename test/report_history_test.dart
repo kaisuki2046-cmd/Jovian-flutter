@@ -20,6 +20,37 @@ import '../src/ui/theme.dart';
 
 void main() {
   test(
+    'a selected destiny archive rejects a record for another chart',
+    () async {
+      final selected = 'b' * 64;
+      final other = 'a' * 64;
+      final account = _account((request) {
+        expect(request.url.path, '/account/destiny-history/$selected');
+        expect(request.url.queryParameters['expectedOwnerId'], 'member-owner');
+        return _json({
+          ..._entry(other),
+          'report': {
+            'version': 1,
+            'timeKnown': true,
+            'charts': [
+              for (final method in ['bazi', 'ziwei', 'western'])
+                {'method': method, 'rows': []},
+            ],
+          },
+        });
+      });
+      addTearDown(account.dispose);
+      await expectLater(
+        account.reports.latestDestinyCharts(
+          'member-owner',
+          archiveId: selected,
+        ),
+        throwsFormatException,
+      );
+    },
+  );
+
+  test(
     'an owner mismatch clears report data and ignores an outstanding page',
     () async {
       final record = 'a' * 64;

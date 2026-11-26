@@ -164,7 +164,7 @@ void main() {
       final requests = <String>[];
       final contexts = <String?>[];
       final destinations = <AccountDestination>[];
-      final account = await _guestAccount((request) {
+      final account = await _fixtureAccount((request) {
         final path = request.url.path;
         expect(request.method, 'GET');
         expect(request.url.queryParameters['expectedOwnerId'], 'guest-fixture');
@@ -258,7 +258,7 @@ void main() {
       final older = 'e' * 64;
       final cursors = <String?>[];
       var olderReads = 0;
-      final account = await _guestAccount((request) {
+      final account = await _fixtureAccount((request) {
         expect(request.url.queryParameters['expectedOwnerId'], 'guest-fixture');
         expect(request.url.queryParameters['kind'], 'synastry');
         final path = request.url.path;
@@ -329,8 +329,13 @@ void main() {
     },
   );
 
-  for (final revokeAi in [false, true]) {
-    final kind = revokeAi ? 'AI authorization' : 'B-side consent';
+  for (final kind in [
+    'B-side consent',
+    'AI authorization',
+    'archived A account session',
+  ]) {
+    final revokeAi = kind == 'AI authorization';
+    final archiveA = kind == 'archived A account session';
     test('withdrawing $kind aborts the actual model request', () async {
       final requestArrived = Completer<void>();
       final disconnected = Completer<void>();
@@ -359,11 +364,20 @@ void main() {
         );
         requestArrived.complete();
       });
-      final account = await _guestAccount((request) {
-        expect(request.method, 'GET');
-        expect(request.url.path, '/account/reading-history/latest');
-        return _json(null);
-      }, share: true);
+      final account = await _fixtureAccount(
+        (request) {
+          expect(request.method, 'GET');
+          return switch (request.url.path) {
+            '/account/synastry-chart-snapshots/latest' when archiveA => _json(
+              _snapshot(_ownedChart()),
+            ),
+            '/account/reading-history/latest' => _json(null),
+            _ => fail('Unexpected archive request: $request'),
+          };
+        },
+        share: true,
+        member: archiveA,
+      );
       final controller = SynastryPageController(
         account: account,
         calculate: (profile, _) async =>
@@ -374,7 +388,7 @@ void main() {
         ),
       );
       addTearDown(controller.dispose);
-      await _prepareComparison(controller);
+      await _prepareComparison(controller, archiveA: archiveA);
       final response = HttpOverrides.runWithHttpOverrides(
         controller.generateSummary,
         _LoopbackHttpOverrides(),
@@ -382,6 +396,8 @@ void main() {
       await requestArrived.future.timeout(const Duration(seconds: 5));
       if (revokeAi) {
         await account.choose(account.catalog!.ai, _permission, false);
+      } else if (archiveA) {
+        await account.signOut();
       } else {
         controller.confirmConsent(false);
       }
@@ -393,6 +409,8 @@ void main() {
       if (revokeAi) {
         expect(controller.result, _comparison);
         expect(controller.needsPermission, isTrue);
+      } else if (archiveA) {
+        expect(account.authorizedSession, isNull);
       } else {
         expect(controller.b, isNull);
         expect(controller.result, isNull);
@@ -400,8 +418,72 @@ void main() {
     });
   }
 
+  test(
+    'reloading archived A discards stale data and rejects invalid projections',
+    () async {
+      var response = _json(_snapshot(_ownedChart()));
+      final account = await _fixtureAccount((request) {
+        expect(request.url.path, '/account/synastry-chart-snapshots/latest');
+        expect(request.url.queryParameters, {
+          'expectedOwnerId': 'member-fixture',
+        });
+        return response;
+      }, member: true);
+      var comparisons = 0;
+      final controller = SynastryPageController(
+        account: account,
+        calculate: (profile, _) async =>
+            _chart(profile.date.utcMidnight.toIso8601String()),
+        compare: (a, b, _) async {
+          comparisons++;
+          expect(a['mode'], 'account_owner');
+          expect(a['chart'], _ownedChart());
+          return _comparison;
+        },
+      );
+      addTearDown(controller.dispose);
+
+      await _prepareComparison(controller, archiveA: true);
+      expect(controller.ownChartStatus, OwnSynastryChartStatus.available);
+      response = _json({}, 403);
+      final refresh = controller.readOwnChart();
+      expect(controller.a, isNull);
+      expect(controller.result, isNull);
+      await refresh;
+      expect(controller.ownChartStatus, OwnSynastryChartStatus.failed);
+      expect(controller.canCompare, isFalse);
+      expect(controller.aFromArchive, isFalse);
+      expect(controller.b, isNotNull);
+
+      response = _json(_snapshot({..._ownedChart(), 'snapshotId': 'b' * 64}));
+      await controller.readOwnChart();
+      expect(controller.ownChartStatus, OwnSynastryChartStatus.failed);
+      expect(controller.canCompare, isFalse);
+
+      response = _json({
+        'status': 'missing_snapshot',
+        'archiveId': 'a' * 64,
+        'calculatedAt': '2026-10-20T09:00:00.000Z',
+      });
+      await controller.readOwnChart();
+      expect(controller.ownChartStatus, OwnSynastryChartStatus.missingSnapshot);
+      expect(controller.a, isNull);
+
+      response = _json(_snapshot({..._ownedChart(), 'timeKnown': false}));
+      await controller.readOwnChart();
+      expect(controller.ownChartStatus, OwnSynastryChartStatus.unknownTime);
+      expect(controller.a, isNull);
+      expect(comparisons, 1);
+
+      response = _json(_snapshot(_ownedChart()));
+      await controller.readOwnChart();
+      expect(controller.ownChartStatus, OwnSynastryChartStatus.available);
+      expect(controller.canCompare, isTrue);
+    },
+  );
+
   test('an unknown chart version cannot open or generate a report', () async {
-    final account = await _guestAccount(
+    final account = await _fixtureAccount(
       (request) => throw StateError('Unexpected archive request'),
       share: true,
     );
@@ -426,9 +508,10 @@ const _permission = 'synastry.cloud_interpretation';
 
 class _LoopbackHttpOverrides extends HttpOverrides {}
 
-Future<AccountController> _guestAccount(
+Future<AccountController> _fixtureAccount(
   http.Response Function(http.Request) readArchives, {
   bool share = false,
+  bool member = false,
 }) async {
   Map<String, Object?> agreements(bool shared) => {
     'requiredAccepted': true,
@@ -442,7 +525,13 @@ Future<AccountController> _guestAccount(
       base: Uri.https('fixture.invalid'),
       client: MockClient(
         (request) async => switch (request.url.path) {
-          '/account/session' => _json({}, 401),
+          '/account/session' =>
+            member
+                ? _json({
+                    'user': {'id': 'member-fixture', 'displayName': '测试会员'},
+                  })
+                : _json({}, 401),
+          '/account/auth/logout' => http.Response('', 204),
           '/account/auth/guest' => _json({
             'id': 'guest-fixture',
             'expiresAt': 4102444800000,
@@ -463,7 +552,9 @@ Future<AccountController> _guestAccount(
           }),
           '/account/agreements' => _json(agreements(share)),
           '/account/agreements/permission' => _json(agreements(false)),
-          final path when path.startsWith('/account/reading-history') =>
+          final path
+              when path.startsWith('/account/reading-history') ||
+                  path == '/account/synastry-chart-snapshots/latest' =>
             readArchives(request),
           final path => throw StateError('Unexpected path $path'),
         },
@@ -476,7 +567,10 @@ Future<AccountController> _guestAccount(
   return account;
 }
 
-Future<void> _prepareComparison(SynastryPageController controller) async {
+Future<void> _prepareComparison(
+  SynastryPageController controller, {
+  bool archiveA = false,
+}) async {
   BirthProfile profile(int day) => BirthProfile(
     date: BirthDate(1990, 6, day),
     time: const BirthTime(hour: 9, minute: 20),
@@ -484,7 +578,12 @@ Future<void> _prepareComparison(SynastryPageController controller) async {
     gender: BirthGender.female,
   );
   controller.confirmConsent(true);
-  expect(await controller.setManual(SynastrySide.a, profile(1)), isTrue);
+  if (archiveA) {
+    await controller.readOwnChart();
+    expect(controller.aFromArchive, isTrue);
+  } else {
+    expect(await controller.setManual(SynastrySide.a, profile(1)), isTrue);
+  }
   expect(await controller.setManual(SynastrySide.b, profile(2)), isTrue);
   await controller.compareCharts();
   expect(controller.result, _comparison);
@@ -510,6 +609,20 @@ Map<String, Object?> _chart(String calculatedAt) => {
   'bazi': {'status': 'complete'},
   'ziwei': {'status': 'complete'},
   'western': {'status': 'complete'},
+};
+
+Map<String, Object?> _ownedChart() => {
+  ..._chart('2026-10-20T09:00:00.000Z'),
+  'schemaVersion': 1,
+  'snapshotId': 'a' * 64,
+  'archiveId': 'a' * 64,
+  'timeKnown': true,
+  'ziwei': {'status': 'unavailable', 'reason': 'calculation_failed'},
+};
+
+Map<String, Object?> _snapshot(Map<String, Object?> chart) => {
+  'status': 'available',
+  'snapshot': chart,
 };
 
 Map<String, Object?> _entry(String id, String title) => {

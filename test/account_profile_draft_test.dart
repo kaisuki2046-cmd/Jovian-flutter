@@ -92,6 +92,50 @@ void main() {
     },
   );
 
+  testWidgets(
+    'history waits for the profile draft decision before removing its page',
+    (tester) async {
+      final service = _ProfileService();
+      await _open(tester, service, '基础个人资料');
+      final name = find.widgetWithText(TextField, '昵称');
+      await tester.enterText(name, '浏览器草稿');
+      await tester.pump();
+
+      final cancelled = tester.binding.handlePushRoute('/account/settings');
+      await tester.pumpAndSettle();
+      expect(find.byType(AlertDialog), findsOneWidget);
+      await tester.binding.handlePushRoute('/account');
+      await tester.pumpAndSettle();
+      expect(find.byType(AlertDialog), findsOneWidget);
+      await _tap(tester, find.text('继续编辑'));
+      await cancelled;
+      expect(tester.widget<TextField>(name).controller!.text, '浏览器草稿');
+      expect(service.profileWrites, isEmpty);
+
+      final save = tester.binding.handlePushRoute('/account');
+      await tester.pumpAndSettle();
+      await _tap(tester, find.text('保存并离开'));
+      await save;
+      expect(find.text('浏览器草稿'), findsOneWidget);
+      expect(find.text('设置'), findsNothing);
+      expect(service.profileWrites.single['displayName'], '浏览器草稿');
+
+      await tester.binding.handlePushRoute('/account/profile');
+      await tester.pumpAndSettle();
+      expect(tester.widget<TextField>(name).controller!.text, '浏览器草稿');
+      await tester.enterText(name, '准备丢弃');
+      await tester.pump();
+      final discard = tester.binding.handlePushRoute('/account');
+      await tester.pumpAndSettle();
+      await _tap(tester, find.text('放弃修改'));
+      await discard;
+      expect(find.text('浏览器草稿'), findsOneWidget);
+      expect(find.text('准备丢弃'), findsNothing);
+      expect(service.profileWrites, hasLength(1));
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets('an owner change dismisses an old draft and cannot save it', (
     tester,
   ) async {

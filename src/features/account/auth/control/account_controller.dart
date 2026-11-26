@@ -13,6 +13,7 @@ import '../../settings/requests/privacy_requests_api.dart';
 import '../model/password.dart';
 import '../model/session.dart';
 import '../requests/account_api.dart';
+import '../requests/phone_binding_api.dart';
 
 class AccountController extends ChangeNotifier {
   AccountController(this._account, this._agreements);
@@ -48,6 +49,9 @@ class AccountController extends ChangeNotifier {
 
   PrivacyRequestsApi privacyRequests(String owner) =>
       PrivacyRequestsApi(_account, owner, () => memberId == owner);
+
+  PhoneBindingApi phoneBinding(String owner) =>
+      PhoneBindingApi(_account, owner, () => memberId == owner);
 
   Future<void> probeIdentityVerification(
     String memberId, {

@@ -7,6 +7,7 @@ import '../../settings/model/agreements.dart';
 import '../../settings/view/agreement_document_page.dart';
 import '../control/account_controller.dart';
 import 'password_security_page.dart';
+import 'phone_security_page.dart';
 
 const _identityTerms = AgreementDocument(
   id: 'identity',
@@ -249,7 +250,22 @@ class AccountSecurityPage extends StatelessWidget {
                       provider == 'wechat' ? '当前使用微信登录。' : '当前使用 QQ 登录。',
                     ),
                   )
-                else
+                else ...[
+                  Card(
+                    child: ListTile(
+                      leading: const Icon(Icons.phone_android_outlined),
+                      title: const Text('手机号'),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () => Navigator.of(context).push<void>(
+                        MaterialPageRoute(
+                          builder: (_) => PhoneSecurityPage(
+                            account: account,
+                            owner: memberId,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                   Card(
                     child: ListTile(
                       leading: const Icon(Icons.lock_outline),
@@ -265,6 +281,7 @@ class AccountSecurityPage extends StatelessWidget {
                       ),
                     ),
                   ),
+                ],
                 Card(
                   child: ListTile(
                     leading: const Icon(Icons.badge_outlined),

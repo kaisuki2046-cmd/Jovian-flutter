@@ -1,11 +1,14 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
+import '../src/features/account/auth/model/phone_binding.dart';
 import '../src/features/account/auth/model/session.dart';
 import '../src/features/account/auth/requests/account_api.dart';
+import '../src/features/account/auth/requests/phone_binding_api.dart';
 import '../src/features/account/profile/model/profile_preview.dart';
 import '../src/features/account/reading-profile/model/account_birth_fields.dart';
 import '../src/features/account/reading-profile/model/account_reading_profile.dart';
@@ -41,6 +44,89 @@ Map<String, Object?> _document(String id) => {
 };
 
 void main() {
+  test(
+    'phone rebinding separates the two challenges and checks native owner',
+    () async {
+      const oldPhone = '+8613700137000';
+      const newPhone = '+8613600136000';
+      final storage = _TestTokenStore()..token = 'a' * 43;
+      final writes = <Object?>[];
+      var member = 'owner';
+      final api = AccountApi(
+        JsonHttpClient(
+          base: Uri.parse('https://account.example.test'),
+          client: MockClient((request) async {
+            expect(request.headers['authorization'], 'Bearer ${storage.token}');
+            expect(request.headers['x-app-client'], 'native');
+            switch (request.url.path) {
+              case '/account/session':
+                return _json({
+                  'user': {'id': member},
+                });
+              case '/account/auth/phone':
+                return _json({'phone': oldPhone});
+              case '/account/auth/phone/bind-current/code':
+                expect(jsonDecode(request.body), {'phone': oldPhone});
+                return _json({'challengeId': 'old-code'});
+              case '/account/auth/phone/bind/code':
+                expect(jsonDecode(request.body), {'phone': newPhone});
+                return _json({
+                  'challengeId': 'new-code',
+                  'delivery': 'local-inbox',
+                });
+              case '/account/auth/phone/bind':
+                writes.add(jsonDecode(request.body));
+                return _json({'phone': newPhone});
+              default:
+                fail('Unexpected request ${request.url.path}');
+            }
+          }),
+        ),
+        nativeSession: storage,
+      );
+      addTearDown(api.close);
+      final binding = PhoneBindingApi(api, 'owner', () => true);
+      final cancel = Completer<void>().future;
+      expect(await binding.bound(cancel: cancel), oldPhone);
+      expect(maskAccountPhone(oldPhone), '137******00');
+      final old = await binding.issue(
+        BindingCodeTarget.current,
+        oldPhone,
+        cancel: cancel,
+      );
+      final next = await binding.issue(
+        BindingCodeTarget.next,
+        newPhone,
+        cancel: cancel,
+      );
+      expect(next.localInbox, isTrue);
+      expect(
+        await binding.bind(
+          next,
+          '123456',
+          current: old,
+          currentCode: '012345',
+          cancel: cancel,
+        ),
+        newPhone,
+      );
+      expect(writes, [
+        {
+          'phone': newPhone,
+          'challengeId': 'new-code',
+          'code': '123456',
+          'currentChallengeId': 'old-code',
+          'currentCode': '012345',
+        },
+      ]);
+      member = 'other';
+      await expectLater(
+        binding.issue(BindingCodeTarget.next, newPhone, cancel: cancel),
+        throwsA(isA<JsonRequestError>()),
+      );
+    },
+  );
+
   test('privacy receipts and writes stay bound to the active member', () async {
     var activeMember = 'owner';
     final sent = <Object?>[];

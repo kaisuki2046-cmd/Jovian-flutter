@@ -23,6 +23,45 @@ class OnlineReading {
   final GuideRitualSnapshot snapshot;
   final ProReport? report;
   final List<ReadingFollowUp> followUps;
+
+  factory OnlineReading.fromJson(Map<String, Object?> value) {
+    final snapshot = parseGuideSnapshot(value);
+    final rawReport = value['proReport'];
+    final rawFollowUps = value['followUps'] as List;
+    if (snapshot.stage != GuideStage.reading &&
+        (rawReport != null || rawFollowUps.isNotEmpty)) {
+      throw const FormatException('Report before reading stage.');
+    }
+    return OnlineReading(
+      snapshot,
+      report: rawReport == null ? null : parseSavedProReport(rawReport),
+      followUps: List.unmodifiable(
+        rawFollowUps.map((item) {
+          final entry = item as Map;
+          final report = entry['report'] as Map;
+          return (
+            question: entry['question'] as String,
+            answer: report['answer'] as String,
+            nextSteps: List<String>.unmodifiable(
+              (report['nextSteps'] as List).cast<String>(),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+
+  Map<String, Object?> toJson() => {
+    ...snapshot.toChartSnapshotJson(),
+    if (report case final report?) 'proReport': report.toJson(),
+    'followUps': [
+      for (final item in followUps)
+        {
+          'question': item.question,
+          'report': {'answer': item.answer, 'nextSteps': item.nextSteps},
+        },
+    ],
+  };
 }
 
 class ReadingConnectionError implements Exception {
@@ -41,15 +80,17 @@ class PendingGuideAction {
 }
 
 class GuideRecovery {
-  const GuideRecovery(this.token, [this.pending]);
+  const GuideRecovery(this.token, [this.pending, this.threadId]);
 
   factory GuideRecovery.fromJson(Map<String, Object?> value) {
     final token = value['token'];
     if (token is! String || !RegExp(r'^[A-Za-z0-9_-]{43}$').hasMatch(token)) {
       throw const FormatException('Invalid reading recovery token.');
     }
+    final id = value['threadId'];
+    final threadId = id is String && isGuideThreadId(id) ? id : null;
     final pending = value['pending'];
-    if (pending == null) return GuideRecovery(token);
+    if (pending == null) return GuideRecovery(token, null, threadId);
     if (pending is! Map || pending['body'] is! Map)
       throw const FormatException('Invalid pending reading action.');
     final action = switch (pending['action']) {
@@ -60,14 +101,17 @@ class GuideRecovery {
     return GuideRecovery(
       token,
       PendingGuideAction(action, (pending['body'] as Map).cast()),
+      threadId,
     );
   }
 
   final String token;
   final PendingGuideAction? pending;
+  final String? threadId;
 
   Map<String, Object?> toJson() => {
     'token': token,
+    if (threadId != null) 'threadId': threadId,
     if (pending case final pending?)
       'pending': {'action': pending.action.name, 'body': pending.body},
   };
@@ -76,6 +120,21 @@ class GuideRecovery {
 abstract interface class GuideRecoveryStore {
   Future<GuideRecovery?> read();
   Future<void> write(GuideRecovery? recovery);
+}
+
+bool isGuideThreadId(String id) => RegExp(r'^[a-z0-9-]{1,100}$').hasMatch(id);
+
+typedef GuideHistoryEntry = ({
+  String id,
+  DateTime updatedAt,
+  OnlineReading reading,
+});
+
+abstract interface class GuideHistoryStore implements GuideRecoveryStore {
+  Future<List<GuideHistoryEntry>> readHistory();
+  Future<void> writeHistory(GuideHistoryEntry entry);
+  Future<GuideRecovery?> readThread(String id);
+  Future<void> writeThread(String id, GuideRecovery? recovery);
 }
 
 abstract interface class GuideGateway {
@@ -108,8 +167,10 @@ class OnlineGuideController {
   final void Function()? _onDispose;
   final _changes = StreamController<void>.broadcast(sync: true);
   final _clock = Stopwatch()..start();
+  final _history = <String, GuideHistoryEntry>{};
   final _clockSession = guideEventId();
   String? _token;
+  String? _threadId;
   PendingGuideAction? _pending;
   String? _clarificationQuestion;
   String? _previousQuestion;
@@ -120,21 +181,65 @@ class OnlineGuideController {
 
   Stream<void> get changes => _changes.stream;
   OnlineReading? get reading => _reading;
+  String? get activeHistoryId => _threadId;
+  bool get canContinue => _token != null;
+  List<GuideHistoryEntry> get history =>
+      _history.values.toList()
+        ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
   bool get busy => _busy;
   String? get message => _message;
   bool get canRetry => _retry != null;
 
+  GuideHistoryStore? get _historyStore => switch (_recovery) {
+    final GuideHistoryStore store => store,
+    _ => null,
+  };
+
   Future<void> restore() => _run(() async {
+    final history = await _historyStore?.readHistory();
+    if (history != null)
+      _history.addEntries(history.map((entry) => MapEntry(entry.id, entry)));
     final recovered = await _recovery.read();
     if (recovered == null) return;
+    _threadId = recovered.threadId ?? guideEventId();
+    _reading = _history[_threadId]?.reading;
+    await _resume(recovered);
+  }, revisiting: true);
+
+  Future<void> openHistory(String id) => _run(() async {
+    final entry = _history[id];
+    if (entry == null || id == _threadId) return;
+    _threadId = id;
+    _reading = entry.reading;
+    _token = null;
+    _pending = null;
+    _previousQuestion = null;
+    _clarificationQuestion = null;
+    _emit();
+    final cache = _historyStore;
+    final recovered = cache == null
+        ? _memoryRecovery[id]
+        : await cache.readThread(id);
+    if (recovered == null) {
+      _message = '此历史记录可回看，继续算事请开启新对话。';
+      await _save();
+    } else {
+      await _resume(recovered);
+    }
+  }, revisiting: true);
+
+  final _memoryRecovery = <String, GuideRecovery>{};
+
+  Future<void> _resume(GuideRecovery recovered) async {
     _token = recovered.token;
     _pending = recovered.pending;
     if (_pending != null) {
       await _sendPending(refresh: true);
     } else {
       _reading = await _gateway.get(recovered.token);
+      await _save();
     }
-  });
+  }
 
   Future<void> start(String text, {required bool automatic}) {
     final combined = _clarificationQuestion == null
@@ -164,6 +269,7 @@ class OnlineGuideController {
         previousQuestion: previous,
       );
       _token = started.token;
+      _threadId = guideEventId();
       _pending = null;
       _reading = started.reading;
       _clarificationQuestion = null;
@@ -176,7 +282,8 @@ class OnlineGuideController {
 
   Future<void> toss() {
     final state = _reading?.snapshot;
-    if (_busy || state?.stage != GuideStage.cast) return Future.value();
+    if (_busy || _token == null || state?.stage != GuideStage.cast)
+      return Future.value();
     return _act(
       PendingGuideAction(
         GuideAction.toss,
@@ -191,6 +298,7 @@ class OnlineGuideController {
   Future<void> pick(int slot) {
     final state = _reading?.snapshot;
     if (_busy ||
+        _token == null ||
         state?.stage != GuideStage.draw ||
         state!.selectedSlots.contains(slot)) {
       return Future.value();
@@ -222,9 +330,10 @@ class OnlineGuideController {
     });
   }
 
-  Future<void> nextQuestion() => _run(() async {
-    _previousQuestion = _reading?.snapshot.question;
+  Future<void> nextQuestion({bool carryContext = true}) => _run(() async {
+    _previousQuestion = carryContext ? _reading?.snapshot.question : null;
     _token = null;
+    _threadId = null;
     _pending = null;
     _reading = null;
     _clarificationQuestion = null;
@@ -260,7 +369,8 @@ class OnlineGuideController {
   }
 
   Future<void> _reportIfReady() async {
-    if (_reading?.snapshot.stage != GuideStage.reading ||
+    if (_token == null ||
+        _reading?.snapshot.stage != GuideStage.reading ||
         _reading?.report != null)
       return;
     _retry = _reportIfReady;
@@ -269,13 +379,25 @@ class OnlineGuideController {
 
   Future<void> _save() async {
     if (_changes.isClosed) return;
-    await _recovery.write(
-      _token == null ? null : GuideRecovery(_token!, _pending),
-    );
+    final id = _threadId;
+    final record = _token == null ? null : GuideRecovery(_token!, _pending, id);
+    await _recovery.write(record);
+    if (id == null) return;
+    if (_historyStore case final store?) {
+      await store.writeThread(id, record);
+    } else if (record != null) {
+      _memoryRecovery[id] = record;
+    } else {
+      _memoryRecovery.remove(id);
+    }
   }
 
-  Future<void> _run(Future<void> Function() action) async {
+  Future<void> _run(
+    Future<void> Function() action, {
+    bool revisiting = false,
+  }) async {
     if (_busy || _changes.isClosed) return;
+    final previous = _reading;
     _busy = true;
     _message = null;
     _retry = action;
@@ -287,12 +409,25 @@ class OnlineGuideController {
       if (error.status == 404 && _token != null) {
         _token = null;
         _pending = null;
-        _reading = null;
         _retry = null;
         await _save();
       }
       _message = _errorMessage(error);
     } finally {
+      if (_threadId case final id? when !_changes.isClosed) {
+        final reading = _reading;
+        if (reading != null && !identical(previous, reading)) {
+          final record = (
+            id: id,
+            updatedAt: revisiting
+                ? _history[id]?.updatedAt ?? DateTime.now()
+                : DateTime.now(),
+            reading: reading,
+          );
+          _history[id] = record;
+          await _historyStore?.writeHistory(record);
+        }
+      }
       _busy = false;
       _emit();
     }

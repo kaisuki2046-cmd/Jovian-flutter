@@ -127,30 +127,7 @@ class HttpGuideGateway implements GuideGateway {
 
 OnlineReading _parse(Map<String, Object?> value) {
   try {
-    final snapshot = parseGuideSnapshot(value);
-    final rawReport = value['proReport'];
-    final rawFollowUps = value['followUps'] as List;
-    if (snapshot.stage != GuideStage.reading &&
-        (rawReport != null || rawFollowUps.isNotEmpty)) {
-      throw const FormatException('Report before reading stage.');
-    }
-    return OnlineReading(
-      snapshot,
-      report: rawReport == null ? null : parseSavedProReport(rawReport),
-      followUps: List.unmodifiable(
-        rawFollowUps.map((item) {
-          final entry = item as Map;
-          final report = entry['report'] as Map;
-          return (
-            question: entry['question'] as String,
-            answer: report['answer'] as String,
-            nextSteps: List<String>.unmodifiable(
-              (report['nextSteps'] as List).cast<String>(),
-            ),
-          );
-        }),
-      ),
-    );
+    return OnlineReading.fromJson(value);
   } on FormatException {
     throw const ReadingConnectionError('invalid_response');
   } on TypeError {

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/rendering.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -10,6 +11,8 @@ import 'package:material_ui/material_ui.dart';
 
 import '../src/app/main.dart';
 import '../src/features/divination/requests/reading_gateway.dart';
+import '../src/features/divination/requests/reading_history_codec.dart';
+import '../src/features/divination/requests/reading_recovery.dart';
 import '../src/features/divination/view/divination_page.dart';
 import '../src/shared/http/json_client.dart';
 
@@ -110,11 +113,13 @@ void main() {
 
       await tester.tap(find.byTooltip('会话历史'));
       await tester.pumpAndSettle();
-      expect(find.text('本次会话记录'), findsOneWidget);
+      await tester.enterText(find.widgetWithText(TextField, '搜索对话'), '确认后续');
+      await tester.pumpAndSettle();
       await _tap(tester, '$_question；补充：$_details');
       expect(find.text('塔罗对照报告。'), findsOneWidget);
       expect(find.text('先确认后续时间。'), findsOneWidget);
-      expect(find.byTooltip('发送消息'), findsNothing);
+      expect(find.byType(TextFormField), findsOneWidget);
+      expect(service.calls.last, 'GET /reading');
       expect(
         service.calls.where((call) => call == 'POST /reading/follow-up').length,
         1,
@@ -126,7 +131,7 @@ void main() {
       expect(find.text('先确认后续时间。'), findsNothing);
       await tester.tap(find.byTooltip('会话历史'));
       await tester.pumpAndSettle();
-      expect(find.text('本次会话暂无已完成的解读。'), findsOneWidget);
+      expect(find.text('暂无历史对话'), findsOneWidget);
       expect(tester.takeException(), isNull);
     },
   );
@@ -147,6 +152,52 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('塔罗对照报告。'), findsOneWidget);
     expect(service.calls, ['GET /reading']);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('history keeps cached reports after the server task expires', (
+    tester,
+  ) async {
+    FlutterSecureStorage.setMockInitialValues({});
+    addTearDown(() => FlutterSecureStorage.setMockInitialValues({}));
+    final service = _ReadingService()..failReport = false;
+    final base = Uri.https('fixture.invalid');
+    GuideHistoryStore store(String owner) =>
+        createReadingRecovery(base, ownerScope: 'member:$owner')
+            as GuideHistoryStore;
+    final recovery = store('owner');
+    final initial = service.connect(recovery);
+    await initial.start(_details, automatic: true);
+    await initial.followUp(_followUp);
+    await initial.nextQuestion();
+    initial.dispose();
+    final afterRestart = store('owner');
+    expect(await afterRestart.read(), isNull);
+    expect(await store('other').readHistory(), isEmpty);
+    expect(
+      (await afterRestart.readHistory())
+          .single
+          .reading
+          .followUps
+          .single
+          .question,
+      _followUp,
+    );
+    service.expired = true;
+    service.calls.clear();
+    final restored = service.connect(afterRestart);
+    addTearDown(restored.dispose);
+
+    await tester.pumpWidget(_app(restored));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('会话历史'));
+    await tester.pumpAndSettle();
+    await _tap(tester, _details);
+    expect(service.calls, ['GET /reading']);
+    expect(find.text('塔罗对照报告。'), findsOneWidget);
+    expect(find.text('先确认后续时间。'), findsOneWidget);
+    expect(find.text('这次算事已过期，可以发起新问题。'), findsOneWidget);
+    expect(find.byType(TextFormField), findsNothing);
     expect(tester.takeException(), isNull);
   });
 
@@ -200,19 +251,39 @@ Future<void> _send(WidgetTester tester) async {
   await tester.pumpAndSettle();
 }
 
-class _Recovery implements GuideRecoveryStore {
+class _Recovery implements GuideHistoryStore {
   GuideRecovery? state;
+  final _reads = <String, String>{};
+  final _threads = <String, GuideRecovery?>{};
 
   @override
   Future<GuideRecovery?> read() async => state;
 
   @override
   Future<void> write(GuideRecovery? recovery) async => state = recovery;
+
+  @override
+  Future<List<GuideHistoryEntry>> readHistory() async => _reads.values
+      .map(decodeGuideHistory)
+      .whereType<GuideHistoryEntry>()
+      .toList();
+
+  @override
+  Future<void> writeHistory(GuideHistoryEntry entry) async =>
+      _reads[entry.id] = encodeGuideHistory(entry);
+
+  @override
+  Future<GuideRecovery?> readThread(String id) async => _threads[id];
+
+  @override
+  Future<void> writeThread(String id, GuideRecovery? recovery) async =>
+      _threads[id] = recovery;
 }
 
 class _ReadingService {
   String get _token => 'a' * 43;
   bool failReport = true;
+  bool expired = false;
   Future<void>? understanding;
   final understood = <String>[];
   final calls = <String>[];
@@ -221,7 +292,7 @@ class _ReadingService {
   bool _hasReport = false;
   final _followUps = <Map<String, Object?>>[];
 
-  OnlineGuideController connect(_Recovery recovery) {
+  OnlineGuideController connect(GuideRecoveryStore recovery) {
     final client = MockClient(_respond);
     return OnlineGuideController(
       HttpGuideGateway(
@@ -287,6 +358,7 @@ class _ReadingService {
         );
         return _json(_state());
       case 'GET /reading':
+        if (expired) return _json({'error': 'not_found'}, status: 404);
         return _json(_state());
       case 'POST /reading/report':
         if (failReport) {

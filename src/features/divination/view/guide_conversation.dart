@@ -1,9 +1,7 @@
 import 'package:jovian_divination/jovian_divination.dart';
 import 'package:material_ui/material_ui.dart';
 
-import 'cast_content.dart';
 import 'guide_composer.dart';
-import 'reading_report.dart';
 
 class GuideQuestionBubble extends StatelessWidget {
   const GuideQuestionBubble(this.question, {super.key});
@@ -102,77 +100,133 @@ class GuideFollowUpList extends StatelessWidget {
   );
 }
 
-class GuideConversationHistory extends StatelessWidget {
+class GuideConversationHistory extends StatefulWidget {
   const GuideConversationHistory({
     super.key,
-    required this.readings,
+    required this.entries,
+    required this.activeId,
     required this.open,
     required this.back,
   });
 
-  final List<OnlineReading> readings;
-  final ValueChanged<OnlineReading> open;
+  final List<GuideHistoryEntry> entries;
+  final String? activeId;
+  final ValueChanged<String>? open;
   final VoidCallback back;
 
   @override
-  Widget build(BuildContext context) => CastContent(
-    children: [
-      Align(
-        alignment: AlignmentDirectional.centerStart,
-        child: TextButton.icon(
-          icon: const Icon(Icons.arrow_back),
-          label: const Text('返回对话'),
-          onPressed: back,
-        ),
-      ),
-      Text('本次会话记录', style: Theme.of(context).textTheme.headlineSmall),
-      const SizedBox(height: 12),
-      if (readings.isEmpty) const Text('本次会话暂无已完成的解读。'),
-      for (final reading in readings)
-        Card(
-          child: ListTile(
-            leading: const Icon(Icons.history),
-            title: Text(
-              reading.snapshot.question,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => open(reading),
-          ),
-        ),
-    ],
-  );
+  State<GuideConversationHistory> createState() =>
+      _GuideConversationHistoryState();
 }
 
-class GuideSavedConversation extends StatelessWidget {
-  const GuideSavedConversation({
-    super.key,
-    required this.reading,
-    required this.back,
-  });
-
-  final OnlineReading reading;
-  final VoidCallback back;
+class _GuideConversationHistoryState extends State<GuideConversationHistory> {
+  String _query = '';
 
   @override
-  Widget build(BuildContext context) => CastContent(
-    children: [
-      Align(
-        alignment: AlignmentDirectional.centerStart,
-        child: TextButton.icon(
-          icon: const Icon(Icons.arrow_back),
-          label: const Text('返回会话记录'),
-          onPressed: back,
+  Widget build(BuildContext context) {
+    final width = (MediaQuery.sizeOf(context).width * .84).clamp(0.0, 320.0);
+    final now = DateTime.now();
+    final theme = Theme.of(context);
+    final groups = <String, List<GuideHistoryEntry>>{};
+    for (final entry in widget.entries) {
+      if (!_matches(entry.reading)) continue;
+      final date = entry.updatedAt.toLocal();
+      final label = DateUtils.isSameDay(date, now)
+          ? '今天'
+          : '${date.year}年${date.month}月';
+      groups.putIfAbsent(label, () => []).add(entry);
+    }
+    return Drawer(
+      width: width,
+      shape: const RoundedRectangleBorder(),
+      semanticLabel: '会话历史',
+      backgroundColor: theme.scaffoldBackgroundColor,
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Semantics(
+                      header: true,
+                      child: Text('会话历史', style: theme.textTheme.titleMedium),
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: '关闭会话历史',
+                    onPressed: widget.back,
+                    icon: const Icon(Icons.close),
+                  ),
+                ],
+              ),
+              Semantics(
+                label: '搜索对话',
+                child: TextField(
+                  onChanged: (query) =>
+                      setState(() => _query = query.trim().toLowerCase()),
+                  decoration: const InputDecoration(
+                    hintText: '搜索对话',
+                    prefixIcon: Icon(Icons.search),
+                    isDense: true,
+                  ),
+                ),
+              ),
+              if (groups.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Text(_query.isEmpty ? '暂无历史对话' : '没有找到匹配的对话'),
+                )
+              else
+                Expanded(
+                  child: ListView(
+                    children: [
+                      for (final group in groups.entries) ...[
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(8, 14, 8, 4),
+                          child: Text(
+                            group.key,
+                            style: theme.textTheme.labelMedium,
+                          ),
+                        ),
+                        for (final entry in group.value)
+                          ListTile(
+                            dense: true,
+                            selected: entry.id == widget.activeId,
+                            selectedTileColor:
+                                theme.colorScheme.primaryContainer,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(11),
+                            ),
+                            title: Text(
+                              entry.reading.snapshot.question,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            onTap: widget.open == null
+                                ? null
+                                : () => widget.open!(entry.id),
+                          ),
+                      ],
+                    ],
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
-      Text('算事记录', style: Theme.of(context).textTheme.headlineSmall),
-      const SizedBox(height: 12),
-      GuideQuestionBubble(reading.snapshot.question),
-      const SizedBox(height: 12),
-      ReadingReportView(report: reading.report!),
-      const SizedBox(height: 12),
-      GuideFollowUpList(followUps: reading.followUps),
-    ],
-  );
+    );
+  }
+
+  bool _matches(OnlineReading reading) =>
+      _query.isEmpty ||
+      reading.snapshot.question.toLowerCase().contains(_query) ||
+      reading.snapshot.focus.toLowerCase().contains(_query) ||
+      reading.followUps.any(
+        (turn) =>
+            turn.question.toLowerCase().contains(_query) ||
+            turn.answer.toLowerCase().contains(_query),
+      );
 }

@@ -31,6 +31,7 @@ class _GuideFormState extends State<GuideForm>
     with AutomaticKeepAliveClientMixin {
   final _form = GlobalKey<FormState>();
   final _followUpForm = GlobalKey<FormState>();
+  final _scaffold = GlobalKey<ScaffoldState>();
   final _question = TextEditingController();
   final _questionFocus = FocusNode();
   final _followUp = TextEditingController();
@@ -43,10 +44,7 @@ class _GuideFormState extends State<GuideForm>
   DialogRoute<void>? _ritualRoute;
   GuideRitualPresentation? _presentation;
   final _clarifications = <({String question, String reply})>[];
-  final _completed = <OnlineReading>[];
   String? _pendingQuestion;
-  bool _showHistory = false;
-  OnlineReading? _savedReading;
   bool _showCharts = false;
 
   @override
@@ -68,10 +66,12 @@ class _GuideFormState extends State<GuideForm>
       unawaited(_onlineChanges?.cancel());
       _onlineChanges = null;
       _clearDraft();
-      _completed.clear();
-      _showHistory = false;
-      _savedReading = null;
       _attachOnline();
+    }
+    if (oldWidget.active && !widget.active) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && !widget.active) _scaffold.currentState?.closeDrawer();
+      });
     }
   }
 
@@ -202,7 +202,11 @@ class _GuideFormState extends State<GuideForm>
   }
 
   void _openRitual() {
-    if (!widget.active || _ritualRoute != null || _snapshot == null) return;
+    if (!widget.active ||
+        _ritualRoute != null ||
+        _snapshot == null ||
+        widget.online?.canContinue == false)
+      return;
     final presentation = _presentation ??= GuideRitualPresentation();
     final navigator = Navigator.of(context, rootNavigator: true);
     final motionOff =
@@ -248,17 +252,24 @@ class _GuideFormState extends State<GuideForm>
     });
   }
 
-  void _restart() {
+  void _restart({bool carryContext = true}) {
     FocusScope.of(context).unfocus();
+    setState(_clearDraft);
+    unawaited(widget.online?.nextQuestion(carryContext: carryContext));
+  }
+
+  void _selectHistory(String id) {
     final online = widget.online;
-    final completed = online?.reading;
-    setState(() {
-      if (completed?.report != null) _completed.add(completed!);
-      _clearDraft();
-      _showHistory = false;
-      _savedReading = null;
-    });
-    unawaited(online?.nextQuestion());
+    if (online == null || online.busy) return;
+    _closeHistory();
+    if (online.activeHistoryId == id) return;
+    setState(_clearDraft);
+    unawaited(online.openHistory(id));
+  }
+
+  void _closeHistory() {
+    FocusManager.instance.primaryFocus?.unfocus();
+    _scaffold.currentState?.closeDrawer();
   }
 
   void _clearDraft() {
@@ -284,29 +295,36 @@ class _GuideFormState extends State<GuideForm>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final historyOpen = _showHistory || _savedReading != null;
+    final online = widget.online;
     return Scaffold(
+      key: _scaffold,
+      drawerEnableOpenDragGesture: false,
+      drawer: GuideConversationHistory(
+        entries: online?.history ?? const [],
+        activeId: online?.activeHistoryId,
+        open: online?.busy == true ? null : _selectHistory,
+        back: _closeHistory,
+      ),
       appBar: AppBar(
         toolbarHeight: 48,
         centerTitle: true,
         titleTextStyle: Theme.of(context).textTheme.titleMedium,
         title: const Text('对话'),
         leading: IconButton(
-          tooltip: historyOpen ? '返回对话' : '会话历史',
-          icon: Icon(historyOpen ? Icons.chevron_left : Icons.menu_rounded),
+          tooltip: '会话历史',
+          icon: const Icon(Icons.menu_rounded),
           onPressed: () {
             FocusScope.of(context).unfocus();
-            setState(() {
-              _savedReading = null;
-              _showHistory = !historyOpen;
-            });
+            _scaffold.currentState?.openDrawer();
           },
         ),
         actions: [
           IconButton(
             tooltip: '新对话',
             icon: const Icon(Icons.add_comment_outlined),
-            onPressed: widget.online?.busy == true ? null : _restart,
+            onPressed: online?.busy == true
+                ? null
+                : () => _restart(carryContext: false),
           ),
         ],
       ),
@@ -331,25 +349,6 @@ class _GuideFormState extends State<GuideForm>
     final online = widget.online;
     final busy = online?.busy ?? false;
     final ritual = _snapshot;
-    if (_savedReading case final saved?) {
-      return GuideSavedConversation(
-        key: const ValueKey('guide-saved-conversation'),
-        reading: saved,
-        back: () => setState(() => _savedReading = null),
-      );
-    }
-    if (_showHistory) {
-      return GuideConversationHistory(
-        key: const ValueKey('guide-conversation-history'),
-        readings: [
-          if (online?.reading case final active? when active.report != null)
-            active,
-          ..._completed.reversed,
-        ],
-        open: (reading) => setState(() => _savedReading = reading),
-        back: () => setState(() => _showHistory = false),
-      );
-    }
     if (ritual == null) {
       final welcome =
           !busy && _pendingQuestion == null && _clarifications.isEmpty;
@@ -395,13 +394,19 @@ class _GuideFormState extends State<GuideForm>
       ..._conversation(),
       ..._questionContext(ritual),
       ..._feedback(),
-      Align(
-        alignment: AlignmentDirectional.centerStart,
-        child: OutlinedButton(
-          onPressed: _openRitual,
-          child: const Text('继续本次仪式'),
+      if (widget.online?.canContinue != false)
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: OutlinedButton(
+            onPressed: _openRitual,
+            child: const Text('继续本次仪式'),
+          ),
+        )
+      else
+        guideComposerAction(
+          label: '另问一件事',
+          action: widget.online?.busy == true ? null : _restart,
         ),
-      ),
     ],
   );
 
@@ -430,7 +435,8 @@ class _GuideFormState extends State<GuideForm>
     final reading = online?.reading;
     final busy = online?.busy ?? false;
     final hasReport = reading?.report != null;
-    final canFollowUp = hasReport && reading!.followUps.length < 8;
+    final live = online?.canContinue == true;
+    final canFollowUp = live && hasReport && reading!.followUps.length < 8;
     return GuideThread(
       key: const ValueKey('guide-result'),
       scroll: _reportScroll,
@@ -445,7 +451,8 @@ class _GuideFormState extends State<GuideForm>
         ..._feedback(),
         if (online != null && busy && !hasReport)
           const GuideConversationReply(body: '正在解读…'),
-        if (online != null &&
+        if (live &&
+            online != null &&
             !busy &&
             reading?.report == null &&
             !online.canRetry) ...[
@@ -488,7 +495,7 @@ class _GuideFormState extends State<GuideForm>
         if (hasReport) ...[
           const SizedBox(height: 20),
           GuideFollowUpList(followUps: reading!.followUps),
-          if (!canFollowUp) const Text('这次算事的追问已达上限，可以另问一件事。'),
+          if (live && !canFollowUp) const Text('这次算事的追问已达上限，可以另问一件事。'),
         ],
       ],
       composer: canFollowUp

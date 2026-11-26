@@ -4,6 +4,7 @@ export 'package:jovian_divination_model/pro_report.dart';
 
 export 'src/cast_calendar.dart';
 export 'src/guide_ritual.dart';
+export 'src/guide_transcript.dart';
 export 'src/online_guide.dart';
 export 'src/liuyao.dart';
 export 'src/meihua.dart';

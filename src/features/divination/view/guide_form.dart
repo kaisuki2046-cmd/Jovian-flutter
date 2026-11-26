@@ -47,10 +47,7 @@ class _GuideFormState extends State<GuideForm>
   DialogRoute<void>? _ritualRoute;
   GuideRitualPresentation? _presentation;
   LegacyGuideArchive? _openArchive;
-  final _clarifications =
-      <
-        ({String question, String reply, List<ComposerAttachment> attachments})
-      >[];
+  final _clarificationAttachments = <String, List<ComposerAttachment>>{};
   ({String text, TextEditingValue draft, List<ComposerAttachment> attachments})?
   _pendingQuestion;
   int _sentRevision = 0;
@@ -132,7 +129,10 @@ class _GuideFormState extends State<GuideForm>
     if (_attachmentSelection != null || widget.online?.busy == true) return;
     final question = _question.text.trim();
     if (question.isEmpty && _draftAttachments.isNotEmpty) {
-      _sendLocalAttachments(_localQuestionTurns, _clarifications.length);
+      _sendLocalAttachments(
+        _localQuestionTurns,
+        widget.online?.activeTranscript.length ?? 0,
+      );
       return;
     }
     final online = widget.online;
@@ -177,13 +177,10 @@ class _GuideFormState extends State<GuideForm>
         }
         if (online.questionStopped) _pendingQuestion = null;
       });
-    } else if (online.message case final reply?) {
+    } else if (online.activeTranscript.lastOrNull case final turn?
+        when turn.reply != null && turn.question == pending.text) {
       setState(() {
-        _clarifications.add((
-          question: pending.text,
-          reply: reply,
-          attachments: _acceptQuestion(),
-        ));
+        _clarificationAttachments[turn.id] = _acceptQuestion();
       });
     }
   }
@@ -314,11 +311,17 @@ class _GuideFormState extends State<GuideForm>
     });
   }
 
-  Future<void> _restart({bool carryContext = false}) async {
+  Future<void> _restart({
+    bool carryContext = false,
+    bool newConversation = false,
+  }) async {
     FocusScope.of(context).unfocus();
     setState(_clearDraft);
     final online = widget.online;
-    await online?.nextQuestion(carryContext: carryContext);
+    await online?.nextQuestion(
+      carryContext: carryContext,
+      newConversation: newConversation,
+    );
     if (carryContext && mounted && widget.online == online && widget.active) {
       _questionFocus.requestFocus();
     }
@@ -334,6 +337,18 @@ class _GuideFormState extends State<GuideForm>
     }
     setState(_clearDraft);
     unawaited(online.openHistory(id));
+  }
+
+  void _selectConversation(String id) {
+    final online = widget.online;
+    if (online == null || online.busy) return;
+    _closeHistory();
+    if (online.activeConversationId == id) {
+      if (_openArchive != null) setState(() => _openArchive = null);
+      return;
+    }
+    setState(_clearDraft);
+    unawaited(online.openConversation(id));
   }
 
   void _selectArchive(LegacyGuideArchive archive) {
@@ -353,7 +368,7 @@ class _GuideFormState extends State<GuideForm>
     _followUp.clear();
     _pendingQuestion = null;
     _openArchive = null;
-    _clarifications.clear();
+    _clarificationAttachments.clear();
     _releaseAttachments();
     _draftAttachments.clear();
     _localQuestionTurns.clear();
@@ -386,7 +401,7 @@ class _GuideFormState extends State<GuideForm>
   }
 
   Object get _latestMessage => (
-    _clarifications.length,
+    widget.online?.activeTranscript.lastOrNull?.id,
     _localQuestionTurns.length,
     _localFollowUpTurns.length,
     _pendingQuestion?.text,
@@ -405,9 +420,14 @@ class _GuideFormState extends State<GuideForm>
       drawerEnableOpenDragGesture: false,
       drawer: GuideConversationHistory(
         entries: online?.history ?? const [],
+        transcripts: online?.transcripts ?? const [],
         archives: online?.legacyArchives ?? const [],
-        activeId: _openArchive?.id ?? online?.activeHistoryId,
+        activeId:
+            _openArchive?.id ??
+            online?.activeConversationId ??
+            online?.activeHistoryId,
         open: online?.busy == true ? null : _selectHistory,
+        openConversation: online?.busy == true ? null : _selectConversation,
         openArchive: online?.busy == true ? null : _selectArchive,
         back: _closeHistory,
       ),
@@ -428,7 +448,9 @@ class _GuideFormState extends State<GuideForm>
           IconButton(
             tooltip: '新对话',
             icon: const Icon(Icons.add_comment_outlined),
-            onPressed: online?.busy == true ? null : _restart,
+            onPressed: online?.busy == true
+                ? null
+                : () => _restart(newConversation: true),
           ),
         ],
       ),
@@ -462,11 +484,13 @@ class _GuideFormState extends State<GuideForm>
     final ritual = _snapshot;
     if (ritual == null) {
       final previousQuestion = online?.previousQuestion;
+      final transcript =
+          online?.activeTranscript ?? const <GuideTranscriptTurn>[];
       final welcome =
           !busy &&
           previousQuestion == null &&
           _pendingQuestion == null &&
-          _clarifications.isEmpty &&
+          transcript.isEmpty &&
           _localQuestionTurns.isEmpty &&
           online?.questionStopped != true;
       return GuideThread(
@@ -475,7 +499,8 @@ class _GuideFormState extends State<GuideForm>
         sentRevision: _sentRevision,
         welcome: welcome ? const GuideWelcome() : null,
         messages: [
-          if (previousQuestion != null) ...[
+          if (previousQuestion != null &&
+              !transcript.any((turn) => turn.readingId != null)) ...[
             GuideQuestionBubble(previousQuestion),
             const SizedBox(height: 12),
           ],
@@ -548,28 +573,76 @@ class _GuideFormState extends State<GuideForm>
     ],
   );
 
-  List<Widget> _conversation() => [
-    for (var index = 0; index <= _clarifications.length; index++) ...[
-      for (final turn in _localQuestionTurns.where(
-        (turn) => turn.after == index,
-      )) ...[
-        GuideQuestionBubble('', attachments: turn.attachments),
-        const SizedBox(height: 12),
+  List<Widget> _conversation() {
+    final online = widget.online;
+    final turns = online?.activeTranscript ?? const <GuideTranscriptTurn>[];
+    return [
+      for (var index = 0; index <= turns.length; index++) ...[
+        for (final turn in _localQuestionTurns.where(
+          (turn) => turn.after == index,
+        )) ...[
+          GuideQuestionBubble('', attachments: turn.attachments),
+          const SizedBox(height: 12),
+        ],
+        if (index < turns.length && _shownInTranscript(turns, index, online))
+          ..._transcriptTurn(turns[index], online),
       ],
-      if (index < _clarifications.length) ...[
-        GuideQuestionBubble(
-          _clarifications[index].question,
-          attachments: _clarifications[index].attachments,
+    ];
+  }
+
+  bool _shownInTranscript(
+    List<GuideTranscriptTurn> turns,
+    int index,
+    OnlineGuideController? online,
+  ) {
+    final turn = turns[index];
+    if (turn.readingId != null)
+      return turn.readingId != online?.activeHistoryId;
+    // The optimistic bubble already displays this unacknowledged turn.
+    return index < turns.length - 1 ||
+        turn.reply != null ||
+        turn.question != _pendingQuestion?.text;
+  }
+
+  List<Widget> _transcriptTurn(
+    GuideTranscriptTurn turn,
+    OnlineGuideController? online,
+  ) {
+    final previous = turn.readingId == null
+        ? null
+        : online?.archivedReading(turn.readingId!);
+    return [
+      GuideQuestionBubble(
+        turn.question,
+        attachments: _clarificationAttachments[turn.id] ?? const [],
+      ),
+      const SizedBox(height: 8),
+      if (turn.reply case final reply?) GuideConversationReply(body: reply),
+      if (previous?.report case final report?)
+        ExpansionTile(
+          key: ValueKey(turn.id),
+          title: const UiText('查看此前解读'),
+          children: [
+            ReadingReportView(report: report),
+            GuideFollowUpList(
+              followUps: previous!.followUps,
+              evidence: previous.evidence,
+            ),
+          ],
         ),
-        const SizedBox(height: 8),
-        GuideConversationReply(body: _clarifications[index].reply),
-        const SizedBox(height: 12),
-      ],
-    ],
-  ];
+      const SizedBox(height: 12),
+    ];
+  }
 
   List<Widget> _questionContext(GuideRitualSnapshot ritual) => [
-    GuideQuestionBubble(ritual.question, attachments: _readingAttachments),
+    GuideQuestionBubble(
+      widget.online?.activeTranscript
+              .where((turn) => turn.readingId == widget.online?.activeHistoryId)
+              .lastOrNull
+              ?.question ??
+          ritual.question,
+      attachments: _readingAttachments,
+    ),
     if (ritual.focus.trim().isNotEmpty && ritual.focus != ritual.question) ...[
       const SizedBox(height: 8),
       GuideConversationReply(heading: '确认的关注点', body: ritual.focus),
@@ -703,7 +776,8 @@ class _GuideFormState extends State<GuideForm>
               : const LinearProgressIndicator(semanticsLabel: '正在处理算事请求'),
         ),
       if (online.message case final message?
-          when online.canRetry || _clarifications.lastOrNull?.reply != message)
+          when online.canRetry ||
+              online.activeTranscript.lastOrNull?.reply != message)
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: Semantics(

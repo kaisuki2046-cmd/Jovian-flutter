@@ -17,10 +17,13 @@ const divinationFixtureFollowUp = '我接下来该准备什么？';
 const divinationFixtureEvidenceUrl =
     'https://en.wikisource.org/wiki/Jovian_fixture';
 
-class DivinationRecoveryFixture implements GuideHistoryStore {
+class DivinationRecoveryFixture
+    implements GuideHistoryStore, GuideTranscriptStore {
   GuideRecovery? state;
   final _reads = <String, String>{};
   final _threads = <String, GuideRecovery?>{};
+  final _transcript = <String, GuideTranscriptTurn>{};
+  GuideTranscriptPosition? _position;
 
   @override
   Future<GuideRecovery?> read() async => state;
@@ -44,6 +47,22 @@ class DivinationRecoveryFixture implements GuideHistoryStore {
   @override
   Future<void> writeThread(String id, GuideRecovery? recovery) async =>
       _threads[id] = recovery;
+
+  @override
+  Future<List<GuideTranscriptTurn>> readTranscriptTurns() async =>
+      _transcript.values.toList();
+
+  @override
+  Future<GuideTranscriptPosition?> readTranscriptPosition() async => _position;
+
+  @override
+  Future<void> writeTranscriptTurn(GuideTranscriptTurn turn) async =>
+      _transcript[turn.id] = turn;
+
+  @override
+  Future<void> writeTranscriptPosition(
+    GuideTranscriptPosition? position,
+  ) async => _position = position;
 }
 
 class DivinationServiceFixture {

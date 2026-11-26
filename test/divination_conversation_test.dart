@@ -446,6 +446,10 @@ void main() {
         hasLength(1),
       );
       await _tap(tester, '另问一件事');
+      expect(find.text('查看此前解读'), findsOneWidget);
+      expect(find.byType(TextFormField), findsOneWidget);
+      await tester.tap(find.byTooltip('新对话'));
+      await tester.pumpAndSettle();
       expect(find.text('有什么事情想知道吗？'), findsOneWidget);
       expect(find.text(divinationFixtureDetails), findsNothing);
 
@@ -453,10 +457,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.enterText(find.widgetWithText(TextField, '搜索对话'), '确认后续');
       await tester.pumpAndSettle();
-      await _tap(
-        tester,
-        '$divinationFixtureQuestion；补充：$divinationFixtureDetails',
-      );
+      await _tap(tester, divinationFixtureQuestion);
       expect(find.text('塔罗对照报告。'), findsOneWidget);
       expect(find.text('先确认后续时间。'), findsOneWidget);
       expect(find.byType(TextFormField), findsOneWidget);
@@ -504,7 +505,8 @@ void main() {
     final understand = Completer<void>();
     final service = DivinationServiceFixture()
       ..understanding = understand.future;
-    final online = service.connect(DivinationRecoveryFixture());
+    final recovery = DivinationRecoveryFixture();
+    final online = service.connect(recovery);
     addTearDown(online.dispose);
     await tester.pumpWidget(
       MaterialApp(
@@ -546,8 +548,13 @@ void main() {
     expect(service.calls, ['POST /reading/understand']);
     expect(online.reading, isNull);
     expect(online.canRetry, isFalse);
+    final stoppedTurn = online.activeTranscript.single;
+    expect(stoppedTurn.question, divinationFixtureDetails);
+    expect(stoppedTurn.reply, isNull);
+    expect((await recovery.readTranscriptTurns()).single.id, stoppedTurn.id);
 
     await _send(tester);
+    expect(online.activeTranscript.single.id, stoppedTurn.id);
     expect(service.calls, [
       'POST /reading/understand',
       'POST /reading/understand',
@@ -562,6 +569,88 @@ void main() {
     expect(find.text('local-draft.txt'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  test(
+    'closing an owner before the transcript write completes cancels model work',
+    () async {
+      final service = DivinationServiceFixture();
+      final releaseWrite = Completer<void>();
+      final writing = Completer<void>();
+      final recovery = _PausedTranscriptWrite(writing, releaseWrite.future);
+      final online = service.connect(recovery);
+      final request = online.start(divinationFixtureQuestion, automatic: false);
+      await writing.future;
+      online.dispose();
+      releaseWrite.complete();
+      await request;
+
+      expect(service.calls, isEmpty);
+      expect(await recovery.readTranscriptPosition(), isNull);
+    },
+  );
+
+  testWidgets(
+    'a clarification-only conversation survives restart and continues',
+    (tester) async {
+      FlutterSecureStorage.setMockInitialValues({});
+      addTearDown(() => FlutterSecureStorage.setMockInitialValues({}));
+      final base = Uri.https('fixture.invalid');
+      GuideRecoveryStore store() =>
+          createReadingRecovery(base, ownerScope: 'member:clarification-owner');
+      final service = DivinationServiceFixture();
+      final initial = service.connect(store());
+      await tester.pumpWidget(_app(initial));
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byType(TextFormField),
+        divinationFixtureQuestion,
+      );
+      await _send(tester);
+      expect(find.text(divinationFixtureClarification), findsOneWidget);
+      final conversation = initial.activeConversationId;
+      expect(conversation, isNotNull);
+      expect(initial.history, isEmpty);
+      await tester.pumpWidget(const SizedBox.shrink());
+      initial.dispose();
+
+      service.calls.clear();
+      final restored = service.connect(store());
+      addTearDown(restored.dispose);
+      await tester.pumpWidget(_app(restored));
+      await tester.pumpAndSettle();
+      expect(restored.activeConversationId, conversation);
+      expect(find.text(divinationFixtureQuestion), findsOneWidget);
+      expect(find.text(divinationFixtureClarification), findsOneWidget);
+      expect(service.calls, isEmpty);
+      await tester.tap(find.byTooltip('新对话'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('会话历史'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.widgetWithText(TextField, '搜索对话'), '具体事情');
+      await tester.pumpAndSettle();
+      await _tap(tester, divinationFixtureQuestion);
+      expect(restored.activeConversationId, conversation);
+      expect(find.text(divinationFixtureClarification), findsOneWidget);
+      await tester.enterText(
+        find.byType(TextFormField),
+        divinationFixtureDetails,
+      );
+      await _send(tester);
+      expect(
+        service.understood.last,
+        '$divinationFixtureQuestion；补充：$divinationFixtureDetails',
+      );
+      expect(restored.transcripts.single.id, conversation);
+      expect(restored.transcripts.single.turns.map((turn) => turn.question), [
+        divinationFixtureQuestion,
+        divinationFixtureDetails,
+      ]);
+      await tester.tap(find.byTooltip('暂停仪式'));
+      await tester.pumpAndSettle();
+      expect(find.text(divinationFixtureClarification), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('continuing the previous question starts a contextual reading', (
     tester,
@@ -580,6 +669,8 @@ void main() {
     service.calls.clear();
     service.transmitted.clear();
     final firstReading = online.activeHistoryId;
+    final firstConversation = online.activeConversationId;
+    expect(firstConversation, isNotNull);
 
     expect(find.text('围绕这次结果继续问'), findsOneWidget);
     await _tap(tester, '接着上一题问');
@@ -596,38 +687,88 @@ void main() {
     }
     expect(online.activeHistoryId, isNot(firstReading));
     expect(online.history.map((entry) => entry.id), contains(firstReading));
+    expect(online.activeConversationId, firstConversation);
+    expect(online.transcripts.single.turns.map((turn) => turn.question), [
+      divinationFixtureDetails,
+      nextQuestion,
+    ]);
     await tester.tap(find.byTooltip('暂停仪式'));
     await tester.pumpAndSettle();
+    await _tap(tester, '查看此前解读');
+    expect(find.text('塔罗对照报告。'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('新对话'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('会话历史'));
+    await tester.pumpAndSettle();
+    expect(find.byType(ListTile), findsOneWidget);
+    await _tap(tester, divinationFixtureDetails);
+    expect(online.activeConversationId, firstConversation);
+    expect(find.text(nextQuestion), findsOneWidget);
+    expect(find.text('查看此前解读'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('another question starts without the prior question context', (
-    tester,
-  ) async {
-    final service = DivinationServiceFixture()..failReport = false;
-    final recovery = DivinationRecoveryFixture();
-    final initial = service.connect(recovery);
-    await initial.start(divinationFixtureDetails, automatic: true);
-    initial.dispose();
-    final online = service.connect(recovery);
-    addTearDown(online.dispose);
-    await tester.pumpWidget(_app(online));
-    await tester.pumpAndSettle();
-    service.calls.clear();
-    service.transmitted.clear();
+  testWidgets(
+    'an unrelated question stays in the conversation but starts without prior context',
+    (tester) async {
+      final service = DivinationServiceFixture()..failReport = false;
+      final recovery = DivinationRecoveryFixture();
+      final online = service.connect(recovery);
+      addTearDown(online.dispose);
+      await online.start(divinationFixtureDetails, automatic: true);
+      await tester.pumpWidget(_app(online));
+      await tester.pumpAndSettle();
+      service.calls.clear();
+      service.transmitted.clear();
 
-    await _tap(tester, '另问一件事');
-    await tester.enterText(find.byType(TextFormField), '下个月适合搬家吗？');
-    await _send(tester);
-    expect(service.calls, ['POST /reading/understand', 'POST /reading']);
-    for (final request in service.transmitted) {
-      expect(request['question'], '下个月适合搬家吗？');
-      expect(request.containsKey('previousQuestion'), isFalse);
-    }
-    await tester.tap(find.byTooltip('暂停仪式'));
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-  });
+      final originalConversation = online.activeConversationId;
+      await _tap(tester, '另问一件事');
+      expect(online.activeConversationId, originalConversation);
+      expect(online.previousQuestion, isNull);
+      expect(find.text('查看此前解读'), findsOneWidget);
+
+      final restored = service.connect(recovery);
+      addTearDown(restored.dispose);
+      await tester.pumpWidget(_app(restored));
+      await tester.pumpAndSettle();
+      expect(service.calls, isEmpty);
+      expect(restored.activeConversationId, originalConversation);
+      expect(restored.previousQuestion, isNull);
+      expect(find.byType(TextFormField), findsOneWidget);
+      expect(find.text('查看此前解读'), findsOneWidget);
+
+      const unrelatedQuestion = '下个月适合搬家吗？';
+      await tester.enterText(find.byType(TextFormField), unrelatedQuestion);
+      await _send(tester);
+      expect(service.calls, ['POST /reading/understand', 'POST /reading']);
+      for (final request in service.transmitted) {
+        expect(request['question'], unrelatedQuestion);
+        expect(request.containsKey('previousQuestion'), isFalse);
+      }
+      expect(restored.transcripts.single.id, originalConversation);
+      expect(restored.transcripts.single.turns.map((turn) => turn.question), [
+        divinationFixtureDetails,
+        unrelatedQuestion,
+      ]);
+      await tester.tap(find.byTooltip('暂停仪式'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byTooltip('新对话'));
+      await tester.pumpAndSettle();
+      expect(restored.activeConversationId, isNull);
+      expect(find.text(unrelatedQuestion), findsNothing);
+      const independentQuestion = '项目啥时候可以启动？';
+      await tester.enterText(find.byType(TextFormField), independentQuestion);
+      await _send(tester);
+      expect(restored.transcripts, hasLength(2));
+      expect(restored.activeConversationId, isNot(originalConversation));
+      expect(restored.activeTranscript.single.question, independentQuestion);
+      await tester.tap(find.byTooltip('暂停仪式'));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('return to latest preserves reading position until requested', (
     tester,
@@ -783,7 +924,7 @@ void main() {
     final initial = service.connect(recovery);
     await initial.start(divinationFixtureDetails, automatic: true);
     await initial.followUp(divinationFixtureFollowUp);
-    await initial.nextQuestion();
+    await initial.nextQuestion(carryContext: false, newConversation: true);
     initial.dispose();
     final afterRestart = store('owner');
     expect(await afterRestart.read(), isNull);
@@ -860,6 +1001,20 @@ void main() {
       await tester.pumpAndSettle();
     },
   );
+}
+
+class _PausedTranscriptWrite extends DivinationRecoveryFixture {
+  _PausedTranscriptWrite(this.writing, this.release);
+
+  final Completer<void> writing;
+  final Future<void> release;
+
+  @override
+  Future<void> writeTranscriptTurn(GuideTranscriptTurn turn) async {
+    writing.complete();
+    await release;
+    await super.writeTranscriptTurn(turn);
+  }
 }
 
 Widget _app(OnlineGuideController online) => MaterialApp(

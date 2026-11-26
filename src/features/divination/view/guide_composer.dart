@@ -20,7 +20,10 @@ class GuideWelcome extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final viewport = MediaQuery.sizeOf(context);
-    final portraitSize = math.min(204.0, (viewport.width - 36) * 0.55);
+    final portraitSize = math.min(
+      204.0,
+      math.min((viewport.width - 36) * .55, viewport.height * .34),
+    );
     final welcomeInset = (viewport.height / 3 - 104 - portraitSize / 2).clamp(
       14.0,
       84.0,
@@ -433,13 +436,20 @@ class _GuideThreadState extends State<GuideThread> {
   @override
   void didUpdateWidget(GuideThread oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.sentRevision != oldWidget.sentRevision ||
-        (widget.latestMessage != oldWidget.latestMessage && !_showLatest)) {
-      // After the new reply is laid out, keep the reader at the latest turn.
+    final welcoming = widget.welcome != null;
+    final shouldScroll = welcoming
+        ? oldWidget.welcome == null
+        : widget.sentRevision != oldWidget.sentRevision ||
+              (widget.latestMessage != oldWidget.latestMessage && !_showLatest);
+    if (shouldScroll) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted && _scroll.hasClients) {
-          _scroll.jumpTo(_scroll.position.maxScrollExtent);
-        }
+        if (!mounted || !_scroll.hasClients) return;
+        final position = _scroll.position;
+        _scroll.jumpTo(
+          widget.welcome == null
+              ? position.maxScrollExtent
+              : position.minScrollExtent,
+        );
       });
     }
   }

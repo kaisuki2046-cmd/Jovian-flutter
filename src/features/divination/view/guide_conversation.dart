@@ -137,17 +137,21 @@ class GuideConversationHistory extends StatefulWidget {
   const GuideConversationHistory({
     super.key,
     required this.entries,
+    required this.transcripts,
     required this.archives,
     required this.activeId,
     required this.open,
+    required this.openConversation,
     required this.openArchive,
     required this.back,
   });
 
   final List<GuideHistoryEntry> entries;
+  final List<GuideTranscript> transcripts;
   final List<LegacyGuideArchive> archives;
   final String? activeId;
   final ValueChanged<String>? open;
+  final ValueChanged<String>? openConversation;
   final ValueChanged<LegacyGuideArchive>? openArchive;
   final VoidCallback back;
 
@@ -171,13 +175,32 @@ class _GuideConversationHistoryState extends State<GuideConversationHistory> {
     final width = (MediaQuery.sizeOf(context).width * .84).clamp(0.0, 320.0);
     final now = DateTime.now();
     final theme = Theme.of(context);
+    final readings = {
+      for (final entry in widget.entries) entry.id: entry.reading,
+    };
+    final linkedIds = {
+      for (final transcript in widget.transcripts)
+        for (final turn in transcript.turns)
+          if (turn.readingId case final id?) id,
+    };
     final entries = <_GuideHistoryRow>[
+      for (final transcript in widget.transcripts)
+        if (_matchesTranscript(transcript, readings))
+          (
+            id: transcript.id,
+            question: transcript.turns.first.question,
+            updatedAt: transcript.turns.last.sentAt,
+            open: widget.openConversation == null
+                ? null
+                : () => widget.openConversation!(transcript.id),
+          ),
       for (final entry in widget.entries)
-        if (_matches(
-          entry.reading.snapshot.question,
-          entry.reading.snapshot.focus,
-          entry.reading.followUps,
-        ))
+        if (!linkedIds.contains(entry.id) &&
+            _matches(
+              entry.reading.snapshot.question,
+              entry.reading.snapshot.focus,
+              entry.reading.followUps,
+            ))
           (
             id: entry.id,
             question: entry.reading.snapshot.question,
@@ -284,6 +307,18 @@ class _GuideConversationHistoryState extends State<GuideConversationHistory> {
       ),
     );
   }
+
+  bool _matchesTranscript(
+    GuideTranscript transcript,
+    Map<String, OnlineReading> readings,
+  ) => transcript.turns.any((turn) {
+    final reading = readings[turn.readingId];
+    return _matches(
+      turn.question,
+      turn.reply ?? reading?.snapshot.focus ?? '',
+      reading?.followUps ?? const [],
+    );
+  });
 
   bool _matches(
     String question,

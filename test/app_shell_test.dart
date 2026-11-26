@@ -3,6 +3,8 @@ import 'package:material_ui/material_ui.dart';
 
 import '../src/app/app_shell.dart' show JovianShell;
 import '../src/app/main.dart';
+import '../src/features/divination/view/guide_assistant.dart';
+import '../src/features/divination/view/guide_composer.dart';
 import '../src/ui/tab_dock.dart';
 import '../src/ui/tab_lens.dart';
 import '../src/ui/theme.dart';
@@ -10,6 +12,47 @@ import '../src/ui/theme.dart';
 Finder _tab(JovianTab value) => find.byKey(ValueKey(value));
 
 void main() {
+  testWidgets('short guide welcome stays visible after session restore', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(844, 390);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPhysicalSize);
+
+    const footer = ValueKey('landscape-guide-footer');
+    Widget screen(Object revision) => MaterialApp(
+      theme: jovianTheme(Brightness.light),
+      home: Scaffold(
+        appBar: AppBar(title: const Text('对话')),
+        body: GuideThread(
+          sentRevision: 0,
+          latestMessage: revision,
+          messages: [GuideSuggestions(select: (_) {})],
+          composer: const SizedBox(key: footer, height: 114),
+          welcome: const GuideWelcome(),
+        ),
+      ),
+    );
+    final greeting = find.text('有什么事情想知道吗？');
+    await tester.pumpWidget(screen('initial'));
+    expect(greeting.hitTestable(), findsOneWidget);
+
+    await tester.pumpWidget(screen('session restored'));
+    await tester.pump();
+    expect(greeting.hitTestable(), findsOneWidget);
+    final assistant = find.byType(GuideAssistantWelcomePortrait);
+    expect(
+      tester.getRect(assistant).bottom,
+      lessThanOrEqualTo(tester.getTopLeft(find.byKey(footer)).dy),
+    );
+    final recentQuestion = find.text('最近什么时候适合搬家？');
+    await tester.ensureVisible(recentQuestion);
+    await tester.pump();
+    expect(recentQuestion.hitTestable(), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets(
     'page scroll compacts the dock and reverses before reaching top',
     (tester) async {

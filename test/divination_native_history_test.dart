@@ -209,6 +209,61 @@ void main() {
   );
 
   test(
+    'native transcript data follows the account and endpoint scope',
+    () async {
+      GuideTranscriptStore store(String scope, {Uri? base}) =>
+          createReadingRecovery(base ?? _base, ownerScope: scope)
+              as GuideTranscriptStore;
+      GuideTranscriptTurn turn(String id, String question) => (
+        id: id,
+        conversationId: 'conversation-one',
+        sentAt: DateTime.utc(2026, 11, 27),
+        question: question,
+        reply: '请补充问题。',
+        clarificationQuestion: question,
+        previousQuestion: null,
+        readingId: null,
+      );
+      const position = (
+        id: 'conversation-one',
+        previousQuestion: '上一次的问题',
+        composing: true,
+      );
+      final owner = store('member:owner');
+      final other = store('member:other');
+      final guest = store('guest:owner');
+      final otherEndpoint = store(
+        'member:owner',
+        base: Uri.https('other.invalid'),
+      );
+      await Future.wait([
+        owner.writeTranscriptTurn(turn('first', '第一个问题')),
+        store('member:owner').writeTranscriptTurn(turn('second', '第二个问题')),
+        other.writeTranscriptTurn(turn('other', '其他会员的问题')),
+        guest.writeTranscriptTurn(turn('guest', '游客的问题')),
+        otherEndpoint.writeTranscriptTurn(turn('endpoint', '其他服务的问题')),
+      ]);
+      await owner.writeTranscriptPosition(position);
+      expect(
+        (await store(
+          'member:owner',
+        ).readTranscriptTurns()).map((turn) => turn.id),
+        unorderedEquals(['first', 'second']),
+      );
+      expect(await store('member:owner').readTranscriptPosition(), position);
+      expect(await other.readTranscriptPosition(), isNull);
+      expect(await memberReadingTokens('owner'), isEmpty);
+
+      await clearMemberReadingData('owner');
+      expect(await owner.readTranscriptTurns(), isEmpty);
+      expect(await owner.readTranscriptPosition(), isNull);
+      expect(await otherEndpoint.readTranscriptTurns(), isEmpty);
+      expect((await other.readTranscriptTurns()).single.id, 'other');
+      expect((await guest.readTranscriptTurns()).single.id, 'guest');
+    },
+  );
+
+  test(
     'native history reflects deletion across opened and reopened stores',
     () async {
       final reading = await _reading();

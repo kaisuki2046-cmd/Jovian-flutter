@@ -31,6 +31,7 @@ class _BirthPlacePicker extends StatefulWidget {
 
 class _BirthPlacePickerState extends State<_BirthPlacePicker> {
   static const _labels = ['选择国家或地区', '选择省或州', '选择城市', '选择城市或区县'];
+  final _scroll = ScrollController();
   late final List<String> _path = [
     if (widget.current case final current?) ...[
       current.country,
@@ -40,6 +41,24 @@ class _BirthPlacePickerState extends State<_BirthPlacePicker> {
   ];
   late BirthPlace? _selected = widget.current;
   String _query = '';
+
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  void _browse(String? next) {
+    setState(() {
+      if (next == null) {
+        _path.removeLast();
+      } else {
+        _path.add(next);
+      }
+      _selected = null;
+    });
+    _scroll.jumpTo(0);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,10 +86,7 @@ class _BirthPlacePickerState extends State<_BirthPlacePicker> {
               ListTile(
                 title: Text(name),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () => setState(() {
-                  _path.add(name);
-                  _selected = null;
-                }),
+                onTap: () => _browse(name),
               ),
           ]
         : [
@@ -86,6 +102,22 @@ class _BirthPlacePickerState extends State<_BirthPlacePicker> {
                 onTap: () => setState(() => _selected = place),
               ),
           ];
+    final actions = Wrap(
+      alignment: WrapAlignment.end,
+      spacing: 8,
+      children: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const UiText('取消'),
+        ),
+        FilledButton(
+          onPressed: _selected == null
+              ? null
+              : () => Navigator.pop(context, _selected),
+          child: const UiText('确认'),
+        ),
+      ],
+    );
     return Dialog(
       alignment: Alignment.bottomCenter,
       insetPadding: const EdgeInsets.fromLTRB(12, 12, 12, 16),
@@ -95,75 +127,67 @@ class _BirthPlacePickerState extends State<_BirthPlacePicker> {
           height: 480,
           child: Padding(
             padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Semantics(
-                  header: true,
-                  child: UiText(
-                    '选择出生地点',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  decoration: InputDecoration(
-                    labelText: context.uiLabel('搜索城市或区县'),
-                    prefixIcon: const Icon(Icons.search),
-                  ),
-                  onChanged: (value) => setState(() => _query = value),
-                ),
-                const SizedBox(height: 8),
-                if (!searching && _path.isNotEmpty)
-                  Align(
-                    alignment: AlignmentDirectional.centerStart,
-                    child: TextButton.icon(
-                      icon: const Icon(Icons.arrow_back),
-                      label: Text(
-                        _path.join(' · '),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      onPressed: () => setState(() {
-                        _path.removeLast();
-                        _selected = null;
-                      }),
-                    ),
-                  ),
-                if (!searching) UiText(_labels[depth]),
-                Expanded(
-                  child: list.isEmpty
-                      ? const Center(child: UiText('目录中没有匹配的地点。'))
-                      : ListView(
-                          key: ValueKey((searching, depth)),
-                          keyboardDismissBehavior:
-                              ScrollViewKeyboardDismissBehavior.onDrag,
-                          children: list,
-                        ),
-                ),
-                if (_selected case final selected?)
-                  Text(
-                    selected.name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                Wrap(
-                  alignment: WrapAlignment.end,
-                  spacing: 8,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final rowHeight = MediaQuery.textScalerOf(
+                  context,
+                ).scale(kMinInteractiveDimension);
+                final pinActions =
+                    constraints.maxHeight >=
+                    rowHeight + kMinInteractiveDimension;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const UiText('取消'),
+                    Expanded(
+                      child: ListView(
+                        controller: _scroll,
+                        keyboardDismissBehavior:
+                            ScrollViewKeyboardDismissBehavior.onDrag,
+                        children: [
+                          Semantics(
+                            header: true,
+                            child: UiText(
+                              '选择出生地点',
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          TextField(
+                            decoration: InputDecoration(
+                              labelText: context.uiLabel('搜索城市或区县'),
+                              prefixIcon: const Icon(Icons.search),
+                            ),
+                            onChanged: (value) =>
+                                setState(() => _query = value),
+                          ),
+                          const SizedBox(height: 8),
+                          if (!searching && _path.isNotEmpty)
+                            Align(
+                              alignment: AlignmentDirectional.centerStart,
+                              child: TextButton.icon(
+                                icon: const Icon(Icons.arrow_back),
+                                label: Text(_path.join(' · ')),
+                                onPressed: () => _browse(null),
+                              ),
+                            ),
+                          if (!searching) UiText(_labels[depth]),
+                          if (list.isEmpty)
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              child: Center(child: UiText('目录中没有匹配的地点。')),
+                            )
+                          else
+                            ...list,
+                          if (_selected case final selected?)
+                            Text(selected.name),
+                          if (!pinActions) actions,
+                        ],
+                      ),
                     ),
-                    FilledButton(
-                      onPressed: _selected == null
-                          ? null
-                          : () => Navigator.pop(context, _selected),
-                      child: const UiText('确认'),
-                    ),
+                    if (pinActions) actions,
                   ],
-                ),
-              ],
+                );
+              },
             ),
           ),
         ),

@@ -3,7 +3,9 @@ import 'package:jovian_destiny/jovian_destiny.dart'
     show BirthPlace, BirthProfile;
 import 'package:material_ui/material_ui.dart';
 
+import '../src/features/destiny/view/birth_place_picker.dart';
 import '../src/features/destiny/view/birth_profile_editor.dart';
+import '../src/ui/theme.dart';
 
 const _district = BirthPlace(
   id: 'test-gongshu',
@@ -19,6 +21,66 @@ const _district = BirthPlace(
 );
 
 void main() {
+  final themes = ValueVariant<Brightness>(Brightness.values.toSet());
+  testWidgets(
+    'landscape birth-place search remains usable at 200 percent text',
+    variant: themes,
+    (tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(640, 320);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetViewInsets);
+      tester.platformDispatcher.textScaleFactorTestValue = 2;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      BirthPlace? selected;
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: jovianTheme(themes.currentValue!),
+          home: Builder(
+            builder: (context) => Scaffold(
+              body: FilledButton(
+                onPressed: () async =>
+                    selected = await pickBirthPlace(context, [_district], null),
+                child: const Text('打开出生地点'),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('打开出生地点'));
+      await tester.pumpAndSettle();
+      final search = find.widgetWithText(TextField, '搜索城市或区县');
+      await tester.tap(search);
+      tester.view.viewInsets = const FakeViewPadding(bottom: 180);
+      await tester.enterText(search, '拱墅');
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+
+      final result = find.widgetWithText(ListTile, _district.name);
+      final pickerScroll = find
+          .descendant(
+            of: find.byType(Dialog),
+            matching: find.byType(Scrollable),
+          )
+          .first;
+      await tester.scrollUntilVisible(result, 45, scrollable: pickerScroll);
+      await Scrollable.ensureVisible(tester.element(result), alignment: .5);
+      await tester.pumpAndSettle();
+      await tester.tap(result);
+      await tester.pumpAndSettle();
+      final confirm = find.widgetWithText(FilledButton, '确认');
+      await tester.scrollUntilVisible(confirm, 45, scrollable: pickerScroll);
+      await Scrollable.ensureVisible(tester.element(confirm), alignment: .5);
+      await tester.pumpAndSettle();
+      expect(tester.widget<FilledButton>(confirm).onPressed, isNotNull);
+      await tester.tap(confirm);
+      await tester.pumpAndSettle();
+      expect(selected?.id, _district.id);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets('narrow birth form offers date, time and directory pickers', (
     tester,
   ) async {

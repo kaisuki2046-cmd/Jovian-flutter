@@ -5,6 +5,7 @@ import 'package:jovian_divination_model/iching.dart' show Hexagram;
 import 'package:jovian_divination_model/pro_report.dart';
 
 import 'guide_ritual.dart';
+import 'guide_transcript.dart';
 import 'meihua.dart';
 import 'tarot.dart';
 
@@ -265,6 +266,8 @@ class OnlineGuideController {
   final _changes = StreamController<void>.broadcast(sync: true);
   final _clock = Stopwatch()..start();
   final _history = <String, GuideHistoryEntry>{};
+  final _transcriptTurns = <String, GuideTranscriptTurn>{};
+  String? _conversationId;
   List<LegacyGuideArchive> _legacyArchives = const [];
   final _clockSession = guideEventId();
   String? _token;
@@ -283,6 +286,21 @@ class OnlineGuideController {
   OnlineReading? get reading => _reading;
   String? get activeHistoryId => _threadId;
   String? get previousQuestion => _previousQuestion;
+  String? get activeConversationId => _conversationId;
+  List<GuideTranscriptTurn> get activeTranscript =>
+      _conversationId == null ? const [] : _conversationTurns(_conversationId!);
+  List<GuideTranscript> get transcripts {
+    final groups = <String, List<GuideTranscriptTurn>>{};
+    for (final turn in _transcriptTurns.values) {
+      groups.putIfAbsent(turn.conversationId, () => []).add(turn);
+    }
+    return [
+      for (final group in groups.entries)
+        (id: group.key, turns: group.value..sort(_compareTurns)),
+    ];
+  }
+
+  OnlineReading? archivedReading(String id) => _history[id]?.reading;
   bool get canContinue => _token != null;
   List<LegacyGuideArchive> get legacyArchives => _legacyArchives;
   List<GuideHistoryEntry> get history =>
@@ -299,6 +317,11 @@ class OnlineGuideController {
     _ => null,
   };
 
+  GuideTranscriptStore? get _transcriptStore => switch (_recovery) {
+    final GuideTranscriptStore store => store,
+    _ => null,
+  };
+
   Future<void> restore() => _run(() async {
     final history = await _historyStore?.readHistory();
     if (history != null)
@@ -306,23 +329,72 @@ class OnlineGuideController {
     if (_recovery case final LegacyGuideArchiveStore store) {
       _legacyArchives = List.unmodifiable(await store.readLegacyArchives());
     }
+    final composing = await _restoreTranscript();
     final recovered = await _recovery.read();
-    if (recovered == null) return;
+    if (recovered == null) {
+      if (activeTranscript.lastOrNull?.readingId case final id?
+          when !composing) {
+        _threadId = id;
+        _reading = _history[id]?.reading;
+      }
+      return;
+    }
     _threadId = recovered.threadId ?? guideEventId();
+    _conversationId = _conversationForReading(_threadId!) ?? _conversationId;
     _reading = _history[_threadId]?.reading;
     await _resume(recovered);
   }, revisiting: true);
 
+  Future<bool> _restoreTranscript() async {
+    final store = _transcriptStore;
+    if (store == null) return false;
+    for (final turn in await store.readTranscriptTurns()) {
+      _transcriptTurns.putIfAbsent(turn.id, () => turn);
+    }
+    final position = await store.readTranscriptPosition();
+    _conversationId = position?.id;
+    _previousQuestion = position?.previousQuestion;
+    _clarificationQuestion = activeTranscript.lastOrNull?.clarificationQuestion;
+    return position?.composing ?? false;
+  }
+
+  Future<void> openConversation(String id) => _run(() async {
+    final turns = _conversationTurns(id);
+    if (id == _conversationId || turns.isEmpty) return;
+    _conversationId = id;
+    final last = turns.last;
+    final readingId = last.readingId;
+    if (readingId != null && _history.containsKey(readingId)) {
+      _previousQuestion = null;
+      await _openSavedReading(readingId);
+      return;
+    }
+    _threadId = null;
+    _token = null;
+    _pending = null;
+    _reading = null;
+    _clarificationQuestion = last.clarificationQuestion;
+    _previousQuestion = last.previousQuestion;
+    await _save();
+    await _saveTranscriptPosition();
+  }, revisiting: true);
+
   Future<void> openHistory(String id) => _run(() async {
-    final entry = _history[id];
-    if (entry == null || id == _threadId) return;
+    if (!_history.containsKey(id) || id == _threadId) return;
+    _conversationId = null;
+    _previousQuestion = null;
+    await _openSavedReading(id);
+  }, revisiting: true);
+
+  Future<void> _openSavedReading(String id) async {
     _threadId = id;
-    _reading = entry.reading;
+    _reading = _history[id]!.reading;
     _token = null;
     _pending = null;
     _previousQuestion = null;
     _clarificationQuestion = null;
     _emit();
+    await _saveTranscriptPosition();
     final cache = _historyStore;
     final recovered = cache == null
         ? _memoryRecovery[id]
@@ -333,7 +405,7 @@ class OnlineGuideController {
     } else {
       await _resume(recovered);
     }
-  }, revisiting: true);
+  }
 
   final _memoryRecovery = <String, GuideRecovery>{};
 
@@ -355,8 +427,11 @@ class OnlineGuideController {
     final question = combined.length <= guideQuestionMaxLength
         ? combined
         : text;
+    final previous = _previousQuestion;
+    GuideTranscriptTurn? pendingTurn;
     return _run(() async {
-      final previous = _previousQuestion;
+      final turn = pendingTurn ??= await _recordTurn(text);
+      if (_changes.isClosed) return;
       final understood = await _understand(question, previous);
       if (understood == null) {
         _questionStopped = true;
@@ -366,6 +441,7 @@ class OnlineGuideController {
       if (understood.clarification.isNotEmpty) {
         _clarificationQuestion = understood.chatOnly ? null : question;
         _message = understood.clarification;
+        await _finishTurn(turn, reply: understood.clarification);
         return;
       }
       final proof = understood.proof;
@@ -384,6 +460,7 @@ class OnlineGuideController {
       _clarificationQuestion = null;
       _previousQuestion = null;
       await _save();
+      await _finishTurn(turn, readingId: _threadId);
       _emit();
       await _reportIfReady();
     });
@@ -471,15 +548,106 @@ class OnlineGuideController {
     });
   }
 
-  Future<void> nextQuestion({bool carryContext = true}) => _run(() async {
-    _previousQuestion = carryContext ? _reading?.snapshot.question : null;
+  Future<void> nextQuestion({
+    bool carryContext = true,
+    bool newConversation = false,
+  }) => _run(() async {
+    final priorQuestion = _reading?.snapshot.question;
+    if (newConversation) {
+      _conversationId = null;
+    } else if (priorQuestion != null && _threadId != null) {
+      _conversationId ??= _conversationForReading(_threadId!);
+      if (_conversationId == null) {
+        await _recordTurn(priorQuestion, readingId: _threadId);
+      }
+    }
+    _previousQuestion = carryContext && !newConversation ? priorQuestion : null;
     _token = null;
     _threadId = null;
     _pending = null;
     _reading = null;
     _clarificationQuestion = null;
     await _save();
+    await _saveTranscriptPosition();
   });
+
+  List<GuideTranscriptTurn> _conversationTurns(String id) =>
+      _transcriptTurns.values
+          .where((turn) => turn.conversationId == id)
+          .toList()
+        ..sort(_compareTurns);
+
+  String? _conversationForReading(String id) => _transcriptTurns.values
+      .where((turn) => turn.readingId == id)
+      .firstOrNull
+      ?.conversationId;
+
+  Future<GuideTranscriptTurn> _recordTurn(
+    String question, {
+    String? readingId,
+  }) async {
+    final prior = activeTranscript.lastOrNull;
+    if (readingId == null &&
+        prior != null &&
+        prior.reply == null &&
+        prior.readingId == null &&
+        prior.question == question) {
+      return prior;
+    }
+    final id = _conversationId ??= guideEventId();
+    final previousTime = prior?.sentAt;
+    final now = DateTime.now();
+    final turn = (
+      id: guideEventId(),
+      conversationId: id,
+      sentAt: previousTime != null && !now.isAfter(previousTime)
+          ? previousTime.add(const Duration(microseconds: 1))
+          : now,
+      question: question,
+      reply: null,
+      clarificationQuestion: readingId == null ? _clarificationQuestion : null,
+      previousQuestion: _previousQuestion,
+      readingId: readingId,
+    );
+    await _saveTranscriptTurn(turn);
+    return turn;
+  }
+
+  Future<void> _finishTurn(
+    GuideTranscriptTurn turn, {
+    String? reply,
+    String? readingId,
+  }) => _saveTranscriptTurn((
+    id: turn.id,
+    conversationId: turn.conversationId,
+    sentAt: turn.sentAt,
+    question: turn.question,
+    reply: reply,
+    clarificationQuestion: readingId == null ? _clarificationQuestion : null,
+    previousQuestion: turn.previousQuestion,
+    readingId: readingId,
+  ));
+
+  Future<void> _saveTranscriptTurn(GuideTranscriptTurn turn) async {
+    if (_changes.isClosed) return;
+    _transcriptTurns[turn.id] = turn;
+    await _transcriptStore?.writeTranscriptTurn(turn);
+    await _saveTranscriptPosition();
+  }
+
+  Future<void> _saveTranscriptPosition() async {
+    if (_changes.isClosed) return;
+    final id = _conversationId;
+    await _transcriptStore?.writeTranscriptPosition(
+      id == null
+          ? null
+          : (
+              id: id,
+              previousQuestion: _previousQuestion,
+              composing: _threadId == null,
+            ),
+    );
+  }
 
   Future<void> retry() => _retry == null ? Future.value() : _run(_retry!);
 
@@ -585,6 +753,11 @@ class OnlineGuideController {
     unawaited(_changes.close());
     _onDispose?.call();
   }
+}
+
+int _compareTurns(GuideTranscriptTurn a, GuideTranscriptTurn b) {
+  final order = a.sentAt.compareTo(b.sentAt);
+  return order == 0 ? a.id.compareTo(b.id) : order;
 }
 
 String _errorMessage(ReadingConnectionError error) => switch (error.status) {

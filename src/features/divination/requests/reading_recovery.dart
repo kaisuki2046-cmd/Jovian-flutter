@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 
 import 'legacy_reading_archive_codec.dart';
 import 'reading_history_codec.dart';
+import 'reading_transcript_codec.dart';
 
 const _historyPrefix = 'jovian.divination.flutter.v1.';
 const _storage = FlutterSecureStorage();
@@ -57,6 +58,8 @@ Future<void> _clearFlutterMemberData(String owner) async {
     final suffix = memberReadingKeySuffix(key, _historyPrefix, owner);
     return suffix == 'active' ||
         suffix == 'index' ||
+        suffix == guideTranscriptPositionSuffix ||
+        isGuideTranscriptKey(suffix) ||
         _isReadingKey(suffix, 'session.') ||
         _isReadingKey(suffix, 'history.');
   }).toList();
@@ -119,7 +122,10 @@ class MemoryGuideRecovery implements GuideRecoveryStore {
 }
 
 class _NativeReadingHistory
-    implements GuideHistoryStore, LegacyGuideArchiveStore {
+    implements
+        GuideHistoryStore,
+        LegacyGuideArchiveStore,
+        GuideTranscriptStore {
   _NativeReadingHistory(
     String namespace,
     this._legacyOwner,
@@ -210,6 +216,43 @@ class _NativeReadingHistory
     encodeGuideHistory(entry),
     keepOnError: false,
   );
+
+  @override
+  Future<List<GuideTranscriptTurn>> readTranscriptTurns() =>
+      _withStorage(() async {
+        final prefix = '$_prefix$guideTranscriptTurnPrefix';
+        final turns = <GuideTranscriptTurn>[];
+        try {
+          for (final item in (await _storage.readAll()).entries) {
+            if (!item.key.startsWith(prefix)) continue;
+            final turn = decodeGuideTranscriptTurn(item.value);
+            if (turn != null && item.key == '$prefix${turn.id}') {
+              turns.add(turn);
+            }
+          }
+        } catch (_) {
+          // Keep the active conversation available in memory.
+        }
+        return turns;
+      });
+
+  @override
+  Future<void> writeTranscriptTurn(GuideTranscriptTurn turn) => _write(
+    '$guideTranscriptTurnPrefix${turn.id}',
+    encodeGuideTranscriptTurn(turn),
+    keepOnError: false,
+  );
+
+  @override
+  Future<GuideTranscriptPosition?> readTranscriptPosition() async =>
+      decodeGuideTranscriptPosition(await _read(guideTranscriptPositionSuffix));
+
+  @override
+  Future<void> writeTranscriptPosition(GuideTranscriptPosition? position) =>
+      _write(
+        guideTranscriptPositionSuffix,
+        position == null ? null : encodeGuideTranscriptPosition(position),
+      );
 
   @override
   Future<GuideRecovery?> readThread(String id) async =>

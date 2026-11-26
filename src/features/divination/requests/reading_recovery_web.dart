@@ -5,6 +5,7 @@ import 'package:web/web.dart' as web;
 
 import 'legacy_reading_archive_codec.dart';
 import 'reading_history_codec.dart';
+import 'reading_transcript_codec.dart';
 
 const _activePrefix = 'jovian.divination.active.v2.';
 const _historyPrefix = 'jovian.divination.flutter-history.v1.';
@@ -53,6 +54,7 @@ Future<void> clearMemberReadingData(String owner) async {
   for (final key in _storageKeys(history)) {
     final suffix = memberReadingKeySuffix(key, _historyPrefix, owner);
     if ((suffix != null && isGuideThreadId(suffix)) ||
+        isGuideTranscriptKey(suffix) ||
         (legacyOwner != null &&
             key == '$legacyGuideHistoryPrefix$legacyOwner')) {
       history.removeItem(key);
@@ -60,6 +62,8 @@ Future<void> clearMemberReadingData(String owner) async {
   }
   for (final key in _storageKeys(recoveries)) {
     if (_isActiveKey(key, owner) ||
+        memberReadingKeySuffix(key, _activePrefix, owner) ==
+            guideTranscriptPositionSuffix ||
         (legacyOwner != null &&
             (key.startsWith('$_legacyRecoveryPrefix$legacyOwner.') ||
                 key.startsWith('$_legacyPendingPrefix$legacyOwner.')))) {
@@ -72,7 +76,10 @@ GuideRecoveryStore createReadingRecovery(Uri base, {String? ownerScope}) =>
     _BrowserReadingRecovery(base, ownerScope);
 
 class _BrowserReadingRecovery
-    implements GuideHistoryStore, LegacyGuideArchiveStore {
+    implements
+        GuideHistoryStore,
+        LegacyGuideArchiveStore,
+        GuideTranscriptStore {
   _BrowserReadingRecovery(Uri base, String? ownerScope)
     : _ownerScope = ownerScope,
       _key = ownerScope == null
@@ -86,6 +93,7 @@ class _BrowserReadingRecovery
   final String _historyKey;
   final String? _legacyOwner;
   GuideRecovery? _memory;
+  GuideTranscriptPosition? _memoryPosition;
   final _threads = <String, GuideRecovery?>{};
 
   @override
@@ -128,7 +136,9 @@ class _BrowserReadingRecovery
       final storage = web.window.localStorage;
       for (var index = 0; index < storage.length; index++) {
         final key = storage.key(index);
-        if (key != null && key.startsWith(_historyKey)) {
+        if (key != null &&
+            key.startsWith(_historyKey) &&
+            isGuideThreadId(key.substring(_historyKey.length))) {
           final entry = decodeGuideHistory(storage.getItem(key));
           if (entry != null && key == '$_historyKey${entry.id}')
             entries[entry.id] = entry;
@@ -172,6 +182,71 @@ class _BrowserReadingRecovery
       );
     } catch (_) {
       // Keep the entry in memory when this origin's storage is unavailable.
+    }
+  }
+
+  @override
+  Future<List<GuideTranscriptTurn>> readTranscriptTurns() async {
+    if (_ownerScope == null) return const [];
+    final prefix = '$_historyKey$guideTranscriptTurnPrefix';
+    final turns = <GuideTranscriptTurn>[];
+    try {
+      final storage = web.window.localStorage;
+      for (final key in _storageKeys(storage)) {
+        if (!key.startsWith(prefix)) continue;
+        final turn = decodeGuideTranscriptTurn(storage.getItem(key));
+        if (turn != null && key == '$prefix${turn.id}') {
+          turns.add(turn);
+        }
+      }
+    } catch (_) {
+      // Keep the active conversation available in memory.
+    }
+    return turns;
+  }
+
+  @override
+  Future<void> writeTranscriptTurn(GuideTranscriptTurn turn) async {
+    if (_ownerScope == null) return;
+    try {
+      web.window.localStorage.setItem(
+        '$_historyKey$guideTranscriptTurnPrefix${turn.id}',
+        encodeGuideTranscriptTurn(turn),
+      );
+    } catch (_) {
+      // The controller retains the accepted turn for this session.
+    }
+  }
+
+  String get _positionKey => '$_key.$guideTranscriptPositionSuffix';
+
+  @override
+  Future<GuideTranscriptPosition?> readTranscriptPosition() async {
+    if (_ownerScope == null) return _memoryPosition;
+    try {
+      return decodeGuideTranscriptPosition(
+        web.window.sessionStorage.getItem(_positionKey),
+      );
+    } catch (_) {
+      return _memoryPosition;
+    }
+  }
+
+  @override
+  Future<void> writeTranscriptPosition(
+    GuideTranscriptPosition? position,
+  ) async {
+    _memoryPosition = position;
+    if (_ownerScope == null) return;
+    try {
+      final storage = web.window.sessionStorage;
+      if (position == null) {
+        storage.removeItem(_positionKey);
+      } else {
+        storage.setItem(_positionKey, encodeGuideTranscriptPosition(position));
+      }
+    } catch (_) {
+      // Keep the current conversation in memory when this tab cannot save it.
     }
   }
 

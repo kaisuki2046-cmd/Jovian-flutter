@@ -110,6 +110,7 @@ class _AccountPageState extends State<AccountPage> {
                 ),
                 child: AutofillGroup(
                   child: ListView(
+                    key: ValueKey(widget.standalone ? _pane : null),
                     padding: showDashboard
                         ? EdgeInsets.zero
                         : jovianPagePadding,
@@ -244,8 +245,10 @@ class _AccountPageState extends State<AccountPage> {
     final emailEntry = widget.standalone && _pane == _WelcomePane.email;
     return [
       if (widget.standalone) ...[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Wrap(
+          alignment: WrapAlignment.spaceBetween,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: 8,
           children: [
             TextButton.icon(
               onPressed: disabled ? null : _returnToLanding,
@@ -413,31 +416,28 @@ class _AccountPageState extends State<AccountPage> {
       ],
       if (needsCode) ...[
         const SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _code,
-                enabled: !disabled && !codeDisabled,
-                autofillHints: const [AutofillHints.oneTimeCode],
-                keyboardType: TextInputType.number,
-                textInputAction: TextInputAction.done,
-                onSubmitted: disabled || codeDisabled
-                    ? null
-                    : (_) => _submit(_method),
-                maxLength: 6,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                decoration: InputDecoration(
-                  labelText: context.uiLabel('验证码'),
-                  counterText: '',
-                ),
-              ),
-            ),
-            TextButton(
-              onPressed: disabled || codeDisabled ? null : _sendCode,
-              child: UiText(_challenge == null ? '发送验证码' : '重新发送'),
-            ),
-          ],
+        TextField(
+          controller: _code,
+          enabled: !disabled && !codeDisabled,
+          autofillHints: const [AutofillHints.oneTimeCode],
+          keyboardType: TextInputType.number,
+          textInputAction: TextInputAction.done,
+          onSubmitted: disabled || codeDisabled
+              ? null
+              : (_) => _submit(_method),
+          maxLength: 6,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          decoration: InputDecoration(
+            labelText: context.uiLabel('验证码'),
+            counterText: '',
+          ),
+        ),
+        Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: TextButton(
+            onPressed: disabled || codeDisabled ? null : _sendCode,
+            child: UiText(_challenge == null ? '发送验证码' : '重新发送'),
+          ),
         ),
         if (_challenge case final challenge?)
           Semantics(

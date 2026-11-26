@@ -8,8 +8,71 @@ import 'package:material_ui/material_ui.dart';
 import '../src/features/account/account.dart';
 import '../src/features/account/settings/model/agreements.dart';
 import '../src/shared/http/json_client.dart';
+import '../src/ui/interface_language.dart';
 
 void main() {
+  testWidgets('a 320dp OTP form fits all six digits at large text size', (
+    tester,
+  ) async {
+    final service = _AuthService({'phoneCodesAvailable': true});
+    await _open(tester, service, largeText: true);
+    await tester.scrollUntilVisible(find.text('Sign in with phone'), 140);
+    await _tap(tester, 'Sign in with phone');
+    await _tap(tester, 'Agree and continue');
+    final formScroller = find
+        .descendant(
+          of: find.byType(ListView),
+          matching: find.byType(Scrollable),
+        )
+        .first;
+    expect(_field('Phone number').hitTestable(), findsOneWidget);
+    await _enter(tester, 'Phone number', '13800138000');
+    await tester.scrollUntilVisible(
+      find.text('Send code'),
+      100,
+      scrollable: formScroller,
+    );
+    final send = find.text('Send code');
+    await Scrollable.ensureVisible(tester.element(send), alignment: 0.5);
+    await tester.pumpAndSettle();
+    await tester.tap(send.hitTestable());
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      _field('Verification code'),
+      -100,
+      scrollable: formScroller,
+    );
+    await _enter(tester, 'Verification code', '012345');
+
+    final field = _field('Verification code');
+    final editor = tester.widget<EditableText>(
+      find.descendant(of: field, matching: find.byType(EditableText)),
+    );
+    final digits = TextPainter(
+      text: TextSpan(text: editor.controller.text, style: editor.style),
+      textDirection: TextDirection.ltr,
+      textScaler: TextScaler.linear(2),
+    )..layout();
+    // The field also needs horizontal padding around the six-digit code.
+    expect(
+      tester.getSize(field).width,
+      greaterThanOrEqualTo(digits.width + 24),
+    );
+    digits.dispose();
+    expect(find.text('Resend code'), findsOneWidget);
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.pumpAndSettle();
+    expect(service.submitted['/account/auth/phone/login'], [
+      {
+        'phone': '+8613800138000',
+        'challengeId': 'fixture-challenge',
+        'code': '012345',
+        'acceptance': _acceptance('v1'),
+      },
+    ]);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('320px phone registration uses the existing SMS flow', (
     tester,
   ) async {
@@ -148,7 +211,11 @@ void main() {
   );
 }
 
-Future<void> _open(WidgetTester tester, _AuthService service) async {
+Future<void> _open(
+  WidgetTester tester,
+  _AuthService service, {
+  bool largeText = false,
+}) async {
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = const Size(320, 640);
   addTearDown(tester.view.resetDevicePixelRatio);
@@ -159,6 +226,17 @@ Future<void> _open(WidgetTester tester, _AuthService service) async {
   await tester.pumpWidget(
     MaterialApp(
       theme: ThemeData.dark(),
+      localizationsDelegates: largeText
+          ? const [interfaceStringsDelegate]
+          : const [],
+      builder: largeText
+          ? (context, child) => MediaQuery(
+              data: MediaQuery.of(
+                context,
+              ).copyWith(textScaler: const TextScaler.linear(2)),
+              child: child!,
+            )
+          : null,
       home: AccountPage(account: service.account, standalone: true),
     ),
   );

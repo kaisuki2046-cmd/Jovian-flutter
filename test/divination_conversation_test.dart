@@ -58,11 +58,13 @@ void main() {
       expect(chart.chartHash, serverHash);
 
       final restored = decodeGuideHistory(
-        encodeGuideHistory((
-          id: 'published-chart',
-          updatedAt: DateTime.utc(2026),
-          reading: snapshot,
-        )),
+        encodeGuideHistory(
+          GuideHistoryEntry(
+            id: 'published-chart',
+            updatedAt: DateTime.utc(2026),
+            reading: snapshot,
+          ),
+        ),
       );
       expect(restored?.reading.toJson(), wire);
       expect(

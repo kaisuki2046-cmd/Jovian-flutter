@@ -27,8 +27,11 @@ Future<OnlineReading> _reading() async {
   }
 }
 
-GuideHistoryEntry _entry(String id, OnlineReading reading) =>
-    (id: id, updatedAt: DateTime.utc(2026, 11, 27), reading: reading);
+GuideHistoryEntry _entry(String id, OnlineReading reading) => GuideHistoryEntry(
+  id: id,
+  updatedAt: DateTime.utc(2026, 11, 27),
+  reading: reading,
+);
 
 Future<Iterable<String>> _ids(GuideHistoryStore store) async =>
     (await store.readHistory()).map((entry) => entry.id);

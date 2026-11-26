@@ -242,11 +242,19 @@ abstract interface class GuideRecoveryStore {
 
 bool isGuideThreadId(String id) => RegExp(r'^[a-z0-9-]{1,100}$').hasMatch(id);
 
-typedef GuideHistoryEntry = ({
-  String id,
-  DateTime updatedAt,
-  OnlineReading reading,
-});
+class GuideHistoryEntry {
+  const GuideHistoryEntry({
+    required this.id,
+    required this.updatedAt,
+    required this.reading,
+    this.revealedTarotSlots,
+  });
+
+  final String id;
+  final DateTime updatedAt;
+  final OnlineReading reading;
+  final Set<int>? revealedTarotSlots;
+}
 
 abstract interface class GuideHistoryStore implements GuideRecoveryStore {
   Future<List<GuideHistoryEntry>> readHistory();
@@ -325,6 +333,45 @@ class OnlineGuideController {
 
   OnlineReading? archivedReading(String id) => _history[id]?.reading;
   bool get canContinue => _token != null;
+  Set<int>? get revealedTarotSlots => _revealsFor(_reading?.snapshot);
+
+  bool get needsTarotReveal {
+    final snapshot = _reading?.snapshot;
+    final revealed = _revealsFor(snapshot);
+    return canContinue &&
+        snapshot != null &&
+        revealed != null &&
+        !snapshot.selectedSlots.every(revealed.contains);
+  }
+
+  Set<int>? _revealsFor(GuideRitualSnapshot? snapshot) {
+    final chart = snapshot?.chart;
+    final entry = _history[_threadId];
+    if (chart == null ||
+        snapshot?.automatic != false ||
+        entry?.reading.snapshot.chart?.chartHash != chart.chartHash)
+      return null;
+    return entry?.revealedTarotSlots;
+  }
+
+  Future<void> revealTarotSlots(Set<int> slots) async {
+    final current = revealedTarotSlots;
+    final snapshot = _reading?.snapshot;
+    if (_changes.isClosed ||
+        !canContinue ||
+        current == null ||
+        snapshot == null)
+      return;
+    final next = {...current, ...snapshot.selectedSlots.where(slots.contains)};
+    if (next.length == current.length) return;
+    final saved = _writeReadingHistory(
+      revisiting: true,
+      revealed: Set.unmodifiable(next),
+    );
+    _emit();
+    await saved;
+  }
+
   List<LegacyGuideConversation> get legacyConversations => _legacyConversations;
   List<GuideHistoryEntry> get history =>
       _history.values
@@ -452,7 +499,11 @@ class OnlineGuideController {
     if (_pending != null) {
       await _sendPending(refresh: true);
     } else {
+      final previous = _reading?.snapshot.stage;
       _reading = await _gateway.get(recovered.token);
+      if (previous != null && previous != GuideStage.reading) {
+        await _beginManualReveal(revisiting: true);
+      }
       await _save();
     }
   }
@@ -511,6 +562,7 @@ class OnlineGuideController {
         _reading = started.reading;
         _clarificationQuestion = null;
         _previousQuestion = null;
+        await _beginManualReveal();
         await _save();
         await _finishTurn(turn, readingId: _threadId);
         _emit();
@@ -728,6 +780,9 @@ class OnlineGuideController {
   Future<void> _sendPending({required bool refresh}) async {
     final token = _token!;
     final event = _pending!;
+    final wasDrawing =
+        event.action == GuideAction.pick &&
+        _reading?.snapshot.stage != GuideStage.reading;
     await _save();
     try {
       final next = await _gateway.perform(token, event);
@@ -737,9 +792,19 @@ class OnlineGuideController {
       _reading = await _gateway.get(token);
     }
     _pending = null;
+    if (wasDrawing) await _beginManualReveal(revisiting: refresh);
     await _save();
     _emit();
     await _reportIfReady();
+  }
+
+  Future<void> _beginManualReveal({bool revisiting = false}) async {
+    final snapshot = _reading?.snapshot;
+    if (snapshot?.chart == null ||
+        snapshot?.automatic != false ||
+        revealedTarotSlots != null)
+      return;
+    await _writeReadingHistory(revisiting: revisiting, revealed: const <int>{});
   }
 
   Future<void> _reportIfReady() async {
@@ -764,6 +829,30 @@ class OnlineGuideController {
     } else {
       _memoryRecovery.remove(id);
     }
+  }
+
+  Future<void> _writeReadingHistory({
+    required bool revisiting,
+    Set<int>? revealed,
+  }) async {
+    final id = _threadId;
+    final reading = _reading;
+    if (id == null || reading == null || _changes.isClosed) return;
+    final previous = _history[id];
+    final slots = revealed ?? _revealsFor(reading.snapshot);
+    if (identical(previous?.reading, reading) &&
+        identical(previous?.revealedTarotSlots, slots))
+      return;
+    final record = GuideHistoryEntry(
+      id: id,
+      updatedAt: revisiting
+          ? previous?.updatedAt ?? DateTime.now()
+          : DateTime.now(),
+      reading: reading,
+      revealedTarotSlots: slots,
+    );
+    _history[id] = record;
+    await _historyStore?.writeHistory(record);
   }
 
   Future<void> _run(
@@ -793,19 +882,8 @@ class OnlineGuideController {
           ? '暂时无法开始算事，请稍后重试。'
           : _errorMessage(error);
     } finally {
-      if (_threadId case final id? when !_changes.isClosed) {
-        final reading = _reading;
-        if (reading != null && !identical(previous, reading)) {
-          final record = (
-            id: id,
-            updatedAt: revisiting
-                ? _history[id]?.updatedAt ?? DateTime.now()
-                : DateTime.now(),
-            reading: reading,
-          );
-          _history[id] = record;
-          await _historyStore?.writeHistory(record);
-        }
+      if (!identical(previous, _reading)) {
+        await _writeReadingHistory(revisiting: revisiting);
       }
       _busy = false;
       _emit();

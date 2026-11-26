@@ -3,6 +3,8 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/interface_language.dart';
+
 import 'coin_cast_scene.dart';
 import 'coin_feedback.dart'
     if (dart.library.js_interop) 'coin_feedback_web.dart';
@@ -225,14 +227,23 @@ class _CoinCastRitualState extends State<CoinCastRitual>
     final last = _visibleTosses.lastOrNull;
     final values = _visibleTosses.map(_lineValue).toList(growable: false);
     final buttonText = _moving
-        ? '正在投掷…'
+        ? context.uiLabel('正在投掷…')
         : widget.pending && !complete
-        ? '等待投掷结果…'
+        ? context.uiLabel('等待投掷结果…')
         : complete
-        ? '六爻已成'
+        ? context.uiLabel('六爻已成')
         : values.isEmpty
-        ? '投三枚铜钱'
-        : '投掷第 ${values.length + 1} 次';
+        ? context.uiLabel('投三枚铜钱')
+        : '${context.uiLabel('投掷第 ')}${values.length + 1}${context.uiLabel(' 次')}';
+    final resultText = _moving
+        ? context.uiLabel('铜钱翻转，静候落定…')
+        : last == null
+        ? context.uiLabel('字面记 2，背面记 3')
+        : '${context.uiLabel(_lineNames[values.length - 1])} · '
+              '${last.map((face) => context.uiLabel(face == 2 ? '字' : '背')).join(' / ')} · ${values.last}';
+    final countText =
+        '${context.uiLabel('已投 ')}${values.length} / '
+        '${_lineNames.length}${context.uiLabel(' 次')}';
     return Card(
       margin: EdgeInsets.zero,
       child: Padding(
@@ -240,7 +251,12 @@ class _CoinCastRitualState extends State<CoinCastRitual>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _LineProgress(values: values),
+            Semantics(
+              container: true,
+              explicitChildNodes: true,
+              label: context.uiLabel('六次投掷'),
+              child: _LineProgress(values: values),
+            ),
             const SizedBox(height: 10),
             CoinCastScene(
               progress: _flight,
@@ -319,12 +335,7 @@ class _CoinCastRitualState extends State<CoinCastRitual>
               container: true,
               liveRegion: true,
               child: Text(
-                _moving
-                    ? '铜钱翻转，静候落定…'
-                    : last == null
-                    ? '字面记 2，背面记 3'
-                    : '${_lineNames[values.length - 1]} · '
-                          '${last.map((face) => face == 2 ? '字' : '背').join(' / ')} · ${values.last}',
+                resultText,
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodySmall,
               ),
@@ -334,7 +345,7 @@ class _CoinCastRitualState extends State<CoinCastRitual>
               container: true,
               liveRegion: true,
               child: Text(
-                '已投 ${values.length} / ${_lineNames.length} 次',
+                countText,
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodySmall,
               ),
@@ -408,7 +419,7 @@ class _LineProgress extends StatelessWidget {
                     child: Column(
                       children: [
                         Text(
-                          name,
+                          context.uiLabel(name),
                           textAlign: TextAlign.center,
                           style: theme.textTheme.bodySmall,
                         ),

@@ -3,6 +3,8 @@ import 'dart:math' as math;
 import 'package:flutter/gestures.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/interface_language.dart';
+
 const tarotAspectRatio = 0.58;
 const tarotBack = 'src/features/divination/assets/tarot/back.jpg';
 
@@ -135,14 +137,14 @@ class _TarotRitualFanState extends State<TarotRitualFan> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
-                  tooltip: '向左浏览牌阵',
+                  tooltip: context.uiLabel('向左浏览牌阵'),
                   onPressed: widget.busy || offset <= 0
                       ? null
                       : () => _shift(-1),
                   icon: const Icon(Icons.chevron_left),
                 ),
                 IconButton(
-                  tooltip: '向右浏览牌阵',
+                  tooltip: context.uiLabel('向右浏览牌阵'),
                   onPressed: widget.busy || offset >= layout.maxScroll
                       ? null
                       : () => _shift(1),
@@ -154,7 +156,9 @@ class _TarotRitualFanState extends State<TarotRitualFan> {
         ),
         Semantics(
           container: true,
-          label: '${layout.slotCount} 张塔罗牌阵',
+          label: context
+              .uiLabel('{count} 张塔罗牌阵')
+              .replaceFirst('{count}', layout.slotCount.toString()),
           child: ScrollConfiguration(
             behavior: ScrollConfiguration.of(context).copyWith(
               dragDevices: const {
@@ -213,7 +217,12 @@ class _TarotRitualFanState extends State<TarotRitualFan> {
 
                                         return Semantics(
                                           button: true,
-                                          label: '选取第 ${slot + 1} 张牌',
+                                          label: context
+                                              .uiLabel('选取第 {index} 张牌')
+                                              .replaceFirst(
+                                                '{index}',
+                                                (slot + 1).toString(),
+                                              ),
                                           enabled: !widget.busy,
                                           onTap: widget.busy ? null : pick,
                                           excludeSemantics: true,

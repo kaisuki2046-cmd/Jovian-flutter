@@ -15,15 +15,22 @@ String? memberReadingKeySuffix(String key, String prefix, String owner) {
 GuideHistoryEntry? decodeGuideHistory(String? text) {
   if (text == null) return null;
   try {
-    if (jsonDecode(text) case {
-      'id': final String id,
-      'updatedAt': final int updated,
-      'reading': final Map<String, Object?> reading,
-    } when isGuideThreadId(id)) {
-      return (
+    if (jsonDecode(text)
+        case {
+              'id': final String id,
+              'updatedAt': final int updated,
+              'reading': final Map<String, Object?> reading,
+            } &&
+            final Map value when isGuideThreadId(id)) {
+      final saved = OnlineReading.fromJson(reading);
+      return GuideHistoryEntry(
         id: id,
         updatedAt: DateTime.fromMillisecondsSinceEpoch(updated),
-        reading: OnlineReading.fromJson(reading),
+        reading: saved,
+        revealedTarotSlots: _readRevealedSlots(
+          saved.snapshot,
+          value['revealedTarotSlots'],
+        ),
       );
     }
   } on FormatException {
@@ -40,7 +47,21 @@ String encodeGuideHistory(GuideHistoryEntry entry) => jsonEncode({
   'id': entry.id,
   'updatedAt': entry.updatedAt.millisecondsSinceEpoch,
   'reading': entry.reading.toJson(),
+  if (entry.revealedTarotSlots case final slots?)
+    'revealedTarotSlots': slots.toList(),
 });
+
+Set<int>? _readRevealedSlots(GuideRitualSnapshot snapshot, Object? value) {
+  if (snapshot.chart == null ||
+      snapshot.automatic ||
+      value is! List ||
+      value.length > snapshot.selectedSlots.length ||
+      value.any(
+        (slot) => slot is! int || !snapshot.selectedSlots.contains(slot),
+      ))
+    return null;
+  return Set<int>.unmodifiable(value.cast<int>());
+}
 
 GuideRecovery? decodeGuideRecovery(String? text) {
   if (text == null) return null;

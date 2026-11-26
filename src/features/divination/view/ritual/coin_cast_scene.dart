@@ -2,6 +2,8 @@ import 'dart:math' as math;
 
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/interface_language.dart';
+
 import 'coin_toss_motion.dart';
 
 const coinFrontAsset =
@@ -35,13 +37,19 @@ class CoinCastScene extends StatelessWidget {
     final result = faces;
     return Semantics(
       label: moving
-          ? '正在投掷三枚铜钱'
+          ? context.uiLabel('正在投掷三枚铜钱')
           : result == null
-          ? '三枚铜钱，待投掷'
+          ? context.uiLabel('三枚铜钱，待投掷')
           : [
               for (final (index, face) in result.indexed)
-                '第 ${index + 1} 枚铜钱，${face == 2 ? '字面' : '背面'}',
-            ].join('；'),
+                context
+                    .uiLabel('第 {index} 枚铜钱，{face}')
+                    .replaceFirst('{index}', '${index + 1}')
+                    .replaceFirst(
+                      '{face}',
+                      context.uiLabel(face == 2 ? '字面' : '背面'),
+                    ),
+            ].join(context.uiLabel('；')),
       excludeSemantics: true,
       child: LayoutBuilder(
         builder: (context, constraints) {

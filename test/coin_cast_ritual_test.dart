@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../src/features/divination/view/ritual/coin_cast_ritual.dart';
 import '../src/features/divination/view/ritual/coin_toss_motion.dart';
+import '../src/ui/interface_language.dart';
 
 const _tossButton = ValueKey('coin-ritual-toss-button');
 const _audioChannel = MethodChannel('jovian/coin_audio');
@@ -15,8 +16,10 @@ Widget _rig({
   bool active = true,
   bool reducedMotion = false,
   bool pending = false,
+  bool english = false,
   double width = 310,
 }) => MaterialApp(
+  localizationsDelegates: english ? const [interfaceStringsDelegate] : null,
   home: Scaffold(
     body: Align(
       alignment: Alignment.topCenter,
@@ -156,6 +159,63 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+
+  testWidgets('localizes coin controls and ordered face semantics in English', (
+    tester,
+  ) async {
+    Widget page(List<List<int>> tosses, {bool pending = false}) => _rig(
+      tosses: tosses,
+      toss: () {},
+      settled: (_) {},
+      pending: pending,
+      english: true,
+      width: 286,
+    );
+
+    await tester.pumpWidget(page([]));
+    expect(find.text('Toss three coins'), findsOneWidget);
+    expect(find.text('Marked side = 2, reverse side = 3'), findsOneWidget);
+    expect(find.text('Line 1'), findsOneWidget);
+    expect(find.bySemanticsLabel('Six tosses'), findsOneWidget);
+    expect(find.bySemanticsLabel('Three coins ready to toss'), findsOneWidget);
+
+    await tester.pumpWidget(page([], pending: true));
+    expect(
+      find.bySemanticsLabel('Waiting for the toss result…'),
+      findsOneWidget,
+    );
+
+    const first = [
+      [3, 2, 3],
+    ];
+    await tester.pumpWidget(page(first));
+    expect(find.text('Tossing…'), findsOneWidget);
+    expect(
+      find.text('The coins are turning. Wait for them to settle…'),
+      findsOneWidget,
+    );
+    expect(find.bySemanticsLabel('Tossing three coins'), findsOneWidget);
+    await tester.pumpAndSettle();
+
+    expect(find.bySemanticsLabel('Toss 2'), findsOneWidget);
+    expect(find.text('Tossed 1 / 6'), findsOneWidget);
+    expect(
+      find.text('Line 1 · Reverse / Marked / Reverse · 8'),
+      findsOneWidget,
+    );
+    expect(
+      find.bySemanticsLabel(
+        'Coin 1: reverse side; Coin 2: marked side; Coin 3: reverse side',
+      ),
+      findsOneWidget,
+    );
+
+    await tester.pumpWidget(page(List.filled(6, first.single)));
+    await tester.pumpAndSettle();
+    expect(find.text('Six lines complete'), findsOneWidget);
+    expect(find.text('Tossed 6 / 6'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('settles and stops an in-flight toss when hidden', (
     tester,

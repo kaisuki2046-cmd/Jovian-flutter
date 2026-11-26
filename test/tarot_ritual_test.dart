@@ -4,9 +4,58 @@ import 'package:material_ui/material_ui.dart';
 import '../src/features/divination/view/guide_form.dart';
 import '../src/features/divination/view/ritual/tarot_deck.dart';
 import '../src/features/divination/view/ritual/tarot_preparation.dart';
+import '../src/ui/interface_language.dart';
 import 'support/divination_service_fixture.dart';
 
 void main() {
+  testWidgets('preparation announces each saved animation phase in English', (
+    tester,
+  ) async {
+    for (final (elapsed, label) in [
+      (0, 'Shuffling the deck…'),
+      (1810, 'Gathering the cards…'),
+      (2400, 'Spreading the cards…'),
+      (3440, 'Cutting the deck…'),
+      (5500, 'The deck is ready'),
+    ]) {
+      await tester.pumpWidget(
+        MaterialApp(
+          locale: const Locale('en'),
+          localizationsDelegates: const [interfaceStringsDelegate],
+          home: Center(
+            child: SizedBox(
+              width: 296,
+              child: TarotDeckPreparation(
+                key: ValueKey(elapsed),
+                slotCount: 78,
+                cutIndex: 39,
+                seed: 7,
+                initialProgress: elapsed / 5700,
+                active: false,
+                reducedMotion: false,
+                progress: (_) {},
+                finish: () {},
+              ),
+            ),
+          ),
+        ),
+      );
+      final status = find.byKey(const ValueKey('tarot-preparation-status'));
+      expect(tester.widget<Text>(status).data, label);
+      expect(
+        find.ancestor(
+          of: status,
+          matching: find.byWidgetPredicate(
+            (widget) =>
+                widget is Semantics && widget.properties.liveRegion == true,
+          ),
+        ),
+        findsOneWidget,
+      );
+    }
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets(
     'pauses at the server cut point and continues the same animation',
     (tester) async {

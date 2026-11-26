@@ -2,6 +2,8 @@ import 'dart:math' as math;
 
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/interface_language.dart';
+
 import 'tarot_deck.dart';
 
 class TarotDeckPreparation extends StatefulWidget {
@@ -107,7 +109,7 @@ class _TarotDeckPreparationState extends State<TarotDeckPreparation>
               Semantics(
                 liveRegion: true,
                 child: Text(
-                  status,
+                  context.uiLabel(status),
                   key: const ValueKey('tarot-preparation-status'),
                   style: theme.textTheme.titleMedium,
                 ),

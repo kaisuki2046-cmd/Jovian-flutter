@@ -13,11 +13,6 @@ class GuideRitualPresentation {
   final seed = math.Random().nextInt(1 << 30);
   final revealed = <int>{};
   double preparation = 0;
-
-  bool needsReveal(GuideRitualSnapshot snapshot) =>
-      snapshot.stage == GuideStage.reading &&
-      !snapshot.automatic &&
-      !snapshot.selectedSlots.every(revealed.contains);
 }
 
 class GuideRitualDialog extends StatefulWidget {
@@ -32,6 +27,7 @@ class GuideRitualDialog extends StatefulWidget {
     required this.toss,
     required this.choose,
     required this.pause,
+    this.onRevealChanged,
   });
 
   final GuideRitualPresentation presentation;
@@ -43,6 +39,7 @@ class GuideRitualDialog extends StatefulWidget {
   final VoidCallback toss;
   final ValueChanged<int> choose;
   final VoidCallback pause;
+  final ValueChanged<Set<int>>? onRevealChanged;
 
   @override
   State<GuideRitualDialog> createState() => _GuideRitualDialogState();
@@ -137,11 +134,12 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(step, style: theme.textTheme.labelMedium),
+                      UiText(step, style: theme.textTheme.labelMedium),
                       const SizedBox(height: 4),
                       Semantics(
+                        container: true,
                         header: true,
-                        child: Text(
+                        child: UiText(
                           title,
                           style: theme.textTheme.headlineSmall,
                         ),
@@ -150,7 +148,7 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
                   ),
                 ),
                 IconButton(
-                  tooltip: '暂停仪式',
+                  tooltip: context.uiLabel('暂停仪式'),
                   icon: const Icon(Icons.close),
                   onPressed: widget.pause,
                 ),
@@ -174,15 +172,15 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
                   if (error != null && !flipping)
                     Semantics(
                       liveRegion: true,
-                      child: Text(
+                      child: UiText(
                         error,
                         style: TextStyle(color: theme.colorScheme.error),
                       ),
                     ),
                   if (!busy && retry != null && !flipping)
-                    TextButton(onPressed: retry, child: const Text('重试仪式同步')),
+                    TextButton(onPressed: retry, child: const UiText('重试仪式同步')),
                   if (snapshot == null)
-                    const Text('这次算事的进度暂时无法读取。')
+                    const UiText('这次算事的进度暂时无法读取。')
                   else if (casting)
                     CoinCastRitual(
                       tosses: snapshot.tosses,
@@ -195,7 +193,9 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
                   else ...[
                     if (snapshot.castResult case final result?) ...[
                       Text(
-                        '六爻卜卦结果：${result.base.primary.name}',
+                        context
+                            .uiLabel('六爻卜卦结果：{result}')
+                            .replaceFirst('{result}', result.base.primary.name),
                         style: theme.textTheme.bodySmall,
                       ),
                       const SizedBox(height: 10),
@@ -234,15 +234,20 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
                                 active: _active,
                                 reducedMotion: motionOff,
                                 choose: widget.choose,
-                                reveal: (slot) => setState(() {
-                                  if (slot == null) {
-                                    presentation.revealed.addAll(
-                                      snapshot.selectedSlots,
-                                    );
-                                  } else {
-                                    presentation.revealed.add(slot);
-                                  }
-                                }),
+                                reveal: (slot) {
+                                  setState(() {
+                                    if (slot == null) {
+                                      presentation.revealed.addAll(
+                                        snapshot.selectedSlots,
+                                      );
+                                    } else {
+                                      presentation.revealed.add(slot);
+                                    }
+                                  });
+                                  widget.onRevealChanged?.call(
+                                    Set.unmodifiable(presentation.revealed),
+                                  );
+                                },
                                 finish: widget.pause,
                               ),
                       ),

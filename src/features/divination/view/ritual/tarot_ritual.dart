@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:jovian_divination/jovian_divination.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/interface_language.dart';
 import 'tarot_deck.dart';
 
 const _positions = ['现状', '关键影响', '趋势'];
@@ -106,7 +107,7 @@ class _TarotRitualPanelState extends State<TarotRitualPanel> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             if (draw != null) ...[
-              Text(
+              UiText(
                 '轻触牌面逐张翻开，或一键全翻',
                 style: theme.textTheme.bodyMedium,
                 textAlign: TextAlign.center,
@@ -139,18 +140,20 @@ class _TarotRitualPanelState extends State<TarotRitualPanel> {
             if (draw != null)
               FilledButton(
                 onPressed: revealed ? widget.finish : () => widget.reveal(null),
-                child: Text(revealed ? '查看解读' : '一键翻牌'),
+                child: UiText(revealed ? '查看解读' : '一键翻牌'),
               )
             else ...[
               Semantics(
                 liveRegion: true,
                 child: Text(
-                  '已选 ${held.length} / 3 张',
+                  context
+                      .uiLabel('已选 {count} / 3 张')
+                      .replaceFirst('{count}', held.length.toString()),
                   textAlign: TextAlign.center,
                 ),
               ),
               const SizedBox(height: 10),
-              Text(
+              UiText(
                 '左右滑动，选择你的牌',
                 style: theme.textTheme.titleMedium,
                 textAlign: TextAlign.center,
@@ -224,6 +227,7 @@ class _TarotPosition extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final drawn = card;
+    final position = context.uiLabel(label);
     final tap = drawn != null && !revealed ? () => reveal(drawn.slot) : null;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -235,11 +239,15 @@ class _TarotPosition extends StatelessWidget {
             button: tap != null,
             label: revealed && drawn != null
                 ? drawn.face.card.name
-                : tap != null
-                ? '翻开$label牌'
-                : occupied
-                ? '$label已选牌'
-                : '$label空白卡位',
+                : context
+                      .uiLabel(
+                        tap != null
+                            ? '翻开{position}牌'
+                            : occupied
+                            ? '{position}已选牌'
+                            : '{position}空白卡位',
+                      )
+                      .replaceFirst('{position}', position),
             onTap: tap,
             excludeSemantics: true,
             child: Material(
@@ -301,7 +309,7 @@ class _TarotPosition extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         Text(
-          label,
+          position,
           textAlign: TextAlign.center,
           style: theme.textTheme.labelMedium,
         ),
@@ -311,7 +319,7 @@ class _TarotPosition extends StatelessWidget {
             textAlign: TextAlign.center,
             style: theme.textTheme.bodySmall,
           ),
-          Text(
+          UiText(
             drawn.face.orientation == TarotOrientation.reversed ? '逆位' : '正位',
             textAlign: TextAlign.center,
             style: theme.textTheme.labelSmall,

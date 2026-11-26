@@ -269,6 +269,10 @@ class _GuideFormState extends State<GuideForm>
         !online.canContinue)
       return;
     final presentation = _presentation ??= GuideRitualPresentation();
+    presentation.revealed
+      ..clear()
+      ..addAll(online.revealedTarotSlots ?? const <int>{});
+    final historyId = online.activeHistoryId;
     final navigator = Navigator.of(context, rootNavigator: true);
     final motionOff =
         MediaQuery.disableAnimationsOf(context) ||
@@ -290,6 +294,14 @@ class _GuideFormState extends State<GuideForm>
         },
         toss: () => unawaited(online.toss()),
         choose: (slot) => unawaited(online.pick(slot)),
+        onRevealChanged: (slots) {
+          if (mounted &&
+              identical(_ritualRoute, route) &&
+              identical(widget.online, online) &&
+              online.activeHistoryId == historyId) {
+            unawaited(online.revealTarotSlots(slots));
+          }
+        },
         pause: () {
           if (route.isCurrent) navigator.pop();
         },
@@ -542,7 +554,7 @@ class _GuideFormState extends State<GuideForm>
 
     return switch (ritual.stage) {
       GuideStage.cast || GuideStage.draw => _buildRitualPrompt(ritual),
-      GuideStage.reading when _presentation?.needsReveal(ritual) == true =>
+      GuideStage.reading when online?.needsTarotReveal == true =>
         _buildRitualPrompt(ritual),
       GuideStage.reading => _buildResult(context, ritual),
     };
@@ -714,7 +726,7 @@ class _GuideFormState extends State<GuideForm>
             child: OutlinedButton.icon(
               onPressed: () => setState(() => _showCharts = !_showCharts),
               icon: Icon(_showCharts ? Icons.expand_less : Icons.expand_more),
-              label: Text(_showCharts ? '收起盘面' : '查看三套盘面'),
+              label: UiText(_showCharts ? '收起盘面' : '查看三套盘面'),
             ),
           ),
         ),

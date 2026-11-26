@@ -5,7 +5,6 @@ import 'package:material_ui/material_ui.dart';
 
 import '../ui/tab_dock.dart';
 import '../ui/tab_glyph.dart';
-import '../ui/theme.dart';
 
 enum JovianTab {
   destiny('命理', TabGlyphShape.chart),
@@ -157,36 +156,44 @@ class JovianViewport extends StatelessWidget {
 
   final Widget child;
 
+  static const _maxContentWidth = 720.0;
+
   @override
-  Widget build(BuildContext context) => LayoutBuilder(
-    builder: (context, constraints) {
-      final theme = Theme.of(context);
-      final width = math.min(jovianPageWidth, constraints.maxWidth);
-      final size = Size(width, constraints.maxHeight);
-      return ColoredBox(
-        color: theme.colorScheme.surfaceContainerHighest,
-        child: Center(
-          child: SizedBox.fromSize(
-            size: size,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: theme.scaffoldBackgroundColor,
-                boxShadow: constraints.maxWidth > width
-                    ? const [
-                        BoxShadow(color: Color(0x24190f20), blurRadius: 34),
-                      ]
-                    : null,
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return ColoredBox(
+      color: theme.colorScheme.surfaceContainerHighest,
+      child: SafeArea(
+        top: false,
+        bottom: false,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final width = math.min(_maxContentWidth, constraints.maxWidth);
+            final size = Size(width, constraints.maxHeight);
+            return Center(
+              child: SizedBox.fromSize(
+                size: size,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: theme.scaffoldBackgroundColor,
+                    boxShadow: constraints.maxWidth > width
+                        ? const [
+                            BoxShadow(color: Color(0x24190f20), blurRadius: 34),
+                          ]
+                        : null,
+                  ),
+                  child: MediaQuery(
+                    data: MediaQuery.of(context).copyWith(size: size),
+                    child: child,
+                  ),
+                ),
               ),
-              child: MediaQuery(
-                data: MediaQuery.of(context).copyWith(size: size),
-                child: child,
-              ),
-            ),
-          ),
+            );
+          },
         ),
-      );
-    },
-  );
+      ),
+    );
+  }
 }
 
 class JovianTabNavigator extends StatefulWidget {

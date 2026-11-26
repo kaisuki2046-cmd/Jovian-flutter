@@ -8,11 +8,14 @@ import 'package:material_ui/material_ui.dart';
 
 import 'tab_glyph.dart';
 import 'tab_lens.dart';
+import 'theme.dart' show jovianPageWidth;
 
 const tabDockMargin = 14.0;
 const _trayPadding = 5.0;
 const _rowHeight = 56.0;
 const _trayHeight = _rowHeight + 2 * _trayPadding;
+const _minSlotWidth = 48.0;
+const _lensAspectRatio = 1.36;
 
 typedef _LensContact = ({
   double x,
@@ -100,6 +103,7 @@ class _JovianTabDockState extends State<JovianTabDock>
     }
     _cancelled = false;
     _suppressTap = false;
+    Tooltip.dismissAllToolTips();
     _heldCollapse = widget.collapse;
     _downX = event.localPosition.dx;
     _latest = (x: _downX, travel: 0, dragging: false, time: event.timeStamp);
@@ -210,18 +214,32 @@ class _JovianTabDockState extends State<JovianTabDock>
         : 0.0;
     final rowHeight = ui.lerpDouble(_rowHeight, 44, collapse)!;
     final trayHeight = rowHeight + 2 * _trayPadding;
+    final length = widget.destinations.length;
+    final safePadding = MediaQuery.paddingOf(context);
+    final frameWidth =
+        MediaQuery.sizeOf(context).width - safePadding.horizontal;
+    final margin =
+        ((frameWidth - 2 * _trayPadding - length * _minSlotWidth) / 2).clamp(
+          4.0,
+          tabDockMargin,
+        );
     return SafeArea(
       top: false,
-      minimum: const EdgeInsets.fromLTRB(tabDockMargin, 12, tabDockMargin, 12),
+      minimum: EdgeInsets.fromLTRB(margin, 12, margin, 12),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final dockWidth = constraints.maxWidth;
-          final length = widget.destinations.length;
+          final dockWidth = math.min(
+            constraints.maxWidth,
+            jovianPageWidth - 2 * tabDockMargin,
+          );
           final slotWidth = (dockWidth - 2 * _trayPadding) / length;
-          final baseWidth = (slotWidth - 8).clamp(1.0, slotWidth);
+          final baseWidth = (slotWidth - 8).clamp(
+            1.0,
+            rowHeight * _lensAspectRatio,
+          );
           final resting = Size(
             baseWidth,
-            (baseWidth / 1.36).clamp(22.0, rowHeight),
+            (baseWidth / _lensAspectRatio).clamp(22.0, rowHeight),
           );
           double slotCenter(int index) =>
               _trayPadding + (index + .5) * slotWidth;
@@ -238,6 +256,7 @@ class _JovianTabDockState extends State<JovianTabDock>
                 onPointerUp: (event) => _end(event, slotAt),
                 onPointerCancel: (event) => _end(event, slotAt),
                 child: SizedBox(
+                  width: dockWidth,
                   height: trayHeight,
                   child: ValueListenableBuilder(
                     valueListenable: _contact,
@@ -283,8 +302,8 @@ class _JovianTabDockState extends State<JovianTabDock>
                           ? widget.selected
                           : slotAt(contact.x);
                       final target = TabLensPose(
-                        dragging && !reduced ? contact!.x : slotCenter(index),
-                        press: contact != null && !reduced ? 1 : 0,
+                        dragging ? contact!.x : slotCenter(index),
+                        press: contact == null ? 0 : 1,
                         travel: reduced ? 0 : contact?.travel ?? 0,
                       );
                       return TweenAnimationBuilder<TabLensPose>(
@@ -326,7 +345,10 @@ class _JovianTabDockState extends State<JovianTabDock>
                                 ),
                               ),
                               lens,
-                              navigation!,
+                              TooltipVisibility(
+                                visible: contact == null,
+                                child: navigation!,
+                              ),
                               Positioned.fill(
                                 child: ExcludeSemantics(
                                   child: IgnorePointer(
@@ -580,7 +602,7 @@ class _Tray extends StatelessWidget {
                   end: Alignment.bottomCenter,
                   colors: dark
                       ? const [Color(0xa02f2f2f), Color(0x99272727)]
-                      : const [Color(0x9bf8f7f4), Color(0x82f2f0eb)],
+                      : const [Color(0xb9f1efeb), Color(0xa9ebe8e2)],
                 ),
               ),
             ),
@@ -631,7 +653,7 @@ class _Lens extends StatelessWidget {
           0,
           0,
           0,
-          raised ? (dark ? 0.44 : 0.20) : (dark ? 0.13 : 0.05),
+          raised ? (dark ? 0.40 : 0.13) : (dark ? 0.13 : 0.05),
         ),
         blur: raised ? 17 : 6,
         drop: raised ? 7 : 2,
@@ -690,7 +712,7 @@ class _RaisedGlass extends StatelessWidget {
         ClipPath(
           clipper: _LensBand(outline: outline, inset: rimWidth, rim: true),
           child: BackdropFilter(
-            filter: _refraction(size, dark, scale: 1.34, blur: 1.45),
+            filter: _refraction(size, dark, scale: 1.34, blur: 2),
             child: const SizedBox.expand(),
           ),
         ),
@@ -834,8 +856,8 @@ class _RaisedRim extends CustomPainter {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: dark
-              ? const [Color(0x17ffffff), Color(0x0bffffff)]
-              : const [Color(0x1affffff), Color(0x06ffffff)],
+              ? const [Color(0x26ffffff), Color(0x12ffffff)]
+              : const [Color(0x4dffffff), Color(0x1fffffff)],
         ).createShader(rect),
     );
     canvas.drawPath(

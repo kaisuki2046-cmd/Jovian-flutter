@@ -93,7 +93,8 @@ TabLensOutline tabLensOutline({
   final minY = points.map((point) => point.dy).reduce(math.min);
   final maxY = points.map((point) => point.dy).reduce(math.max);
   final width = math.min(maxX - minX, tray.width - 2 * clearance);
-  final height = lerpDouble(maxY - minY, resting.height + 20, pose.press)!;
+  final lift = math.min(20.0, resting.height * .49);
+  final height = lerpDouble(maxY - minY, resting.height + lift, pose.press)!;
   final left = (pose.x - width / 2).clamp(
     clearance,
     tray.width - clearance - width,

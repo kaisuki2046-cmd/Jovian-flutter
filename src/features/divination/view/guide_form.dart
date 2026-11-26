@@ -4,6 +4,7 @@ import 'package:jovian_divination/jovian_divination.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'cast_content.dart';
+import 'guide_composer.dart';
 import 'guide_conversation.dart';
 import 'liuyao_form.dart';
 import 'meihua_page.dart';
@@ -25,7 +26,9 @@ class _GuideFormState extends State<GuideForm>
   final _form = GlobalKey<FormState>();
   final _followUpForm = GlobalKey<FormState>();
   final _question = TextEditingController();
+  final _questionFocus = FocusNode();
   final _followUp = TextEditingController();
+  final _reportScroll = ScrollController();
   final _clock = Stopwatch();
   final _ritualChanges = ValueNotifier(0);
   StreamSubscription<void>? _onlineChanges;
@@ -86,7 +89,9 @@ class _GuideFormState extends State<GuideForm>
     _removeRitualRoute();
     _ritualChanges.dispose();
     _question.dispose();
+    _questionFocus.dispose();
     _followUp.dispose();
+    _reportScroll.dispose();
     super.dispose();
   }
 
@@ -254,10 +259,17 @@ class _GuideFormState extends State<GuideForm>
     _showCharts = false;
   }
 
+  void _setSuggestedQuestion(String question) {
+    _question.value = TextEditingValue(
+      text: question,
+      selection: TextSelection.collapsed(offset: question.length),
+    );
+    _questionFocus.requestFocus();
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final text = Theme.of(context).textTheme;
     final online = widget.online;
     final busy = online?.busy ?? false;
     final ritual = _snapshot;
@@ -281,51 +293,42 @@ class _GuideFormState extends State<GuideForm>
       );
     }
     if (ritual == null) {
-      return CastContent(
+      final welcome =
+          !busy && _pendingQuestion == null && _clarifications.isEmpty;
+      return GuideThread(
         key: const ValueKey('guide-question'),
-        children: [
-          _heading('综合起盘'),
-          const SizedBox(height: 8),
-          Text(
-            online == null ? '在本机生成六爻、塔罗和梅花易数盘面。' : '输入一件想问的事，起盘后可以继续追问。',
-            style: text.bodyMedium,
-          ),
-          const SizedBox(height: 16),
+        headerAction: _historyAction(),
+        welcome: welcome ? GuideWelcome(offline: online == null) : null,
+        messages: [
           ..._conversation(),
           if (_pendingQuestion case final submitted?) ...[
             GuideQuestionBubble(submitted),
             const SizedBox(height: 12),
           ],
           ..._feedback(),
-          Form(
-            key: _form,
-            child: TextFormField(
-              controller: _question,
-              enabled: !busy,
-              decoration: const InputDecoration(labelText: '你想问哪件事？'),
-              minLines: 2,
-              maxLines: 4,
-              maxLength: guideQuestionMaxLength,
-              validator: (input) => validateGuideQuestion(input ?? ''),
-            ),
-          ),
-          OverflowBar(
-            alignment: MainAxisAlignment.start,
-            overflowAlignment: OverflowBarAlignment.start,
-            spacing: 8,
-            overflowSpacing: 8,
-            children: [
-              FilledButton(
-                onPressed: busy ? null : () => _start(automatic: false),
-                child: const Text('手动起盘'),
-              ),
-              OutlinedButton(
-                onPressed: busy ? null : () => _start(automatic: true),
-                child: const Text('自动起盘'),
-              ),
-            ],
-          ),
+          if (welcome)
+            GuideSuggestions(select: busy ? null : _setSuggestedQuestion),
         ],
+        composer: GuideComposer(
+          form: _form,
+          text: _question,
+          focus: _questionFocus,
+          label: '你想问哪件事？',
+          sendLabel: '发送消息',
+          busy: busy,
+          send: () => _start(automatic: false),
+          suggest: _setSuggestedQuestion,
+          actions: [
+            guideComposerAction(
+              label: '手动起盘',
+              action: busy ? null : () => _start(automatic: false),
+            ),
+            guideComposerAction(
+              label: '自动起盘',
+              action: busy ? null : () => _start(automatic: true),
+            ),
+          ],
+        ),
       );
     }
 
@@ -375,14 +378,17 @@ class _GuideFormState extends State<GuideForm>
           child: Text(title, style: Theme.of(context).textTheme.headlineMedium),
         ),
       ),
-      if (widget.online != null)
-        IconButton(
-          tooltip: '会话记录',
-          onPressed: () => setState(() => _showHistory = true),
-          icon: const Icon(Icons.history),
-        ),
+      if (_historyAction() case final action?) action,
     ],
   );
+
+  Widget? _historyAction() => widget.online == null
+      ? null
+      : IconButton(
+          tooltip: '会话记录',
+          onPressed: () => setState(() => _showHistory = true),
+          icon: const Icon(Icons.menu_rounded),
+        );
 
   List<Widget> _conversation() => [
     for (final turn in _clarifications) ...[
@@ -408,14 +414,22 @@ class _GuideFormState extends State<GuideForm>
     final online = widget.online;
     final reading = online?.reading;
     final busy = online?.busy ?? false;
-    return CastContent(
+    final hasReport = reading?.report != null;
+    final canFollowUp = hasReport && reading!.followUps.length < 8;
+    return GuideThread(
       key: const ValueKey('guide-result'),
-      children: [
-        _heading(_showCharts ? '综合盘面' : '翻开三张塔罗'),
-        const SizedBox(height: 8),
+      headerAction: _historyAction(),
+      scroll: _reportScroll,
+      messages: [
         ..._questionContext(ritual),
-        TarotReveal(draw: chart.tarot),
+        if (online == null) ...[
+          Text('翻开三张塔罗', style: text.titleMedium),
+          const SizedBox(height: 12),
+          TarotReveal(draw: chart.tarot),
+        ],
         ..._feedback(),
+        if (online != null && busy && !hasReport)
+          const GuideConversationReply(body: '正在解读…'),
         if (online != null &&
             !busy &&
             reading?.report == null &&
@@ -427,32 +441,25 @@ class _GuideFormState extends State<GuideForm>
           ),
         ],
         if (reading?.report case final report?) ...[
-          const SizedBox(height: 20),
-          Text('综合解读', style: text.titleLarge),
-          const SizedBox(height: 8),
           ReadingReportView(report: report),
         ],
         const SizedBox(height: 16),
-        OverflowBar(
-          alignment: MainAxisAlignment.start,
-          overflowAlignment: OverflowBarAlignment.start,
-          spacing: 8,
-          overflowSpacing: 8,
-          children: [
-            OutlinedButton.icon(
-              onPressed: () => setState(() => _showCharts = !_showCharts),
-              icon: Icon(_showCharts ? Icons.expand_less : Icons.expand_more),
-              label: Text(_showCharts ? '收起盘面' : '查看盘面'),
-            ),
-            OutlinedButton.icon(
-              onPressed: busy ? null : _restart,
-              icon: const Icon(Icons.add_comment_outlined),
-              label: const Text('另问一件事'),
-            ),
-          ],
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: OutlinedButton.icon(
+            onPressed: () => setState(() => _showCharts = !_showCharts),
+            icon: Icon(_showCharts ? Icons.expand_less : Icons.expand_more),
+            label: Text(_showCharts ? '收起盘面' : '查看盘面'),
+          ),
         ),
         if (_showCharts) ...[
           const SizedBox(height: 20),
+          if (online != null) ...[
+            Text('翻开三张塔罗', style: text.titleMedium),
+            const SizedBox(height: 12),
+            TarotReveal(draw: chart.tarot),
+            const SizedBox(height: 20),
+          ],
           JingfangResult(reading: chart.liuyao),
           const SizedBox(height: 24),
           Text(
@@ -463,11 +470,38 @@ class _GuideFormState extends State<GuideForm>
           const SizedBox(height: 8),
           MeihuaResult(reading: chart.meihua),
         ],
-        if (reading?.report != null) ...[
+        if (hasReport) ...[
           const SizedBox(height: 20),
-          ..._followUps(reading!, busy),
+          GuideFollowUpList(followUps: reading!.followUps),
+          if (!canFollowUp) const Text('这次算事的追问已达上限，可以另问一件事。'),
         ],
       ],
+      composer: canFollowUp
+          ? GuideComposer(
+              form: _followUpForm,
+              text: _followUp,
+              label: '基于当前盘面追问',
+              sendLabel: '发送追问',
+              send: _sendFollowUp,
+              busy: busy,
+              followUp: true,
+              actions: [
+                guideComposerAction(
+                  label: '另问一件事',
+                  action: busy ? null : _restart,
+                ),
+              ],
+            )
+          : Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(14, 4, 14, 12),
+                child: guideComposerAction(
+                  label: '另问一件事',
+                  action: busy ? null : _restart,
+                ),
+              ),
+            ),
     );
   }
 
@@ -500,38 +534,27 @@ class _GuideFormState extends State<GuideForm>
     ];
   }
 
-  List<Widget> _followUps(OnlineReading reading, bool busy) => [
-    GuideFollowUpList(followUps: reading.followUps),
-    if (reading.followUps.length < 8) ...[
-      Form(
-        key: _followUpForm,
-        child: TextFormField(
-          controller: _followUp,
-          enabled: !busy,
-          maxLength: guideQuestionMaxLength,
-          minLines: 1,
-          maxLines: 4,
-          textInputAction: TextInputAction.send,
-          decoration: const InputDecoration(labelText: '基于当前盘面追问'),
-          validator: (input) => validateGuideQuestion(input ?? ''),
-          onFieldSubmitted: busy ? null : (_) => _sendFollowUp(),
-        ),
-      ),
-      Align(
-        alignment: AlignmentDirectional.centerEnd,
-        child: FilledButton.icon(
-          onPressed: busy ? null : _sendFollowUp,
-          icon: const Icon(Icons.send_outlined),
-          label: const Text('发送追问'),
-        ),
-      ),
-    ] else
-      const Text('这次算事的追问已达上限，可以另问一件事。'),
-  ];
-
   Future<void> _sendFollowUp() async {
     if (_followUpForm.currentState?.validate() != true) return;
     FocusScope.of(context).unfocus();
-    await widget.online?.followUp(_followUp.text.trim());
+    final online = widget.online;
+    await online?.followUp(_followUp.text.trim());
+    if (!mounted || widget.online != online) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_reportScroll.hasClients) return;
+      final end = _reportScroll.position.maxScrollExtent;
+      if (MediaQuery.disableAnimationsOf(context) ||
+          MediaQuery.accessibleNavigationOf(context)) {
+        _reportScroll.jumpTo(end);
+      } else {
+        unawaited(
+          _reportScroll.animateTo(
+            end,
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOut,
+          ),
+        );
+      }
+    });
   }
 }

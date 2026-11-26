@@ -2,6 +2,7 @@ import 'package:jovian_divination/jovian_divination.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'cast_content.dart';
+import 'guide_composer.dart';
 import 'reading_report.dart';
 
 class GuideQuestionBubble extends StatelessWidget {
@@ -10,28 +11,35 @@ class GuideQuestionBubble extends StatelessWidget {
   final String question;
 
   @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    return Align(
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, viewport) => Align(
       alignment: AlignmentDirectional.centerEnd,
-      child: FractionallySizedBox(
-        widthFactor: 0.88,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: viewport.maxWidth * .85),
         child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: colors.primaryContainer,
-            borderRadius: BorderRadius.circular(18),
+          decoration: const BoxDecoration(
+            color: Color(0xff087bab),
+            borderRadius: BorderRadiusDirectional.only(
+              topStart: Radius.circular(22),
+              topEnd: Radius.circular(22),
+              bottomStart: Radius.circular(22),
+              bottomEnd: Radius.circular(6),
+            ),
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: Text(
               question,
-              style: TextStyle(color: colors.onPrimaryContainer),
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: Colors.white,
+                height: 1.45,
+              ),
             ),
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
 }
 
 class GuideConversationReply extends StatelessWidget {
@@ -49,25 +57,21 @@ class GuideConversationReply extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Card(
-      margin: EdgeInsets.zero,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (heading case final label?) ...[
-              Text(label, style: theme.textTheme.titleSmall),
-              const SizedBox(height: 6),
-            ],
-            Text(body, style: theme.textTheme.bodyMedium),
-            for (final step in steps)
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Text('• $step'),
-              ),
+    return GuideAssistantMessage(
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (heading case final label?) ...[
+            Text(label, style: theme.textTheme.titleSmall),
+            const SizedBox(height: 6),
           ],
-        ),
+          Text(body, style: theme.textTheme.bodyMedium),
+          for (final step in steps)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text('• $step'),
+            ),
+        ],
       ),
     );
   }

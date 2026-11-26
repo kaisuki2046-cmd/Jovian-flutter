@@ -51,7 +51,7 @@ void main() {
       await tester.ensureVisible(restart);
       await tester.tap(restart);
       await tester.pumpAndSettle();
-      expect(find.text('综合起盘'), findsOneWidget);
+      expect(find.text('有什么事情想知道吗？'), findsOneWidget);
       expect(find.text('我这次面试后续会怎样？'), findsNothing);
       expect(tester.takeException(), isNull);
     },

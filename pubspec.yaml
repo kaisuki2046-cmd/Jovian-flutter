@@ -36,3 +36,4 @@ flutter:
     - src/features/divination/assets/coins/
     - src/features/divination/assets/coins/collision/
     - src/features/divination/assets/ritual/
+    - src/features/divination/assets/assistant/portrait.png

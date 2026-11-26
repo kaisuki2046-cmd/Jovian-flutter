@@ -1,6 +1,8 @@
 import 'package:jovian_divination/jovian_divination.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'guide_composer.dart';
+
 const _methodLabels = {'tarot': '塔罗解读', 'meihua': '梅花易数解读', 'liuyao': '六爻解读'};
 
 class ReadingReportView extends StatelessWidget {
@@ -11,15 +13,14 @@ class ReadingReportView extends StatelessWidget {
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     final current = report;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        if (current is LegacyProReport) Text(current.opening),
-        for (final method in proMethods)
-          Card(
-            margin: const EdgeInsets.only(bottom: 8),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
+    return GuideAssistantMessage(
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (current is LegacyProReport) Text(current.opening),
+          for (final method in proMethods)
+            Padding(
+              padding: const EdgeInsets.only(top: 12, bottom: 5),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -59,12 +60,12 @@ class ReadingReportView extends StatelessWidget {
                 ],
               ),
             ),
-          ),
-        if (current is LegacyProReport) ...[
-          const SizedBox(height: 12),
-          Text(current.closing),
+          if (current is LegacyProReport) ...[
+            const SizedBox(height: 12),
+            Text(current.closing),
+          ],
         ],
-      ],
+      ),
     );
   }
 }

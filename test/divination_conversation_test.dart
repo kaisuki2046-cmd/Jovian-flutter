@@ -32,7 +32,7 @@ void main() {
       await tester.pumpWidget(_app(online));
       await tester.pumpAndSettle();
 
-      expect(find.text('综合起盘'), findsOneWidget);
+      expect(find.text('有什么事情想知道吗？'), findsOneWidget);
       expect(find.text('梅花易数'), findsOneWidget);
       expect(find.text('六爻'), findsOneWidget);
       await _tap(tester, '梅花易数');
@@ -40,6 +40,14 @@ void main() {
       await _tap(tester, '六爻');
       expect(find.text('投三枚铜钱'), findsOneWidget);
       await _tap(tester, '综合算事');
+      await _tap(tester, '这次面试会顺利吗？');
+      expect(
+        tester
+            .widget<TextFormField>(find.byType(TextFormField))
+            .controller
+            ?.text,
+        '这次面试会顺利吗？',
+      );
       await tester.enterText(find.byType(TextFormField), _question);
       await _tap(tester, '自动起盘');
       expect(find.text(_question), findsOneWidget);
@@ -51,9 +59,9 @@ void main() {
       expect(find.text('确认的关注点'), findsOneWidget);
       expect(find.text(_concern), findsOneWidget);
       expect(find.text('解读暂不可用，可以稍后重试。'), findsOneWidget);
-      expect(find.text('翻开三张塔罗'), findsOneWidget);
+      expect(find.text('查看盘面'), findsOneWidget);
       await _tap(tester, '重试');
-      expect(find.text('综合解读'), findsOneWidget);
+      expect(find.text('塔罗解读'), findsOneWidget);
       expect(find.text('塔罗对照报告。'), findsOneWidget);
       expect(find.text('查看盘面'), findsOneWidget);
       expect(service.understood.last, '$_question；补充：$_details');
@@ -66,7 +74,8 @@ void main() {
       final compose = find.byType(TextFormField);
       await tester.ensureVisible(compose);
       await tester.enterText(compose, _followUp);
-      await _tap(tester, '发送追问');
+      await tester.tap(find.byTooltip('发送追问'));
+      await tester.pumpAndSettle();
       expect(find.text(_followUp), findsOneWidget);
       expect(find.text('先确认后续时间。'), findsOneWidget);
       expect(find.text('• 整理面试问题。'), findsOneWidget);
@@ -81,7 +90,7 @@ void main() {
         hasLength(1),
       );
       await _tap(tester, '另问一件事');
-      expect(find.text('综合起盘'), findsOneWidget);
+      expect(find.text('有什么事情想知道吗？'), findsOneWidget);
       expect(find.text(_details), findsNothing);
 
       await tester.tap(find.byTooltip('会话记录'));
@@ -90,7 +99,7 @@ void main() {
       await _tap(tester, '$_question；补充：$_details');
       expect(find.text('塔罗对照报告。'), findsOneWidget);
       expect(find.text('先确认后续时间。'), findsOneWidget);
-      expect(find.text('发送追问'), findsNothing);
+      expect(find.byTooltip('发送追问'), findsNothing);
       expect(
         service.calls.where((call) => call == 'POST /reading/follow-up').length,
         1,

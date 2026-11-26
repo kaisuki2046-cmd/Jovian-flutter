@@ -22,7 +22,7 @@ class DivinationPage extends StatelessWidget {
     length: 3,
     child: Scaffold(
       appBar: AppBar(
-        title: const Text('算事'),
+        title: const Text('对话'),
         actions: [
           if (openDestiny != null)
             TextButton(onPressed: openDestiny, child: const Text('命理')),

@@ -36,6 +36,7 @@ AccountController? configureAccount({
         await Future.wait([
           clearMemberReadingData(owner),
           clearLocalDestinyBirthProfile(owner),
+          clearMemberProfileAvatar(owner),
         ]);
       },
     ),

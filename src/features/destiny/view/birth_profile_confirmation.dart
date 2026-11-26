@@ -34,13 +34,13 @@ class BirthProfileConfirmation extends StatelessWidget {
           if (latest != null) ...[
             const Text('账户资料在另一处有更新，请选择用于本次测算的资料。'),
             const SizedBox(height: 12),
-            const Text('本次填写'),
+            _heading(context, '本次填写'),
           ],
-          Text(_summary(entered)),
+          _BirthDetails(entered),
           if (latest case final profile?) ...[
             const SizedBox(height: 12),
-            const Text('账户最新资料'),
-            Text(_summary(profile)),
+            _heading(context, '账户最新资料'),
+            _BirthDetails(profile),
           ],
           if (member) ...[
             const SizedBox(height: 12),
@@ -86,16 +86,55 @@ class BirthProfileConfirmation extends StatelessWidget {
     ),
   );
 
-  static String _summary(AccountBirthFields profile) {
-    final date = profile.birthDate.isEmpty ? '日期未填写' : profile.birthDate;
-    final time = profile.birthTime.isEmpty ? '时刻未填写' : profile.birthTime;
-    final place = profile.birthPlace.isEmpty ? '地点未填写' : profile.birthPlace;
+  Widget _heading(BuildContext context, String text) => Semantics(
+    header: true,
+    child: Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Text(text, style: Theme.of(context).textTheme.titleSmall),
+    ),
+  );
+}
+
+class _BirthDetails extends StatelessWidget {
+  const _BirthDetails(this.profile);
+
+  final AccountBirthFields profile;
+
+  @override
+  Widget build(BuildContext context) {
     final gender = switch (profile.gender) {
       'female' => '女',
       'male' => '男',
       'other' => '其他',
-      _ => '性别未填写',
+      _ => profile.gender,
     };
-    return '$date · $time\n$place · $gender';
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 6,
+      children: [
+        for (final (label, value) in [
+          ('出生日期', profile.birthDate),
+          ('出生时间', _timeLabel(profile.birthTime)),
+          ('出生地点', profile.birthPlace),
+          ('性别', gender),
+        ])
+          Text('$label · ${value.isEmpty ? '未填写' : value}'),
+      ],
+    );
+  }
+
+  static String _timeLabel(String time) {
+    final match = RegExp(
+      r'^([01]\d|2[0-3]|\?\?):([0-5]\d|\?\?)$',
+    ).firstMatch(time);
+    if (match == null) return time;
+    final hour = int.tryParse(match[1]!);
+    final minute = int.tryParse(match[2]!);
+    return switch ((hour, minute)) {
+      (null, null) => '时间未知',
+      (null, final known?) => '小时未知 · $known 分',
+      (final known?, null) => '$known 时 · 分钟未知',
+      _ => time,
+    };
   }
 }

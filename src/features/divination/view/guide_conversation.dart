@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 import 'composer_attachment.dart';
 import 'composer_attachment_view.dart';
 import 'guide_composer.dart';
+import 'reading_report.dart';
 
 class GuideQuestionBubble extends StatelessWidget {
   const GuideQuestionBubble(
@@ -65,16 +66,10 @@ class GuideQuestionBubble extends StatelessWidget {
 }
 
 class GuideConversationReply extends StatelessWidget {
-  const GuideConversationReply({
-    super.key,
-    this.heading,
-    required this.body,
-    this.steps = const [],
-  });
+  const GuideConversationReply({super.key, this.heading, required this.body});
 
   final String? heading;
   final String body;
-  final List<String> steps;
 
   @override
   Widget build(BuildContext context) {
@@ -88,11 +83,6 @@ class GuideConversationReply extends StatelessWidget {
             const SizedBox(height: 6),
           ],
           Text(body, style: theme.textTheme.bodyMedium),
-          for (final step in steps)
-            Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: Text('• $step'),
-            ),
         ],
       ),
     );
@@ -103,11 +93,13 @@ class GuideFollowUpList extends StatelessWidget {
   const GuideFollowUpList({
     super.key,
     required this.followUps,
+    required this.evidence,
     this.attachments = const {},
     this.localTurns = const [],
   });
 
   final List<ReadingFollowUp> followUps;
+  final List<ReadingEvidence> evidence;
   final Map<int, List<ComposerAttachment>> attachments;
   final List<ComposerAttachmentTurn> localTurns;
 
@@ -127,9 +119,10 @@ class GuideFollowUpList extends StatelessWidget {
             attachments: attachments[index] ?? const [],
           ),
           const SizedBox(height: 8),
-          GuideConversationReply(
-            body: followUps[index].answer,
-            steps: followUps[index].nextSteps,
+          GuideFollowUpReply(
+            key: ValueKey((index, followUps[index].question)),
+            followUp: followUps[index],
+            evidence: evidence,
           ),
           const SizedBox(height: 12),
         ],

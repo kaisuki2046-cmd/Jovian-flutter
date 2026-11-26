@@ -15,19 +15,35 @@ typedef OpenedReading = ({String token, OnlineReading reading});
 typedef ReadingFollowUp = ({
   String question,
   String answer,
+  String? explanation,
   List<String> nextSteps,
+  List<String> evidenceIds,
+});
+typedef ReadingEvidence = ({
+  String id,
+  String label,
+  String plain,
+  String source,
+  int? catalogVersion,
 });
 
 class OnlineReading {
-  const OnlineReading(this.snapshot, {this.report, this.followUps = const []});
+  const OnlineReading(
+    this.snapshot, {
+    this.report,
+    this.followUps = const [],
+    this.evidence = const [],
+  });
   final GuideRitualSnapshot snapshot;
   final ProReport? report;
   final List<ReadingFollowUp> followUps;
+  final List<ReadingEvidence> evidence;
 
   factory OnlineReading.fromJson(Map<String, Object?> value) {
     final snapshot = parseGuideSnapshot(value);
     final rawReport = value['proReport'];
     final rawFollowUps = value['followUps'] as List;
+    final rawEvidence = value['evidence'];
     if (snapshot.stage != GuideStage.reading &&
         (rawReport != null || rawFollowUps.isNotEmpty)) {
       throw const FormatException('Report before reading stage.');
@@ -42,12 +58,43 @@ class OnlineReading {
           return (
             question: entry['question'] as String,
             answer: report['answer'] as String,
+            explanation: switch (report['explanation']) {
+              final String text when text.trim().isNotEmpty => text,
+              _ => null,
+            },
             nextSteps: List<String>.unmodifiable(
               (report['nextSteps'] as List).cast<String>(),
             ),
+            evidenceIds: switch (report['evidenceIds']) {
+              final List ids => List<String>.unmodifiable(
+                ids.whereType<String>(),
+              ),
+              _ => const <String>[],
+            },
           );
         }),
       ),
+      evidence: rawEvidence is List
+          ? List.unmodifiable([
+              for (final item in rawEvidence)
+                if (item case {
+                  'id': final String id,
+                  'label': final String label,
+                  'plain': final String plain,
+                  'source': final String source,
+                })
+                  (
+                    id: id,
+                    label: label,
+                    plain: plain,
+                    source: source,
+                    catalogVersion: switch (item['catalogVersion']) {
+                      final int version => version,
+                      _ => null,
+                    },
+                  ),
+            ])
+          : const [],
     );
   }
 
@@ -58,9 +105,27 @@ class OnlineReading {
       for (final item in followUps)
         {
           'question': item.question,
-          'report': {'answer': item.answer, 'nextSteps': item.nextSteps},
+          'report': {
+            'answer': item.answer,
+            if (item.explanation case final explanation?)
+              'explanation': explanation,
+            'nextSteps': item.nextSteps,
+            if (item.evidenceIds.isNotEmpty) 'evidenceIds': item.evidenceIds,
+          },
         },
     ],
+    if (evidence.isNotEmpty)
+      'evidence': [
+        for (final item in evidence)
+          {
+            'id': item.id,
+            'label': item.label,
+            'plain': item.plain,
+            'source': item.source,
+            if (item.catalogVersion case final version?)
+              'catalogVersion': version,
+          },
+      ],
   };
 }
 

@@ -20,6 +20,7 @@ dependencies:
   jovian_fortune:
     path: src/features/fortune/control/calculation
   material_ui: ^1.11.1
+  path_provider: ^2.1.6
   web: ^1.1.2
   webview_flutter: ^4.14.1
 dev_dependencies:

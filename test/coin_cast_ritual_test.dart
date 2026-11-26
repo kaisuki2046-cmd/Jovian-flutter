@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -5,6 +6,7 @@ import '../src/features/divination/view/ritual/coin_cast_ritual.dart';
 import '../src/features/divination/view/ritual/coin_toss_motion.dart';
 
 const _tossButton = ValueKey('coin-ritual-toss-button');
+const _audioChannel = MethodChannel('jovian/coin_audio');
 
 Widget _rig({
   required List<List<int>> tosses,
@@ -177,4 +179,67 @@ void main() {
     expect(settled, [1]);
     expect(find.text('正在投掷…'), findsNothing);
   });
+
+  testWidgets('native sound follows the toss and stops when the view leaves', (
+    tester,
+  ) async {
+    final audio = _recordAudio(tester);
+    final result = [
+      [2, 3, 2],
+    ];
+    Widget page(List<List<int>> tosses, {bool active = true}) =>
+        _rig(tosses: tosses, toss: () {}, settled: (_) {}, active: active);
+    await tester.pumpWidget(page([]));
+    expect(audio.single.method, 'prepare');
+    expect(audio.single.arguments, hasLength(3));
+    await tester.pumpWidget(page(result));
+    expect(_variants(audio), [0]);
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(_variants(audio), [0, 1, 2]);
+    await tester.pump(const Duration(milliseconds: 1570));
+    expect(_variants(audio), [0, 1, 2, 0]);
+    await tester.pumpWidget(page(result, active: false));
+    expect(audio.last.method, 'stop');
+    await tester.pumpAndSettle();
+    await tester.pump(coinTossDuration);
+    expect(_variants(audio), [0, 1, 2, 0]);
+  });
+
+  testWidgets('reduced motion plays one sound and never replays saved tosses', (
+    tester,
+  ) async {
+    final audio = _recordAudio(tester);
+    final first = [
+      [2, 3, 2],
+    ];
+    final second = [
+      ...first,
+      [2, 2, 3],
+    ];
+    Widget page(List<List<int>> tosses) =>
+        _rig(tosses: tosses, toss: () {}, settled: (_) {}, reducedMotion: true);
+    await tester.pumpWidget(page(first));
+    expect(_variants(audio), isEmpty);
+    await tester.pumpWidget(page(second));
+    await tester.pump(coinTossDuration);
+    expect(_variants(audio), [0]);
+    await tester.pumpWidget(const SizedBox());
+    expect(audio.last.method, 'stop');
+  });
 }
+
+List<MethodCall> _recordAudio(WidgetTester tester) {
+  final audio = <MethodCall>[];
+  final messenger = tester.binding.defaultBinaryMessenger;
+  messenger.setMockMethodCallHandler(_audioChannel, (call) async {
+    audio.add(call);
+    return null;
+  });
+  addTearDown(() => messenger.setMockMethodCallHandler(_audioChannel, null));
+  return audio;
+}
+
+List<int> _variants(List<MethodCall> calls) => [
+  for (final call in calls)
+    if (call.method == 'strike') call.arguments['variant'] as int,
+];

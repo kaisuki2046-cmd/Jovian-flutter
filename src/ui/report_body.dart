@@ -8,7 +8,7 @@ class ReportBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context).textTheme;
     final headings = RegExp(r'^#{1,6}\s+');
-    return Column(
+    final content = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         for (final block in body.split(RegExp(r'\r?\n[ \t]*\r?\n'))) ...[
@@ -23,9 +23,12 @@ class ReportBody extends StatelessWidget {
               ),
             )
           else
-            SelectableText(block),
+            Text(block),
         ],
       ],
     );
+    return SelectionContainer.maybeOf(context) == null
+        ? SelectionArea(child: content)
+        : content;
   }
 }

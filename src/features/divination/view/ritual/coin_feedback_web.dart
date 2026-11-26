@@ -5,23 +5,10 @@ import 'dart:math' as math;
 import 'package:flutter/services.dart';
 import 'package:web/web.dart' as web;
 
-import 'coin_toss_motion.dart';
+import 'coin_sound_timeline.dart';
 
 typedef _Clip = ({web.AudioBuffer buffer, double offset});
-typedef _Event = ({double at, double volume, int variant});
 typedef _Sound = ({web.AudioBufferSourceNode source, web.GainNode gain});
-
-const _clipPaths = [
-  'src/features/divination/assets/coins/collision/coin-collision-1.wav',
-  'src/features/divination/assets/coins/collision/coin-collision-2.wav',
-  'src/features/divination/assets/coins/collision/coin-collision-3.wav',
-];
-const _reduced = [(at: 0.0, volume: 0.55, variant: 0)];
-const _opening = [
-  (at: 0.0, volume: 0.22, variant: 0),
-  (at: 0.16, volume: 0.16, variant: 1),
-  (at: 0.36, volume: 0.20, variant: 2),
-];
 
 class CoinFeedback {
   CoinFeedback() {
@@ -65,7 +52,7 @@ class CoinFeedback {
 
   web.AudioContext _createContext() {
     final context = web.AudioContext();
-    final master = context.createGain()..gain.value = 0.20;
+    final master = context.createGain()..gain.value = coinSoundMasterVolume;
     master.connect(context.destination);
     _filter = context.createBiquadFilter()
       ..type = 'highpass'
@@ -76,7 +63,7 @@ class CoinFeedback {
   }
 
   Future<List<_Clip>> _loadClips(web.AudioContext context) => Future.wait(
-    _clipPaths.map((path) async {
+    coinCollisionAssets.map((path) async {
       final bytes = await rootBundle.load(path);
       final copy = Uint8List.fromList(
         bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes),
@@ -106,28 +93,7 @@ class CoinFeedback {
       final clips = await (_clips ??= _loadClips(context));
       if (generation != _generation || web.document.hidden || _disposed) return;
       final start = reducedMotion ? context.currentTime : started;
-      final duration = coinTossDuration.inMilliseconds / 1000.0;
-      final events = reducedMotion
-          ? _reduced
-          : <_Event>[
-              ..._opening,
-              for (final (index, time) in coinLandingTimes.indexed)
-                (
-                  at: time * duration,
-                  volume: 0.56 - index * 0.025,
-                  variant: index,
-                ),
-              (
-                at: coinLandingTimes.first * duration + 0.05,
-                volume: 0.12,
-                variant: 1,
-              ),
-              (
-                at: coinLandingTimes.last * duration + 0.07,
-                volume: 0.09,
-                variant: 0,
-              ),
-            ];
+      final events = reducedMotion ? reducedCoinSoundCues : coinSoundCues;
       for (final event in events) {
         final planned = start + event.at;
         final now = context.currentTime;
@@ -138,7 +104,7 @@ class CoinFeedback {
         final at = math.max(planned, now);
         source
           ..buffer = clip.buffer
-          ..playbackRate.value = 1.22;
+          ..playbackRate.value = coinSoundRate;
         gain.gain
           ..setValueAtTime(0, at)
           ..linearRampToValueAtTime(event.volume, at + 0.003)

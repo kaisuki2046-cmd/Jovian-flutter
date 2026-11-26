@@ -1,5 +1,8 @@
+import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:jovian_destiny/jovian_destiny.dart'
+    show RestoredBaZiRow, restoreArchivedBaZiRows;
 import 'package:material_ui/material_ui.dart';
 
 import '../model/destiny_reading.dart';
@@ -87,7 +90,11 @@ class _ChartDialogState extends State<_ChartDialog> {
                     ...switch (_active) {
                       DestinyChartMethod.bazi => [
                         const _Title('四柱、十神与神煞'),
-                        _Pillars(preview.rows),
+                        _Pillars(
+                          charts.presentation == null
+                              ? restoreArchivedBaZiRows(preview.rows)
+                              : _freshPillarRows(preview.rows),
+                        ),
                         if (charts.presentation?['bazi']
                             case final List analysis)
                           _FactsBox('八字本命结构', analysis.map(chartRow)),
@@ -178,7 +185,7 @@ class _Fact extends StatelessWidget {
 }
 
 class _FactsBox extends StatelessWidget {
-  const _FactsBox(this.title, this.rows);
+  const _FactsBox(this.title, this.rows, {super.key});
   final String title;
   final Iterable<ChartRow> rows;
   @override
@@ -193,55 +200,119 @@ class _FactsBox extends StatelessWidget {
   );
 }
 
+List<RestoredBaZiRow> _freshPillarRows(List<ChartRow> rows) => [
+  for (final row in rows)
+    (
+      label: row.label,
+      value: row.value.split('\n').first,
+      details: row.value.split('\n').skip(1).toList(growable: false),
+    ),
+];
+
 class _Pillars extends StatelessWidget {
   const _Pillars(this.rows);
-  final List<ChartRow> rows;
+  final List<RestoredBaZiRow> rows;
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      spacing: 8,
       children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            for (final row in rows)
-              Expanded(
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8,
-                      horizontal: 2,
-                    ),
-                    child: Column(
-                      children: [
-                        Text(row.label, style: theme.textTheme.labelMedium),
-                        if (row.value.split('\n').first case final value
-                            when value.length == 2) ...[
-                          Text(
-                            value[0],
-                            style: theme.textTheme.headlineSmall?.copyWith(
-                              color: theme.colorScheme.primary,
+        LayoutBuilder(
+          builder: (context, constraints) {
+            const gap = 6.0;
+            final minWidth = MediaQuery.textScalerOf(context).scale(52);
+            final available = ((constraints.maxWidth + gap) / (minWidth + gap))
+                .floor();
+            final columns = available >= 4 && rows.length >= 4
+                ? 4
+                : available >= 2 && rows.length >= 2
+                ? 2
+                : 1;
+            final width =
+                (constraints.maxWidth - gap * (columns - 1)) / columns;
+            return Wrap(
+              spacing: gap,
+              runSpacing: gap,
+              children: [
+                for (final row in rows)
+                  SizedBox(
+                    key: ValueKey(('destiny-pillar', row.label)),
+                    width: width,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primaryContainer,
+                        borderRadius: BorderRadius.circular(13),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 8,
+                          horizontal: 4,
+                        ),
+                        child: Column(
+                          children: [
+                            Text(
+                              row.label,
+                              textAlign: TextAlign.center,
+                              style: theme.textTheme.labelMedium,
                             ),
-                          ),
-                          Text(value[1], style: theme.textTheme.titleLarge),
-                        ] else
-                          Text(
-                            row.value.split('\n').first,
-                            textAlign: TextAlign.center,
-                          ),
-                      ],
+                            if (row.value.length == 2) ...[
+                              Text(
+                                row.value[0],
+                                style: theme.textTheme.headlineSmall?.copyWith(
+                                  color: theme.colorScheme.onPrimaryContainer,
+                                ),
+                              ),
+                              Text(
+                                row.value[1],
+                                style: theme.textTheme.titleLarge,
+                              ),
+                            ] else
+                              Text(row.value, textAlign: TextAlign.center),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-          ],
+              ],
+            );
+          },
         ),
         for (final row in rows)
-          if (row.value.contains('\n'))
-            _Fact((
-              label: row.label,
-              value: row.value.split('\n').skip(1).join('\n'),
-            )),
+          if (row.details.isNotEmpty)
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surfaceContainer,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Flexible(
+                      child: Text(row.label, style: theme.textTheme.labelLarge),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 3,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: 3,
+                        children: [
+                          for (final detail in row.details)
+                            Text(
+                              detail,
+                              style: theme.textTheme.bodyMedium,
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
       ],
     );
   }
@@ -274,6 +345,26 @@ class _ZiweiPanelState extends State<_ZiweiPanel> {
     '亥',
   ];
   String? _selected;
+  final _detail = GlobalKey();
+
+  void _select(String branch) {
+    setState(() => _selected = branch);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final detail = _detail.currentContext;
+      if (!mounted || detail == null) return;
+      final reduced =
+          MediaQuery.disableAnimationsOf(context) ||
+          MediaQuery.accessibleNavigationOf(context);
+      unawaited(
+        Scrollable.ensureVisible(
+          detail,
+          alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+          duration: reduced ? Duration.zero : const Duration(milliseconds: 160),
+        ),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final chart = widget.chart;
@@ -292,7 +383,8 @@ class _ZiweiPanelState extends State<_ZiweiPanel> {
           orElse: () => palaces.first as Map,
         );
     final theme = Theme.of(context);
-    const cellHeight = 80.0;
+    final singleLine = MediaQuery.textScalerOf(context).scale(12);
+    final cellHeight = math.max(80.0, singleLine * 5 + 12);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -331,8 +423,7 @@ class _ZiweiPanelState extends State<_ZiweiPanel> {
                                                 .colorScheme
                                                 .surfaceContainerHigh,
                                       child: InkWell(
-                                        onTap: () =>
-                                            setState(() => _selected = branch),
+                                        onTap: () => _select(branch),
                                         child: Padding(
                                           padding: const EdgeInsets.all(4),
                                           child: Column(
@@ -387,7 +478,7 @@ class _ZiweiPanelState extends State<_ZiweiPanel> {
           ])
             if (detail[key] case final String value when value.isNotEmpty)
               (label: label, value: value),
-        ]),
+        ], key: _detail),
         const _Note('点按宫位切换详情。'),
       ],
     );

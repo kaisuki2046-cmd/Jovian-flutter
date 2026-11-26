@@ -1,7 +1,11 @@
+import 'package:flutter/services.dart';
 import 'package:jovian_divination/jovian_divination.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../ui/report_body.dart';
 import 'guide_composer.dart';
+import 'reading_reference.dart'
+    if (dart.library.js_interop) 'reading_reference_web.dart';
 
 const _methodLabels = {'tarot': '塔罗解读', 'meihua': '梅花易数解读', 'liuyao': '六爻解读'};
 
@@ -11,66 +15,256 @@ class ReadingReportView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final text = Theme.of(context).textTheme;
+    final theme = Theme.of(context);
+    final body = theme.textTheme.bodyMedium?.copyWith(height: 1.62);
+    final heading = theme.textTheme.titleMedium?.copyWith(
+      color: theme.colorScheme.primary,
+    );
     final current = report;
     return GuideAssistantMessage(
-      content: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (current is LegacyProReport) Text(current.opening),
-          for (final method in proMethods)
-            Padding(
-              padding: const EdgeInsets.only(top: 12, bottom: 5),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Semantics(
-                    header: true,
-                    child: Text(
-                      _methodLabels[method]!,
-                      style: text.titleMedium,
+      content: SelectionArea(
+        child: DefaultTextStyle.merge(
+          style: body,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            spacing: 16,
+            children: [
+              if (current is LegacyProReport)
+                _render(splitProText(current.opening)),
+              for (final method in proMethods)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  spacing: 8,
+                  children: [
+                    Semantics(
+                      header: true,
+                      child: Text(_methodLabels[method]!, style: heading),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  ...switch (current) {
-                    ProParagraphReport(:final sections) => [
-                      for (final paragraph in sections[method]!)
-                        if (paragraph.detail case final detail?)
-                          ExpansionTile(
-                            title: _marked(paragraph.text),
-                            tilePadding: EdgeInsets.zero,
-                            childrenPadding: const EdgeInsets.only(bottom: 8),
-                            expandedCrossAxisAlignment:
-                                CrossAxisAlignment.start,
-                            children: [Text(detail)],
-                          )
-                        else
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 4),
-                            child: _marked(paragraph.text),
+                    ...switch (current) {
+                      ProParagraphReport(:final sections) => [
+                        for (final (index, paragraph)
+                            in sections[method]!.indexed)
+                          _ReportParagraph(
+                            key: ValueKey((
+                              method,
+                              index,
+                              paragraph.text,
+                              paragraph.detail,
+                            )),
+                            text: paragraph.text,
+                            detail: paragraph.detail,
+                            label: '${_methodLabels[method]}第${index + 1}段详情',
                           ),
-                    ],
-                    ProTextReport(:final sections) => [
-                      _marked(sections[method]!),
-                    ],
-                    LegacyProReport(:final sections) => [
-                      _archived(sections[method]!),
-                    ],
-                  },
-                ],
-              ),
-            ),
-          if (current is LegacyProReport) ...[
-            const SizedBox(height: 12),
-            Text(current.closing),
-          ],
-        ],
+                      ],
+                      ProTextReport(:final sections) => [
+                        for (final line in sections[method]!.split('\n'))
+                          if (line.trim().isNotEmpty)
+                            _render(splitProText(line.trim())),
+                      ],
+                      LegacyProReport(:final sections) => [
+                        _archived(sections[method]!),
+                      ],
+                    },
+                  ],
+                ),
+              if (current is LegacyProReport)
+                _render(splitProText(current.closing)),
+            ],
+          ),
+        ),
       ),
     );
   }
 }
 
-Widget _marked(String text) => _render(splitProText(text));
+class _ReportParagraph extends StatefulWidget {
+  const _ReportParagraph({
+    super.key,
+    required this.text,
+    required this.detail,
+    required this.label,
+  });
+
+  final String text;
+  final String? detail;
+  final String label;
+
+  @override
+  State<_ReportParagraph> createState() => _ReportParagraphState();
+}
+
+class _ReportParagraphState extends State<_ReportParagraph> {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final detail = widget.detail;
+    if (detail == null) return _render(splitProText(widget.text));
+    final colors = Theme.of(context).colorScheme;
+    final toggle = Semantics(
+      expanded: _expanded,
+      label: widget.label,
+      child: TextButton(
+        onPressed: () => setState(() => _expanded = !_expanded),
+        child: Text(_expanded ? '收起' : '展开'),
+      ),
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _render(splitProInterpretation(widget.text)),
+        if (_expanded)
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsetsDirectional.only(start: 8, top: 6),
+            padding: const EdgeInsetsDirectional.fromSTEB(10, 8, 8, 0),
+            decoration: BoxDecoration(
+              color: colors.surfaceContainerHighest,
+              border: BorderDirectional(
+                start: BorderSide(color: colors.outlineVariant, width: 2),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [_render(splitProText(detail)), toggle],
+            ),
+          )
+        else
+          toggle,
+      ],
+    );
+  }
+}
+
+class GuideFollowUpReply extends StatefulWidget {
+  const GuideFollowUpReply({
+    super.key,
+    required this.followUp,
+    required this.evidence,
+  });
+
+  final ReadingFollowUp followUp;
+  final List<ReadingEvidence> evidence;
+
+  @override
+  State<GuideFollowUpReply> createState() => _GuideFollowUpReplyState();
+}
+
+class _GuideFollowUpReplyState extends State<GuideFollowUpReply> {
+  bool _showSources = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final turn = widget.followUp;
+    final sources = [
+      for (final item in widget.evidence)
+        if (turn.evidenceIds.contains(item.id)) item,
+    ];
+    return GuideAssistantMessage(
+      content: SelectionArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 10,
+          children: [
+            Semantics(
+              header: true,
+              child: Text(turn.answer, style: theme.textTheme.titleMedium),
+            ),
+            if (turn.explanation case final explanation?)
+              ReportBody(explanation),
+            if (turn.nextSteps.isNotEmpty) ...[
+              const Divider(height: 1),
+              Semantics(
+                header: true,
+                child: Text('下一步', style: theme.textTheme.titleSmall),
+              ),
+              for (final step in turn.nextSteps) Text('• $step'),
+            ],
+            if (sources.isNotEmpty) ...[
+              Semantics(
+                expanded: _showSources,
+                child: TextButton(
+                  onPressed: () => setState(() => _showSources = !_showSources),
+                  child: Text(_showSources ? '收起解读依据' : '查看解读依据'),
+                ),
+              ),
+              if (_showSources) ...[
+                const Divider(height: 1),
+                for (final source in sources) _EvidenceSource(source: source),
+                Text(
+                  '说明为 Jovian 整理，参考链接指向原文。',
+                  style: theme.textTheme.bodySmall,
+                ),
+              ],
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _EvidenceSource extends StatelessWidget {
+  const _EvidenceSource({required this.source});
+
+  final ReadingEvidence source;
+
+  @override
+  Widget build(BuildContext context) {
+    final uri = Uri.tryParse(source.source);
+    final hasLink =
+        uri != null &&
+        uri.scheme == 'https' &&
+        uri.port == 443 &&
+        !uri.authority.contains('@') &&
+        const {'zh.wikisource.org', 'en.wikisource.org'}.contains(uri.host) &&
+        uri.path.startsWith('/wiki/');
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 4,
+      children: [
+        Text(source.label, style: Theme.of(context).textTheme.titleSmall),
+        Text(source.plain),
+        if (hasLink) ...[
+          Text(source.source, style: Theme.of(context).textTheme.bodySmall),
+          Wrap(
+            spacing: 6,
+            children: [
+              TextButton(
+                onPressed: () async {
+                  final opened = await openReadingReference(uri);
+                  if (!opened && context.mounted) {
+                    _linkFeedback(context, '暂时无法打开参考链接。');
+                  }
+                },
+                child: const Text('打开参考原文'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  try {
+                    await Clipboard.setData(ClipboardData(text: source.source));
+                    if (context.mounted) _linkFeedback(context, '已复制参考链接');
+                  } on PlatformException {
+                    if (context.mounted) {
+                      _linkFeedback(context, '无法复制链接，可以长按网址手动复制。');
+                    }
+                  }
+                },
+                child: const Text('复制参考链接'),
+              ),
+            ],
+          ),
+        ],
+      ],
+    );
+  }
+
+  void _linkFeedback(BuildContext context, String message) =>
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
+}
 
 Widget _archived(LegacyProSection section) {
   final offset = highlightOffset(section.text, section.highlight);

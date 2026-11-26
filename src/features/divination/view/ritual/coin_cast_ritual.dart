@@ -71,7 +71,7 @@ class _CoinCastRitualState extends State<CoinCastRitual>
     duration: const Duration(milliseconds: 900),
     value: 1,
   );
-  late final _feedback = CoinFeedback();
+  late final CoinFeedback _feedback;
   late List<List<int>> _recorded;
   late List<List<int>> _visibleTosses;
   var _foreground = true;
@@ -88,6 +88,7 @@ class _CoinCastRitualState extends State<CoinCastRitual>
   @override
   void initState() {
     super.initState();
+    _feedback = CoinFeedback();
     _recorded = _snapshot(widget.tosses);
     _visibleTosses = _recorded;
     final binding = WidgetsBinding.instance;

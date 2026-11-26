@@ -6,6 +6,7 @@ import '../../auth/control/account_controller.dart';
 import '../../auth/model/session.dart';
 import '../../history/view/archived_charts_page.dart';
 import '../../history/view/reports_page.dart';
+import 'profile_avatar.dart';
 import 'profile_editor_page.dart';
 
 class ProfileDashboard extends StatelessWidget {
@@ -83,6 +84,11 @@ class ProfileDashboard extends StatelessWidget {
                     ),
                   ),
                   _Identity(
+                    avatar: ProfileAvatar(
+                      key: ValueKey((account, owner?.scope)),
+                      account: account,
+                      scope: owner?.scope,
+                    ),
                     name:
                         owner?.displayName ??
                         (waiting || auth != null ? '账号与隐私' : '个人中心'),
@@ -195,6 +201,7 @@ class ProfileDashboard extends StatelessWidget {
 class _Identity extends StatelessWidget {
   const _Identity({
     required this.name,
+    required this.avatar,
     this.uid,
     this.status,
     this.bio,
@@ -203,6 +210,7 @@ class _Identity extends StatelessWidget {
   });
 
   final String name;
+  final Widget avatar;
   final String? uid;
   final String? status;
   final String? bio;
@@ -220,36 +228,7 @@ class _Identity extends StatelessWidget {
       child: Row(
         spacing: 12,
         children: [
-          Container(
-            key: const ValueKey('profile-avatar'),
-            width: 104,
-            height: 104,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: colors.primaryContainer,
-              shape: BoxShape.circle,
-              border: Border.all(color: colors.outlineVariant),
-            ),
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Icon(
-                  Icons.person_outline_rounded,
-                  size: 43,
-                  color: colors.primary,
-                ),
-                PositionedDirectional(
-                  end: -4,
-                  top: 1,
-                  child: Icon(
-                    Icons.auto_awesome,
-                    size: 14,
-                    color: colors.primary,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          avatar,
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

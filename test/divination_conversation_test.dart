@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart' show MethodChannel, SystemChannels;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
@@ -18,6 +19,7 @@ import '../src/features/divination/requests/reading_recovery.dart';
 import '../src/features/divination/view/divination_page.dart';
 import '../src/features/divination/view/composer_attachment.dart';
 import '../src/features/divination/view/guide_form.dart';
+import '../src/features/divination/view/reading_report.dart';
 import '../src/shared/http/json_client.dart';
 
 const _question = '这件事如何推进？';
@@ -25,6 +27,7 @@ const _details = '我想问这周面试后续会怎样。';
 const _explained = '可以补充一下正在考虑的具体事情吗？';
 const _concern = '梳理这次面试的后续安排。';
 const _followUp = '我接下来该准备什么？';
+const _evidenceUrl = 'https://en.wikisource.org/wiki/Jovian_fixture';
 
 void main() {
   testWidgets('composer keeps selected files local and sends only the caption', (
@@ -326,12 +329,94 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('reading paragraphs expand independently on a narrow screen', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(320, 680));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    const phrase = '可以先核实安排';
+    const summary = '目前信息仍少。$phrase。';
+    const detail = '先核实是否有下一轮面试。';
+    const otherDetail = '把可参加的时间列出来。';
+    final report = parseSavedProReport({
+      'tarot': [
+        {'text': summary, 'detail': detail},
+        {'text': '第二张牌显示还有变动。', 'detail': otherDetail},
+        {'text': '第三张牌说明可以准备。', 'detail': '整理之前的沟通内容。'},
+        {'text': '综述：稳妥推进。'},
+      ],
+      'meihua': [
+        {'text': '本卦说明还需等待。', 'detail': '及时查看新消息。'},
+        {'text': '变卦提示干扰。', 'detail': '留出时间处理变动。'},
+        {'text': '综述：留出余地。'},
+      ],
+      'liuyao': [
+        {'text': '世爻显示先观察。', 'detail': '了解对方的安排。'},
+        {'text': '应爻说明仍需沟通。', 'detail': '确认可参加的时间。'},
+        {'text': '综述：主动确认。'},
+      ],
+    });
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData.dark(),
+        home: Scaffold(
+          body: SingleChildScrollView(child: ReadingReportView(report: report)),
+        ),
+      ),
+    );
+    final styled =
+        tester.widget<Text>(find.text(summary)).textSpan! as TextSpan;
+    expect(
+      (styled.children!.singleWhere((part) => part.toPlainText() == phrase)
+              as TextSpan)
+          .style
+          ?.fontWeight,
+      FontWeight.w700,
+    );
+    await tester.tap(find.text('展开').first);
+    await tester.pumpAndSettle();
+    expect(find.text(detail), findsOneWidget);
+    expect(find.text(otherDetail), findsNothing);
+    await tester.tap(find.text('收起'));
+    await tester.pumpAndSettle();
+    expect(find.text(detail), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('history keeps cached reports after the server task expires', (
     tester,
   ) async {
+    await tester.binding.setSurfaceSize(const Size(320, 680));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
     FlutterSecureStorage.setMockInitialValues({});
     addTearDown(() => FlutterSecureStorage.setMockInitialValues({}));
-    final service = _ReadingService()..failReport = false;
+    String? copied;
+    String? opened;
+    const referenceChannel = MethodChannel('jovian/reading_reference');
+    final messenger = tester.binding.defaultBinaryMessenger;
+    messenger.setMockMethodCallHandler(referenceChannel, (call) async {
+      expect(call.method, 'open');
+      opened = call.arguments as String;
+      return true;
+    });
+    addTearDown(
+      () => messenger.setMockMethodCallHandler(referenceChannel, null),
+    );
+    messenger.setMockMethodCallHandler(SystemChannels.platform, (call) async {
+      if (call.method == 'Clipboard.setData') {
+        copied = (call.arguments as Map)['text'] as String;
+      }
+      return null;
+    });
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        null,
+      ),
+    );
+    final service = _ReadingService()
+      ..failReport = false
+      ..extendedFollowUp = true;
     final base = Uri.https('fixture.invalid');
     GuideHistoryStore store(String owner) =>
         createReadingRecovery(base, ownerScope: 'member:$owner')
@@ -345,15 +430,10 @@ void main() {
     final afterRestart = store('owner');
     expect(await afterRestart.read(), isNull);
     expect(await store('other').readHistory(), isEmpty);
-    expect(
-      (await afterRestart.readHistory())
-          .single
-          .reading
-          .followUps
-          .single
-          .question,
-      _followUp,
-    );
+    final archived = (await afterRestart.readHistory()).single.reading;
+    expect(archived.followUps.single.question, _followUp);
+    expect(archived.followUps.single.evidenceIds, ['tarot:v1:reference']);
+    expect(archived.evidence.first.catalogVersion, 1);
     service.expired = true;
     service.calls.clear();
     final restored = service.connect(afterRestart);
@@ -367,8 +447,24 @@ void main() {
     expect(service.calls, ['GET /reading']);
     expect(find.text('塔罗对照报告。'), findsOneWidget);
     expect(find.text('先确认后续时间。'), findsOneWidget);
+    expect(find.text('时间参考'), findsOneWidget);
+    expect(find.text('根据本次盘面，先跟进日程。'), findsOneWidget);
+    expect(find.text('下一步'), findsOneWidget);
     expect(find.text('这次算事已过期，可以发起新问题。'), findsOneWidget);
     expect(find.byType(TextFormField), findsNothing);
+    await _tap(tester, '查看三套盘面');
+    expect(find.text('梅花易数结果'), findsOneWidget);
+    await _tap(tester, '收起盘面');
+    expect(find.text('梅花易数结果'), findsNothing);
+    await _tap(tester, '查看解读依据');
+    expect(find.text('本次参考文献'), findsOneWidget);
+    expect(find.text('未引用文献'), findsNothing);
+    expect(opened, isNull);
+    await _tap(tester, '打开参考原文');
+    expect(opened, _evidenceUrl);
+    await _tap(tester, '复制参考链接');
+    expect(copied, _evidenceUrl);
+    expect(service.calls, ['GET /reading']);
     expect(tester.takeException(), isNull);
   });
 
@@ -461,6 +557,7 @@ class _ReadingService {
   String get _token => 'a' * 43;
   bool failReport = true;
   bool expired = false;
+  bool extendedFollowUp = false;
   Future<void>? understanding;
   final understood = <String>[];
   final calls = <String>[];
@@ -553,6 +650,10 @@ class _ReadingService {
           'report': {
             'answer': '先确认后续时间。',
             'nextSteps': ['整理面试问题。'],
+            if (extendedFollowUp) ...{
+              'explanation': '### 时间参考\n\n根据本次盘面，先跟进日程。',
+              'evidenceIds': ['tarot:v1:reference'],
+            },
           },
         });
         return _json(_state());
@@ -564,6 +665,23 @@ class _ReadingService {
   Map<String, Object?> _state() => {
     ..._ritual!.snapshot.toChartSnapshotJson(),
     'followUps': _followUps,
+    if (_hasReport && extendedFollowUp)
+      'evidence': [
+        {
+          'id': 'tarot:v1:reference',
+          'label': '本次参考文献',
+          'plain': '这是本次报告引用的说明。',
+          'source': _evidenceUrl,
+          'catalogVersion': 1,
+        },
+        {
+          'id': 'meihua:v1:unrelated',
+          'label': '未引用文献',
+          'plain': '这是未引用的说明。',
+          'source': _evidenceUrl,
+          'catalogVersion': 1,
+        },
+      ],
     if (_hasReport)
       'proReport': {
         'tarot': '塔罗对照报告。',

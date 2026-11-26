@@ -13,9 +13,26 @@ import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.MethodChannel;
 
 public final class MainActivity extends FlutterActivity {
+    private CoinAudio coinAudio;
+    private MethodChannel coinAudioChannel;
+    private MethodChannel readingReferenceChannel;
+
     @Override
     public void configureFlutterEngine(FlutterEngine flutterEngine) {
         super.configureFlutterEngine(flutterEngine);
+        coinAudio = new CoinAudio(getAssets());
+        coinAudioChannel = new MethodChannel(
+            flutterEngine.getDartExecutor().getBinaryMessenger(), "jovian/coin_audio");
+        coinAudioChannel.setMethodCallHandler(coinAudio);
+        readingReferenceChannel = new MethodChannel(
+            flutterEngine.getDartExecutor().getBinaryMessenger(), "jovian/reading_reference");
+        readingReferenceChannel.setMethodCallHandler((call, result) -> {
+            if ("open".equals(call.method)) {
+                result.success(call.arguments instanceof String && openHttpsLink((String) call.arguments));
+            } else {
+                result.notImplemented();
+            }
+        });
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), "jovian/app_updates")
             .setMethodCallHandler((call, result) -> {
                 switch (call.method) {
@@ -34,7 +51,7 @@ public final class MainActivity extends FlutterActivity {
                         }
                         break;
                     case "openDownload":
-                        result.success(call.arguments instanceof String && openDownload((String) call.arguments));
+                        result.success(call.arguments instanceof String && openHttpsLink((String) call.arguments));
                         break;
                     default:
                         result.notImplemented();
@@ -42,7 +59,21 @@ public final class MainActivity extends FlutterActivity {
             });
     }
 
-    private boolean openDownload(String url) {
+    @Override
+    protected void onPause() {
+        if (coinAudio != null) coinAudio.stop();
+        super.onPause();
+    }
+
+    @Override
+    public void cleanUpFlutterEngine(FlutterEngine flutterEngine) {
+        if (coinAudioChannel != null) coinAudioChannel.setMethodCallHandler(null);
+        if (readingReferenceChannel != null) readingReferenceChannel.setMethodCallHandler(null);
+        if (coinAudio != null) coinAudio.release();
+        super.cleanUpFlutterEngine(flutterEngine);
+    }
+
+    private boolean openHttpsLink(String url) {
         Uri uri = Uri.parse(url);
         if (!"https".equals(uri.getScheme()) || uri.getHost() == null || uri.getUserInfo() != null) {
             return false;

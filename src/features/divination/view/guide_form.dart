@@ -627,10 +627,13 @@ class _GuideFormState extends State<GuideForm>
         const SizedBox(height: 16),
         Align(
           alignment: AlignmentDirectional.centerStart,
-          child: OutlinedButton.icon(
-            onPressed: () => setState(() => _showCharts = !_showCharts),
-            icon: Icon(_showCharts ? Icons.expand_less : Icons.expand_more),
-            label: Text(_showCharts ? '收起盘面' : '查看三套盘面'),
+          child: Semantics(
+            expanded: _showCharts,
+            child: OutlinedButton.icon(
+              onPressed: () => setState(() => _showCharts = !_showCharts),
+              icon: Icon(_showCharts ? Icons.expand_less : Icons.expand_more),
+              label: Text(_showCharts ? '收起盘面' : '查看三套盘面'),
+            ),
           ),
         ),
         if (_showCharts) ...[
@@ -655,6 +658,7 @@ class _GuideFormState extends State<GuideForm>
           const SizedBox(height: 20),
           GuideFollowUpList(
             followUps: reading!.followUps,
+            evidence: reading.evidence,
             attachments: _sentFollowUpAttachments,
             localTurns: _localFollowUpTurns,
           ),

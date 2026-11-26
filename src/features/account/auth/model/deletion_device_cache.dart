@@ -1,0 +1,1 @@
+void clearLegacyAccountDeviceCache(String owner) {}

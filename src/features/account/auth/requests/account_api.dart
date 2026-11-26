@@ -364,8 +364,10 @@ class AccountApi {
 
   Future<void> signOut() async {
     await request(['auth', 'logout'], method: 'POST', authenticated: true);
-    await _nativeSession?.write(null);
+    await clearNativeSession();
   }
+
+  Future<void> clearNativeSession() async => _nativeSession?.write(null);
 
   void close() => _http.client.close();
 }

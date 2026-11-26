@@ -6,6 +6,7 @@ import '../../../../ui/theme.dart';
 import '../../settings/model/agreements.dart';
 import '../../settings/view/agreement_document_page.dart';
 import '../control/account_controller.dart';
+import 'account_deletion_page.dart';
 import 'password_security_page.dart';
 import 'phone_security_page.dart';
 
@@ -297,6 +298,23 @@ class AccountSecurityPage extends StatelessWidget {
                     ),
                   ),
                 ),
+                if (account.deletion != null)
+                  Card(
+                    child: ListTile(
+                      leading: const Icon(Icons.person_remove_outlined),
+                      title: const Text('注销账号'),
+                      subtitle: const Text('查看数据处理范围并申请注销'),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () => Navigator.of(context).push<void>(
+                        MaterialPageRoute(
+                          builder: (_) => AccountDeletionPage(
+                            account: account,
+                            owner: memberId,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
               ],
             ],
           );

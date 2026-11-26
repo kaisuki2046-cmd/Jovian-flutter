@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 
 import '../features/account/account.dart';
+import '../features/divination/divination.dart'
+    show clearMemberReadingData, memberReadingTokens;
 import '../shared/http/credentialed_client.dart'
     if (dart.library.js_interop) '../shared/http/credentialed_client_web.dart';
 import '../shared/http/json_client.dart';
@@ -21,5 +23,15 @@ AccountController? configureAccount({
         ? null
         : SecureNativeSession('jovian.account.v1.$base'),
   );
-  return AccountController(account, AgreementsApi(account));
+  return AccountController(
+    account,
+    AgreementsApi(account),
+    deletionDevice: AccountDeletionDevice(
+      receipts: SecureDeletionReceiptStorage(
+        'jovian.account.deletion.v1.$base',
+      ),
+      legacyReadingTokens: memberReadingTokens,
+      clearMemberData: clearMemberReadingData,
+    ),
+  );
 }

@@ -10,17 +10,30 @@ import '../../reading-profile/requests/account_birth_api.dart';
 import '../../settings/model/agreements.dart';
 import '../../settings/requests/agreements_api.dart';
 import '../../settings/requests/privacy_requests_api.dart';
+import '../model/account_deletion.dart';
 import '../model/password.dart';
 import '../model/session.dart';
 import '../requests/account_api.dart';
+import '../requests/account_deletion_api.dart';
 import '../requests/phone_binding_api.dart';
+import 'account_deletion_service.dart';
 import 'password_recovery_controller.dart';
 
 class AccountController extends ChangeNotifier {
-  AccountController(this._account, this._agreements);
+  AccountController(
+    this._account,
+    this._agreements, {
+    AccountDeletionDevice? deletionDevice,
+  }) : deletion = deletionDevice == null
+           ? null
+           : AccountDeletionService(
+               AccountDeletionApi(_account),
+               deletionDevice,
+             );
 
   final AccountApi _account;
   final AgreementsApi _agreements;
+  final AccountDeletionService? deletion;
   late final reports = ReportHistoryApi(_account);
   late final _birth = AccountBirthApi(_account);
   late final _profilePreview = ProfilePreviewApi(_account);
@@ -60,6 +73,47 @@ class AccountController extends ChangeNotifier {
         phone,
         keepGuest: session?.kind == AccountKind.guest,
       );
+
+  Future<DeletionSetup> prepareDeletion(String owner) =>
+      deletion!.api.prepare(owner, () => memberId == owner);
+
+  Future<PasswordSmsChallenge> issueDeletionCode(String owner) =>
+      deletion!.api.issueCode(owner, () => memberId == owner);
+
+  Future<void> deleteAccount(
+    String owner,
+    DeletionSetup setup,
+    Map<String, Object?> proof,
+  ) async {
+    final service = deletion;
+    if (service == null || memberId != owner || _busy) {
+      throw const JsonRequestError('account_changed', status: 401);
+    }
+    _busy = true;
+    _sessionChanging = true;
+    _notice = null;
+    notifyListeners();
+    try {
+      final request = SavedDeletion(receipt: setup.receipt, owner: owner);
+      await service.submit(
+        request,
+        proof,
+        () => !_closed && _session?.scope == 'member:$owner',
+      );
+      _session = null;
+      _agreementState = null;
+      try {
+        await _account.clearNativeSession();
+      } catch (_) {
+        _notice = '账号会话已失效，本机登录信息清理暂未完成。';
+      }
+      await service.clearDevice(request);
+    } finally {
+      _sessionChanging = false;
+      _busy = false;
+      if (!_closed) notifyListeners();
+    }
+  }
 
   Future<void> probeIdentityVerification(
     String memberId, {

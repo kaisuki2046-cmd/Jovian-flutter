@@ -1,4 +1,6 @@
 export 'auth/control/account_controller.dart' show AccountController;
+export 'auth/model/account_deletion.dart'
+    show AccountDeletionDevice, SecureDeletionReceiptStorage;
 export 'auth/model/secure_session.dart' show SecureNativeSession;
 export 'auth/requests/account_api.dart' show AccountApi;
 export 'auth/view/account_page.dart' show AccountPage;

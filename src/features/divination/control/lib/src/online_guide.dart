@@ -382,7 +382,7 @@ class OnlineGuideController {
     final id = _threadId;
     final record = _token == null ? null : GuideRecovery(_token!, _pending, id);
     await _recovery.write(record);
-    if (id == null) return;
+    if (id == null || _changes.isClosed) return;
     if (_historyStore case final store?) {
       await store.writeThread(id, record);
     } else if (record != null) {

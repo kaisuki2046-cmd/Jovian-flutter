@@ -2,6 +2,16 @@ import 'dart:convert';
 
 import 'package:jovian_divination/jovian_divination.dart';
 
+String? memberReadingKeySuffix(String key, String prefix, String owner) {
+  if (!key.startsWith(prefix)) return null;
+  final member = '.member:$owner';
+  if (key.endsWith(member)) return '';
+  final marker = '$member.';
+  final index = key.lastIndexOf(marker);
+  if (index < prefix.length) return null;
+  return key.substring(index + marker.length);
+}
+
 GuideHistoryEntry? decodeGuideHistory(String? text) {
   if (text == null) return null;
   try {

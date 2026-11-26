@@ -23,6 +23,43 @@ const _concern = '梳理这次面试的后续安排。';
 const _followUp = '我接下来该准备什么？';
 
 void main() {
+  test('only clears the deleted member’s native reading storage', () async {
+    const prefix = 'jovian.divination.flutter.v1.https://fixture.invalid.';
+    final token = 't' * 43;
+    final secondToken = 's' * 43;
+    final member = <String, String>{
+      '${prefix}member:alice.active': jsonEncode(GuideRecovery(token).toJson()),
+      '${prefix}member:alice.session.thread-one': jsonEncode(
+        GuideRecovery(secondToken).toJson(),
+      ),
+      '${prefix}member:alice.history.thread-one': 'history',
+      '${prefix}member:alice.index': '["thread-one"]',
+    };
+    final other = <String, String>{
+      '${prefix}member:alice-other.active': jsonEncode(
+        GuideRecovery('u' * 43).toJson(),
+      ),
+      '${prefix}guest:alice.history.thread-one': 'guest history',
+      'jovian.ui.theme.v1': 'dark',
+    };
+    FlutterSecureStorage.setMockInitialValues({...member, ...other});
+    addTearDown(() => FlutterSecureStorage.setMockInitialValues({}));
+    expect(
+      await memberReadingTokens('alice'),
+      unorderedEquals([token, secondToken]),
+    );
+    final recovery = createReadingRecovery(
+      Uri.https('fixture.invalid'),
+      ownerScope: 'member:alice',
+    );
+    await Future.wait([
+      recovery.write(GuideRecovery(secondToken)),
+      clearMemberReadingData('alice'),
+    ]);
+    expect(await const FlutterSecureStorage().readAll(), other);
+    expect(await memberReadingTokens('alice'), isEmpty);
+  });
+
   testWidgets(
     'online conversation uses the existing reading contract at 320 pixels',
     (tester) async {

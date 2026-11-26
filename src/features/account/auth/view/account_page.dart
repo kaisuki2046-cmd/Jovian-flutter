@@ -9,6 +9,7 @@ import '../../settings/view/agreement_document_page.dart';
 import '../control/account_controller.dart';
 import '../model/password.dart';
 import '../model/session.dart';
+import 'deletion_receipt_notice.dart';
 import 'password_recovery_dialog.dart';
 
 class AccountPage extends StatefulWidget {
@@ -79,6 +80,9 @@ class _AccountPageState extends State<AccountPage> {
                     padding: statusPadding,
                     child: Semantics(liveRegion: true, child: Text(message)),
                   ),
+                if (_account.deletion case final deletion?
+                    when _account.restored && session == null)
+                  DeletionReceiptNotice(service: deletion),
                 if ((_account.catalog == null ||
                         _account.capabilities == null ||
                         (session != null && _account.agreementState == null) ||

@@ -7,6 +7,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../src/app/main.dart';
 import '../src/features/account/account.dart';
+import '../src/features/account/auth/model/account_deletion.dart';
 import '../src/features/account/settings/model/agreements.dart';
 import '../src/shared/http/json_client.dart';
 
@@ -24,7 +25,147 @@ Map<String, Object?> _document(String id, String title) => {
   ],
 };
 
+class _DeletionStorage implements DeletionReceiptStorage {
+  SavedDeletion? latest;
+
+  @override
+  Future<SavedDeletion?> read() async => latest;
+
+  @override
+  Future<void> write(SavedDeletion? receipt) async => latest = receipt;
+}
+
 void main() {
+  testWidgets('confirmed account deletion can recover from a lost response', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(360, 800);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPhysicalSize);
+    const owner = 'fixture-owner';
+    final receipt = 'r' * 43;
+    final token = 't' * 43;
+    final storage = _DeletionStorage();
+    var accepted = false;
+    var completed = false;
+    var attempts = 0;
+    var cleanup = 0;
+    final api = AccountApi(
+      JsonHttpClient(
+        base: Uri.parse('https://account.example.test'),
+        client: MockClient((request) async {
+          switch ('${request.method} ${request.url.path}') {
+            case 'GET /account/session':
+              return accepted
+                  ? _json({}, 401)
+                  : _json({
+                      'user': {
+                        'id': owner,
+                        'displayName': '测试会员',
+                        'hasPassword': true,
+                      },
+                    });
+            case 'GET /account/auth/capabilities':
+              return _json({});
+            case 'GET /account/agreements/catalog':
+              return _json({
+                'documents': [
+                  _document('terms', '用户服务协议'),
+                  _document('privacy', '隐私政策'),
+                  _document('ai', 'AI 数据共享告知'),
+                ],
+              });
+            case 'GET /account/agreements':
+              return _json({
+                'requiredAccepted': true,
+                'permissions': {for (final key in aiPurposes.keys) key: false},
+              });
+            case 'GET /social/me':
+              return _json({'followingCount': 0, 'followerCount': 0});
+            case 'GET /account/deletion':
+              return _json({'receipt': receipt, 'method': 'password'});
+            case 'POST /account/deletion':
+              expect(storage.latest?.receipt, receipt);
+              final input = jsonDecode(request.body) as Map<String, Object?>;
+              expect(input['confirm'], true);
+              expect(input['legacyReadingTokens'], [token]);
+              expect(input['receipt'], receipt);
+              attempts++;
+              if (input['password'] == 'wrong') return _json({}, 422);
+              expect(input['password'], 'fixture-password');
+              accepted = true;
+              return _json({}, 503);
+            case 'POST /account/deletion/status':
+              expect(jsonDecode(request.body), {'receipt': receipt});
+              return accepted
+                  ? _json({
+                      'status': completed ? 'completed' : 'pending',
+                      'requestedAt': 1,
+                      'completedAt': completed ? 2 : null,
+                    })
+                  : _json({}, 404);
+            default:
+              return _json({}, 404);
+          }
+        }),
+      ),
+    );
+    final account = AccountController(
+      api,
+      AgreementsApi(api),
+      deletionDevice: AccountDeletionDevice(
+        receipts: storage,
+        legacyReadingTokens: (id) async {
+          expect(id, owner);
+          return [token, token, 'invalid'];
+        },
+        clearMemberData: (id) async {
+          expect(id, owner);
+          expect(accepted, isTrue);
+          cleanup++;
+          if (cleanup < 3) throw StateError('test device storage unavailable');
+        },
+      ),
+    );
+    await tester.pumpWidget(
+      JovianApp(account: account, initialTab: JovianTab.account),
+    );
+    await tester.pumpAndSettle();
+    Future<void> tap(Finder finder) async {
+      await tester.ensureVisible(finder);
+      await tester.tap(finder);
+      await tester.pumpAndSettle();
+    }
+
+    await tap(find.byTooltip('设置'));
+    await tap(find.text('账户与安全'));
+    await tap(find.text('注销账号'));
+    final password = find.widgetWithText(TextField, '当前密码');
+    final submit = find.widgetWithText(FilledButton, '确认注销账号');
+    await tester.enterText(password, 'wrong');
+    await tester.pumpAndSettle();
+    expect(tester.widget<FilledButton>(submit).onPressed, isNull);
+    expect(attempts, 0);
+    await tap(find.text('我了解注销影响并确认申请'));
+    await tap(submit);
+    expect(find.text('身份验证失败，请核对密码或验证码。'), findsOneWidget);
+    expect(cleanup, 0);
+    await tester.enterText(password, 'fixture-password');
+    await tap(submit);
+    expect(attempts, 2);
+    expect(account.session, isNull);
+    expect(find.text('账号已退出，关联数据正在清理。'), findsOneWidget);
+    expect(find.text('本机记录清理未完成，请重试。'), findsOneWidget);
+    completed = true;
+    await tap(find.text('刷新注销状态'));
+    expect(find.text('账号注销已完成。'), findsOneWidget);
+    expect(storage.latest?.deviceCleared, true);
+    await tap(find.text('知道了'));
+    expect(storage.latest, isNull);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('recovers with a bound phone and returns to password sign-in', (
     tester,
   ) async {

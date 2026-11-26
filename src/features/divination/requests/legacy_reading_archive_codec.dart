@@ -85,6 +85,7 @@ LegacyGuideMessage? _message(
     _ => null,
   };
   if (kind == null) return null;
+  final sentAt = _milliseconds(raw['sentAt']);
 
   String? focus;
   String? error;
@@ -119,7 +120,7 @@ LegacyGuideMessage? _message(
       text = _nonEmpty(snapshot['question']);
       final version = snapshot['ruleVersion'];
       final snapshotId = 'rn-$chatId-$id';
-      final time = _milliseconds(raw['sentAt']) ?? threadTime;
+      final time = sentAt ?? threadTime;
       if (version == guideVersion && snapshot['method'] == 'combined') {
         reading = decodeGuideHistory(
           jsonEncode({
@@ -139,6 +140,7 @@ LegacyGuideMessage? _message(
   return (
     id: id,
     kind: kind,
+    sentAt: sentAt,
     text: text,
     focus: focus,
     error: error,

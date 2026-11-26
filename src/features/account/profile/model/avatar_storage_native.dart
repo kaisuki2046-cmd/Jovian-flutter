@@ -3,6 +3,8 @@ import 'dart:typed_data';
 
 import 'package:path_provider/path_provider.dart';
 
+import 'legacy_android_profile.dart';
+
 Future<File> _avatarFile(String key) async {
   final support = await getApplicationSupportDirectory();
   final slash = Platform.pathSeparator;
@@ -15,7 +17,17 @@ Future<Uint8List?> readAvatarDevice(String key) async {
     if (await file.length() > 512 * 1024) return null;
     return await file.readAsBytes();
   } on PathNotFoundException {
-    return null;
+    final name = await readLegacyAndroidProfile(key);
+    if (name == null) return null;
+    final directory = file.parent.parent;
+    final slash = Platform.pathSeparator;
+    final legacy = File('${directory.path}${slash}jovian-avatars$slash$name');
+    try {
+      if (await legacy.length() > 12 * 1024 * 1024) return null;
+      return await legacy.readAsBytes();
+    } on PathNotFoundException {
+      return null;
+    }
   }
 }
 
@@ -23,6 +35,7 @@ Future<void> writeAvatarDevice(String key, Uint8List? bytes) async {
   final file = await _avatarFile(key);
   final temporary = File('${file.path}.new');
   if (bytes == null) {
+    await clearLegacyAndroidProfile(key);
     await _delete(file);
     await _delete(temporary);
     return;

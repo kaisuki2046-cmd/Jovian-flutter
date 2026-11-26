@@ -392,6 +392,7 @@ class _AvatarCircle extends StatelessWidget {
               width: diameter,
               height: diameter,
               fit: BoxFit.cover,
+              cacheWidth: 320,
               excludeFromSemantics: true,
               errorBuilder: (_, _, _) => fallback,
             ),

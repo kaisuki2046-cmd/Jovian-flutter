@@ -2,29 +2,75 @@ package com.jovian.preview;
 
 import android.content.Context;
 import android.util.Base64;
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.KeyStore;
+import java.util.regex.Pattern;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/** Reads the device preferences written by this app's Expo SecureStore 58 client. */
+/** Reads this app's legacy device preferences and account profile fields. */
 final class LegacyPreferences {
-    private static final String RECORD = "key_v1-jovian.preferences.v1";
+    private static final String RECORD_PREFIX = "key_v1-";
+    private static final String AVATAR_PREFIX = "jovian.avatar.v1.";
+    private static final Pattern PROFILE_KEY = Pattern.compile(
+        "jovian\\.(?:avatar|profile-details)\\.v1\\."
+        + "(?:6d-65-6d-62-65-72|67-75-65-73-74)-3a(?:-[0-9a-f]{1,6}){1,128}");
     private static final String CIPHER = "AES/GCM/NoPadding";
     private static final String ALIAS = CIPHER + ":key_v1:keystoreUnauthenticated";
 
     private LegacyPreferences() {}
 
     static String read(Context context) {
+        return readRecord(context, "jovian.preferences.v1");
+    }
+
+    static String readProfile(Context context, String key) {
+        if (!PROFILE_KEY.matcher(key).matches()) return null;
+        String value = readRecord(context, key);
+        if (!key.startsWith(AVATAR_PREFIX)) return value;
+        File avatar = avatarFile(context, value);
+        return avatar == null ? null : avatar.getName();
+    }
+
+    static boolean clearProfile(Context context, String key) {
+        if (!PROFILE_KEY.matcher(key).matches()) return false;
+        if (key.startsWith(AVATAR_PREFIX)) {
+            File avatar = avatarFile(context, readRecord(context, key));
+            if (avatar != null && avatar.isFile() && !avatar.delete()) return false;
+        }
+        var preferences = context.getSharedPreferences("SecureStore", Context.MODE_PRIVATE);
+        String record = RECORD_PREFIX + key;
+        return !preferences.contains(record) || preferences.edit().remove(record).commit();
+    }
+
+    private static File avatarFile(Context context, String value) {
+        if (value == null) return null;
+        try {
+            File files = context.getFilesDir().getCanonicalFile();
+            File directory = new File(files, "jovian-avatars");
+            File avatar = new File(URI.create(value));
+            String name = avatar.getName();
+            if (!name.matches("[a-z0-9]+-[a-z0-9]*\\.[a-zA-Z0-9]{1,10}")) return null;
+            File expected = new File(directory, name);
+            return expected.equals(avatar.getCanonicalFile())
+                    && expected.equals(expected.getCanonicalFile()) ? expected : null;
+        } catch (IOException | IllegalArgumentException | SecurityException ignored) {
+            return null;
+        }
+    }
+
+    private static String readRecord(Context context, String preferenceKey) {
         try {
             String raw = context.getSharedPreferences("SecureStore", Context.MODE_PRIVATE)
-                .getString(RECORD, null);
+                .getString(RECORD_PREFIX + preferenceKey, null);
             if (raw == null || raw.length() > 4096) return null;
             JSONObject record = new JSONObject(raw);
             if (!"aes".equals(record.optString("scheme"))

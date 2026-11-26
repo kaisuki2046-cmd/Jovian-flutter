@@ -60,6 +60,7 @@ enum LegacyGuideMessageKind { user, assistant, preview, question, reading }
 typedef LegacyGuideMessage = ({
   int id,
   LegacyGuideMessageKind kind,
+  DateTime? sentAt,
   String text,
   String? focus,
   String? error,

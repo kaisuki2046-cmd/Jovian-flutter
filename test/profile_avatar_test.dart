@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../src/features/account/profile/control/profile_photo.dart';
 import '../src/features/account/profile/model/avatar_storage.dart';
+import '../src/features/account/profile/model/profile_device_scope.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -50,6 +52,66 @@ void main() {
         decodeProfilePhoto(Uint8List(12 * 1024 * 1024 + 1)),
         throwsFormatException,
       );
+    },
+  );
+
+  test(
+    'Android restores only the current avatar and clears it on reset',
+    () async {
+      final root = await Directory.systemTemp.createTemp('jovian-rn-avatar-');
+      final slash = Platform.pathSeparator;
+      final legacy = await Directory(
+        '${root.path}${slash}jovian-avatars',
+      ).create();
+      final original = File('${legacy.path}${slash}abc-123.jpg');
+      final image = Uint8List.fromList([7, 8, 9]);
+      await original.writeAsBytes(image);
+      const paths = MethodChannel('plugins.flutter.io/path_provider');
+      const channel = MethodChannel('jovian/legacy_preferences');
+      final messenger =
+          TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      addTearDown(() async {
+        debugDefaultTargetPlatformOverride = null;
+        messenger.setMockMethodCallHandler(paths, null);
+        messenger.setMockMethodCallHandler(channel, null);
+        await root.delete(recursive: true);
+      });
+      messenger.setMockMethodCallHandler(paths, (call) async {
+        expect(call.method, 'getApplicationSupportDirectory');
+        return root.path;
+      });
+      final ownerKey = profileDeviceKey('member:1', 'avatar');
+      var legacyReads = 0;
+      messenger.setMockMethodCallHandler(channel, (call) async {
+        switch (call.method) {
+          case 'readProfile':
+            legacyReads++;
+            return call.arguments == ownerKey && await original.exists()
+                ? 'abc-123.jpg'
+                : null;
+          case 'clearProfile':
+            expect(call.arguments, ownerKey);
+            await original.delete();
+            return true;
+          default:
+            fail('Unexpected method ${call.method}');
+        }
+      });
+
+      const store = ProfileAvatarStore();
+      expect(await store.read('member:1'), image);
+      expect(await store.read('guest:1'), isNull);
+      expect(await store.read('member:2'), isNull);
+      final newer = Uint8List.fromList([3, 4, 5]);
+      expect(await store.save('member:1', newer, () => true), isTrue);
+      expect(await store.read('member:1'), newer);
+      expect(legacyReads, 3);
+      expect(await original.exists(), isTrue);
+
+      expect(await store.save('member:1', null, () => true), isTrue);
+      expect(await store.read('member:1'), isNull);
+      expect(await original.exists(), isFalse);
     },
   );
 

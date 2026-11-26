@@ -18,8 +18,10 @@ import '../src/features/divination/view/divination_page.dart';
 import '../src/features/divination/view/composer_attachment.dart';
 import '../src/features/divination/view/composer_attachment_view.dart';
 import '../src/features/divination/view/guide_composer.dart';
+import '../src/features/divination/view/guide_conversation.dart';
 import '../src/features/divination/view/guide_form.dart';
 import '../src/features/divination/view/reading_report.dart';
+import '../src/ui/chat_time_label.dart';
 
 import 'support/divination_service_fixture.dart';
 
@@ -534,6 +536,19 @@ void main() {
     await tester.pump();
 
     expect(find.text('正在理解你的问题…'), findsOneWidget);
+    expect(
+      tester.widget<ChatTimeLabel>(find.byType(ChatTimeLabel)).sentAt,
+      online.activeTranscript.single.sentAt,
+    );
+    final pendingBubble = find.widgetWithText(
+      GuideQuestionBubble,
+      divinationFixtureDetails,
+    );
+    expect(pendingBubble, findsOneWidget);
+    expect(
+      tester.getBottomLeft(find.byType(ChatTimeLabel)).dy,
+      lessThanOrEqualTo(tester.getTopLeft(pendingBubble).dy),
+    );
     expect(service.calls, ['POST /reading/understand']);
     await tester.tap(find.byTooltip('停止'));
     await tester.pumpAndSettle();
@@ -610,6 +625,11 @@ void main() {
       final conversation = initial.activeConversationId;
       expect(conversation, isNotNull);
       expect(initial.history, isEmpty);
+      final sentAt = initial.activeTranscript.single.sentAt;
+      expect(
+        tester.widget<ChatTimeLabel>(find.byType(ChatTimeLabel)).sentAt,
+        sentAt,
+      );
       await tester.pumpWidget(const SizedBox.shrink());
       initial.dispose();
 
@@ -619,6 +639,10 @@ void main() {
       await tester.pumpWidget(_app(restored));
       await tester.pumpAndSettle();
       expect(restored.activeConversationId, conversation);
+      expect(
+        tester.widget<ChatTimeLabel>(find.byType(ChatTimeLabel)).sentAt,
+        sentAt,
+      );
       expect(find.text(divinationFixtureQuestion), findsOneWidget);
       expect(find.text(divinationFixtureClarification), findsOneWidget);
       expect(service.calls, isEmpty);
@@ -648,6 +672,56 @@ void main() {
       await tester.tap(find.byTooltip('暂停仪式'));
       await tester.pumpAndSettle();
       expect(find.text(divinationFixtureClarification), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
+    'a restored earlier reading keeps its time next to its question',
+    (tester) async {
+      final service = DivinationServiceFixture()..failReport = false;
+      final recovery = DivinationRecoveryFixture();
+      final initial = service.connect(recovery);
+      const earlier = '原来这个面试还有下一轮吗？';
+      const later = '大概要等多久才有消息？';
+      await initial.start(earlier, automatic: true);
+      final earlierRecovery = (await recovery.read())!;
+      await initial.nextQuestion();
+      await initial.start(later, automatic: false);
+      final started = DateTime(2026, 11, 27, 11, 20);
+      for (final (index, turn) in initial.activeTranscript.indexed) {
+        await recovery.writeTranscriptTurn((
+          id: turn.id,
+          conversationId: turn.conversationId,
+          sentAt: started.add(Duration(minutes: index * 2)),
+          question: turn.question,
+          reply: turn.reply,
+          clarificationQuestion: turn.clarificationQuestion,
+          previousQuestion: turn.previousQuestion,
+          readingId: turn.readingId,
+        ));
+      }
+      await recovery.write(earlierRecovery);
+      initial.dispose();
+      service.expired = true;
+      final restored = service.connect(recovery);
+      addTearDown(restored.dispose);
+      await tester.pumpWidget(_app(restored));
+      await tester.pumpAndSettle();
+
+      expect(restored.reading?.snapshot.question, earlier);
+      final stamp = find.byType(ChatTimeLabel);
+      expect(tester.widget<ChatTimeLabel>(stamp).sentAt, started);
+      final earlierBubble = find.widgetWithText(GuideQuestionBubble, earlier);
+      final laterBubble = find.widgetWithText(GuideQuestionBubble, later);
+      expect(
+        tester.getTopLeft(stamp).dy,
+        greaterThan(tester.getBottomLeft(laterBubble).dy),
+      );
+      expect(
+        tester.getBottomLeft(stamp).dy,
+        lessThanOrEqualTo(tester.getTopLeft(earlierBubble).dy),
+      );
       expect(tester.takeException(), isNull);
     },
   );

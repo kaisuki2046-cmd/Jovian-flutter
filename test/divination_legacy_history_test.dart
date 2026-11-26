@@ -6,6 +6,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../src/features/divination/requests/legacy_reading_archive_codec.dart';
 import '../src/features/divination/view/divination_page.dart';
+import '../src/ui/chat_time_label.dart';
 import 'support/divination_service_fixture.dart';
 
 Map<String, Object> _report(String answer) => {
@@ -50,10 +51,15 @@ Map<String, Object> _thread(
   'messages': messages,
 };
 
-Map<String, Object> _reading(int id, Map<String, Object?> snapshot) => {
+Map<String, Object> _reading(
+  int id,
+  Map<String, Object?> snapshot, {
+  int? sentAt,
+}) => {
   'id': id,
   'kind': 'readingSession',
   'snapshot': snapshot,
+  if (sentAt != null) 'sentAt': sentAt,
 };
 
 class _LegacyRecovery extends DivinationRecoveryFixture
@@ -97,6 +103,7 @@ void main() {
               'id': 12,
               'kind': 'user',
               'text': '原来问的是工作。',
+              'sentAt': 1700000000000,
               'attachments': [
                 {
                   'id': 'attachment-one',
@@ -111,13 +118,14 @@ void main() {
               'id': 7,
               'kind': 'readingQuestion',
               'question': '原版确认卡的问题？',
+              'sentAt': 1700000240000,
               'understanding': {'focus': '旧提问重点', 'proof': 'do-not-import'},
               'error': '原版记录的确认错误。',
             },
             _reading(3, {
               ..._snapshot('tarot', 'rws-three-card-v1', '之前的单项塔罗'),
               'draw': chart.tarot.toJson(),
-            }),
+            }, sentAt: 1700000540000),
             {'id': 9, 'kind': 'preview', 'text': '原来聊过的模拟结果。'},
             _reading(10, {
               ...oldCombined,
@@ -165,6 +173,12 @@ void main() {
         16,
       ]);
       expect(mixed.messages.first.attachmentNames, ['旧笔记.txt']);
+      expect(
+        mixed.messages
+            .take(4)
+            .map((message) => message.sentAt?.millisecondsSinceEpoch),
+        [1700000000000, null, 1700000240000, 1700000540000],
+      );
       expect(mixed.messages[2].error, '原版记录的确认错误。');
       final combined = mixed.messages[5].archive!;
       expect(combined.report?.answer, '存档时的判断。');
@@ -208,6 +222,12 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('原来问的是工作。'), findsOneWidget);
+      expect(
+        tester
+            .widgetList<ChatTimeLabel>(find.byType(ChatTimeLabel))
+            .map((widget) => widget.sentAt.millisecondsSinceEpoch),
+        [1700000000000, 1700000540000],
+      );
       expect(find.text('旧笔记.txt'), findsOneWidget);
       expect(find.text('file:///not-to-be-opened.txt'), findsNothing);
       expect(find.text('do-not-import'), findsNothing);
@@ -235,6 +255,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('我有个还没有说清楚的问题。'), findsOneWidget);
       expect(find.text('可以补充实际遇到的情况吗？'), findsOneWidget);
+      expect(find.byType(ChatTimeLabel), findsNothing);
       expect(find.byType(TextFormField), findsNothing);
       expect(service.calls, isEmpty);
       await tester.tap(back);

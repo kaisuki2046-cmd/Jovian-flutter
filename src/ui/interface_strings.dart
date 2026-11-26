@@ -9,6 +9,7 @@ const englishInterfaceStrings = <String, String>{
   "设置密码": "Create a password",
   "确认密码": "Confirm password",
   "今天": "Today",
+  "昨天": "Yesterday",
   "添加图片": "Add image",
   "快捷提问": "Quick question",
   "消息": "Messages",

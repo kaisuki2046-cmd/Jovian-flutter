@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -37,6 +39,61 @@ void main() {
         ProfileTag.interests: '登山',
       });
       expect((await store.read(guest)).signature, isEmpty);
+    },
+  );
+
+  test(
+    'Android reads older details until Flutter saves a scoped update',
+    () async {
+      FlutterSecureStorage.setMockInitialValues({});
+      const legacy = MethodChannel('jovian/legacy_preferences');
+      final messenger =
+          TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      addTearDown(() {
+        debugDefaultTargetPlatformOverride = null;
+        messenger.setMockMethodCallHandler(legacy, null);
+      });
+      final values = <String, String>{
+        originalKey: jsonEncode({
+          'signature': '旧签名',
+          'tags': {'zodiac': '旧星座'},
+        }),
+        profileDeviceKey(guest, 'profile-details'): jsonEncode({
+          'signature': '游客签名',
+        }),
+      };
+      var reads = 0;
+      messenger.setMockMethodCallHandler(legacy, (call) async {
+        final key = call.arguments as String;
+        switch (call.method) {
+          case 'readProfile':
+            reads++;
+            return values[key];
+          case 'clearProfile':
+            expect(key, originalKey);
+            values.remove(key);
+            return true;
+          default:
+            fail('Unexpected method ${call.method}');
+        }
+      });
+
+      expect((await store.read(member)).signature, '旧签名');
+      expect((await store.read(guest)).signature, '游客签名');
+      expect((await store.read('member:2')).signature, isEmpty);
+      final saved = await store.save(
+        member,
+        isCurrent: () => true,
+        signature: '新签名',
+      );
+      expect(saved?.tags[ProfileTag.zodiac], '旧星座');
+      expect((await store.read(member)).signature, '新签名');
+      expect(reads, 4);
+
+      await clearMemberProfileDetails('1');
+      expect((await store.read(member)).signature, isEmpty);
+      expect((await store.read(guest)).signature, '游客签名');
     },
   );
 

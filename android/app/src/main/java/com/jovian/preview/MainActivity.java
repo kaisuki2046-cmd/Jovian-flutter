@@ -11,6 +11,7 @@ import java.util.Map;
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugin.common.StandardMethodCodec;
 
 public final class MainActivity extends FlutterActivity {
     private CoinAudio coinAudio;
@@ -51,13 +52,24 @@ public final class MainActivity extends FlutterActivity {
                 result.notImplemented();
             }
         });
-        legacyPreferencesChannel = new MethodChannel(
-            flutterEngine.getDartExecutor().getBinaryMessenger(), "jovian/legacy_preferences");
+        var messenger = flutterEngine.getDartExecutor().getBinaryMessenger();
+        legacyPreferencesChannel = new MethodChannel(messenger, "jovian/legacy_preferences",
+            StandardMethodCodec.INSTANCE, messenger.makeBackgroundTaskQueue());
         legacyPreferencesChannel.setMethodCallHandler((call, result) -> {
-            if ("read".equals(call.method)) {
-                result.success(LegacyPreferences.read(this));
-            } else {
-                result.notImplemented();
+            switch (call.method) {
+                case "read":
+                    result.success(LegacyPreferences.read(this));
+                    break;
+                case "readProfile":
+                    result.success(call.arguments instanceof String key
+                        ? LegacyPreferences.readProfile(this, key) : null);
+                    break;
+                case "clearProfile":
+                    result.success(call.arguments instanceof String key
+                        && LegacyPreferences.clearProfile(this, key));
+                    break;
+                default:
+                    result.notImplemented();
             }
         });
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), "jovian/app_updates")

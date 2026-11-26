@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:jovian_divination/jovian_divination.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../ui/chat_time_label.dart';
 import '../../../ui/interface_language.dart';
 
 import 'composer_attachment.dart';
@@ -509,13 +510,6 @@ class _GuideFormState extends State<GuideForm>
             const SizedBox(height: 12),
           ],
           ..._conversation(),
-          if (_pendingQuestion case final submitted?) ...[
-            GuideQuestionBubble(
-              submitted.text,
-              attachments: submitted.attachments,
-            ),
-            const SizedBox(height: 12),
-          ],
           ..._feedback(),
           if (welcome)
             GuideSuggestions(select: busy ? null : _setSuggestedQuestion),
@@ -558,8 +552,7 @@ class _GuideFormState extends State<GuideForm>
     latestMessage: _latestMessage,
     sentRevision: _sentRevision,
     messages: [
-      ..._conversation(),
-      ..._questionContext(ritual),
+      ..._conversation(ritual: ritual),
       ..._feedback(),
       if (widget.online?.canContinue != false)
         Align(
@@ -577,9 +570,25 @@ class _GuideFormState extends State<GuideForm>
     ],
   );
 
-  List<Widget> _conversation() {
+  List<Widget> _conversation({GuideRitualSnapshot? ritual}) {
     final online = widget.online;
     final turns = online?.activeTranscript ?? const <GuideTranscriptTurn>[];
+    final stamps = chatTimeLabels(turns.map((turn) => turn.sentAt));
+    final activeId = online?.activeHistoryId;
+    final activeIndex = ritual == null || activeId == null
+        ? -1
+        : turns.lastIndexWhere((turn) => turn.readingId == activeId);
+    final pending = ritual == null ? _pendingQuestion : null;
+    final last = turns.lastOrNull;
+    // The optimistic bubble displays the matching stored turn with its local attachments.
+    final pendingIndex =
+        pending != null &&
+            last != null &&
+            last.reply == null &&
+            last.readingId == null &&
+            last.question == pending.text
+        ? turns.length - 1
+        : -1;
     return [
       for (var index = 0; index <= turns.length; index++) ...[
         for (final turn in _localQuestionTurns.where(
@@ -588,24 +597,30 @@ class _GuideFormState extends State<GuideForm>
           GuideQuestionBubble('', attachments: turn.attachments),
           const SizedBox(height: 12),
         ],
-        if (index < turns.length && _shownInTranscript(turns, index, online))
+        if (index < turns.length &&
+            index != activeIndex &&
+            index != pendingIndex) ...[
+          if (stamps[index] case final sentAt?) ChatTimeLabel(sentAt: sentAt),
           ..._transcriptTurn(turns[index], online),
+        ],
+      ],
+      if (ritual != null) ...[
+        if (activeIndex >= 0)
+          if (stamps[activeIndex] case final sentAt?)
+            ChatTimeLabel(sentAt: sentAt),
+        ..._questionContext(
+          ritual,
+          activeIndex >= 0 ? turns[activeIndex].question : ritual.question,
+        ),
+      ],
+      if (pending != null) ...[
+        if (pendingIndex >= 0)
+          if (stamps[pendingIndex] case final sentAt?)
+            ChatTimeLabel(sentAt: sentAt),
+        GuideQuestionBubble(pending.text, attachments: pending.attachments),
+        const SizedBox(height: 12),
       ],
     ];
-  }
-
-  bool _shownInTranscript(
-    List<GuideTranscriptTurn> turns,
-    int index,
-    OnlineGuideController? online,
-  ) {
-    final turn = turns[index];
-    if (turn.readingId != null)
-      return turn.readingId != online?.activeHistoryId;
-    // The optimistic bubble already displays this unacknowledged turn.
-    return index < turns.length - 1 ||
-        turn.reply != null ||
-        turn.question != _pendingQuestion?.text;
   }
 
   List<Widget> _transcriptTurn(
@@ -638,15 +653,11 @@ class _GuideFormState extends State<GuideForm>
     ];
   }
 
-  List<Widget> _questionContext(GuideRitualSnapshot ritual) => [
-    GuideQuestionBubble(
-      widget.online?.activeTranscript
-              .where((turn) => turn.readingId == widget.online?.activeHistoryId)
-              .lastOrNull
-              ?.question ??
-          ritual.question,
-      attachments: _readingAttachments,
-    ),
+  List<Widget> _questionContext(
+    GuideRitualSnapshot ritual,
+    String question,
+  ) => [
+    GuideQuestionBubble(question, attachments: _readingAttachments),
     if (ritual.focus.trim().isNotEmpty && ritual.focus != ritual.question) ...[
       const SizedBox(height: 8),
       GuideConversationReply(heading: '确认的关注点', body: ritual.focus),
@@ -676,8 +687,7 @@ class _GuideFormState extends State<GuideForm>
       latestMessage: _latestMessage,
       sentRevision: _sentRevision,
       messages: [
-        ..._conversation(),
-        ..._questionContext(ritual),
+        ..._conversation(ritual: ritual),
         if (!hasReport) ..._feedback(),
         if (online != null && busy && !hasReport)
           const GuideConversationReply(body: '正在解读…'),

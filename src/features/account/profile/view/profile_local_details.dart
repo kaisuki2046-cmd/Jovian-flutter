@@ -83,7 +83,9 @@ class _ProfileLocalDetailsState extends State<ProfileLocalDetails> {
     return FutureBuilder<LocalProfileDetails>(
       future: current ? _details : null,
       builder: (context, snapshot) {
-        final details = current ? snapshot.data : null;
+        final ready =
+            current && snapshot.connectionState == ConnectionState.done;
+        final details = ready ? snapshot.data : null;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -94,7 +96,7 @@ class _ProfileLocalDetailsState extends State<ProfileLocalDetails> {
                   ? null
                   : (tab) => _edit(scope, details, tab),
             ),
-            if (current && snapshot.hasError)
+            if (ready && snapshot.hasError)
               Align(
                 alignment: AlignmentDirectional.centerStart,
                 child: TextButton(

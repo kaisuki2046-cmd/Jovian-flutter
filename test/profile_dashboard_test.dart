@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
@@ -164,7 +165,14 @@ Widget _app(
 );
 
 void main() {
-  setUp(() => FlutterSecureStorage.setMockInitialValues({}));
+  const legacyProfile = MethodChannel('jovian/legacy_preferences');
+  setUp(() {
+    FlutterSecureStorage.setMockInitialValues({});
+    final messenger =
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+    messenger.setMockMethodCallHandler(legacyProfile, (_) async => null);
+    addTearDown(() => messenger.setMockMethodCallHandler(legacyProfile, null));
+  });
 
   testWidgets(
     'preserves the original narrow layout, real counts, UID copying, and shortcuts',
@@ -245,12 +253,15 @@ void main() {
     'local signature and tags stay with their identity on a narrow dashboard',
     (tester) async {
       final key = profileDeviceKey('member:$_memberId', 'profile-details');
-      FlutterSecureStorage.setMockInitialValues({
-        key: jsonEncode({
-          'signature': '旧本机签名',
-          'tags': {'zodiac': '双鱼座'},
-        }),
-      });
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        legacyProfile,
+        (call) async => call.method == 'readProfile' && call.arguments == key
+            ? jsonEncode({
+                'signature': '旧本机签名',
+                'tags': {'zodiac': '双鱼座'},
+              })
+            : null,
+      );
       tester.view.devicePixelRatio = 1;
       tester.view.physicalSize = const Size(320, 720);
       addTearDown(tester.view.resetPhysicalSize);
@@ -330,6 +341,47 @@ void main() {
       await tester.pumpWidget(const SizedBox.shrink());
     },
   );
+
+  testWidgets('account switches hide stale details during native reads', (
+    tester,
+  ) async {
+    final member = _fixture(<String>[]);
+    final guest = _fixture(<String>[], guest: true);
+    addTearDown(member.dispose);
+    addTearDown(guest.dispose);
+    await member.initialize();
+    await guest.initialize();
+    final memberKey = profileDeviceKey(
+      member.authorizedSession!.scope,
+      'profile-details',
+    );
+    final guestKey = profileDeviceKey(
+      guest.authorizedSession!.scope,
+      'profile-details',
+    );
+    final guestRead = Completer<String?>();
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      legacyProfile,
+      (call) async {
+        if (call.method != 'readProfile') return null;
+        if (call.arguments == memberKey)
+          return jsonEncode({'signature': '会员的旧签名'});
+        if (call.arguments == guestKey) return guestRead.future;
+        return null;
+      },
+    );
+
+    await tester.pumpWidget(_app(member));
+    await tester.pumpAndSettle();
+    expect(find.text('会员的旧签名'), findsOneWidget);
+    await tester.pumpWidget(_app(guest));
+    await tester.pump();
+    expect(find.text('会员的旧签名'), findsNothing);
+    guestRead.complete(jsonEncode({'signature': '游客的旧签名'}));
+    await tester.pumpAndSettle();
+    expect(find.text('游客的旧签名'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
 
   testWidgets(
     'settings opens agreements and privacy, sends presentation choice and signs out',

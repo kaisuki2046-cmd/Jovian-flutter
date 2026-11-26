@@ -1,6 +1,7 @@
 import 'package:jovian_divination/jovian_divination.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../ui/chat_time_label.dart';
 import '../../../ui/interface_language.dart';
 import 'guide_conversation.dart';
 import 'hexagram_card.dart';
@@ -22,6 +23,9 @@ class LegacyGuideConversationView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final stamps = chatTimeLabels(
+      conversation.messages.map((message) => message.sentAt),
+    );
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 520),
@@ -52,12 +56,16 @@ class LegacyGuideConversationView extends StatelessWidget {
                     ),
                   const UiText('旧版记录仅供回看。'),
                   const SizedBox(height: 16),
-                  for (final message in conversation.messages)
+                  for (final (index, message)
+                      in conversation.messages.indexed) ...[
+                    if (stamps[index] case final sentAt?)
+                      ChatTimeLabel(sentAt: sentAt),
                     Padding(
                       key: ValueKey(message.id),
                       padding: const EdgeInsets.only(bottom: 12),
                       child: _LegacyMessage(message: message),
                     ),
+                  ],
                 ],
               ),
             ),

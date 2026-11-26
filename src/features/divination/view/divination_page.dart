@@ -43,12 +43,21 @@ class DivinationPage extends StatelessWidget {
       ),
       body: SafeArea(
         top: false,
-        child: TabBarView(
-          children: [
-            GuideForm(key: ObjectKey(onlineGuide), online: onlineGuide),
-            const MeihuaForm(),
-            const LiuYaoForm(),
-          ],
+        child: Builder(
+          builder: (context) {
+            final tabs = DefaultTabController.of(context);
+            return AnimatedBuilder(
+              animation: tabs,
+              builder: (context, _) => TabBarView(
+                controller: tabs,
+                children: [
+                  GuideForm(key: ObjectKey(onlineGuide), online: onlineGuide),
+                  const MeihuaForm(),
+                  LiuYaoForm(active: tabs.index == 2),
+                ],
+              ),
+            );
+          },
         ),
       ),
     ),

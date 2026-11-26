@@ -2,6 +2,8 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../auth/control/account_controller.dart';
 import '../../auth/model/session.dart';
+import '../../auth/view/identity_preview_page.dart';
+import '../../profile/view/profile_editor_page.dart';
 import 'account_permissions.dart';
 import 'agreement_document_page.dart';
 
@@ -120,6 +122,26 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                   margin: EdgeInsets.zero,
                   child: Column(
                     children: [
+                      if (account.authorizedSession case final member?
+                          when member.kind == AccountKind.member) ...[
+                        ListTile(
+                          leading: const Icon(Icons.person_outline),
+                          title: const Text('基础个人资料'),
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap: () => _open(
+                            ProfileEditorPage(account: account, member: member),
+                          ),
+                        ),
+                        const Divider(height: 1, indent: 16, endIndent: 16),
+                      ],
+                      ListTile(
+                        leading: const Icon(Icons.shield_outlined),
+                        title: const Text('账户与安全'),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () =>
+                            _open(AccountSecurityPage(account: account)),
+                      ),
+                      const Divider(height: 1, indent: 16, endIndent: 16),
                       ListTile(
                         leading: const Icon(Icons.privacy_tip_outlined),
                         title: const Text('隐私设置'),

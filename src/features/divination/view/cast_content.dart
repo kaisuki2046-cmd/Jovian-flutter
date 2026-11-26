@@ -1,5 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../../../ui/theme.dart';
+
 class CastContent extends StatelessWidget {
   const CastContent({super.key, required this.children});
 
@@ -11,7 +13,7 @@ class CastContent extends StatelessWidget {
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 520),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+          padding: jovianPagePadding,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: children,

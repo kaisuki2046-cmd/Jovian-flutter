@@ -346,10 +346,23 @@ class _GuideFormState extends State<GuideForm>
           const SizedBox(height: 8),
           ..._questionContext(ritual),
           ..._feedback(),
-          FilledButton.icon(
-            onPressed: _openRitual,
-            icon: const Icon(Icons.play_arrow),
-            label: const Text('继续本次仪式'),
+          OverflowBar(
+            alignment: MainAxisAlignment.start,
+            overflowAlignment: OverflowBarAlignment.start,
+            spacing: 8,
+            overflowSpacing: 8,
+            children: [
+              FilledButton.icon(
+                onPressed: _openRitual,
+                icon: const Icon(Icons.play_arrow),
+                label: const Text('继续本次仪式'),
+              ),
+              OutlinedButton.icon(
+                onPressed: widget.online?.busy == true ? null : _restart,
+                icon: const Icon(Icons.add_comment_outlined),
+                label: const Text('另问一件事'),
+              ),
+            ],
           ),
         ],
       );

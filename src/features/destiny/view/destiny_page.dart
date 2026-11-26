@@ -1,6 +1,14 @@
-import 'package:flutter/services.dart';
+import 'dart:async';
+
 import 'package:jovian_destiny/jovian_destiny.dart';
 import 'package:material_ui/material_ui.dart';
+
+import '../../../ui/report_body.dart';
+import '../../../ui/theme.dart';
+import '../../account/account.dart';
+import '../frontend/control/destiny_page_controller.dart';
+import '../model/destiny_reading.dart';
+import 'birth_profile_editor.dart';
 
 const _pillarLabels = {
   Pillar.year: '年柱',
@@ -14,201 +22,171 @@ class DestinyPage extends StatefulWidget {
     super.key,
     required this.loadPlaces,
     required this.calculate,
+    this.calculateReading,
+    this.requestReport,
     this.openFortune,
+    this.account,
   });
 
   final Future<List<BirthPlace>> Function() loadPlaces;
   final Future<LocalBaZi> Function(BirthProfile) calculate;
+  final Future<DestinyReading> Function(BirthProfile, Future<void>)?
+  calculateReading;
+  final Future<String> Function(Map<String, Object?>)? requestReport;
   final VoidCallback? openFortune;
+  final AccountController? account;
 
   @override
   State<DestinyPage> createState() => _DestinyPageState();
 }
 
 class _DestinyPageState extends State<DestinyPage> {
-  final _date = TextEditingController();
-  final _hour = TextEditingController();
-  final _minute = TextEditingController();
-  late Future<List<BirthPlace>> _places = widget.loadPlaces();
-  BirthPlace? _place;
-  BirthGender? _gender;
-  bool _busy = false;
-  String? _error;
-  LocalBaZi? _chart;
+  late final DestinyPageController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = DestinyPageController(
+      calculate: widget.calculate,
+      calculateReading: widget.calculateReading,
+      requestReport: widget.requestReport,
+      account: widget.account,
+    );
+    unawaited(_controller.restoreReport());
+  }
 
   @override
   void dispose() {
-    _date.dispose();
-    _hour.dispose();
-    _minute.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      title: const Text('命理'),
-      actions: [
-        if (widget.openFortune != null)
-          TextButton(onPressed: widget.openFortune, child: const Text('周期运势')),
-      ],
-    ),
+    appBar: AppBar(title: const Text('命理')),
     body: SafeArea(
       top: false,
-      child: ListView(
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        padding: const EdgeInsets.all(20),
-        children: [
-          const Text('出生资料'),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _date,
-            enabled: !_busy,
-            keyboardType: TextInputType.datetime,
-            decoration: const InputDecoration(
-              labelText: '出生日期',
-              hintText: 'YYYY-MM-DD',
-            ),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(child: _timeField(_hour, '出生小时（可留空）')),
-              const SizedBox(width: 12),
-              Expanded(child: _timeField(_minute, '出生分钟（可留空）')),
-            ],
-          ),
-          const SizedBox(height: 12),
-          FutureBuilder<List<BirthPlace>>(
-            future: _places,
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return TextButton(
-                  onPressed: () =>
-                      setState(() => _places = widget.loadPlaces()),
-                  child: const Text('出生地目录加载失败，点击重试'),
-                );
-              }
-              final places = snapshot.data;
-              if (places == null) return const LinearProgressIndicator();
-              return _placeField(places);
-            },
-          ),
-          const SizedBox(height: 16),
-          Wrap(
-            spacing: 8,
-            children: [
-              for (final (value, label) in const [
-                (BirthGender.female, '女'),
-                (BirthGender.male, '男'),
-              ])
-                ChoiceChip(
-                  label: Text(label),
-                  selected: _gender == value,
-                  onSelected: _busy
-                      ? null
-                      : (_) => setState(() => _gender = value),
+      child: ListenableBuilder(
+        listenable: _controller,
+        builder: (context, _) => ListView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          padding: jovianPagePadding,
+          children: [
+            if (widget.openFortune case final open?) ...[
+              Card(
+                child: ListTile(
+                  onTap: open,
+                  leading: const Icon(Icons.calendar_month_outlined),
+                  title: const Text('周期运势'),
+                  subtitle: const Text('日、周、月、年'),
+                  trailing: const Icon(Icons.chevron_right),
                 ),
+              ),
+              const SizedBox(height: 18),
             ],
-          ),
-          const SizedBox(height: 12),
-          if (_error case final error?)
-            Text(
-              error,
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            if (_controller.report case final report?
+                when _controller.reading == null)
+              _reportCard(context, report, saved: true),
+            if (_controller.archiveLoading) const LinearProgressIndicator(),
+            if (_controller.archiveError)
+              TextButton(
+                onPressed: _controller.restoreReport,
+                child: const Text('已存报告读取失败，点此重试'),
+              ),
+            Text('出生资料', style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 12),
+            BirthProfileEditor(
+              loadPlaces: widget.loadPlaces,
+              submitLabel: _controller.calculating
+                  ? '正在排盘…'
+                  : widget.calculateReading == null
+                  ? '计算八字'
+                  : '排盘',
+              busy: _controller.busy,
+              onSubmit: _controller.submit,
             ),
-          FilledButton(
-            onPressed: _busy ? null : _submit,
-            child: Text(_busy ? '正在排盘…' : '计算八字'),
-          ),
-          if (_chart case final chart?) ...[
-            const SizedBox(height: 16),
-            _BaZiResult(chart: chart),
+            if (_controller.calculationError case final error?)
+              _status(context, error),
+            if (_controller.chart case final chart?) ...[
+              const SizedBox(height: 16),
+              _BaZiResult(chart: chart),
+            ],
+            if (_controller.reading case final reading?) ...[
+              const SizedBox(height: 16),
+              for (final preview in reading.charts)
+                _LegacyChartCard(preview: preview),
+              const SizedBox(height: 12),
+              if (_controller.report == null && widget.requestReport != null)
+                FilledButton.tonal(
+                  onPressed: _controller.busy
+                      ? null
+                      : _controller.generateReport,
+                  child: Text(_controller.generating ? '正在生成解读…' : '获取命理解读'),
+                ),
+              if (_controller.report case final body?)
+                _reportCard(context, body, saved: !_controller.needsSave),
+            ],
+            if (_controller.reportError case final error?)
+              _status(context, error),
+            if (_controller.needsSave)
+              TextButton(
+                onPressed: _controller.saving ? null : _controller.saveReport,
+                child: Text(_controller.saving ? '正在存档…' : '重试存档'),
+              ),
           ],
+        ),
+      ),
+    ),
+  );
+
+  Widget _status(BuildContext context, String error) => Semantics(
+    liveRegion: true,
+    child: Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Text(
+        error,
+        style: TextStyle(color: Theme.of(context).colorScheme.error),
+      ),
+    ),
+  );
+
+  Widget _reportCard(
+    BuildContext context,
+    String body, {
+    required bool saved,
+  }) => Card(
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            saved ? '已保存的命理解读' : '命理解读',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          ReportBody(body),
         ],
       ),
     ),
   );
+}
 
-  Widget _timeField(TextEditingController field, String label) => TextField(
-    controller: field,
-    enabled: !_busy,
-    keyboardType: TextInputType.number,
-    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-    maxLength: 2,
-    decoration: InputDecoration(labelText: label, counterText: ''),
-  );
+class _LegacyChartCard extends StatelessWidget {
+  const _LegacyChartCard({required this.preview});
 
-  Widget _placeField(List<BirthPlace> places) => Autocomplete<BirthPlace>(
-    displayStringForOption: (place) => place.name,
-    fieldViewBuilder: (context, field, focus, submit) => TextField(
-      enabled: !_busy,
-      controller: field,
-      focusNode: focus,
-      onSubmitted: (_) => submit(),
-      onChanged: (query) {
-        if (query != _place?.name) _place = null;
-      },
-      decoration: const InputDecoration(
-        labelText: '出生地',
-        hintText: '输入城市或区县并选择',
-      ),
+  final DestinyChartPreview preview;
+
+  @override
+  Widget build(BuildContext context) => Card(
+    child: ExpansionTile(
+      title: Text(preview.label),
+      subtitle: preview.note == null ? null : Text(preview.note!),
+      children: [
+        for (final row in preview.rows)
+          ListTile(title: Text(row.label), subtitle: Text(row.value)),
+      ],
     ),
-    optionsBuilder: (value) {
-      final query = value.text.trim().toLowerCase();
-      if (query.isEmpty) return const [];
-      return places
-          .where((place) {
-            return place.name.toLowerCase().contains(query) ||
-                place.adminCode == query;
-          })
-          .take(25);
-    },
-    onSelected: (place) => _place = place,
   );
-
-  Future<void> _submit() async {
-    final input = _date.text.trim();
-    final parsed = DateTime.tryParse(input);
-    final place = _place;
-    final gender = _gender;
-    final date =
-        parsed != null &&
-            RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(input) &&
-            parsed.toIso8601String().startsWith('${input}T')
-        ? BirthDate(parsed.year, parsed.month, parsed.day)
-        : null;
-    final time = BirthTime(
-      hour: int.tryParse(_hour.text),
-      minute: int.tryParse(_minute.text),
-    );
-    if (date == null ||
-        !date.isValid() ||
-        !time.isValid ||
-        place == null ||
-        gender == null) {
-      setState(() => _error = '请核对出生日期和时间，并选择出生地和性别。');
-      return;
-    }
-    FocusManager.instance.primaryFocus?.unfocus();
-    setState(() {
-      _busy = true;
-      _error = null;
-      _chart = null;
-    });
-    try {
-      final chart = await widget.calculate(
-        BirthProfile(date: date, time: time, place: place, gender: gender),
-      );
-      if (mounted) setState(() => _chart = chart);
-    } on FormatException catch (error) {
-      if (mounted) setState(() => _error = error.message);
-    } catch (_) {
-      if (mounted) setState(() => _error = '暂时无法计算八字，请重试。');
-    } finally {
-      if (mounted) setState(() => _busy = false);
-    }
-  }
 }
 
 class _BaZiResult extends StatelessWidget {

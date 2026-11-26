@@ -3,11 +3,14 @@ import 'package:material_ui/material_ui.dart';
 
 import 'cast_content.dart';
 import 'hexagram_card.dart';
+import 'ritual/coin_cast_ritual.dart';
 
 const _lineNames = ['初爻', '二爻', '三爻', '四爻', '五爻', '上爻'];
 
 class LiuYaoForm extends StatefulWidget {
-  const LiuYaoForm({super.key});
+  const LiuYaoForm({super.key, this.active = true});
+
+  final bool active;
 
   @override
   State<LiuYaoForm> createState() => _LiuYaoFormState();
@@ -27,10 +30,17 @@ class _LiuYaoFormState extends State<LiuYaoForm>
     setState(() {
       _castStartedAt ??= DateTime.now();
       _tosses.add(rollLiuYaoLine());
-      if (_tosses.length == _lineNames.length) {
-        _reading = readJingfang(_tosses, castCalendar(_castStartedAt!));
-      }
     });
+  }
+
+  void _settle(int count) {
+    if (count != _lineNames.length ||
+        _tosses.length != count ||
+        _reading != null)
+      return;
+    setState(
+      () => _reading = readJingfang(_tosses, castCalendar(_castStartedAt!)),
+    );
   }
 
   void _restart() {
@@ -51,14 +61,19 @@ class _LiuYaoFormState extends State<LiuYaoForm>
         const SizedBox(height: 8),
         const Text('每次投三枚铜钱，字面记 2，背面记 3。初爻在最下方，按投掷顺序向上排。'),
         const SizedBox(height: 16),
-        CoinCastProgress(tosses: _tosses),
-        const SizedBox(height: 12),
         if (_reading case final reading?) ...[
+          CoinCastProgress(tosses: _tosses),
+          const SizedBox(height: 12),
           OutlinedButton(onPressed: _restart, child: const Text('重新起卦')),
           const SizedBox(height: 16),
           JingfangResult(reading: reading),
         ] else
-          FilledButton(onPressed: _toss, child: const Text('投三枚铜钱')),
+          CoinCastRitual(
+            tosses: _tosses,
+            onToss: _toss,
+            onSettled: _settle,
+            active: widget.active,
+          ),
       ],
     );
   }

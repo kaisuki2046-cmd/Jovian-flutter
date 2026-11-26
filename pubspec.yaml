@@ -28,3 +28,6 @@ flutter:
   assets:
     - src/features/destiny/assets/birth_places.json
     - src/features/divination/assets/tarot/
+    - src/features/divination/assets/coins/
+    - src/features/divination/assets/coins/collision/
+    - src/features/divination/assets/ritual/

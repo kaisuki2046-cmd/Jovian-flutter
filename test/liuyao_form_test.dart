@@ -11,13 +11,19 @@ void main() {
     tester.view.physicalSize = const Size(360, 640);
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
-    await tester.pumpWidget(const JovianApp());
+    tester.binding.platformDispatcher.accessibilityFeaturesTestValue =
+        const FakeAccessibilityFeatures(disableAnimations: true);
+    addTearDown(
+      tester.binding.platformDispatcher.clearAccessibilityFeaturesTestValue,
+    );
+    await tester.pumpWidget(const JovianApp(initialTab: JovianTab.divination));
     await tester.tap(find.text('六爻'));
     await tester.pumpAndSettle();
 
-    final toss = find.text('投三枚铜钱');
+    final toss = find.byKey(const ValueKey('coin-ritual-toss-button'));
+    await tester.ensureVisible(toss);
     await tester.tap(toss);
-    await tester.pump();
+    await tester.pumpAndSettle();
     expect(find.text('已投 1 / 6 次'), findsOneWidget);
     expect(find.text('六爻结果'), findsNothing);
 
@@ -28,8 +34,9 @@ void main() {
     expect(find.text('已投 1 / 6 次'), findsOneWidget);
 
     for (var count = 2; count <= 6; count++) {
+      await tester.ensureVisible(toss);
       await tester.tap(toss);
-      await tester.pump();
+      await tester.pumpAndSettle();
       expect(find.text('已投 $count / 6 次'), findsOneWidget);
     }
     expect(toss, findsNothing);

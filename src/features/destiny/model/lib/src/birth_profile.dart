@@ -94,4 +94,27 @@ class BirthProfile {
   final BirthTime time;
   final BirthPlace place;
   final BirthGender gender;
+
+  Map<String, Object?> toJson() => {
+    'date': {'year': date.year, 'month': date.month, 'day': date.day},
+    'time': {
+      'timeKnown': time.timeKnown,
+      'hour': time.hour,
+      'minute': time.minute,
+    },
+    'gender': gender.name,
+    'place': {
+      'id': place.id,
+      'name': place.name,
+      'countryCode': place.countryCode,
+      'country': place.country,
+      'region': place.region,
+      'city': place.city,
+      if (place.district != null) 'district': place.district,
+      if (place.adminCode != null) 'adminCode': place.adminCode,
+      'latitude': place.latitude,
+      'longitude': place.longitude,
+      'timeZone': place.timeZone,
+    },
+  };
 }

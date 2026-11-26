@@ -1,0 +1,180 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
+import 'package:jovian_destiny/jovian_destiny.dart';
+
+import '../../../../shared/http/json_client.dart';
+import '../../../account/account.dart';
+import '../../model/destiny_reading.dart';
+
+class DestinyPageController extends ChangeNotifier {
+  DestinyPageController({
+    required this.calculate,
+    this.calculateReading,
+    this.requestReport,
+    this.account,
+  });
+
+  final Future<LocalBaZi> Function(BirthProfile) calculate;
+  final Future<DestinyReading> Function(BirthProfile, Future<void>)?
+  calculateReading;
+  final Future<String> Function(Map<String, Object?>)? requestReport;
+  final AccountController? account;
+  final _disposed = Completer<void>();
+  var _revision = 0;
+
+  bool calculating = false;
+  bool generating = false;
+  bool saving = false;
+  bool archiveLoading = false;
+  bool archiveError = false;
+  String? calculationError;
+  String? reportError;
+  LocalBaZi? chart;
+  DestinyReading? reading;
+  String? report;
+  ({String owner, String scope, Map<String, Object?> report})? _pendingSave;
+
+  bool get busy => calculating || generating || saving;
+  bool get needsSave => _pendingSave != null;
+
+  @override
+  void dispose() {
+    _disposed.complete();
+    super.dispose();
+  }
+
+  bool _current(String scope) =>
+      !_disposed.isCompleted &&
+      account?.sessionChanging == false &&
+      account?.authorizedSession?.scope == scope;
+
+  bool get _allowed =>
+      account?.agreementState?.permissions['destiny.cloud_interpretation'] ==
+      true;
+
+  void _refresh() {
+    if (!_disposed.isCompleted) notifyListeners();
+  }
+
+  Future<void> submit(BirthProfile profile) async {
+    if (busy) return;
+    _revision++;
+    calculating = true;
+    calculationError = null;
+    chart = null;
+    reading = null;
+    report = null;
+    reportError = null;
+    archiveError = false;
+    _pendingSave = null;
+    _refresh();
+    try {
+      final read = calculateReading;
+      if (read == null) {
+        chart = await calculate(profile);
+      } else {
+        reading = await read(profile, _disposed.future);
+      }
+    } on FormatException catch (error) {
+      calculationError = error.message;
+    } catch (_) {
+      calculationError = '暂时无法排盘，请重试。';
+    } finally {
+      calculating = false;
+      _refresh();
+    }
+  }
+
+  Future<void> restoreReport() async {
+    final client = account;
+    final session = client?.authorizedSession;
+    if (client == null || session == null || archiveLoading) return;
+    final revision = _revision;
+    archiveLoading = true;
+    archiveError = false;
+    _refresh();
+    try {
+      final result = await client.reports.latest(
+        session.id,
+        ReportKind.destiny,
+      );
+      if (_current(session.scope) && revision == _revision)
+        report = result?.body;
+    } catch (_) {
+      if (_current(session.scope) && revision == _revision) archiveError = true;
+    } finally {
+      archiveLoading = false;
+      _refresh();
+    }
+  }
+
+  Future<void> generateReport() async {
+    final session = account?.authorizedSession;
+    final currentReading = reading;
+    final request = requestReport;
+    if (busy || currentReading == null || request == null) return;
+    if (session == null || !_current(session.scope)) {
+      reportError = '请先在个人中心登录或进入游客体验。';
+      _refresh();
+      return;
+    }
+    if (!_allowed) {
+      reportError = '请在个人中心开启命理在线解读授权。';
+      _refresh();
+      return;
+    }
+    generating = true;
+    reportError = null;
+    _refresh();
+    try {
+      final result = await request(currentReading.reportRequest);
+      if (!_current(session.scope) || !_allowed) return;
+      report = result;
+      _pendingSave = (
+        owner: session.id,
+        scope: session.scope,
+        report: {...currentReading.archive, 'overview': result},
+      );
+      await saveReport();
+    } on JsonRequestError catch (error) {
+      if (_current(session.scope)) {
+        reportError = switch (error.status) {
+          401 => '当前会话已失效，请重新登录或进入游客体验。',
+          428 => '请在个人中心开启命理在线解读授权。',
+          _ => '暂时无法连接解读服务，请重试。',
+        };
+      }
+    } on FormatException catch (error) {
+      if (_current(session.scope)) reportError = error.message;
+    } catch (_) {
+      if (_current(session.scope)) reportError = '暂时无法连接解读服务，请重试。';
+    } finally {
+      generating = false;
+      _refresh();
+    }
+  }
+
+  Future<void> saveReport() async {
+    final client = account;
+    final pending = _pendingSave;
+    if (client == null || pending == null || !_current(pending.scope) || saving)
+      return;
+    saving = true;
+    reportError = null;
+    _refresh();
+    try {
+      await client.reports.save(
+        pending.owner,
+        ReportKind.destiny,
+        pending.report,
+      );
+      if (_current(pending.scope)) _pendingSave = null;
+    } catch (_) {
+      if (_current(pending.scope)) reportError = '报告已生成，暂时无法存档。';
+    } finally {
+      saving = false;
+      _refresh();
+    }
+  }
+}

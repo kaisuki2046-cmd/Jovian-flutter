@@ -7,7 +7,11 @@ void main() {
   testWidgets(
     'validates numeric fields and displays the calculated hexagrams',
     (tester) async {
-      await tester.pumpWidget(const JovianApp());
+      await tester.pumpWidget(
+        const JovianApp(initialTab: JovianTab.divination),
+      );
+      await tester.tap(find.text('梅花易数'));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('用这三个数起卦'));
       await tester.pump();
       expect(find.text('请输入 1 到 999 的整数'), findsNWidgets(3));

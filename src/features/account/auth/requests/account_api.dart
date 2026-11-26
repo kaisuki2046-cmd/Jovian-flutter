@@ -11,6 +11,35 @@ class AccountApi {
 
   Future<String?> readNativeSession() async => _nativeSession?.read();
 
+  Future<void> probeIdentityVerification({
+    required bool submit,
+    required bool Function() isCurrent,
+  }) async {
+    await _requestAt(
+      ['account', 'auth', 'identity-verification'],
+      authenticated: true,
+      isCurrent: isCurrent,
+      body: submit ? const {} : null,
+    );
+  }
+
+  Future<AccountSession> updateProfile(
+    String memberId,
+    Map<String, Object?> profile, {
+    required bool Function() isCurrent,
+  }) async {
+    final response = await _requestAt(
+      ['account', 'profile'],
+      method: 'PATCH',
+      authenticated: true,
+      isCurrent: isCurrent,
+      body: {...profile, 'expectedOwnerId': memberId},
+    );
+    if (response == null)
+      throw const FormatException('Invalid account profile.');
+    return AccountSession.fromMember(response);
+  }
+
   Future<Map<String, Object?>> request(
     List<String> path, {
     Map<String, Object?>? body,

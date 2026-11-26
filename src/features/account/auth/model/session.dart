@@ -5,17 +5,26 @@ class AccountSession {
     required this.id,
     required this.displayName,
     this.uid,
+    this.bio = '',
+    this.namePublic = false,
+    this.bioPublic = false,
   }) : kind = AccountKind.member;
 
   const AccountSession.guest(this.id)
     : kind = AccountKind.guest,
       displayName = '游客',
-      uid = null;
+      uid = null,
+      bio = '',
+      namePublic = false,
+      bioPublic = false;
 
   final AccountKind kind;
   final String id;
   final String displayName;
   final String? uid;
+  final String bio;
+  final bool namePublic;
+  final bool bioPublic;
 
   String get scope => '${kind.name}:$id';
 
@@ -26,12 +35,16 @@ class AccountSession {
       'displayName': final String name,
     } when id.isNotEmpty) {
       final uid = user['uid'];
+      final visibility = user['visibility'];
       return AccountSession.member(
         id: id,
         displayName: name,
         uid: uid is String && RegExp(r'^[1-9]\d{7}$').hasMatch(uid)
             ? uid
             : null,
+        bio: (user['bio'] as String?) ?? '',
+        namePublic: visibility is Map && visibility['displayName'] == true,
+        bioPublic: visibility is Map && visibility['bio'] == true,
       );
     }
     throw const FormatException('Invalid account profile.');

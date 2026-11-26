@@ -2,6 +2,7 @@ import 'package:jovian_fortune/jovian_fortune.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../ui/report_body.dart';
+import '../../../ui/theme.dart';
 import '../../account/account.dart';
 import '../control/fortune_page_controller.dart';
 import 'fortune_calendar_page.dart';
@@ -113,7 +114,7 @@ class _FortuneSessionState extends State<_FortuneSession> {
       body: SafeArea(
         top: false,
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+          padding: jovianPagePadding,
           children: [
             Wrap(
               spacing: 8,

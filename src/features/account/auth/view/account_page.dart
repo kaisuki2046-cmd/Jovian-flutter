@@ -1,18 +1,27 @@
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/theme.dart';
 import '../../settings/model/agreements.dart';
-import '../../history/view/reports_page.dart';
-import '../../history/view/archived_charts_page.dart';
-import '../../settings/view/account_permissions.dart';
+import '../../profile/view/profile_dashboard.dart';
+import '../../settings/view/account_settings_page.dart';
 import '../../settings/view/agreement_document_page.dart';
 import '../control/account_controller.dart';
 import '../model/session.dart';
 
 class AccountPage extends StatefulWidget {
-  const AccountPage({super.key, required this.account});
+  const AccountPage({
+    super.key,
+    required this.account,
+    this.active = true,
+    this.themeMode = ThemeMode.system,
+    this.onThemeModeChanged,
+  });
 
   final AccountController account;
+  final bool active;
+  final ThemeMode themeMode;
+  final ValueChanged<ThemeMode>? onThemeModeChanged;
 
   @override
   State<AccountPage> createState() => _AccountPageState();
@@ -28,6 +37,7 @@ class _AccountPageState extends State<AccountPage> {
   AgreementDocument? _aiAccepted;
   ({String address, String id})? _challenge;
   bool _upgrade = false;
+  bool _passwordVisible = false;
   String? _validation;
 
   AccountController get _account => widget.account;
@@ -49,115 +59,64 @@ class _AccountPageState extends State<AccountPage> {
         listenable: _account,
         builder: (context, _) {
           final session = _account.session;
-          return ListView(
-            padding: const EdgeInsets.all(20),
-            children: [
-              if (_account.busy) const LinearProgressIndicator(),
-              if (_account.notice case final message?) Text(message),
-              if ((_account.catalog == null ||
-                      _account.capabilities == null ||
-                      (session != null && _account.agreementState == null) ||
-                      _account.notice != null) &&
-                  !_account.busy)
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: TextButton(
-                    onPressed: _account.initialize,
-                    child: const Text('刷新账号与协议'),
+          return AutofillGroup(
+            child: ListView(
+              padding: jovianPagePadding,
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              children: [
+                if (_account.busy) const LinearProgressIndicator(),
+                if (_account.notice case final message?)
+                  Semantics(liveRegion: true, child: Text(message)),
+                if ((_account.catalog == null ||
+                        _account.capabilities == null ||
+                        (session != null && _account.agreementState == null) ||
+                        _account.notice != null) &&
+                    !_account.busy)
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: TextButton(
+                      onPressed: _account.initialize,
+                      child: const Text('刷新账号与协议'),
+                    ),
                   ),
-                ),
-              if (session != null && !_upgrade)
-                _profile(session)
-              else
-                ..._form(session != null),
-            ],
+                if (session != null && !_upgrade)
+                  ProfileDashboard(
+                    account: _account,
+                    openSettings: _openSettings,
+                    active: widget.active,
+                    onUpgrade: _beginUpgrade,
+                  )
+                else
+                  ..._form(session != null),
+              ],
+            ),
           );
         },
       ),
     ),
   );
 
-  Widget _profile(AccountSession session) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Semantics(
-        header: true,
-        child: Text(
-          _account.authorizedSession?.displayName ?? '账号与隐私',
-          style: Theme.of(context).textTheme.headlineSmall,
+  void _openSettings() {
+    Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) => AccountSettingsPage(
+          account: _account,
+          themeMode: widget.themeMode,
+          onThemeModeChanged: widget.onThemeModeChanged,
+          onSignedOut: () {
+            if (mounted) _clearForm();
+          },
         ),
       ),
-      if (_account.authorizedSession?.uid case final uid?)
-        Semantics(
-          container: true,
-          child: ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Text('UID $uid'),
-            subtitle: const Text('长按可复制'),
-            onLongPress: () async {
-              await Clipboard.setData(ClipboardData(text: uid));
-              if (!mounted) return;
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(const SnackBar(content: Text('UID 已复制')));
-            },
-          ),
-        ),
-      const SizedBox(height: 16),
-      if (_account.authorizedSession != null)
-        Semantics(
-          container: true,
-          child: ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: const Icon(Icons.article_outlined),
-            title: const Text('我的报告'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => Navigator.of(context).push<void>(
-              MaterialPageRoute(builder: (_) => ReportsPage(account: _account)),
-            ),
-          ),
-        ),
-      if (_account.authorizedSession != null)
-        Semantics(
-          container: true,
-          child: ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: const Icon(Icons.folder_outlined),
-            title: const Text('命理档案'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => Navigator.of(context).push<void>(
-              MaterialPageRoute(
-                builder: (_) => ArchivedChartsPage(account: _account),
-              ),
-            ),
-          ),
-        ),
-      AccountPermissions(account: _account),
-      const SizedBox(height: 16),
-      if (session.kind == AccountKind.guest)
-        FilledButton.tonal(
-          onPressed: _account.busy
-              ? null
-              : () => setState(() {
-                  _accepted = null;
-                  _aiAccepted = null;
-                  _upgrade = true;
-                  _validation = null;
-                }),
-          child: const Text('登录或注册账号'),
-        ),
-      TextButton(
-        onPressed: _account.busy
-            ? null
-            : () async {
-                await _account.signOut();
-                if (!mounted || _account.session != null) return;
-                _clearForm();
-              },
-        child: const Text('退出登录'),
-      ),
-    ],
-  );
+    );
+  }
+
+  void _beginUpgrade() => setState(() {
+    _accepted = null;
+    _aiAccepted = null;
+    _upgrade = true;
+    _validation = null;
+  });
 
   List<Widget> _form(bool upgrading) {
     final catalog = _account.catalog;
@@ -171,6 +130,7 @@ class _AccountPageState extends State<AccountPage> {
             parsed?.isPhone == false &&
             capabilities?.emailRegistrationCodeRequired == true);
     final disabled = _account.busy || !_account.restored;
+    final small = Theme.of(context).textTheme.bodySmall;
     return [
       if (upgrading)
         Align(
@@ -180,6 +140,26 @@ class _AccountPageState extends State<AccountPage> {
             child: const Text('返回游客资料'),
           ),
         ),
+      if (!upgrading) ...[
+        Row(
+          children: [
+            CircleAvatar(
+              radius: 23,
+              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+              foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
+              child: const Icon(Icons.person_outline),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                '登录或注册',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+      ],
       Wrap(
         spacing: 8,
         children: [
@@ -200,6 +180,9 @@ class _AccountPageState extends State<AccountPage> {
       TextField(
         controller: _address,
         enabled: !disabled,
+        autofillHints: phoneCode
+            ? const [AutofillHints.telephoneNumber]
+            : const [AutofillHints.username],
         autocorrect: false,
         keyboardType: phoneCode
             ? TextInputType.phone
@@ -212,6 +195,7 @@ class _AccountPageState extends State<AccountPage> {
         TextField(
           controller: _name,
           enabled: !disabled,
+          autofillHints: const [AutofillHints.nickname],
           maxLength: 40,
           decoration: const InputDecoration(labelText: '昵称'),
         ),
@@ -221,12 +205,26 @@ class _AccountPageState extends State<AccountPage> {
         TextField(
           controller: _password,
           enabled: !disabled,
-          obscureText: true,
+          obscureText: !_passwordVisible,
           autocorrect: false,
           enableSuggestions: false,
+          autofillHints: [
+            registering ? AutofillHints.newPassword : AutofillHints.password,
+          ],
           decoration: InputDecoration(
             labelText: '密码',
             helperText: registering ? '至少 8 个字符' : null,
+            suffixIcon: IconButton(
+              tooltip: _passwordVisible ? '隐藏密码' : '显示密码',
+              onPressed: disabled
+                  ? null
+                  : () => setState(() => _passwordVisible = !_passwordVisible),
+              icon: Icon(
+                _passwordVisible
+                    ? Icons.visibility_off_outlined
+                    : Icons.visibility_outlined,
+              ),
+            ),
           ),
         ),
       if (needsCode) ...[
@@ -237,6 +235,7 @@ class _AccountPageState extends State<AccountPage> {
               child: TextField(
                 controller: _code,
                 enabled: !disabled,
+                autofillHints: const [AutofillHints.oneTimeCode],
                 keyboardType: TextInputType.number,
                 maxLength: 6,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -254,7 +253,39 @@ class _AccountPageState extends State<AccountPage> {
         ),
       ],
       const SizedBox(height: 12),
-      if (_validation case final message?) Text(message),
+      if (_validation case final message?) ...[
+        Semantics(
+          liveRegion: true,
+          child: Text(
+            message,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
+        ),
+        const SizedBox(height: 8),
+      ],
+      FilledButton(
+        onPressed: disabled ? null : () => _submit(_method),
+        child: Text(registering ? '创建账号' : '登录'),
+      ),
+      Wrap(
+        alignment: WrapAlignment.center,
+        spacing: 8,
+        children: [
+          TextButton(
+            onPressed: disabled ? null : () => _submit(AuthMethod.wechat),
+            child: const Text('微信登录'),
+          ),
+          TextButton(
+            onPressed: disabled ? null : () => _submit(AuthMethod.qq),
+            child: const Text('QQ 登录'),
+          ),
+          if (!upgrading)
+            TextButton(
+              onPressed: disabled ? null : () => _submit(AuthMethod.guest),
+              child: const Text('游客体验'),
+            ),
+        ],
+      ),
       Row(
         children: [
           Semantics(
@@ -274,12 +305,12 @@ class _AccountPageState extends State<AccountPage> {
             child: Wrap(
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                const Text('我已阅读并同意'),
+                Text('我已阅读并同意', style: small),
                 if (catalog != null) ...[
-                  AgreementLink(document: catalog.terms),
-                  AgreementLink(document: catalog.privacy),
+                  AgreementLink(document: catalog.terms, compact: true),
+                  AgreementLink(document: catalog.privacy, compact: true),
                 ] else
-                  const Text('《用户服务协议》和《隐私政策》'),
+                  Text('《用户服务协议》和《隐私政策》', style: small),
               ],
             ),
           ),
@@ -305,35 +336,13 @@ class _AccountPageState extends State<AccountPage> {
               child: Wrap(
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
-                  const Text('同时开启全部 AI 在线解读（可选）'),
-                  AgreementLink(document: catalog.ai),
+                  Text('同时开启全部 AI 在线解读（可选）', style: small),
+                  AgreementLink(document: catalog.ai, compact: true),
                 ],
               ),
             ),
           ],
         ),
-      FilledButton(
-        onPressed: disabled ? null : () => _submit(_method),
-        child: Text(registering ? '创建账号' : '登录'),
-      ),
-      Wrap(
-        spacing: 8,
-        children: [
-          TextButton(
-            onPressed: disabled ? null : () => _submit(AuthMethod.wechat),
-            child: const Text('微信登录'),
-          ),
-          TextButton(
-            onPressed: disabled ? null : () => _submit(AuthMethod.qq),
-            child: const Text('QQ 登录'),
-          ),
-          if (!upgrading)
-            TextButton(
-              onPressed: disabled ? null : () => _submit(AuthMethod.guest),
-              child: const Text('游客体验'),
-            ),
-        ],
-      ),
     ];
   }
 
@@ -342,6 +351,7 @@ class _AccountPageState extends State<AccountPage> {
     _challenge = null;
     _code.clear();
     _validation = null;
+    _passwordVisible = false;
   });
 
   void _show(String message) => setState(() => _validation = message);
@@ -381,6 +391,7 @@ class _AccountPageState extends State<AccountPage> {
     }
     if (!identical(catalog, _accepted)) {
       if (!await confirmAccountAgreements(context, catalog) || !mounted) return;
+      if (_account.busy || !identical(catalog, _account.catalog)) return;
       setState(() => _accepted = catalog);
     }
     final capabilities = _account.capabilities;

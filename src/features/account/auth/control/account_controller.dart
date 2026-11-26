@@ -37,6 +37,38 @@ class AccountController extends ChangeNotifier {
 
   Future<String?> readNativeSession() => _account.readNativeSession();
 
+  Future<void> probeIdentityVerification(
+    String memberId, {
+    bool submit = false,
+  }) => _account.probeIdentityVerification(
+    submit: submit,
+    isCurrent: () => socialMemberId == memberId,
+  );
+
+  Future<bool> updateProfile(
+    String memberId,
+    Map<String, Object?> profile,
+  ) async {
+    var saved = false;
+    await _run(() async {
+      try {
+        final member = await _account.updateProfile(
+          memberId,
+          profile,
+          isCurrent: () => socialMemberId == memberId,
+        );
+        if (member.id == memberId && socialMemberId == memberId) {
+          _session = member;
+          saved = true;
+        }
+      } on JsonRequestError catch (error) {
+        if (error.status != 409) rethrow;
+        _notice = '这个昵称已被使用，请换一个。';
+      }
+    }, failure: '暂时无法保存个人资料，请重试。');
+    return saved;
+  }
+
   String? get socialMemberId {
     final session = authorizedSession;
     return !_closed && !_sessionChanging && session?.kind == AccountKind.member

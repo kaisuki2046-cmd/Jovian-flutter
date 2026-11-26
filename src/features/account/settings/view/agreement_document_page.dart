@@ -3,12 +3,24 @@ import 'package:material_ui/material_ui.dart';
 import '../model/agreements.dart';
 
 class AgreementLink extends StatelessWidget {
-  const AgreementLink({super.key, required this.document});
+  const AgreementLink({
+    super.key,
+    required this.document,
+    this.compact = false,
+  });
 
   final AgreementDocument document;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) => TextButton(
+    style: compact
+        ? TextButton.styleFrom(
+            minimumSize: const Size(0, 36),
+            padding: const EdgeInsets.symmetric(horizontal: 2),
+            textStyle: Theme.of(context).textTheme.bodySmall,
+          )
+        : null,
     onPressed: () => Navigator.of(context).push<void>(
       MaterialPageRoute(
         builder: (_) => Scaffold(

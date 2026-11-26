@@ -23,6 +23,7 @@ typedef SynastrySummaryReader =
     Future<Map<String, String>> Function(
       Map<String, Object?> request,
       bool Function() isCurrent,
+      Future<void> cancel,
     );
 
 enum SynastrySide { a, b }
@@ -290,6 +291,56 @@ class SynastryPageController extends ChangeNotifier {
     }
   }
 
+  String? get _comparisonContext {
+    final from = a?['calculatedAt'];
+    final to = b?['calculatedAt'];
+    if (from is! String ||
+        to is! String ||
+        DateTime.tryParse(from) == null ||
+        DateTime.tryParse(to) == null) {
+      return null;
+    }
+    return jsonEncode([from, to]);
+  }
+
+  Future<void> restoreComparedReport() async {
+    final client = account;
+    final session = client?.authorizedSession;
+    final context = _comparisonContext;
+    if (client == null ||
+        session == null ||
+        !_scope(session.scope) ||
+        busy ||
+        !allowed ||
+        result == null) {
+      return;
+    }
+    if (context == null) {
+      message = '暂时无法确认双方盘面版本，请重新排盘。';
+      notifyListeners();
+      return;
+    }
+    final job = _start();
+    bool isCurrent() => _current(job) && _scope(session.scope);
+    try {
+      final saved = await client.reports.latest(
+        session.id,
+        ReportKind.synastry,
+        contextKey: context,
+      );
+      if (!isCurrent()) return;
+      if (saved == null) {
+        message = '这组盘面还没有已存解读。';
+        return;
+      }
+      _showSaved(saved);
+    } catch (_) {
+      if (isCurrent()) message = '暂时无法读取已存合盘，请重试。';
+    } finally {
+      _finish(job);
+    }
+  }
+
   Future<void> generateSummary() async {
     final client = account;
     final scope = client?.authorizedSession;
@@ -309,11 +360,26 @@ class SynastryPageController extends ChangeNotifier {
       notifyListeners();
       return;
     }
+    final context = _comparisonContext;
+    if (context == null) {
+      message = '暂时无法确认双方盘面版本，请重新排盘。';
+      notifyListeners();
+      return;
+    }
     final job = _start();
+    final stopped = Completer<void>();
     bool isCurrent() =>
-        _current(job) && _scope(scope.scope) && allowed && _canShare;
+        !stopped.isCompleted &&
+        _current(job) &&
+        _scope(scope.scope) &&
+        allowed &&
+        _canShare;
+    void stopIfStale() {
+      if (!isCurrent() && !stopped.isCompleted) stopped.complete();
+    }
+
+    client.addListener(stopIfStale);
     try {
-      final context = jsonEncode([a?['calculatedAt'], b?['calculatedAt']]);
       final saved = await client.reports.latest(
         scope.id,
         ReportKind.synastry,
@@ -324,7 +390,11 @@ class SynastryPageController extends ChangeNotifier {
         _showSaved(saved);
         return;
       }
-      final values = await summarize!(request, isCurrent);
+      final values = await summarize!(
+        request,
+        isCurrent,
+        Future.any([job.future, stopped.future]),
+      );
       if (!isCurrent()) return;
       final sections = [
         for (final MapEntry(:key, :value) in synastrySummarySections.entries)
@@ -364,6 +434,7 @@ class SynastryPageController extends ChangeNotifier {
     } catch (_) {
       if (isCurrent()) message = '合盘解读请求失败，请重试。';
     } finally {
+      client.removeListener(stopIfStale);
       _finish(job);
     }
   }

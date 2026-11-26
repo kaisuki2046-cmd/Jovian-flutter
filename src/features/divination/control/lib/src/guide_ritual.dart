@@ -150,7 +150,8 @@ class GuideChart {
     required this.castStartedAt,
     required List<GuideCardEvent> cardEvents,
     required this.resolvedAt,
-  }) : chartHash = sha256
+  }) : _publishedResults = null,
+       chartHash = sha256
            .convert(
              utf8.encode(
                jsonEncode([
@@ -165,6 +166,17 @@ class GuideChart {
            )
            .toString();
 
+  GuideChart._fromService({
+    required this.tarot,
+    required this.liuyao,
+    required this.meihua,
+    required this.meihuaInputSource,
+    required this.castStartedAt,
+    required this.resolvedAt,
+    required this.chartHash,
+    required Map<String, Object> publishedResults,
+  }) : _publishedResults = Map.unmodifiable(publishedResults);
+
   final TarotDraw tarot;
   final JingfangReading liuyao;
   final MeihuaReading meihua;
@@ -172,9 +184,10 @@ class GuideChart {
   final DateTime castStartedAt;
   final DateTime resolvedAt;
   final String chartHash;
+  final Map<String, Object>? _publishedResults;
 
   Map<String, Object> resultsToJson() =>
-      _guideResults(liuyao, meihua, meihuaInputSource);
+      _publishedResults ?? _guideResults(liuyao, meihua, meihuaInputSource);
 }
 
 Map<String, Object> _guideResults(
@@ -206,7 +219,8 @@ class GuideRitualSnapshot {
     required this.castResult,
     required this.chart,
     this.tarotCutIndex,
-  });
+    Map<String, Object?>? publishedCast,
+  }) : _publishedCast = publishedCast;
 
   final String question;
   final String focus;
@@ -220,6 +234,7 @@ class GuideRitualSnapshot {
   final JingfangReading? castResult;
   final GuideChart? chart;
   final int? tarotCutIndex;
+  final Map<String, Object?>? _publishedCast;
 
   Map<String, String> get calculationRules =>
       automatic ? _automaticGuideRules : _guideRules;
@@ -236,7 +251,8 @@ class GuideRitualSnapshot {
     'selectedSlots': selectedSlots,
     if (tarotCutIndex case final point?) 'tarotCutIndex': point,
     if (castStartedAt case final started?) 'castStartedAt': _wireDate(started),
-    if (castResult case final cast?) 'castResult': cast.toJson(),
+    if (castResult case final cast?)
+      'castResult': _publishedCast ?? cast.toJson(),
     if (automatic)
       'automatic': true
     else

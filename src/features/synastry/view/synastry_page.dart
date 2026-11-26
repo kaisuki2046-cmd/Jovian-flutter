@@ -72,6 +72,11 @@ class _SynastryPageState extends State<SynastryPage> {
     if (_synastry.report != null) _scrollAfterLayout(bottom: false);
   }
 
+  Future<void> _restoreComparedReport() async {
+    await _synastry.restoreComparedReport();
+    if (_synastry.report != null) _scrollAfterLayout(bottom: false);
+  }
+
   Future<void> _compare() async {
     await _synastry.compareCharts();
     if (_synastry.result != null) _scrollAfterLayout(bottom: true);
@@ -271,19 +276,19 @@ class _SynastryPageState extends State<SynastryPage> {
               onPressed: _synastry.canCompare ? _compare : null,
               child: const UiText('比较盘面'),
             ),
-            if (_synastry.message case final message?)
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Semantics(liveRegion: true, child: Text(message)),
-              ),
             if (_synastry.result case final result?) ...[
               const SizedBox(height: 12),
               _comparison(context, result),
               if (_synastry.report == null) ...[
                 const SizedBox(height: 10),
-                _interpretAction(),
+                _interpretAction(context),
               ],
             ],
+            if (_synastry.message case final message?)
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Semantics(liveRegion: true, child: Text(message)),
+              ),
           ],
         ),
       ),
@@ -348,17 +353,37 @@ class _SynastryPageState extends State<SynastryPage> {
     ),
   );
 
-  Widget _interpretAction() {
-    if (!_synastry.summaryConfigured) return const Text('在线解读服务暂未配置。');
-    if (!_synastry.hasSession || _synastry.needsPermission) {
-      return OutlinedButton(
-        onPressed: widget.openAccount,
-        child: Text(_synastry.hasSession ? '前往个人中心开启合盘解读授权' : '登录或进入游客体验后生成解读'),
-      );
-    }
-    return FilledButton(
-      onPressed: _synastry.busy ? null : _generateSummary,
-      child: const UiText('生成合盘解读'),
+  Widget _interpretAction(BuildContext context) {
+    final links = context.getInheritedWidgetOfExactType<AccountSectionLinks>();
+    final hasSession = _synastry.hasSession;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (hasSession &&
+            (!_synastry.summaryConfigured || _synastry.needsPermission))
+          OutlinedButton(
+            onPressed: _synastry.busy ? null : _restoreComparedReport,
+            child: const UiText('查看此组合已存解读'),
+          ),
+        if (!_synastry.summaryConfigured)
+          const UiText('在线解读服务暂未配置。')
+        else if (!hasSession || _synastry.needsPermission)
+          OutlinedButton(
+            onPressed: hasSession && links != null
+                ? () => unawaited(
+                    links.open(
+                      accountDestination(AccountSection.aiPermissions),
+                    ),
+                  )
+                : widget.openAccount,
+            child: UiText(hasSession ? '前往 AI 授权' : '登录或进入游客体验后生成解读'),
+          )
+        else
+          FilledButton(
+            onPressed: _synastry.busy ? null : _generateSummary,
+            child: const UiText('生成合盘解读'),
+          ),
+      ],
     );
   }
 

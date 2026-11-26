@@ -9,18 +9,16 @@ import '../../model/destiny_reading.dart';
 
 class DestinyPageController extends ChangeNotifier {
   DestinyPageController({
-    required this.calculate,
-    this.calculateReading,
+    required this.calculateReading,
     this.requestReport,
     this.account,
   });
 
-  final Future<LocalBaZi> Function(BirthProfile) calculate;
   final Future<DestinyReading> Function(
     BirthProfile,
     Future<void>,
     void Function(String),
-  )?
+  )
   calculateReading;
   final Future<String> Function(Map<String, Object?>, Future<void>)?
   requestReport;
@@ -37,7 +35,6 @@ class DestinyPageController extends ChangeNotifier {
   String? calculationError;
   String? reportError;
   String? stage;
-  LocalBaZi? chart;
   DestinyReading? reading;
   String? report;
   DestinyCharts? archivedCharts;
@@ -74,7 +71,6 @@ class DestinyPageController extends ChangeNotifier {
     _revision++;
     calculating = true;
     calculationError = null;
-    chart = null;
     reading = null;
     report = null;
     archivedCharts = null;
@@ -88,18 +84,12 @@ class DestinyPageController extends ChangeNotifier {
     stage = 'validating';
     _refresh();
     try {
-      final read = calculateReading;
-      if (read == null) {
-        final result = await calculate(profile);
-        if (!task.isCompleted) chart = result;
-      } else {
-        final result = await read(profile, task.future, (value) {
-          if (task.isCompleted) return;
-          stage = value;
-          _refresh();
-        });
-        if (!task.isCompleted) reading = result;
-      }
+      final result = await calculateReading(profile, task.future, (value) {
+        if (task.isCompleted) return;
+        stage = value;
+        _refresh();
+      });
+      if (!task.isCompleted) reading = result;
     } on FormatException catch (error) {
       if (!task.isCompleted) calculationError = error.message;
     } catch (_) {
@@ -129,7 +119,6 @@ class DestinyPageController extends ChangeNotifier {
   Future<void> returnToArchive() async {
     if (busy) return;
     _revision++;
-    chart = null;
     reading = null;
     report = null;
     archivedCharts = null;

@@ -25,6 +25,33 @@ class MeihuaReading {
     required this.interpretation,
   }) : inputs = List.unmodifiable(inputs);
 
+  /// Decodes the original service's chart facts for display.
+  factory MeihuaReading.fromJson(Map<String, Object?> data) {
+    final inputs = (data['inputs'] as List).cast<int>();
+    final moving = data['moving'] as int;
+    if (!validMeihuaNumbers(inputs) || moving < 1 || moving > lineCount) {
+      throw const FormatException('Invalid published Meihua inputs.');
+    }
+    Hexagram hexagram(String key) =>
+        Hexagram.fromJson(data[key] as Map<String, Object?>);
+    Trigram trigram(String key) =>
+        Trigram.fromJson(data[key] as Map<String, Object?>);
+    return MeihuaReading._(
+      inputs: inputs,
+      primary: hexagram('primary'),
+      nuclear: hexagram('nuclear'),
+      changed: hexagram('changed'),
+      moving: moving,
+      body: trigram('body'),
+      use: trigram('use'),
+      changedUse: trigram('changedUse'),
+      relation: data['relation'] as String,
+      changedRelation: data['changedRelation'] as String,
+      direction: ReadingDirection.values.byName(data['direction'] as String),
+      interpretation: data['interpretation'] as String,
+    );
+  }
+
   final List<int> inputs;
   final Hexagram primary;
   final Hexagram nuclear;

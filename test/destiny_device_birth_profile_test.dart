@@ -160,8 +160,6 @@ void main() {
               key: ValueKey(key),
               account: account,
               loadPlaces: _places,
-              calculate: (_) async =>
-                  fail('Legacy reading should supply the local charts.'),
               calculateReading: (profile, _, _) async =>
                   DestinyReading.fromLegacy({
                     'archive': {

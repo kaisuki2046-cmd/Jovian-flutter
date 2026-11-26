@@ -7,13 +7,10 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart' show MethodChannel, SystemChannels;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:http/http.dart' as http;
-import 'package:http/testing.dart';
 import 'package:jovian_divination/jovian_divination.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../src/app/main.dart';
-import '../src/features/divination/requests/reading_gateway.dart';
 import '../src/features/divination/requests/reading_history_codec.dart';
 import '../src/features/divination/requests/reading_recovery.dart';
 import '../src/features/divination/view/divination_page.dart';
@@ -21,21 +18,68 @@ import '../src/features/divination/view/composer_attachment.dart';
 import '../src/features/divination/view/guide_composer.dart';
 import '../src/features/divination/view/guide_form.dart';
 import '../src/features/divination/view/reading_report.dart';
-import '../src/shared/http/json_client.dart';
 
-const _question = '这件事如何推进？';
-const _details = '我想问这周面试后续会怎样。';
-const _explained = '可以补充一下正在考虑的具体事情吗？';
-const _concern = '梳理这次面试的后续安排。';
-const _followUp = '我接下来该准备什么？';
-const _evidenceUrl = 'https://en.wikisource.org/wiki/Jovian_fixture';
+import 'support/divination_service_fixture.dart';
 
 void main() {
+  test(
+    'a stored reading preserves the published chart and its server hash',
+    () async {
+      final service = DivinationServiceFixture()..failReport = false;
+      final recovery = DivinationRecoveryFixture();
+      final online = service.connect(recovery);
+      addTearDown(online.dispose);
+      await online.start(divinationFixtureDetails, automatic: true);
+
+      final wire =
+          jsonDecode(jsonEncode(online.reading!.toJson()))
+              as Map<String, Object?>;
+      final cast = wire['castResult'] as Map<String, Object?>;
+      final results = wire['results'] as Map<String, Object?>;
+      final meihua = results['meihua'] as Map<String, Object?>;
+      (cast['calendar'] as Map<String, Object?>)['day'] = '甲子';
+      (cast['primary'] as Map<String, Object?>)['theme'] = '服务端发布的卦意。';
+      results['liuyao'] = cast;
+      meihua['interpretation'] = '服务端发布的体用解读。';
+      meihua['inputs'] = [1, 2, 3];
+      final serverHash = 'f' * 64;
+      wire['chartHash'] = serverHash;
+
+      final snapshot = OnlineReading.fromJson(wire);
+      final chart = snapshot.snapshot.chart!;
+      expect(chart.liuyao.calendar.day, '甲子');
+      expect(chart.liuyao.base.primary.theme, '服务端发布的卦意。');
+      expect(chart.meihua.inputs, [1, 2, 3]);
+      expect(chart.meihua.interpretation, '服务端发布的体用解读。');
+      expect(chart.chartHash, serverHash);
+
+      final restored = decodeGuideHistory(
+        encodeGuideHistory((
+          id: 'published-chart',
+          updatedAt: DateTime.utc(2026),
+          reading: snapshot,
+        )),
+      );
+      expect(restored?.reading.toJson(), wire);
+      expect(
+        () => OnlineReading.fromJson({...wire, 'chartHash': 'invalid'}),
+        throwsFormatException,
+      );
+      expect(
+        () => OnlineReading.fromJson({
+          ...wire,
+          'castResult': {...cast, 'lines': []},
+        }),
+        throwsFormatException,
+      );
+    },
+  );
+
   testWidgets('composer keeps selected files local and sends only the caption', (
     tester,
   ) async {
-    final service = _ReadingService();
-    final online = service.connect(_Recovery());
+    final service = DivinationServiceFixture();
+    final online = service.connect(DivinationRecoveryFixture());
     addTearDown(online.dispose);
     final picked = <ComposerAttachmentKind>[];
     final image = ComposerAttachment(
@@ -88,24 +132,27 @@ void main() {
     expect(find.text('local-image.png'), findsOneWidget);
     expect(find.byTooltip('发送消息'), findsNothing);
 
-    await tester.enterText(find.byType(TextFormField), _question);
+    await tester.enterText(
+      find.byType(TextFormField),
+      divinationFixtureQuestion,
+    );
     await _openAttachmentMenu(tester, '快捷提问');
     await _tap(tester, '算一件事');
     expect(
       tester.widget<TextFormField>(find.byType(TextFormField)).controller?.text,
-      _question,
+      divinationFixtureQuestion,
     );
     await _openAttachmentMenu(tester, '添加文件');
     await _send(tester);
     expect(picked, [ComposerAttachmentKind.image, ComposerAttachmentKind.file]);
     expect(service.calls, ['POST /reading/understand']);
-    expect(service.understood, [_question]);
+    expect(service.understood, [divinationFixtureQuestion]);
     expect(service.transmitted, [
-      {'question': _question, 'requireModel': true},
+      {'question': divinationFixtureQuestion, 'requireModel': true},
     ]);
     expect(find.text('local-image.png'), findsOneWidget);
     expect(find.text('local-document.txt'), findsOneWidget);
-    expect(find.text(_explained), findsOneWidget);
+    expect(find.text(divinationFixtureClarification), findsOneWidget);
     await tester.tap(find.byTooltip('新对话'));
     await tester.pumpAndSettle();
     expect(find.text('local-image.png'), findsNothing);
@@ -116,10 +163,10 @@ void main() {
   testWidgets('follow-up keeps the attachment out of the reading request', (
     tester,
   ) async {
-    final service = _ReadingService()..failReport = false;
-    final recovery = _Recovery();
+    final service = DivinationServiceFixture()..failReport = false;
+    final recovery = DivinationRecoveryFixture();
     final initial = service.connect(recovery);
-    await initial.start(_details, automatic: true);
+    await initial.start(divinationFixtureDetails, automatic: true);
     initial.dispose();
     service.calls.clear();
     service.transmitted.clear();
@@ -149,12 +196,15 @@ void main() {
     expect(service.calls, ['GET /reading']);
     expect(find.text('follow-up-only.txt'), findsOneWidget);
     await _openAttachmentMenu(tester, '添加文件');
-    await tester.enterText(find.byType(TextFormField), _followUp);
+    await tester.enterText(
+      find.byType(TextFormField),
+      divinationFixtureFollowUp,
+    );
     await _send(tester);
     expect(service.calls, ['GET /reading', 'POST /reading/follow-up']);
     expect(service.transmitted, [
       {},
-      {'step': 0, 'question': _followUp},
+      {'step': 0, 'question': divinationFixtureFollowUp},
     ]);
     expect(find.text('follow-up-only.txt'), findsNWidgets(2));
     expect(find.text('先确认后续时间。'), findsOneWidget);
@@ -210,8 +260,8 @@ void main() {
       addTearDown(
         tester.binding.platformDispatcher.clearAccessibilityFeaturesTestValue,
       );
-      final service = _ReadingService();
-      final recovery = _Recovery();
+      final service = DivinationServiceFixture();
+      final recovery = DivinationRecoveryFixture();
       final online = service.connect(recovery);
       addTearDown(online.dispose);
       await tester.pumpWidget(_app(online));
@@ -228,13 +278,19 @@ void main() {
             ?.text,
         '这次面试会顺利吗？',
       );
-      await tester.enterText(find.byType(TextFormField), _question);
+      await tester.enterText(
+        find.byType(TextFormField),
+        divinationFixtureQuestion,
+      );
       await _send(tester);
-      expect(find.text(_question), findsOneWidget);
-      expect(find.text(_explained), findsOneWidget);
+      expect(find.text(divinationFixtureQuestion), findsOneWidget);
+      expect(find.text(divinationFixtureClarification), findsOneWidget);
       expect(service.calls, ['POST /reading/understand']);
 
-      await tester.enterText(find.byType(TextFormField), _details);
+      await tester.enterText(
+        find.byType(TextFormField),
+        divinationFixtureDetails,
+      );
       await _send(tester);
       expect(service.automatic, [false]);
       final toss = find.byKey(const ValueKey('coin-ritual-toss-button'));
@@ -251,14 +307,17 @@ void main() {
       await _tap(tester, '一键翻牌');
       await _tap(tester, '查看解读');
       expect(find.text('确认的关注点'), findsOneWidget);
-      expect(find.text(_concern), findsOneWidget);
+      expect(find.text(divinationFixtureFocus), findsOneWidget);
       expect(find.text('解读暂不可用，可以稍后重试。'), findsOneWidget);
       expect(find.text('查看三套盘面'), findsOneWidget);
       await _tap(tester, '重试');
       expect(find.text('塔罗解读'), findsOneWidget);
       expect(find.text('塔罗对照报告。'), findsOneWidget);
       expect(find.text('查看三套盘面'), findsOneWidget);
-      expect(service.understood.last, '$_question；补充：$_details');
+      expect(
+        service.understood.last,
+        '$divinationFixtureQuestion；补充：$divinationFixtureDetails',
+      );
       expect(service.calls.where((call) => call == 'POST /reading').length, 1);
       expect(
         service.calls.where((call) => call == 'POST /reading/report').length,
@@ -267,9 +326,9 @@ void main() {
 
       final compose = find.byType(TextFormField);
       await tester.ensureVisible(compose);
-      await tester.enterText(compose, _followUp);
+      await tester.enterText(compose, divinationFixtureFollowUp);
       await _send(tester);
-      expect(find.text(_followUp), findsOneWidget);
+      expect(find.text(divinationFixtureFollowUp), findsOneWidget);
       expect(find.text('先确认后续时间。'), findsOneWidget);
       expect(find.text('• 整理面试问题。'), findsOneWidget);
 
@@ -284,13 +343,16 @@ void main() {
       );
       await _tap(tester, '另问一件事');
       expect(find.text('有什么事情想知道吗？'), findsOneWidget);
-      expect(find.text(_details), findsNothing);
+      expect(find.text(divinationFixtureDetails), findsNothing);
 
       await tester.tap(find.byTooltip('会话历史'));
       await tester.pumpAndSettle();
       await tester.enterText(find.widgetWithText(TextField, '搜索对话'), '确认后续');
       await tester.pumpAndSettle();
-      await _tap(tester, '$_question；补充：$_details');
+      await _tap(
+        tester,
+        '$divinationFixtureQuestion；补充：$divinationFixtureDetails',
+      );
       expect(find.text('塔罗对照报告。'), findsOneWidget);
       expect(find.text('先确认后续时间。'), findsOneWidget);
       expect(find.byType(TextFormField), findsOneWidget);
@@ -299,7 +361,9 @@ void main() {
         service.calls.where((call) => call == 'POST /reading/follow-up').length,
         1,
       );
-      final other = _ReadingService().connect(_Recovery());
+      final other = DivinationServiceFixture().connect(
+        DivinationRecoveryFixture(),
+      );
       addTearDown(other.dispose);
       await tester.pumpWidget(_app(other));
       await tester.pumpAndSettle();
@@ -314,10 +378,10 @@ void main() {
   testWidgets('a restored report opens without asking the model again', (
     tester,
   ) async {
-    final service = _ReadingService()..failReport = false;
-    final recovery = _Recovery();
+    final service = DivinationServiceFixture()..failReport = false;
+    final recovery = DivinationRecoveryFixture();
     final initial = service.connect(recovery);
-    await initial.start(_details, automatic: true);
+    await initial.start(divinationFixtureDetails, automatic: true);
     initial.dispose();
     service.calls.clear();
     final restored = service.connect(recovery);
@@ -334,8 +398,9 @@ void main() {
     tester,
   ) async {
     final understand = Completer<void>();
-    final service = _ReadingService()..understanding = understand.future;
-    final online = service.connect(_Recovery());
+    final service = DivinationServiceFixture()
+      ..understanding = understand.future;
+    final online = service.connect(DivinationRecoveryFixture());
     addTearDown(online.dispose);
     await tester.pumpWidget(
       MaterialApp(
@@ -356,7 +421,7 @@ void main() {
     );
     await tester.pumpAndSettle();
     final composer = find.byType(TextFormField);
-    const draft = '  $_details  ';
+    const draft = '  $divinationFixtureDetails  ';
     await tester.enterText(composer, draft);
     await _openAttachmentMenu(tester, '添加文件');
     await tester.tap(find.byTooltip('发送消息'));
@@ -384,7 +449,10 @@ void main() {
       'POST /reading/understand',
       'POST /reading',
     ]);
-    expect(service.understood, [_details, _details]);
+    expect(service.understood, [
+      divinationFixtureDetails,
+      divinationFixtureDetails,
+    ]);
     await tester.tap(find.byTooltip('暂停仪式'));
     await tester.pumpAndSettle();
     expect(find.text('local-draft.txt'), findsOneWidget);
@@ -394,10 +462,10 @@ void main() {
   testWidgets('another question starts without the prior question context', (
     tester,
   ) async {
-    final service = _ReadingService()..failReport = false;
-    final recovery = _Recovery();
+    final service = DivinationServiceFixture()..failReport = false;
+    final recovery = DivinationRecoveryFixture();
     final initial = service.connect(recovery);
-    await initial.start(_details, automatic: true);
+    await initial.start(divinationFixtureDetails, automatic: true);
     initial.dispose();
     final online = service.connect(recovery);
     addTearDown(online.dispose);
@@ -425,13 +493,13 @@ void main() {
     await tester.binding.setSurfaceSize(const Size(320, 570));
     addTearDown(() => tester.binding.setSurfaceSize(null));
     final reply = Completer<void>();
-    final service = _ReadingService()
+    final service = DivinationServiceFixture()
       ..failReport = false
       ..followUpReply = reply.future
       ..longReport = true;
-    final recovery = _Recovery();
+    final recovery = DivinationRecoveryFixture();
     final initial = service.connect(recovery);
-    await initial.start(_details, automatic: true);
+    await initial.start(divinationFixtureDetails, automatic: true);
     initial.dispose();
     final online = service.connect(recovery);
     addTearDown(online.dispose);
@@ -454,7 +522,10 @@ void main() {
     expect(position.extentAfter, closeTo(0, 1));
     expect(latest, findsNothing);
 
-    await tester.enterText(find.byType(TextFormField), _followUp);
+    await tester.enterText(
+      find.byType(TextFormField),
+      divinationFixtureFollowUp,
+    );
     await tester.pump();
     await tester.tap(find.byTooltip('发送消息'));
     await tester.pump();
@@ -559,7 +630,7 @@ void main() {
         null,
       ),
     );
-    final service = _ReadingService()
+    final service = DivinationServiceFixture()
       ..failReport = false
       ..extendedFollowUp = true;
     final base = Uri.https('fixture.invalid');
@@ -568,15 +639,15 @@ void main() {
             as GuideHistoryStore;
     final recovery = store('owner');
     final initial = service.connect(recovery);
-    await initial.start(_details, automatic: true);
-    await initial.followUp(_followUp);
+    await initial.start(divinationFixtureDetails, automatic: true);
+    await initial.followUp(divinationFixtureFollowUp);
     await initial.nextQuestion();
     initial.dispose();
     final afterRestart = store('owner');
     expect(await afterRestart.read(), isNull);
     expect(await store('other').readHistory(), isEmpty);
     final archived = (await afterRestart.readHistory()).single.reading;
-    expect(archived.followUps.single.question, _followUp);
+    expect(archived.followUps.single.question, divinationFixtureFollowUp);
     expect(archived.followUps.single.evidenceIds, ['tarot:v1:reference']);
     expect(archived.evidence.first.catalogVersion, 1);
     service.expired = true;
@@ -588,7 +659,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byTooltip('会话历史'));
     await tester.pumpAndSettle();
-    await _tap(tester, _details);
+    await _tap(tester, divinationFixtureDetails);
     expect(service.calls, ['GET /reading']);
     expect(find.text('塔罗对照报告。'), findsOneWidget);
     expect(find.text('先确认后续时间。'), findsOneWidget);
@@ -606,9 +677,9 @@ void main() {
     expect(find.text('未引用文献'), findsNothing);
     expect(opened, isNull);
     await _tap(tester, '打开参考原文');
-    expect(opened, _evidenceUrl);
+    expect(opened, divinationFixtureEvidenceUrl);
     await _tap(tester, '复制参考链接');
-    expect(copied, _evidenceUrl);
+    expect(copied, divinationFixtureEvidenceUrl);
     expect(service.calls, ['GET /reading']);
     expect(tester.takeException(), isNull);
   });
@@ -617,14 +688,18 @@ void main() {
     'a question finishing on a different main tab waits in its chat',
     (tester) async {
       final understanding = Completer<void>();
-      final online = (_ReadingService()..understanding = understanding.future)
-          .connect(_Recovery());
+      final online =
+          (DivinationServiceFixture()..understanding = understanding.future)
+              .connect(DivinationRecoveryFixture());
       addTearDown(online.dispose);
       await tester.pumpWidget(
         JovianApp(initialTab: JovianTab.divination, onlineGuide: online),
       );
       await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextFormField), _details);
+      await tester.enterText(
+        find.byType(TextFormField),
+        divinationFixtureDetails,
+      );
       await tester.pump();
       await tester.tap(find.byTooltip('发送消息'));
       await tester.pump();
@@ -667,182 +742,4 @@ Future<void> _openAttachmentMenu(WidgetTester tester, String label) async {
   await tester.tap(find.byTooltip('添加附件或快捷提问'));
   await tester.pumpAndSettle();
   await _tap(tester, label);
-}
-
-class _Recovery implements GuideHistoryStore {
-  GuideRecovery? state;
-  final _reads = <String, String>{};
-  final _threads = <String, GuideRecovery?>{};
-
-  @override
-  Future<GuideRecovery?> read() async => state;
-
-  @override
-  Future<void> write(GuideRecovery? recovery) async => state = recovery;
-
-  @override
-  Future<List<GuideHistoryEntry>> readHistory() async => _reads.values
-      .map(decodeGuideHistory)
-      .whereType<GuideHistoryEntry>()
-      .toList();
-
-  @override
-  Future<void> writeHistory(GuideHistoryEntry entry) async =>
-      _reads[entry.id] = encodeGuideHistory(entry);
-
-  @override
-  Future<GuideRecovery?> readThread(String id) async => _threads[id];
-
-  @override
-  Future<void> writeThread(String id, GuideRecovery? recovery) async =>
-      _threads[id] = recovery;
-}
-
-class _ReadingService {
-  String get _token => 'a' * 43;
-  bool failReport = true;
-  bool expired = false;
-  bool extendedFollowUp = false;
-  bool longReport = false;
-  Future<void>? understanding;
-  Future<void>? followUpReply;
-  final understood = <String>[];
-  final calls = <String>[];
-  final transmitted = <Map<Object?, Object?>>[];
-  final automatic = <bool>[];
-  GuideRitual? _ritual;
-  bool _hasReport = false;
-  final _followUps = <Map<String, Object?>>[];
-
-  OnlineGuideController connect(GuideRecoveryStore recovery) {
-    final client = MockClient(_respond);
-    return OnlineGuideController(
-      HttpGuideGateway(
-        JsonHttpClient(base: Uri.https('fixture.invalid'), client: client),
-      ),
-      recovery,
-      onDispose: client.close,
-    );
-  }
-
-  Future<http.Response> _respond(http.Request request) async {
-    final call = '${request.method} ${request.url.path}';
-    final body = request.body.isEmpty
-        ? const {}
-        : jsonDecode(request.body) as Map;
-    calls.add(call);
-    transmitted.add(body);
-    if (call != 'POST /reading/understand' && call != 'POST /reading') {
-      expectSync(request.headers['Authorization'], 'Bearer $_token');
-    }
-    switch (call) {
-      case 'POST /reading/understand':
-        expectSync(body['requireModel'], true);
-        await understanding;
-        final question = body['question'] as String;
-        understood.add(question);
-        return _json({
-          'source': 'model',
-          'focus': _concern,
-          'clarification': question == _question ? _explained : '',
-          if (question != _question) 'proof': 'accepted-proof',
-        });
-      case 'POST /reading':
-        expectSync(body['method'], 'combined');
-        expectSync(body['profile'], guideVersion);
-        expectSync(body['focus'], _concern);
-        expectSync(body['proof'], 'accepted-proof');
-        automatic.add(body['automatic'] == true);
-        _hasReport = false;
-        _followUps.clear();
-        _ritual = GuideRitual(
-          question: body['question'] as String,
-          focus: _concern,
-          automatic: automatic.last,
-          random: () => 0.3,
-        );
-        return _json({'token': _token, 'task': _state()});
-      case 'POST /reading/toss':
-        _ritual!.toss(
-          GuideCoinEvent(
-            actionId: body['actionId'] as String,
-            step: body['step'] as int,
-          ),
-        );
-        return _json(_state());
-      case 'POST /reading/pick':
-        _ritual!.pick(
-          GuideCardEvent(
-            actionId: body['actionId'] as String,
-            step: body['step'] as int,
-            slot: body['slot'] as int,
-            epochMs: body['epochMs'] as String,
-            monotonicMs: body['monotonicMs'] as num,
-            clockSessionId: body['clockSessionId'] as String,
-          ),
-        );
-        return _json(_state());
-      case 'GET /reading':
-        if (expired) return _json({'error': 'not_found'}, status: 404);
-        return _json(_state());
-      case 'POST /reading/report':
-        if (failReport) {
-          failReport = false;
-          return _json({'error': 'pro_model_unavailable'}, status: 503);
-        }
-        _hasReport = true;
-        return _json(_state());
-      case 'POST /reading/follow-up':
-        expectSync(body, {'step': 0, 'question': _followUp});
-        await followUpReply;
-        _followUps.add({
-          'question': _followUp,
-          'report': {
-            'answer': '先确认后续时间。',
-            'nextSteps': ['整理面试问题。'],
-            if (extendedFollowUp) ...{
-              'explanation': '### 时间参考\n\n根据本次盘面，先跟进日程。',
-              'evidenceIds': ['tarot:v1:reference'],
-            },
-          },
-        });
-        return _json(_state());
-      default:
-        throw StateError('Unexpected request: $call');
-    }
-  }
-
-  Map<String, Object?> _state() => {
-    ..._ritual!.snapshot.toChartSnapshotJson(),
-    'followUps': _followUps,
-    if (_hasReport && extendedFollowUp)
-      'evidence': [
-        {
-          'id': 'tarot:v1:reference',
-          'label': '本次参考文献',
-          'plain': '这是本次报告引用的说明。',
-          'source': _evidenceUrl,
-          'catalogVersion': 1,
-        },
-        {
-          'id': 'meihua:v1:unrelated',
-          'label': '未引用文献',
-          'plain': '这是未引用的说明。',
-          'source': _evidenceUrl,
-          'catalogVersion': 1,
-        },
-      ],
-    if (_hasReport)
-      'proReport': {
-        'tarot': longReport ? '留意这次面试的后续通知。' * 60 : '塔罗对照报告。',
-        'meihua': '梅花对照报告。',
-        'liuyao': '六爻对照报告。',
-      },
-  };
-
-  http.Response _json(Object value, {int status = 200}) => http.Response.bytes(
-    utf8.encode(jsonEncode(value)),
-    status,
-    headers: {'Content-Type': 'application/json; charset=utf-8'},
-  );
 }

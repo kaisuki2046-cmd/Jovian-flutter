@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 import '../src/features/divination/view/guide_form.dart';
 import '../src/features/divination/view/ritual/tarot_deck.dart';
 import '../src/features/divination/view/ritual/tarot_preparation.dart';
+import 'support/divination_service_fixture.dart';
 
 void main() {
   testWidgets(
@@ -58,15 +59,19 @@ void main() {
       tester.view.physicalSize = const Size(360, 640);
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
+      final service = DivinationServiceFixture()..failReport = false;
+      final online = service.connect(DivinationRecoveryFixture());
+      addTearDown(online.dispose);
       await tester.pumpWidget(
         MaterialApp(
           builder: (context, child) => MediaQuery(
             data: MediaQuery.of(context).copyWith(disableAnimations: true),
             child: child!,
           ),
-          home: const GuideForm(),
+          home: GuideForm(online: online),
         ),
       );
+      await tester.pumpAndSettle();
       await tester.enterText(find.byType(TextFormField), '我这次面试后续会怎样？');
       await tester.pump();
       await tester.tap(find.byTooltip('发送消息'));
@@ -134,6 +139,15 @@ void main() {
       await tester.tap(charts);
       await tester.pumpAndSettle();
       expect(find.text('梅花取数来自三次抽牌的点击时刻。'), findsOneWidget);
+      expect(
+        service.calls.where((call) => call == 'POST /reading/toss'),
+        hasLength(6),
+      );
+      expect(
+        service.calls.where((call) => call == 'POST /reading/pick'),
+        hasLength(3),
+      );
+      expect(service.calls.last, 'POST /reading/report');
       expect(tester.takeException(), isNull);
     },
   );

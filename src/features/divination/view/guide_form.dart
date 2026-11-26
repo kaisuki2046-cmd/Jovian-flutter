@@ -41,11 +41,8 @@ class _GuideFormState extends State<GuideForm>
   final _questionFocus = FocusNode();
   final _followUp = TextEditingController();
   final _followUpFocus = FocusNode();
-  final _clock = Stopwatch();
   final _ritualChanges = ValueNotifier(0);
   StreamSubscription<void>? _onlineChanges;
-  late String _clockSessionId;
-  GuideRitual? _ritual;
   DialogRoute<void>? _ritualRoute;
   GuideRitualPresentation? _presentation;
   final _clarifications =
@@ -70,8 +67,7 @@ class _GuideFormState extends State<GuideForm>
   @override
   bool get wantKeepAlive => true;
 
-  GuideRitualSnapshot? get _snapshot =>
-      widget.online?.reading?.snapshot ?? _ritual?.snapshot;
+  GuideRitualSnapshot? get _snapshot => widget.online?.reading?.snapshot;
 
   @override
   void initState() {
@@ -137,36 +133,20 @@ class _GuideFormState extends State<GuideForm>
       _sendLocalAttachments(_localQuestionTurns, _clarifications.length);
       return;
     }
-    if (_form.currentState?.validate() != true) return;
+    final online = widget.online;
+    if (online == null || _form.currentState?.validate() != true) return;
     FocusScope.of(context).unfocus();
     _presentation = null;
-    if (widget.online case final online?) {
-      setState(() {
-        _pendingQuestion = (
-          text: question,
-          draft: _question.value,
-          attachments: _takeDraftAttachments(),
-        );
-        _sentRevision++;
-        _question.clear();
-      });
-      unawaited(_startOnline(online, question));
-      return;
-    }
     setState(() {
-      _clock
-        ..reset()
-        ..start();
-      _clockSessionId = guideEventId();
-      _ritual = GuideRitual(
-        question: question,
-        focus: question,
-        automatic: false,
+      _pendingQuestion = (
+        text: question,
+        draft: _question.value,
+        attachments: _takeDraftAttachments(),
       );
-      _readingAttachments = _takeDraftAttachments();
+      _sentRevision++;
       _question.clear();
     });
-    _openRitual();
+    unawaited(_startOnline(online, question));
   }
 
   Future<void> _startOnline(
@@ -279,56 +259,13 @@ class _GuideFormState extends State<GuideForm>
     _attachmentSelection = null;
   }
 
-  void _toss() {
-    if (widget.online case final online?) {
-      unawaited(online.toss());
-      return;
-    }
-    final ritual = _ritual!;
-    if (ritual.snapshot.stage != GuideStage.cast) return;
-    setState(() {
-      ritual.toss(
-        GuideCoinEvent(
-          step: ritual.snapshot.tosses.length,
-          actionId: guideEventId(),
-        ),
-      );
-    });
-    _ritualChanges.value++;
-  }
-
-  void _choose(int slot) {
-    if (widget.online case final online?) {
-      unawaited(online.pick(slot));
-      return;
-    }
-    final ritual = _ritual!;
-    final state = ritual.snapshot;
-    if (state.stage != GuideStage.draw || state.selectedSlots.contains(slot)) {
-      return;
-    }
-    final instant = DateTime.now();
-    final elapsed = _clock.elapsedMicroseconds / 1000;
-    setState(() {
-      ritual.pick(
-        GuideCardEvent(
-          actionId: guideEventId(),
-          step: state.selectedSlots.length,
-          slot: slot,
-          epochMs: instant.millisecondsSinceEpoch.toString(),
-          monotonicMs: elapsed,
-          clockSessionId: _clockSessionId,
-        ),
-      );
-    });
-    _ritualChanges.value++;
-  }
-
   void _openRitual() {
+    final online = widget.online;
     if (!widget.active ||
         _ritualRoute != null ||
         _snapshot == null ||
-        widget.online?.canContinue == false)
+        online == null ||
+        !online.canContinue)
       return;
     final presentation = _presentation ??= GuideRitualPresentation();
     final navigator = Navigator.of(context, rootNavigator: true);
@@ -350,8 +287,8 @@ class _GuideFormState extends State<GuideForm>
           final online = mounted ? widget.online : null;
           return online?.canRetry == true ? online!.retry : null;
         },
-        toss: _toss,
-        choose: _choose,
+        toss: () => unawaited(online.toss()),
+        choose: (slot) => unawaited(online.pick(slot)),
         pause: () {
           if (route.isCurrent) navigator.pop();
         },
@@ -398,7 +335,6 @@ class _GuideFormState extends State<GuideForm>
   void _clearDraft() {
     _removeRitualRoute();
     _presentation = null;
-    _clock.stop();
     _question.clear();
     _followUp.clear();
     _pendingQuestion = null;
@@ -411,7 +347,6 @@ class _GuideFormState extends State<GuideForm>
     _readingAttachments = const [];
     _sendingFollowUp = null;
     _attachmentError = null;
-    _ritual = null;
     _showCharts = false;
   }
 
@@ -512,7 +447,7 @@ class _GuideFormState extends State<GuideForm>
         key: const ValueKey('guide-question'),
         latestMessage: _latestMessage,
         sentRevision: _sentRevision,
-        welcome: welcome ? GuideWelcome(offline: online == null) : null,
+        welcome: welcome ? const GuideWelcome() : null,
         messages: [
           ..._conversation(),
           if (_pendingQuestion case final submitted?) ...[
@@ -533,6 +468,7 @@ class _GuideFormState extends State<GuideForm>
           hint: '输入你想测算的问题…',
           sendLabel: '发送消息',
           busy: busy || _attachmentSelection != null,
+          textSendingAvailable: online != null,
           send: _sendQuestion,
           stop: online?.canStopUnderstanding == true
               ? online!.stopUnderstanding
@@ -541,6 +477,7 @@ class _GuideFormState extends State<GuideForm>
           startQuestion: _questionFocus.requestFocus,
           openSynastry: widget.openSynastry,
           showAssistant: !welcome,
+          actions: [if (online == null) const UiText('算事服务当前未连接，暂时无法发送问题。')],
           attachments: _draftAttachments,
           addAttachment: _addAttachment,
           removeAttachment: _removeAttachment,
@@ -626,11 +563,6 @@ class _GuideFormState extends State<GuideForm>
       messages: [
         ..._conversation(),
         ..._questionContext(ritual),
-        if (online == null) ...[
-          UiText('翻开三张塔罗', style: text.titleMedium),
-          const SizedBox(height: 12),
-          TarotReveal(draw: chart.tarot),
-        ],
         if (!hasReport) ..._feedback(),
         if (online != null && busy && !hasReport)
           const GuideConversationReply(body: '正在解读…'),
@@ -662,12 +594,10 @@ class _GuideFormState extends State<GuideForm>
         ),
         if (_showCharts) ...[
           const SizedBox(height: 20),
-          if (online != null) ...[
-            UiText('翻开三张塔罗', style: text.titleMedium),
-            const SizedBox(height: 12),
-            TarotReveal(draw: chart.tarot),
-            const SizedBox(height: 20),
-          ],
+          UiText('翻开三张塔罗', style: text.titleMedium),
+          const SizedBox(height: 12),
+          TarotReveal(draw: chart.tarot),
+          const SizedBox(height: 20),
           JingfangResult(reading: chart.liuyao),
           const SizedBox(height: 24),
           Text(

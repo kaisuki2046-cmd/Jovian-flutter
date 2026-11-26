@@ -370,8 +370,7 @@ class _AppHomeState extends State<_AppHome> {
       JovianTab.destiny => DestinyPage(
         key: ValueKey(_scope),
         loadPlaces: loadBirthPlaces,
-        calculate: calculateDestinyBaZi,
-        calculateReading: legacyDestinyCalculation(),
+        calculateReading: calculateDestinyReading,
         requestReport: configureDestinyReport(
           readNativeSession: widget.account?.readNativeSession,
         ),

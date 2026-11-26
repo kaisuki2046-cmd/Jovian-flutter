@@ -96,6 +96,8 @@ void main() {
       bar.destinations.cast<NavigationDestination>().map((item) => item.label),
       ['命理', '合盘', '算事', '消息', '个人中心'],
     );
+    await tester.tap(find.widgetWithText(FilledButton, '开始解读'));
+    await tester.pump();
     final date = find.widgetWithText(TextField, '出生日期');
     await tester.enterText(date, '2000-01-01');
     for (final tab in JovianTab.values.skip(1)) {

@@ -12,6 +12,15 @@ class Trigram {
     this.outer,
   );
 
+  factory Trigram.fromJson(Map<String, Object?> data) => Trigram(
+    data['name'] as String,
+    data['image'] as String,
+    data['element'] as String,
+    data['pattern'] as int,
+    List<String>.unmodifiable((data['inner'] as List).cast<String>()),
+    List<String>.unmodifiable((data['outer'] as List).cast<String>()),
+  );
+
   final String name;
   final String image;
   final String element;
@@ -38,6 +47,24 @@ class Hexagram {
     this.theme,
     this.direction,
   );
+
+  factory Hexagram.fromJson(Map<String, Object?> data) {
+    final lines = (data['yangLines'] as List).cast<bool>();
+    if (lines.length != lineCount)
+      throw const FormatException('Invalid published hexagram.');
+    var pattern = 0;
+    for (final (index, yang) in lines.indexed) {
+      if (yang) pattern |= 1 << index;
+    }
+    return Hexagram(
+      data['name'] as String,
+      trigrams.firstWhere((trigram) => trigram.name == data['upper']),
+      trigrams.firstWhere((trigram) => trigram.name == data['lower']),
+      pattern,
+      data['theme'] as String,
+      ReadingDirection.values.byName(data['direction'] as String),
+    );
+  }
 
   final String name;
   final Trigram upper;

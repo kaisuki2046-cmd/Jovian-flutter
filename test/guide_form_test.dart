@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../src/app/main.dart';
+import 'support/divination_service_fixture.dart';
 
 void main() {
   testWidgets(
@@ -16,8 +17,11 @@ void main() {
       addTearDown(
         tester.binding.platformDispatcher.clearAccessibilityFeaturesTestValue,
       );
+      final service = DivinationServiceFixture();
+      final online = service.connect(DivinationRecoveryFixture());
+      addTearDown(online.dispose);
       await tester.pumpWidget(
-        const JovianApp(initialTab: JovianTab.divination),
+        JovianApp(initialTab: JovianTab.divination, onlineGuide: online),
       );
       await tester.pumpAndSettle();
       expect(find.byType(TabBar), findsNothing);
@@ -38,6 +42,11 @@ void main() {
       await tester.tap(toss);
       await tester.pumpAndSettle();
       expect(find.text('已投 1 / 6 次'), findsOneWidget);
+      expect(service.calls, [
+        'POST /reading/understand',
+        'POST /reading',
+        'POST /reading/toss',
+      ]);
 
       await tester.tap(find.byTooltip('暂停仪式'));
       await tester.pumpAndSettle();
@@ -56,4 +65,37 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+
+  testWidgets('without a service the landing keeps the draft and cannot cast', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(360, 640);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(const JovianApp(initialTab: JovianTab.divination));
+    await tester.pumpAndSettle();
+    expect(find.text('算事服务当前未连接，暂时无法发送问题。'), findsOneWidget);
+    final field = find.byType(TextFormField);
+    await tester.enterText(field, divinationFixtureDetails);
+    await tester.pump();
+    expect(
+      tester
+          .widget<IconButton>(
+            find.byWidgetPredicate(
+              (widget) => widget is IconButton && widget.tooltip == '发送消息',
+            ),
+          )
+          .onPressed,
+      isNull,
+    );
+    await tester.testTextInput.receiveAction(TextInputAction.send);
+    await tester.pumpAndSettle();
+    expect(
+      tester.widget<TextFormField>(field).controller!.text,
+      divinationFixtureDetails,
+    );
+    expect(find.byKey(const ValueKey('guide-ritual-dialog')), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
 }

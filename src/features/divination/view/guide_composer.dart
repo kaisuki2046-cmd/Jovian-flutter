@@ -14,9 +14,7 @@ const _assistantPortrait =
 const guideSuggestedQuestions = ['这次面试会顺利吗？', '这段感情接下来会怎么发展？', '最近什么时候适合搬家？'];
 
 class GuideWelcome extends StatelessWidget {
-  const GuideWelcome({super.key, this.offline = false});
-
-  final bool offline;
+  const GuideWelcome({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -74,17 +72,6 @@ class GuideWelcome extends StatelessWidget {
             width: portraitSize,
             child: const GuideAssistantPortrait(accessible: true),
           ),
-          if (offline)
-            Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: UiText(
-                '本机起盘 · 六爻、塔罗和梅花易数',
-                style: theme.textTheme.labelMedium?.copyWith(
-                  color: colors.onSurfaceVariant,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
         ],
       ),
     );
@@ -176,6 +163,7 @@ class GuideComposer extends StatelessWidget {
     this.attachmentError,
     this.actions = const [],
     this.showAssistant = false,
+    this.textSendingAvailable = true,
   });
 
   final GlobalKey<FormState> form;
@@ -184,6 +172,7 @@ class GuideComposer extends StatelessWidget {
   final String hint;
   final String sendLabel;
   final VoidCallback send;
+  final bool textSendingAvailable;
   final VoidCallback? stop;
   final bool busy;
   final bool showAssistant;
@@ -195,6 +184,10 @@ class GuideComposer extends StatelessWidget {
   final ValueChanged<ComposerAttachment> removeAttachment;
   final String? attachmentError;
   final List<Widget> actions;
+
+  bool _canSend(String value) =>
+      !busy &&
+      (value.trim().isEmpty ? attachments.isNotEmpty : textSendingAvailable);
 
   @override
   Widget build(BuildContext context) {
@@ -281,11 +274,7 @@ class GuideComposer extends StatelessWidget {
                                 validator: (input) =>
                                     validateGuideQuestion(input ?? ''),
                                 onFieldSubmitted: (value) {
-                                  if (!busy &&
-                                      (value.trim().isNotEmpty ||
-                                          attachments.isNotEmpty)) {
-                                    send();
-                                  }
+                                  if (_canSend(value)) send();
                                 },
                               ),
                             ),
@@ -301,7 +290,8 @@ class GuideComposer extends StatelessWidget {
                             }
                             return IconButton.filled(
                               tooltip: stop == null ? sendLabel : '停止',
-                              onPressed: stop ?? (busy ? null : send),
+                              onPressed:
+                                  stop ?? (_canSend(draft.text) ? send : null),
                               style: IconButton.styleFrom(
                                 backgroundColor: colors.onSurface,
                                 foregroundColor: colors.surface,

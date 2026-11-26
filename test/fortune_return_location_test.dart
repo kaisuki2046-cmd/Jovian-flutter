@@ -1,17 +1,21 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:jovian_fortune/jovian_fortune.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../src/features/account/account.dart';
 import '../src/features/account/settings/model/agreements.dart';
+import '../src/features/fortune/control/fortune_local.dart';
 import '../src/features/fortune/control/fortune_online.dart';
 import '../src/features/fortune/model/online_fortune.dart';
 import '../src/features/fortune/requests/fortune_report_api.dart';
 import '../src/features/fortune/view/fortune_page.dart';
 import '../src/shared/http/json_client.dart';
+import '../src/ui/interface_language.dart';
 import 'support/fortune_local_fixture.dart';
 
 const _owner = 'active-member';
@@ -22,6 +26,132 @@ final _today = DateTime.utc(2026, 11, 11, 12);
 final _returnAt = DateTime.utc(2026, 3, 10, 18, 25).millisecondsSinceEpoch;
 
 void main() {
+  testWidgets('large English period labels wrap and can select a forecast', (
+    tester,
+  ) async {
+    _viewport(tester, const Size(320, 700));
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: const [interfaceStringsDelegate],
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: TextScaler.linear(2)),
+          child: child!,
+        ),
+        home: FortunePage(
+          loadDisplay: _utc,
+          local: const FortuneLocalFixture(),
+          readServerTime: () async => _today,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final current = find.widgetWithText(ChoiceChip, 'Today');
+    final year = find.widgetWithText(ChoiceChip, 'This year');
+    expect(find.byType(ChoiceChip), findsNWidgets(4));
+    expect(
+      tester.getTopLeft(year).dy,
+      greaterThan(tester.getTopLeft(current).dy),
+    );
+    expect(tester.widget<ChoiceChip>(current).selected, isTrue);
+    await _tap(tester, 'This year');
+    expect(tester.widget<ChoiceChip>(year).selected, isTrue);
+    expect(find.text('2026年1月1日 至 2026年12月31日'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Calendar lookup'));
+    await tester.pumpAndSettle();
+    expect(find.text('Calendar lookup'), findsOneWidget);
+  });
+
+  testWidgets('offline chart retains preview and explains missing service', (
+    tester,
+  ) async {
+    _viewport(tester, const Size(390, 760));
+    final account = _accountWithChart();
+    addTearDown(account.dispose);
+    await account.initialize();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: FortunePage(
+          loadDisplay: _utc,
+          local: const FortuneLocalFixture(),
+          readServerTime: () async => _today,
+          account: account,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('解读服务暂未配置。'), findsOneWidget);
+    expect(find.text('参考干支'), findsOneWidget);
+    expect(find.text('运势报告历史'), findsOneWidget);
+    expect(find.widgetWithText(OutlinedButton, '解读'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('date refresh disables actions until the new preview succeeds', (
+    tester,
+  ) async {
+    _viewport(tester, const Size(390, 760));
+    final account = _accountWithChart();
+    addTearDown(account.dispose);
+    await account.initialize();
+    final nextTime = Completer<DateTime>();
+    final local = _RefreshPreview();
+    var updatedDay = false;
+    final service = _SolarReturnService(
+      FortuneReportApi(
+        JsonHttpClient(
+          base: Uri.https('fortune.example.test'),
+          client: MockClient((request) async {
+            expect(request.method, 'GET');
+            return http.Response('', 204);
+          }),
+        ),
+      ),
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        home: FortunePage(
+          loadDisplay: _utc,
+          local: local,
+          readServerTime: () =>
+              updatedDay ? nextTime.future : Future.value(_today),
+          account: account,
+          connectOnline: () => service,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final interpret = find.widgetWithText(OutlinedButton, '解读');
+    final advice = find.widgetWithText(OutlinedButton, '按盘面获取建议');
+    bool enabled(Finder button) =>
+        tester.widget<OutlinedButton>(button).onPressed != null;
+    expect(enabled(interpret), isTrue);
+    expect(enabled(advice), isTrue);
+
+    local.fail = true;
+    updatedDay = true;
+    await tester.tap(find.text('刷新日期'));
+    await tester.pump();
+    expect(enabled(interpret), isFalse);
+    expect(enabled(advice), isFalse);
+
+    nextTime.complete(_today.add(const Duration(days: 1)));
+    await tester.pumpAndSettle();
+    expect(find.text('暂时无法计算当前运势日期，请重试。'), findsOneWidget);
+    expect(enabled(interpret), isFalse);
+    expect(enabled(advice), isFalse);
+
+    local.fail = false;
+    await _tap(tester, '刷新日期');
+    expect(enabled(interpret), isTrue);
+    expect(enabled(advice), isTrue);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets(
     'can enter southern and western coordinates and retry without them',
     (tester) async {
@@ -186,6 +316,22 @@ void main() {
   }
 }
 
+class _RefreshPreview extends FortuneLocalFixture {
+  bool fail = false;
+
+  @override
+  Future<LocalFortunePreview> preview(
+    int asOf,
+    FortunePeriod period,
+    String zone,
+    ArchivedDestinyCharts? archive,
+    Future<void> cancel,
+  ) async {
+    if (fail) throw StateError('Preview unavailable.');
+    return super.preview(asOf, period, zone, archive, cancel);
+  }
+}
+
 class _SolarReturnService extends FortuneOnline {
   _SolarReturnService(FortuneReportApi api) : super(api, () async => _today);
 
@@ -235,6 +381,14 @@ class _SolarReturnService extends FortuneOnline {
     Future<void> cancel,
   ) async => report.toJson();
 }
+
+AccountController _accountWithChart() => _account(
+  (request) => switch (request.url.path) {
+    '/account/destiny-history/latest' => _json(_chart()),
+    '/account/reading-history/latest' => http.Response('', 204),
+    final path => fail('Unexpected account request $path'),
+  },
+);
 
 AccountController _account(
   http.Response Function(http.Request) respond, {

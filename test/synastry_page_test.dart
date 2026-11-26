@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
@@ -7,8 +8,10 @@ import 'package:http/testing.dart';
 import 'package:jovian_destiny/jovian_destiny.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../src/bootstrap/synastry.dart';
 import '../src/features/account/account.dart';
 import '../src/features/account/settings/model/agreements.dart';
+import '../src/features/synastry/control/synastry_page_controller.dart';
 import '../src/features/synastry/synastry.dart';
 import '../src/shared/http/json_client.dart';
 
@@ -55,7 +58,7 @@ void main() {
               inputs.addAll([a, b]);
               return _comparison;
             },
-            summarize: (request, _) async {
+            summarize: (request, _, _) async {
               onlineCalls++;
               return {};
             },
@@ -159,68 +162,44 @@ void main() {
       final latest = 'a' * 64;
       final older = 'b' * 64;
       final requests = <String>[];
-      final api = AccountApi(
-        JsonHttpClient(
-          base: Uri.https('fixture.invalid'),
-          client: MockClient((request) async {
-            final path = request.url.path;
-            if (path.startsWith('/account/reading-history')) {
-              expect(request.method, 'GET');
-              expect(
-                request.url.queryParameters['expectedOwnerId'],
-                'guest-fixture',
-              );
-              expect(request.url.queryParameters['kind'], 'synastry');
-              requests.add(path);
-            }
-            return switch (path) {
-              '/account/session' => _json({}, 401),
-              '/account/auth/guest' => _json({
-                'id': 'guest-fixture',
-                'expiresAt': 4102444800000,
-              }),
-              '/account/auth/capabilities' => _json({}),
-              '/account/agreements/catalog' => _json({
-                'documents': [
-                  for (final id in ['privacy', 'terms', 'ai'])
-                    {
-                      'id': id,
-                      'title': id,
-                      'version': '1',
-                      'hash': 'sha',
-                      'state': 'preview',
-                      'sections': [],
-                    },
-                ],
-              }),
-              '/account/agreements' => _json({
-                'requiredAccepted': true,
-                'permissions': {
-                  for (final purpose in aiPurposes.keys) purpose: false,
-                },
-              }),
-              '/account/reading-history' => _json({
-                'entries': [_entry(latest, '最近合盘'), _entry(older, '早期合盘')],
-                'nextCursor': null,
-              }),
-              '/account/reading-history/latest' => _json(
-                _archived(latest, '最近'),
-              ),
-              _ when path.endsWith(older) => _json(_archived(older, '早期')),
-              _ => throw StateError('Unexpected path $path'),
-            };
+      final contexts = <String?>[];
+      final destinations = <AccountDestination>[];
+      final account = await _guestAccount((request) {
+        final path = request.url.path;
+        expect(request.method, 'GET');
+        expect(request.url.queryParameters['expectedOwnerId'], 'guest-fixture');
+        expect(request.url.queryParameters['kind'], 'synastry');
+        requests.add(path);
+        return switch (path) {
+          '/account/reading-history' => _json({
+            'entries': [_entry(latest, '最近合盘'), _entry(older, '早期合盘')],
+            'nextCursor': null,
           }),
-        ),
-      );
-      final account = AccountController(api, AgreementsApi(api));
-      addTearDown(account.dispose);
-      await account.initialize();
+          '/account/reading-history/latest' => () {
+            final context = request.url.queryParameters['contextKey'];
+            contexts.add(context);
+            return context == null
+                ? _json(_archived(latest, '最近'))
+                : _json(_archived(older, '匹配'));
+          }(),
+          _ when path.endsWith(older) => _json(_archived(older, '早期')),
+          _ => throw StateError('Unexpected path $path'),
+        };
+      });
       expect(account.authorizedSession?.id, 'guest-fixture');
       await tester.pumpWidget(
         MaterialApp(
-          home: SynastryPage(
-            loadPlaces: () async => [_place],
-            account: account,
+          home: AccountSectionLinks(
+            open: (destination) async => destinations.add(destination),
+            child: SynastryPage(
+              loadPlaces: () async => [_place],
+              account: account,
+              calculate: (profile, _) async =>
+                  _chart(profile.date.utcMidnight.toIso8601String()),
+              compare: (a, b, _) async => _comparison,
+              summarize: (request, isCurrent, cancel) async =>
+                  throw StateError('Reading an archive must not send evidence'),
+            ),
           ),
         ),
       );
@@ -246,9 +225,186 @@ void main() {
           '/account/reading-history/$older',
         ]),
       );
+      await _tap(tester, '手动填写 A 方资料');
+      await _fillProfile(tester, '1990-06-01');
+      await _tap(tester, '确认A 方资料');
+      await _tap(tester, '我已获准使用 B 方资料进行本次合盘');
+      await _tap(tester, '手动填写 B 方资料');
+      await _fillProfile(tester, '1992-07-02');
+      await _tap(tester, '确认B 方资料');
+      await _tap(tester, '比较盘面');
+      await _tap(tester, '前往 AI 授权');
+      expect(destinations, [accountDestination(AccountSection.aiPermissions)]);
+      await _tap(tester, '查看此组合已存解读');
+      expect(find.text('从合盘存档读取'), findsOneWidget);
+      expect(find.text('匹配亲情正文'), findsOneWidget);
+      expect(contexts, [
+        null,
+        '["1990-06-01T00:00:00.000Z","1992-07-02T00:00:00.000Z"]',
+      ]);
       expect(tester.takeException(), isNull);
     },
   );
+
+  for (final revokeAi in [false, true]) {
+    final kind = revokeAi ? 'AI authorization' : 'B-side consent';
+    test('withdrawing $kind aborts the actual model request', () async {
+      final requestArrived = Completer<void>();
+      final disconnected = Completer<void>();
+      final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+      Socket? connection;
+      addTearDown(() async {
+        connection?.destroy();
+        await server.close(force: true);
+      });
+      server.listen((request) async {
+        expect(request.method, 'POST');
+        expect(request.uri.path, '/synastry/summary');
+        expect(
+          jsonDecode(await utf8.decoder.bind(request).join()),
+          _comparison['summaryRequest'],
+        );
+        final socket = await request.response.detachSocket(writeHeaders: false);
+        connection = socket;
+        socket.listen(
+          (_) {},
+          onDone: () => disconnected.complete(),
+          onError: (Object _) {
+            if (!disconnected.isCompleted) disconnected.complete();
+          },
+          cancelOnError: true,
+        );
+        requestArrived.complete();
+      });
+      final account = await _guestAccount((request) {
+        expect(request.method, 'GET');
+        expect(request.url.path, '/account/reading-history/latest');
+        return _json(null);
+      }, share: true);
+      final controller = SynastryPageController(
+        account: account,
+        calculate: (profile, _) async =>
+            _chart(profile.date.utcMidnight.toIso8601String()),
+        compare: (a, b, _) async => _comparison,
+        summarize: configureSynastrySummary(
+          value: Uri.http('127.0.0.1:' + server.port.toString()).toString(),
+        ),
+      );
+      addTearDown(controller.dispose);
+      await _prepareComparison(controller);
+      final response = HttpOverrides.runWithHttpOverrides(
+        controller.generateSummary,
+        _LoopbackHttpOverrides(),
+      );
+      await requestArrived.future.timeout(const Duration(seconds: 5));
+      if (revokeAi) {
+        await account.choose(account.catalog!.ai, _permission, false);
+      } else {
+        controller.confirmConsent(false);
+      }
+      await disconnected.future.timeout(const Duration(seconds: 5));
+      await response;
+      expect(controller.report, isNull);
+      expect(controller.needsSave, isFalse);
+      expect(controller.busy, isFalse);
+      if (revokeAi) {
+        expect(controller.result, _comparison);
+        expect(controller.needsPermission, isTrue);
+      } else {
+        expect(controller.b, isNull);
+        expect(controller.result, isNull);
+      }
+    });
+  }
+
+  test('an unknown chart version cannot open or generate a report', () async {
+    final account = await _guestAccount(
+      (request) => throw StateError('Unexpected archive request'),
+      share: true,
+    );
+    final controller = SynastryPageController(
+      account: account,
+      calculate: (profile, _) async => _chart('not-a-date'),
+      compare: (a, b, _) async => _comparison,
+      summarize: (_, _, _) async => throw StateError('Unexpected model call'),
+    );
+    addTearDown(controller.dispose);
+    await _prepareComparison(controller);
+    await controller.restoreComparedReport();
+    expect(controller.report, isNull);
+    expect(controller.message, '暂时无法确认双方盘面版本，请重新排盘。');
+    await controller.generateSummary();
+    expect(controller.report, isNull);
+    expect(controller.message, '暂时无法确认双方盘面版本，请重新排盘。');
+  });
+}
+
+const _permission = 'synastry.cloud_interpretation';
+
+class _LoopbackHttpOverrides extends HttpOverrides {}
+
+Future<AccountController> _guestAccount(
+  http.Response Function(http.Request) readArchives, {
+  bool share = false,
+}) async {
+  Map<String, Object?> agreements(bool shared) => {
+    'requiredAccepted': true,
+    'permissions': {
+      for (final purpose in aiPurposes.keys)
+        purpose: shared && purpose == _permission,
+    },
+  };
+  final api = AccountApi(
+    JsonHttpClient(
+      base: Uri.https('fixture.invalid'),
+      client: MockClient(
+        (request) async => switch (request.url.path) {
+          '/account/session' => _json({}, 401),
+          '/account/auth/guest' => _json({
+            'id': 'guest-fixture',
+            'expiresAt': 4102444800000,
+          }),
+          '/account/auth/capabilities' => _json({}),
+          '/account/agreements/catalog' => _json({
+            'documents': [
+              for (final id in ['privacy', 'terms', 'ai'])
+                {
+                  'id': id,
+                  'title': id,
+                  'version': '1',
+                  'hash': 'sha',
+                  'state': 'preview',
+                  'sections': [],
+                },
+            ],
+          }),
+          '/account/agreements' => _json(agreements(share)),
+          '/account/agreements/permission' => _json(agreements(false)),
+          final path when path.startsWith('/account/reading-history') =>
+            readArchives(request),
+          final path => throw StateError('Unexpected path $path'),
+        },
+      ),
+    ),
+  );
+  final account = AccountController(api, AgreementsApi(api));
+  addTearDown(account.dispose);
+  await account.initialize();
+  return account;
+}
+
+Future<void> _prepareComparison(SynastryPageController controller) async {
+  BirthProfile profile(int day) => BirthProfile(
+    date: BirthDate(1990, 6, day),
+    time: const BirthTime(hour: 9, minute: 20),
+    place: _place,
+    gender: BirthGender.female,
+  );
+  controller.confirmConsent(true);
+  expect(await controller.setManual(SynastrySide.a, profile(1)), isTrue);
+  expect(await controller.setManual(SynastrySide.b, profile(2)), isTrue);
+  await controller.compareCharts();
+  expect(controller.result, _comparison);
 }
 
 const _comparison = <String, Object?>{

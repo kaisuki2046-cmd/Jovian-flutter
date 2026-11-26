@@ -75,7 +75,13 @@ class FortunePageController extends ChangeNotifier {
   FortunePeriod get displayedPeriod => published?.period ?? period;
   String? get displayedZone => _archivedZone ?? display?.zone;
   PreparedFortunePeriod? get displayedWindow => archivedWindow ?? prepared;
-  bool get canGenerate => prepared != null && hasChart && !busy;
+  bool get canGenerate =>
+      !syncingTime &&
+      preview != null &&
+      clockError == null &&
+      prepared != null &&
+      hasChart &&
+      !busy;
   bool get hasChart => archive?.snapshot != null;
   bool get busy => loadingReport || generating || loadingAdvice || saving;
   bool get needsSave => _draft != null && !reportSaved;

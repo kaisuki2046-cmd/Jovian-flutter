@@ -16,19 +16,11 @@ import 'birth_profile_editor.dart';
 import 'destiny_chart_dialog.dart';
 import 'destiny_report_text.dart';
 
-const _pillarLabels = {
-  Pillar.year: '年柱',
-  Pillar.month: '月柱',
-  Pillar.day: '日柱',
-  Pillar.hour: '时柱',
-};
-
 class DestinyPage extends StatefulWidget {
   const DestinyPage({
     super.key,
     required this.loadPlaces,
-    required this.calculate,
-    this.calculateReading,
+    required this.calculateReading,
     this.requestReport,
     this.openFortune,
     this.account,
@@ -36,12 +28,11 @@ class DestinyPage extends StatefulWidget {
   });
 
   final Future<List<BirthPlace>> Function() loadPlaces;
-  final Future<LocalBaZi> Function(BirthProfile) calculate;
   final Future<DestinyReading> Function(
     BirthProfile,
     Future<void>,
     void Function(String),
-  )?
+  )
   calculateReading;
   final Future<String> Function(Map<String, Object?>, Future<void>)?
   requestReport;
@@ -66,7 +57,6 @@ class _DestinyPageState extends State<DestinyPage> {
   void initState() {
     super.initState();
     _controller = DestinyPageController(
-      calculate: widget.calculate,
       calculateReading: widget.calculateReading,
       requestReport: widget.requestReport,
       account: widget.account,
@@ -123,13 +113,10 @@ class _DestinyPageState extends State<DestinyPage> {
                 onPressed: _controller.restoreReport,
                 child: const Text('已存报告读取失败，点此重试'),
               ),
-            if (widget.calculateReading == null && widget.account == null)
-              _editor(context, legacy: false)
-            else if (_controller.stage case final stage?
-                when !_controller.saving)
+            if (_controller.stage case final stage? when !_controller.saving)
               _progress(context, stage)
             else if (_editing)
-              _editor(context, legacy: true)
+              _editor(context)
             else if (_controller.report case final body?)
               ..._report(context, body)
             else if (_controller.reading case final reading?) ...[
@@ -152,14 +139,7 @@ class _DestinyPageState extends State<DestinyPage> {
                     : null,
                 child: const UiText('修改出生资料'),
               ),
-            ] else if (_controller.chart != null)
-              TextButton(
-                onPressed: _canEdit
-                    ? () => _openEditor(useCurrentDraft: true)
-                    : null,
-                child: const UiText('修改出生资料'),
-              )
-            else
+            ] else
               _entry(context),
             if (_birth.isCurrent &&
                 !_editing &&
@@ -189,10 +169,6 @@ class _DestinyPageState extends State<DestinyPage> {
                   onPressed: () => _controller.submit(draft),
                   child: const UiText('重试测算'),
                 ),
-            if (_controller.chart case final chart?) ...[
-              const SizedBox(height: 16),
-              _BaZiResult(chart: chart),
-            ],
             if (_controller.reportError case final error?)
               _status(context, error),
             if (_controller.needsSave)
@@ -234,35 +210,25 @@ class _DestinyPageState extends State<DestinyPage> {
     ),
   );
 
-  Widget _editor(BuildContext context, {required bool legacy}) => Column(
+  Widget _editor(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      Text(
-        legacy ? '填写出生资料' : '出生资料',
-        style: Theme.of(context).textTheme.titleMedium,
-      ),
+      UiText('填写出生资料', style: Theme.of(context).textTheme.titleMedium),
       const SizedBox(height: 12),
       BirthProfileEditor(
         loadPlaces: widget.loadPlaces,
-        initialDraft: legacy ? _prefill : const BirthProfileDraft(),
-        submitLabel: legacy
-            ? '核对出生资料'
-            : _controller.calculating
-            ? '正在排盘…'
-            : '计算八字',
+        initialDraft: _prefill,
+        submitLabel: '核对出生资料',
         busy: _controller.busy,
-        onSubmit: legacy
-            ? (profile) => _confirm(context, profile)
-            : _controller.submit,
+        onSubmit: (profile) => _confirm(context, profile),
       ),
       if (_baseline case final fields?
-          when legacy && fields.birthPlace.isNotEmpty && _prefill.place == null)
+          when fields.birthPlace.isNotEmpty && _prefill.place == null)
         _status(context, '账户出生地点「${fields.birthPlace}」无法唯一匹配，请重新选择。'),
-      if (legacy)
-        TextButton(
-          onPressed: () => setState(() => _editing = false),
-          child: const UiText('返回入口'),
-        ),
+      TextButton(
+        onPressed: () => setState(() => _editing = false),
+        child: const UiText('返回入口'),
+      ),
     ],
   );
 
@@ -548,51 +514,5 @@ class _DestinyPageState extends State<DestinyPage> {
       alwaysUse24HourFormat: true,
     );
     return '$date · $time';
-  }
-}
-
-class _BaZiResult extends StatelessWidget {
-  const _BaZiResult({required this.chart});
-
-  final LocalBaZi chart;
-
-  @override
-  Widget build(BuildContext context) {
-    final exact = chart.exactChart;
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            UiText('八字四柱', style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: 8),
-            if (exact == null) const Text('出生时分不完整，有多个可能值时会同时显示。'),
-            for (final position in Pillar.values)
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text(_pillarLabels[position]!),
-                subtitle: Text(chart.pillars[position]!.join('、')),
-              ),
-            if (exact?['luckPeriods'] case final List periods
-                when periods.isNotEmpty)
-              ExpansionTile(
-                tilePadding: EdgeInsets.zero,
-                title: const UiText('大运'),
-                children: [
-                  for (final Map period in periods)
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: Text(period['ganZhi'] as String),
-                      trailing: Text(
-                        '${period['startAge']}–${period['endAge']} 岁',
-                      ),
-                    ),
-                ],
-              ),
-          ],
-        ),
-      ),
-    );
   }
 }

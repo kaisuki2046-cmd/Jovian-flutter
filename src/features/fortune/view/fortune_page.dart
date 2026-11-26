@@ -112,7 +112,8 @@ class _FortuneSessionState extends State<_FortuneSession> {
       appBar: AppBar(
         title: const UiText('周期运势'),
         actions: [
-          TextButton(
+          IconButton(
+            tooltip: context.uiLabel('历法查询'),
             onPressed: () {
               final instant = _fortune.referenceTime ?? DateTime.now();
               Navigator.of(context).push<void>(
@@ -126,7 +127,7 @@ class _FortuneSessionState extends State<_FortuneSession> {
                 ),
               );
             },
-            child: const UiText('历法查询'),
+            icon: const Icon(Icons.calendar_month_outlined),
           ),
         ],
       ),
@@ -137,17 +138,16 @@ class _FortuneSessionState extends State<_FortuneSession> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Row(
-                spacing: 4,
+              Wrap(
+                spacing: 8,
+                runSpacing: 4,
                 children: [
                   for (final (index, period) in FortunePeriod.values.indexed)
-                    Expanded(
-                      child: ChoiceChip(
-                        showCheckmark: false,
-                        label: Text(const ['今日', '本周', '本月', '本年'][index]),
-                        selected: _fortune.displayedPeriod == period,
-                        onSelected: (_) => _fortune.selectPeriod(period),
-                      ),
+                    ChoiceChip(
+                      showCheckmark: false,
+                      label: UiText(const ['今日', '本周', '本月', '本年'][index]),
+                      selected: _fortune.displayedPeriod == period,
+                      onSelected: (_) => _fortune.selectPeriod(period),
                     ),
                 ],
               ),
@@ -156,7 +156,7 @@ class _FortuneSessionState extends State<_FortuneSession> {
               _dateControls(context),
               if (_fortune.ownerId != null) ...[
                 _archives(context),
-                if (_fortune.online != null && _fortune.hasChart)
+                if (_fortune.hasChart)
                   FortuneInterpretation(
                     key: ValueKey((
                       FortuneInterpretation,

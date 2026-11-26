@@ -17,6 +17,7 @@ class SynastrySummaryApi {
   Future<Map<String, String>> summarize(
     Map<String, Object?> summaryRequest, {
     required bool Function() isCurrent,
+    Future<void>? cancel,
   }) async {
     _ensureCurrent(isCurrent);
     final readSession = readNativeSession;
@@ -30,6 +31,7 @@ class SynastrySummaryApi {
       method: 'POST',
       body: summaryRequest,
       headers: {if (token != null) 'X-Account-Session': token},
+      cancel: cancel,
     );
     _ensureCurrent(isCurrent);
     final sections = {

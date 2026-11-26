@@ -100,6 +100,8 @@ void main() {
       await tester.tap(find.byKey(const ValueKey(JovianTab.destiny)));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
+      await tester.tap(find.widgetWithText(FilledButton, '开始解读'));
+      await tester.pump();
       final birthDate = find.widgetWithText(TextField, '出生日期');
       await tester.enterText(birthDate, '2000-01-01');
       await tester.binding.handlePushRoute('/messages');

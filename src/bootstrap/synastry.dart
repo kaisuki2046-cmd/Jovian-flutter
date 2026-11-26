@@ -25,7 +25,7 @@ SynastrySummaryReader? configureSynastrySummary({
 }) {
   final base = serviceEndpoint(value, 'SYNASTRY_REPORT_URL');
   if (base == null) return null;
-  return (request, isCurrent) async {
+  return (request, isCurrent, cancel) async {
     final api = SynastrySummaryApi(
       JsonHttpClient(
         base: base,
@@ -35,7 +35,7 @@ SynastrySummaryReader? configureSynastrySummary({
       readNativeSession: kIsWeb ? null : readNativeSession,
     );
     try {
-      return await api.summarize(request, isCurrent: isCurrent);
+      return await api.summarize(request, isCurrent: isCurrent, cancel: cancel);
     } finally {
       api.close();
     }

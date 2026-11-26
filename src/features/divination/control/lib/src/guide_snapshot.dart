@@ -1,6 +1,8 @@
 part of 'guide_ritual.dart';
 
-/// Reads the public HTTP snapshot. Hidden cards are never needed by the client.
+final _publishedChartHash = RegExp(r'^[a-f0-9]{64}$');
+
+/// Reads the computed chart from the public HTTP snapshot.
 GuideRitualSnapshot parseGuideSnapshot(Map<String, Object?> value) {
   const invalid = FormatException('Invalid reading snapshot.');
   if (value['method'] != 'combined' || value['ruleVersion'] != guideVersion)
@@ -42,17 +44,37 @@ GuideRitualSnapshot parseGuideSnapshot(Map<String, Object?> value) {
             (stage != GuideStage.reading || value.containsKey('cardEvents')))) {
       throw invalid;
     }
+    if (!_sameJson(
+      automatic ? _automaticGuideRules : _guideRules,
+      value['calculationRules'],
+    )) {
+      throw invalid;
+    }
+    if (stage != GuideStage.reading &&
+        ['draw', 'results', 'chartHash', 'resolvedAt'].any(value.containsKey)) {
+      throw invalid;
+    }
     JingfangReading? cast;
+    Map<String, Object?>? publishedCast;
     GuideChart? chart;
     if (stage == GuideStage.cast) {
-      if (tosses.length >= lineCount || slotCount != 0 || selected.isNotEmpty)
+      if (tosses.length >= lineCount ||
+          slotCount != 0 ||
+          selected.isNotEmpty ||
+          value.containsKey('castResult')) {
         throw invalid;
+      }
     } else {
       if (tosses.length != lineCount ||
           slotCount != tarotDeck.length ||
           started == null)
         throw invalid;
-      cast = readJingfang(tosses, castCalendar(started));
+      final castPayload = Map<String, Object?>.unmodifiable(
+        _savedMap(value['castResult']),
+      );
+      publishedCast = castPayload;
+      cast = JingfangReading.fromJson(castPayload);
+      if (!_sameJson(cast.base.tosses, tosses)) throw invalid;
       if (stage == GuideStage.reading) {
         if (selected.length != TarotPosition.values.length) throw invalid;
         final draw = TarotDraw.fromJson(_savedMap(value['draw']));
@@ -66,26 +88,39 @@ GuideRitualSnapshot parseGuideSnapshot(Map<String, Object?> value) {
         final source = automatic
             ? MeihuaInputSource.automaticNumbers
             : MeihuaInputSource.tarotClick;
-        final meihua = automatic
-            ? readMeihuaNumbers(
-                (_savedMap(results['meihua'])['inputs'] as List).cast<int>(),
-              )
-            : readMeihuaClicks(events.map((event) => event.epochMs).toList());
-        chart = GuideChart._(
+        final meihua = Map<String, Object?>.unmodifiable(
+          _savedMap(results['meihua']),
+        );
+        final chartHash = value['chartHash'] as String;
+        if (results['meihuaInputSource'] != source.id ||
+            !_sameJson(castPayload, results['liuyao']) ||
+            !_publishedChartHash.hasMatch(chartHash) ||
+            (!automatic &&
+                !_sameJson(
+                  events.map((event) => event.epochMs).toList(),
+                  meihua['timestamps'],
+                ))) {
+          throw invalid;
+        }
+        chart = GuideChart._fromService(
           tarot: draw,
           liuyao: cast,
-          meihua: meihua,
+          meihua: MeihuaReading.fromJson(meihua),
           meihuaInputSource: source,
           castStartedAt: started,
-          cardEvents: events,
           resolvedAt: DateTime.parse(value['resolvedAt'] as String),
+          chartHash: chartHash,
+          publishedResults: {
+            'liuyao': castPayload,
+            'meihua': meihua,
+            'meihuaInputSource': source.id,
+          },
         );
-      } else if (selected.length >= TarotPosition.values.length ||
-          value['draw'] != null) {
+      } else if (selected.length >= TarotPosition.values.length) {
         throw invalid;
       }
     }
-    final snapshot = GuideRitualSnapshot._(
+    return GuideRitualSnapshot._(
       question: value['question'] as String,
       focus: value['focus'] as String,
       automatic: automatic,
@@ -98,17 +133,8 @@ GuideRitualSnapshot parseGuideSnapshot(Map<String, Object?> value) {
       castResult: cast,
       chart: chart,
       tarotCutIndex: rawCut as int?,
+      publishedCast: publishedCast,
     );
-    final computed = snapshot.toChartSnapshotJson();
-    for (final field in [
-      'calculationRules',
-      'castResult',
-      'results',
-      'chartHash',
-    ]) {
-      if (!_sameJson(computed[field], value[field])) throw invalid;
-    }
-    return snapshot;
   } on TypeError {
     throw invalid;
   } on ArgumentError {

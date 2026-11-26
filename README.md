@@ -118,9 +118,9 @@ dart run test/account_permission_contract.dart
 dart run test/reading_http_contract.dart
 ```
 
-在同一目录可用 `dart run bin/reading.dart` 启动算事后台。启动入口沿用现有的 `DIVINATION_REPORT_*`、`APP_ACCOUNT_PORT` 和模型配置变量。
+上述 Dart 算事计算和服务目录用于历史原型对照。运行 Flutter 主入口时，算事由 `DIVINATION_REPORT_URL` 接入原 Node 服务，盘面、报告和会话标识均沿用该服务的结果。
 
-在 `src/features/fortune/server/` 下运行 `dart pub get` 和 `dart run bin/fortune_time.dart`。同一个 Dart 服务提供 `/fortune/time`、`/fortune/advice/options` 与 `/fortune/advice/options/:id`。使用 `dart run test/fortune_time_contract.dart` 和 `dart run test/fortune_advice_contract.dart` 检查 HTTP 状态、跨来源访问和建议内容。
+在 Dart 运势对照目录 `src/features/fortune/server/` 下运行 `dart pub get` 和 `dart run bin/fortune_time.dart`。同一个 Dart 服务提供 `/fortune/time`、`/fortune/advice/options` 与 `/fortune/advice/options/:id`。使用 `dart run test/fortune_time_contract.dart` 和 `dart run test/fortune_advice_contract.dart` 检查 HTTP 状态、跨来源访问和建议内容。
 
 Flutter 命理页上的「周期运势」沿用 `/fortune` 路由。日、周、月、年按设备 IANA 时区划分。交节、换日规则和每日黄历继续按北京时间计算。`FORTUNE_TIME_URL` 指向现有 Node 运势服务，由它提供 UTC 校时、计算、解读、建议和历史查询。该服务的 `APP_WEB_ORIGIN` 应与 Flutter Web 来源一致。
 
@@ -150,9 +150,9 @@ dart run test/knowledge_contract.dart
 
 在 `src/features/destiny/control/` 下运行 `dart pub get`、`dart run test/birth_clock_parity.dart` 和 `dart run test/bazi_parity.dart`。出生时刻对照覆盖时分缺失采样、历史时区和夏令时边界。八字对照覆盖节气前后、23 点换日和大运。运行对照需 Node.js，八字对照还需要原项目的 npm 依赖。Dart 时钟使用内置 IANA 转换规则，新时钟版本标识为 `gregory-iana-tzdb-v1`。
 
-Flutter Web 的「命理」沿用原版出生资料核对流程，使用原 TypeScript 在浏览器排八字、紫微和西方星盘。盘面可在同一弹窗切换，时分缺失时显示原计算给出的稳定结果和时辰情景。出生地沿用旧版 2,941 条目录。配置 `DESTINY_REPORT_URL` 后，报告沿用原 Node 解读和账户归档服务。重新进入可回看上次报告和已归档盘面，完整快照可直接用于周期运势。
+Flutter 的「命理」沿用原版出生资料核对流程，通过本机计算桥调用原 TypeScript 排八字、紫微和西方星盘。盘面可在同一弹窗切换，时分缺失时显示原计算给出的稳定结果和时辰情景。出生地沿用旧版 2,941 条目录。配置 `DESTINY_REPORT_URL` 后，报告沿用原 Node 解读和账户归档服务。重新进入可回看上次报告和已归档盘面，完整快照可直接用于周期运势。
 
-出生资料确认页逐项列出日期、时间、地点和性别。旧档案的八字支持回看十神与神煞，窄屏和大字号下四柱可换行。选择紫微宫位后会滚动到对应的详情。
+命理和合盘共用出生资料表单，支持键盘录入、日历和时间选择，以及逐级浏览或搜索出生地目录。出生资料确认页逐项列出日期、时间、地点和性别。旧档案的八字支持回看十神与神煞，窄屏和大字号下四柱可换行。选择紫微宫位后会滚动到对应的详情。
 
 会员打开命理表单时会直接看到已保存的出生资料。确认测算时，通过原账户接口同步出生字段并沿用可见性设置。若账户同时更新，核对界面会显示本次填写与账户最新资料。访客可填写资料进行本次测算。
 
@@ -176,7 +176,7 @@ Flutter Web 的「命理」沿用原版出生资料核对流程，使用原 Type
 
 星盘的黄道与行星符号使用离线字体。[Noto Sans Symbols](https://notofonts.github.io/symbols/) · [字体许可证](src/features/destiny/assets/NotoSansSymbols-OFL.txt)
 
-在 `src/features/account/server/` 运行 `dart pub get` 和 `dart run bin/account.dart` 可启动迁移中的 Dart 账户服务。默认监听回环地址，临时 SQLite 文件位于系统临时目录。沿用 `APP_ACCOUNT_PORT`、`APP_ACCOUNT_HOST`、`APP_ACCOUNT_DB`、`APP_WEB_ORIGIN`、`APP_ACCOUNT_ISOLATE_WEB_SESSION` 和 `APP_AGREEMENTS_FILE`。当前支持密码登录、回环开发环境免验证码注册、游客、UID、协议、分用途 AI 授权，以及命理、运势和合盘归档接口。短信和邮箱发码、正式第三方登录、隐私请求仍待迁移。
+在 `src/features/account/server/` 运行 `dart pub get` 和 `dart run bin/account.dart` 可启动历史对照用的 Dart 账户原型。Flutter 主入口接入原 Node 账户服务。默认监听回环地址，临时 SQLite 文件位于系统临时目录。沿用 `APP_ACCOUNT_PORT`、`APP_ACCOUNT_HOST`、`APP_ACCOUNT_DB`、`APP_WEB_ORIGIN`、`APP_ACCOUNT_ISOLATE_WEB_SESSION` 和 `APP_AGREEMENTS_FILE`。当前支持密码登录、回环开发环境免验证码注册、游客、UID、协议、分用途 AI 授权，以及命理、运势和合盘归档接口。短信和邮箱发码、正式第三方登录、隐私请求仍待迁移。
 
 个人中心的「我的报告」分页读取当前账号或游客的解读。打开报告会进入专门的阅读页，返回后保留列表滚动和已加载分页。「命理档案」查看最近的八字四柱、紫微和西方星盘。Flutter Web 的命理、运势和合盘解读沿用现有报告服务和账户归档格式。
 
@@ -191,7 +191,7 @@ Flutter Web 的「命理」沿用原版出生资料核对流程，使用原 Type
 | 范围 | 已移植内容 | 待迁移或验收 |
 | --- | --- | --- |
 | Flutter 客户端 | 五栏框架与拖动水滴、个人中心、消息、单入口算事、投币与声音反馈、抽牌、在线解读、追问与会话历史 | Android/iOS 真机回归 |
-| 算事控制层 | 盘面计算与校验、历史报告解析、按账号保存的会话快照、待完成事件重放和解读重试 | 原生本机存储验收 |
+| 算事控制层 | 原 Node 盘面解码和展示、历史报告解析、按账号保存的会话快照、待完成事件重放和解读重试 | 原生本机存储验收 |
 | 算事服务接线 | 复用原 Node `/reading`、问题确认凭证、账户权限、报告和追问 | 真实模型回归 |
 | 运势 | 命理入口、UTC 校时、四周期和指定日期计算、黄历、历法查询、在线解读与归档恢复、独立每日提运建议、原生会话接线 | 原生平台真机回归 |
 | 命理 | 账户出生资料回填和并发同步、原生本机出生资料、出生资料核对、原 TypeScript 三类排盘、紫微宫位交互、西方星图、现有报告自动归档及回看 | 原生平台真机回归 |

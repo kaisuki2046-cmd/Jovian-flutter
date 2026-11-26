@@ -49,6 +49,20 @@ class LiuYaoLine {
     this.role,
   });
 
+  factory LiuYaoLine._fromJson(Map<String, Object?> data) {
+    final value = data['value'] as int;
+    if (value < 6 || value > 9)
+      throw const FormatException('Invalid published coin value.');
+    return LiuYaoLine._(
+      position: data['position'] as int,
+      value: value,
+      branch: data['branch'] as String,
+      element: data['element'] as String,
+      relative: data['relative'] as String,
+      role: data['role'] as String?,
+    );
+  }
+
   final int position;
   final int value;
   final String branch;
@@ -126,6 +140,17 @@ class JingfangLine {
     required this.monthOpposed,
   });
 
+  factory JingfangLine._fromJson(Map<String, Object?> data) => JingfangLine._(
+    position: data['position'] as int,
+    stem: data['stem'] as String,
+    branch: data['branch'] as String,
+    element: data['element'] as String,
+    relative: data['relative'] as String,
+    spirit: data['spirit'] as String,
+    isVoid: data['void'] as bool,
+    monthOpposed: data['monthOpposed'] as bool,
+  );
+
   final int position;
   final String stem;
   final String branch;
@@ -159,6 +184,68 @@ class JingfangReading {
        originalLines = List.unmodifiable(originalLines),
        changedLines = List.unmodifiable(changedLines),
        hiddenSpirits = List.unmodifiable(hiddenSpirits);
+
+  /// Reads the published chart for display without replaying its calculation.
+  factory JingfangReading.fromJson(Map<String, Object?> data) {
+    final tosses = (data['tosses'] as List)
+        .map((toss) => (toss as List).cast<int>())
+        .toList();
+    final lines = (data['lines'] as List)
+        .cast<Map<String, Object?>>()
+        .map(LiuYaoLine._fromJson)
+        .toList();
+    List<JingfangLine> rows(String key) => (data[key] as List)
+        .cast<Map<String, Object?>>()
+        .map(JingfangLine._fromJson)
+        .toList();
+    final original = rows('originalLines');
+    final changed = rows('changedLines');
+    final hidden = rows('hiddenSpirits');
+    final shi = data['shi'] as int;
+    final ying = data['ying'] as int;
+    final moving = (data['moving'] as List).cast<int>();
+    bool isPosition(int index) => index >= 1 && index <= lineCount;
+    if (tosses.length != lineCount ||
+        lines.length != lineCount ||
+        original.length != lineCount ||
+        changed.length != lineCount ||
+        !isPosition(shi) ||
+        !isPosition(ying) ||
+        !moving.every(isPosition) ||
+        hidden.any((line) => !isPosition(line.position)) ||
+        lines.indexed.any((entry) => entry.$2.position != entry.$1 + 1) ||
+        original.indexed.any((entry) => entry.$2.position != entry.$1 + 1) ||
+        changed.indexed.any((entry) => entry.$2.position != entry.$1 + 1)) {
+      throw const FormatException('Invalid published Liu Yao chart lines.');
+    }
+    final calendar = data['calendar'] as Map<String, Object?>;
+    return JingfangReading._(
+      base: LiuYaoReading._(
+        tosses: tosses,
+        lines: lines,
+        primary: Hexagram.fromJson(data['primary'] as Map<String, Object?>),
+        changed: Hexagram.fromJson(data['changed'] as Map<String, Object?>),
+        palace: trigrams.firstWhere(
+          (trigram) => trigram.name == data['palace'],
+        ),
+        shi: shi,
+        ying: ying,
+        moving: moving,
+        direction: ReadingDirection.values.byName(data['direction'] as String),
+        interpretation: data['interpretation'] as String,
+      ),
+      calendar: CastCalendar(
+        timezone: calendar['timezone'] as String,
+        year: calendar['year'] as String,
+        month: calendar['month'] as String,
+        day: calendar['day'] as String,
+      ),
+      voidBranches: (data['voidBranches'] as List).cast<String>(),
+      originalLines: original,
+      changedLines: changed,
+      hiddenSpirits: hidden,
+    );
+  }
 
   final LiuYaoReading base;
   final CastCalendar calendar;

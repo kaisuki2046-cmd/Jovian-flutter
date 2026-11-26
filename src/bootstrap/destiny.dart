@@ -2,7 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:jovian_destiny/jovian_destiny.dart';
+import 'package:jovian_destiny/jovian_destiny.dart'
+    show BirthPlace, BirthProfile;
 
 import '../features/destiny/destiny.dart';
 import '../features/destiny/requests/destiny_report_api.dart';
@@ -11,8 +12,6 @@ import '../shared/http/credentialed_client.dart'
     if (dart.library.js_interop) '../shared/http/credentialed_client_web.dart';
 import '../shared/http/json_client.dart';
 import '../shared/http/service_endpoint.dart';
-
-Future<void>? _clock;
 
 Future<List<BirthPlace>> loadBirthPlaces() async {
   final data = await rootBundle.loadString(
@@ -25,32 +24,22 @@ Future<List<BirthPlace>> loadBirthPlaces() async {
   );
 }
 
-Future<LocalBaZi> calculateDestinyBaZi(BirthProfile profile) async {
-  await (_clock ??= initializeBirthClock(flutterAssets: rootBundle));
-  return calculateLocalBaZi(profile);
-}
-
-Future<DestinyReading> Function(
-  BirthProfile,
-  Future<void>,
-  void Function(String),
-)?
-legacyDestinyCalculation() {
-  const compute = LocalCompute();
-  if (!compute.isAvailable) return null;
-  return (profile, cancel, progress) async {
-    try {
-      return DestinyReading.fromLegacy(
-        await compute.calculateDestiny(
-          profile.toJson(),
-          cancel: cancel,
-          onProgress: progress,
-        ),
-      );
-    } on LocalComputeException catch (error) {
-      throw FormatException(error.message);
-    }
-  };
+Future<DestinyReading> calculateDestinyReading(
+  BirthProfile profile,
+  Future<void> cancel,
+  void Function(String) progress,
+) async {
+  try {
+    return DestinyReading.fromLegacy(
+      await const LocalCompute().calculateDestiny(
+        profile.toJson(),
+        cancel: cancel,
+        onProgress: progress,
+      ),
+    );
+  } on LocalComputeException catch (error) {
+    throw FormatException(error.message);
+  }
 }
 
 Future<String> Function(Map<String, Object?>, Future<void>)?

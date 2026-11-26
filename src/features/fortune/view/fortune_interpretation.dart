@@ -29,6 +29,12 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
   @override
   Widget build(BuildContext context) {
     final fortune = widget.fortune;
+    if (fortune.online == null) {
+      return const _FortuneCard(
+        title: '运势解读',
+        children: [_FortuneStatus('解读服务暂未配置。')],
+      );
+    }
     final report = fortune.published;
     final target = fortune.archivedWindow == null
         ? fortune.prepared?.returnAt
@@ -307,7 +313,7 @@ class _FortuneCard extends StatelessWidget {
         children: [
           Semantics(
             header: true,
-            child: Text(title, style: Theme.of(context).textTheme.titleLarge),
+            child: UiText(title, style: Theme.of(context).textTheme.titleLarge),
           ),
           ...children,
         ],
@@ -323,5 +329,5 @@ class _FortuneStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      Semantics(liveRegion: true, child: Text(message));
+      Semantics(liveRegion: true, child: UiText(message));
 }

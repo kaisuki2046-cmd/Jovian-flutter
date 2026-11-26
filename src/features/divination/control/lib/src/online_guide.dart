@@ -299,6 +299,7 @@ class OnlineGuideController {
   String? _previousQuestion;
   Completer<void>? _understanding;
   Future<void> Function()? _retry;
+  String? _confirmedFocus;
   OnlineReading? _reading;
   bool _busy = false;
   bool _questionStopped = false;
@@ -333,6 +334,8 @@ class OnlineGuideController {
   bool get busy => _busy;
   String? get message => _message;
   bool get canRetry => _retry != null;
+  String? get failedStartFocus =>
+      !_busy && _retry != null && _reading == null ? _confirmedFocus : null;
   bool get canStopUnderstanding => _understanding != null;
   bool get questionStopped => _questionStopped;
 
@@ -463,7 +466,8 @@ class OnlineGuideController {
         : text;
     final previous = _previousQuestion;
     GuideTranscriptTurn? pendingTurn;
-    return _run(() async {
+
+    Future<void> understandAndStart() async {
       final turn = pendingTurn ??= await _recordTurn(text);
       if (_changes.isClosed) return;
       final understood = await _understand(question, previous);
@@ -480,24 +484,51 @@ class OnlineGuideController {
       }
       final proof = understood.proof;
       if (proof == null) throw const ReadingConnectionError('invalid_response');
-      final started = await _gateway.start(
-        question,
-        understood.focus,
-        proof,
-        automatic: automatic,
-        previousQuestion: previous,
-      );
-      _token = started.token;
-      _threadId = guideEventId();
-      _pending = null;
-      _reading = started.reading;
-      _clarificationQuestion = null;
-      _previousQuestion = null;
-      await _save();
-      await _finishTurn(turn, readingId: _threadId);
-      _emit();
-      await _reportIfReady();
-    });
+
+      Future<void> openConfirmed() async {
+        _confirmedFocus = understood.focus;
+        _retry = openConfirmed;
+        final OpenedReading started;
+        try {
+          started = await _gateway.start(
+            question,
+            understood.focus,
+            proof,
+            automatic: automatic,
+            previousQuestion: previous,
+          );
+        } on ReadingConnectionError catch (error) {
+          if (error.status == 400 &&
+              error.code == 'question_needs_model_confirmation') {
+            _retry = understandAndStart;
+          }
+          rethrow;
+        }
+        if (_changes.isClosed) return;
+        _token = started.token;
+        _threadId = guideEventId();
+        _pending = null;
+        _reading = started.reading;
+        _clarificationQuestion = null;
+        _previousQuestion = null;
+        await _save();
+        await _finishTurn(turn, readingId: _threadId);
+        _emit();
+        await _reportIfReady();
+      }
+
+      await openConfirmed();
+    }
+
+    return _run(understandAndStart);
+  }
+
+  void editFailedStart() {
+    if (failedStartFocus == null) return;
+    _confirmedFocus = null;
+    _retry = null;
+    _message = null;
+    _emit();
   }
 
   Future<ReadingConfirmation?> _understand(
@@ -744,6 +775,7 @@ class OnlineGuideController {
     _busy = true;
     _questionStopped = false;
     _message = null;
+    _confirmedFocus = null;
     _retry = action;
     _emit();
     try {
@@ -756,7 +788,10 @@ class OnlineGuideController {
         _retry = null;
         await _save();
       }
-      _message = _errorMessage(error);
+      _message =
+          _confirmedFocus != null && _reading == null && error.status == 503
+          ? '暂时无法开始算事，请稍后重试。'
+          : _errorMessage(error);
     } finally {
       if (_threadId case final id? when !_changes.isClosed) {
         final reading = _reading;

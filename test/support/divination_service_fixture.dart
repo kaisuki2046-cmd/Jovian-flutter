@@ -75,6 +75,7 @@ class DivinationServiceFixture {
   Future<void>? followUpReply;
   final understood = <String>[];
   final calls = <String>[];
+  final startFailures = <({int status, String code})>[];
   final transmitted = <Map<Object?, Object?>>[];
   final automatic = <bool>[];
   GuideRitual? _ritual;
@@ -121,6 +122,10 @@ class DivinationServiceFixture {
         expectSync(body['profile'], guideVersion);
         expectSync(body['focus'], divinationFixtureFocus);
         expectSync(body['proof'], 'accepted-proof');
+        if (startFailures.isNotEmpty) {
+          final failure = startFailures.removeAt(0);
+          return _json({'error': failure.code}, status: failure.status);
+        }
         automatic.add(body['automatic'] == true);
         _hasReport = false;
         _followUps.clear();

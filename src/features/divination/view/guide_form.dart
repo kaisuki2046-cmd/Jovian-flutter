@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../ui/chat_time_label.dart';
 import '../../../ui/interface_language.dart';
+import '../../../ui/report_body.dart';
 
 import 'composer_attachment.dart';
 import 'guide_composer.dart';
@@ -778,9 +779,58 @@ class _GuideFormState extends State<GuideForm>
     );
   }
 
+  Future<void> _retryOnline(OnlineGuideController online) async {
+    await online.retry();
+    _finishQuestion(online);
+  }
+
+  Widget _failedStartCard(OnlineGuideController online, String focus) =>
+      GuideAssistantMessage(
+        content: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 8,
+          children: [
+            Semantics(
+              container: true,
+              header: true,
+              child: const UiText('AI 辅助确认'),
+            ),
+            ReportBody(focus, chat: true),
+            if (online.message case final message?)
+              Semantics(liveRegion: true, child: UiText(message)),
+            Wrap(
+              spacing: 8,
+              runSpacing: 4,
+              children: [
+                OutlinedButton(
+                  onPressed: _attachmentSelection != null
+                      ? null
+                      : () => _retryOnline(online),
+                  child: const UiText('重试算事'),
+                ),
+                TextButton(
+                  onPressed: _attachmentSelection != null
+                      ? null
+                      : () {
+                          online.editFailedStart();
+                          setState(() => _pendingQuestion = null);
+                          _questionFocus.requestFocus();
+                        },
+                  child: const UiText('修改问题'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+
   List<Widget> _feedback() {
     final online = widget.online;
     if (online == null) return const [];
+    if (online.failedStartFocus case final focus?
+        when _pendingQuestion != null) {
+      return [_failedStartCard(online, focus)];
+    }
     return [
       if (online.busy)
         Padding(
@@ -803,10 +853,7 @@ class _GuideFormState extends State<GuideForm>
         OutlinedButton(
           onPressed: _attachmentSelection != null
               ? null
-              : () async {
-                  await online.retry();
-                  _finishQuestion(online);
-                },
+              : () => _retryOnline(online),
           child: const UiText('重试'),
         ),
     ];

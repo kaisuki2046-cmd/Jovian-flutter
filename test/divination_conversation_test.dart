@@ -501,6 +501,141 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('retrying a failed reading start reuses the confirmed question', (
+    tester,
+  ) async {
+    final service = DivinationServiceFixture()
+      ..startFailures.add((status: 503, code: 'unavailable'));
+    final online = service.connect(DivinationRecoveryFixture());
+    addTearDown(online.dispose);
+    await tester.pumpWidget(_app(online));
+    await tester.pumpAndSettle();
+    final composer = find.byType(TextFormField);
+
+    await tester.enterText(composer, divinationFixtureQuestion);
+    await _send(tester);
+    expect(find.text(divinationFixtureClarification), findsOneWidget);
+    await tester.enterText(composer, divinationFixtureDetails);
+    await _send(tester);
+    expect(find.text('AI 辅助确认'), findsOneWidget);
+    expect(find.text(divinationFixtureFocus), findsOneWidget);
+    expect(find.text('暂时无法开始算事，请稍后重试。'), findsOneWidget);
+    expect(find.text('修改问题'), findsOneWidget);
+    expect(service.understood, hasLength(2));
+    expect(
+      service.understood.last,
+      '$divinationFixtureQuestion；补充：$divinationFixtureDetails',
+    );
+    final firstStart = service.transmitted.last;
+
+    await _tap(tester, '重试算事');
+    expect(service.calls, [
+      'POST /reading/understand',
+      'POST /reading/understand',
+      'POST /reading',
+      'POST /reading',
+    ]);
+    expect(service.transmitted.last, firstStart);
+    expect(online.activeTranscript, hasLength(2));
+    expect(online.activeTranscript.last.question, divinationFixtureDetails);
+    expect(
+      find.byKey(const ValueKey('coin-ritual-toss-button')),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets(
+    'editing a failed reading keeps the draft and local attachments',
+    (tester) async {
+      final service = DivinationServiceFixture()
+        ..startFailures.add((status: 503, code: 'unavailable'));
+      final online = service.connect(DivinationRecoveryFixture());
+      addTearDown(online.dispose);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: GuideForm(
+            online: online,
+            attachmentPicker: (_) async => [
+              ComposerAttachment(
+                file: XFile.fromData(
+                  Uint8List(1),
+                  path: 'reading-notes.txt',
+                  name: 'reading-notes.txt',
+                ),
+                kind: ComposerAttachmentKind.file,
+              ),
+            ],
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final composer = find.byType(TextFormField);
+      const draft = '  $divinationFixtureDetails  ';
+      await tester.enterText(composer, draft);
+      await _openAttachmentMenu(tester, '添加文件');
+      await _send(tester);
+      await _tap(tester, '修改问题');
+
+      final field = find.byType(EditableText);
+      expect(tester.widget<EditableText>(field).focusNode.hasFocus, isTrue);
+      expect(tester.widget<TextFormField>(composer).controller?.text, draft);
+      expect(find.byTooltip('移除附件 reading-notes.txt'), findsOneWidget);
+      expect(find.text('重试算事'), findsNothing);
+      expect(online.canRetry, isFalse);
+      expect(service.calls, ['POST /reading/understand', 'POST /reading']);
+
+      const edited = '我想问下周另一场面试的准备。';
+      await tester.enterText(composer, edited);
+      await _send(tester);
+      expect(service.understood, [divinationFixtureDetails, edited]);
+      expect(service.transmitted.last['question'], edited);
+      expect(
+        service.transmitted.last.values,
+        isNot(contains('reading-notes.txt')),
+      );
+      expect(online.activeTranscript.map((turn) => turn.question), [
+        divinationFixtureDetails,
+        edited,
+      ]);
+    },
+  );
+
+  testWidgets('an expired proof is renewed only after the server rejects it', (
+    tester,
+  ) async {
+    final service = DivinationServiceFixture()
+      ..startFailures.addAll([
+        (status: 503, code: 'unavailable'),
+        (status: 400, code: 'question_needs_model_confirmation'),
+      ]);
+    final online = service.connect(DivinationRecoveryFixture());
+    addTearDown(online.dispose);
+    await tester.pumpWidget(_app(online));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byType(TextFormField),
+      divinationFixtureDetails,
+    );
+    await _send(tester);
+
+    await _tap(tester, '重试算事');
+    expect(service.understood, hasLength(1));
+    expect(find.text('问题确认已过期，请重试确认。'), findsOneWidget);
+    await _tap(tester, '重试算事');
+    expect(service.calls, [
+      'POST /reading/understand',
+      'POST /reading',
+      'POST /reading',
+      'POST /reading/understand',
+      'POST /reading',
+    ]);
+    expect(online.activeTranscript, hasLength(1));
+    expect(
+      find.byKey(const ValueKey('coin-ritual-toss-button')),
+      findsOneWidget,
+    );
+  });
+
   testWidgets('stopping question analysis restores the original draft', (
     tester,
   ) async {

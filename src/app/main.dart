@@ -137,7 +137,10 @@ class _JovianAppState extends State<JovianApp> {
       account: widget.account,
       loadDisplay: loadFortuneDisplay,
       readServerTime: widget.readFortuneTime,
-      connectOnline: () => configureFortuneOnline(widget.readFortuneTime),
+      connectOnline: () => configureFortuneOnline(
+        widget.readFortuneTime,
+        readNativeSession: widget.account?.readNativeSession,
+      ),
       archiveId: args is String ? args : null,
     );
   }

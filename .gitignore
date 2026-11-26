@@ -2,3 +2,4 @@
 /build/
 /.flutter-plugins-dependencies
 /web/legacy-compute.js
+/tool/legacy_compute/native_assets/legacy-compute.html

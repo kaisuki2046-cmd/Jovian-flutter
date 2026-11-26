@@ -11,6 +11,7 @@ const dependencies = resolve(process.env.JOVIAN_LEGACY_NODE_ROOT ?? root);
 const browserDependencies = resolve(process.env.JOVIAN_BROWSER_TEST_ROOT ?? dependencies);
 const { chromium } = createRequire(join(browserDependencies, 'package.json'))('playwright-core');
 const worker = await readFile(join(root, 'app-flutter', 'web', 'legacy-compute.js'));
+const nativeRunner = pathToFileURL(join(root, 'app-flutter', 'tool', 'legacy_compute', 'native_assets', 'legacy-compute.html')).href;
 const testOutput = join(root, 'app-flutter', '.dart_tool', 'legacy_compute');
 await mkdir(testOutput, { recursive: true });
 const testBridgePath = join(testOutput, 'bridge-test.js');
@@ -192,8 +193,65 @@ try {
 
   const invalid = await ask({ name: 'calculateDestiny', profile: { ...a, date: { ...a.date, month: 13 } } });
   assert.equal(invalid.error, '请核对出生日期、时间和性别。');
+
+  // Use the exact generated native asset as a file, without the Web app server.
+  const nativeContext = await browser.newContext();
+  const nativeRequests = [];
+  await nativeContext.route('**/*', (route) => {
+    const url = route.request().url();
+    if (url === nativeRunner) return route.continue();
+    nativeRequests.push(url);
+    return route.abort();
+  });
+  const native = await nativeContext.newPage();
+  await native.addInitScript(() => {
+    window.JovianCompute = { postMessage(value) {
+      if (value === 'ready') window.jovianReady = true;
+      else window.jovianReply?.(value);
+    } };
+  });
+  await native.goto(nativeRunner);
+  await native.waitForFunction(() => window.jovianReady === true);
+  const askNative = (request) => native.evaluate((encoded) => new Promise((done, fail) => {
+    const runner = window.jovianNativeCompute;
+    const stages = [];
+    let buffer = '';
+    let pieces = 0;
+    const timer = setTimeout(() => fail(new Error('Local native asset timed out')), 180_000);
+    window.jovianReply = (part) => {
+      buffer += part.slice(1);
+      pieces++;
+      if (part[0] === '0') return;
+      const { stage, result, error } = JSON.parse(buffer);
+      buffer = '';
+      if (stage) stages.push(stage);
+      else {
+        clearTimeout(timer);
+        runner.close();
+        done({ stages, result, error, pieces });
+      }
+    };
+    for (let offset = 0; offset < encoded.length; offset += 48 * 1024) {
+      runner.append(encoded.slice(offset, offset + 48 * 1024));
+    }
+    runner.run();
+  }), Buffer.from(JSON.stringify(request), 'utf8').toString('base64'));
+
+  const nativeReading = await askNative({ name: 'calculateDestiny', profile: a });
+  assert.deepEqual(nativeReading.stages, progress);
+  assertParity(nativeReading.result, result.result);
+  const nativePartial = await askNative({ name: 'calculateDestiny', profile: {
+    ...a, time: { timeKnown: false, hour: null, minute: null },
+  } });
+  assertParity(nativePartial.result, partial.result);
+  assert.ok(nativePartial.pieces > progress.length + 1, 'Large candidates use more than one bridge message');
+  assertParity((await askNative({ name: 'compareSynastry', ...subjects })).result, fact.result);
+  assertParity((await askNative({ name: 'buildFortuneFactSubmission', ...fortune })).result, batch.result);
+  assert.equal((await askNative({ name: 'not_supported' })).error, '不支持的本机计算类型。');
+  assert.deepEqual(nativeRequests, []);
+  await nativeContext.close();
   assert.deepEqual(externalRequests, []);
-  console.log('Chrome parity: Dart bridge and cancellation, natal reading, manual chart, synastry, fortune server validation, and no external requests.');
+  console.log('Chrome parity: Dart Web bridge, native file worker, long replies, natal reading, manual chart, synastry, fortune and no external requests.');
 } finally {
   await browser?.close();
   await new Promise((done) => server.close(done));

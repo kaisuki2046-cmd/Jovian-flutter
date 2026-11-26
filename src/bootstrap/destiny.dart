@@ -6,7 +6,7 @@ import 'package:jovian_destiny/jovian_destiny.dart';
 
 import '../features/destiny/destiny.dart';
 import '../features/destiny/requests/destiny_report_api.dart';
-import '../shared/browser_compute/browser_compute.dart';
+import '../shared/local_compute/local_compute.dart';
 import '../shared/http/credentialed_client.dart'
     if (dart.library.js_interop) '../shared/http/credentialed_client_web.dart';
 import '../shared/http/json_client.dart';
@@ -36,7 +36,7 @@ Future<DestinyReading> Function(
   void Function(String),
 )?
 legacyDestinyCalculation() {
-  const compute = BrowserCompute();
+  const compute = LocalCompute();
   if (!compute.isAvailable) return null;
   return (profile, cancel, progress) async {
     try {
@@ -47,7 +47,7 @@ legacyDestinyCalculation() {
           onProgress: progress,
         ),
       );
-    } on BrowserComputeException catch (error) {
+    } on LocalComputeException catch (error) {
       throw FormatException(error.message);
     }
   };

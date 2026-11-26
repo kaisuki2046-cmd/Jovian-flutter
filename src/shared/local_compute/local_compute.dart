@@ -1,20 +1,21 @@
-import 'browser_compute_stub.dart'
-    if (dart.library.js_interop) 'browser_compute_web.dart'
+import 'local_compute_stub.dart'
+    if (dart.library.io) 'local_compute_native.dart'
+    if (dart.library.js_interop) 'local_compute_web.dart'
     as platform;
 
-export 'browser_compute_error.dart' show BrowserComputeException;
+export 'local_compute_error.dart' show LocalComputeException;
 
-/// Calls the original browser calculations using their JSON contracts.
-class BrowserCompute {
-  const BrowserCompute();
+/// Runs the original calculation source using the local platform's Worker.
+class LocalCompute {
+  const LocalCompute();
 
-  bool get isAvailable => platform.isBrowserComputeAvailable;
+  bool get isAvailable => platform.isLocalComputeAvailable;
 
   Future<Map<String, Object?>> calculateDestiny(
     Map<String, Object?> profile, {
     void Function(String stage)? onProgress,
     Future<void>? cancel,
-  }) => platform.runBrowserCompute(
+  }) => platform.runLocalCompute(
     {'name': 'calculateDestiny', 'profile': profile},
     onProgress: onProgress,
     cancel: cancel,
@@ -23,7 +24,7 @@ class BrowserCompute {
   Future<Map<String, Object?>> calculateManualSubjectChart(
     Map<String, Object?> profile, {
     Future<void>? cancel,
-  }) => platform.runBrowserCompute({
+  }) => platform.runLocalCompute({
     'name': 'calculateManualSubjectChart',
     'profile': profile,
   }, cancel: cancel);
@@ -32,7 +33,7 @@ class BrowserCompute {
     Map<String, Object?> a,
     Map<String, Object?> b, {
     Future<void>? cancel,
-  }) => platform.runBrowserCompute({
+  }) => platform.runLocalCompute({
     'name': 'compareSynastry',
     'a': a,
     'b': b,
@@ -44,7 +45,7 @@ class BrowserCompute {
     Map<String, Object?> archive, {
     Map<String, Object?>? returnLocation,
     Future<void>? cancel,
-  }) => platform.runBrowserCompute({
+  }) => platform.runLocalCompute({
     'name': 'buildFortuneFactSubmission',
     'input': input,
     'asOf': asOf,
@@ -57,7 +58,7 @@ class BrowserCompute {
     int asOf,
     Map<String, Object?> archive,
     Future<void> cancel,
-  ) => platform.runBrowserCompute({
+  ) => platform.runLocalCompute({
     'name': 'prepareFortunePeriod',
     'input': input,
     'asOf': asOf,
@@ -69,7 +70,7 @@ class BrowserCompute {
     Map<String, Object?> input,
     int asOf,
     Future<void> cancel,
-  ) => platform.runBrowserCompute({
+  ) => platform.runLocalCompute({
     'name': 'archiveFortuneReport',
     'report': report,
     'input': input,

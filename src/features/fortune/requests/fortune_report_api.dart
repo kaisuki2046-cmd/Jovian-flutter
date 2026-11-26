@@ -4,12 +4,24 @@ import 'package:jovian_fortune/jovian_fortune.dart';
 
 import '../../../shared/http/json_client.dart';
 import '../model/online_fortune.dart';
-import 'fortune_gzip.dart' if (dart.library.js_interop) 'fortune_gzip_web.dart';
+import 'fortune_gzip.dart'
+    if (dart.library.io) 'fortune_gzip_native.dart'
+    if (dart.library.js_interop) 'fortune_gzip_web.dart';
 
 class FortuneReportApi {
-  const FortuneReportApi(this._http);
+  const FortuneReportApi(this._http, {this.readNativeSession});
 
   final JsonHttpClient _http;
+  final Future<String?> Function()? readNativeSession;
+
+  Future<Map<String, String>> _sessionHeaders() async {
+    final read = readNativeSession;
+    if (read == null) return const {};
+    final token = await read();
+    if (token == null)
+      throw const JsonRequestError('account_session_required', status: 401);
+    return {'Authorization': 'Bearer $token', 'X-Account-Session': token};
+  }
 
   Future<PublishedFortune?> latest(
     String owner,
@@ -18,6 +30,7 @@ class FortuneReportApi {
   ) async {
     final result = await _http.requestNullable(
       ['fortune', 'reports', 'latest'],
+      headers: await _sessionHeaders(),
       query: {
         'expectedOwnerId': owner,
         'snapshotId': key.snapshotId,
@@ -51,7 +64,10 @@ class FortuneReportApi {
     final result = await _http.request(
       ['fortune', 'calculate'],
       encodedBody: compressed ?? raw,
-      headers: {if (compressed != null) 'Content-Encoding': 'gzip'},
+      headers: {
+        ...await _sessionHeaders(),
+        if (compressed != null) 'Content-Encoding': 'gzip',
+      },
       cancel: cancel,
     );
     final id = result['reportId'];
@@ -69,6 +85,7 @@ class FortuneReportApi {
   ) async {
     final result = await _http.request(
       ['fortune', 'interpret'],
+      headers: await _sessionHeaders(),
       body: {
         'calculationRunId': run,
         'expectedOwnerId': owner,
@@ -87,6 +104,7 @@ class FortuneReportApi {
   ) async {
     final result = await _http.request(
       ['fortune', 'advice', run],
+      headers: await _sessionHeaders(),
       query: {'expectedOwnerId': owner},
       cancel: cancel,
     );

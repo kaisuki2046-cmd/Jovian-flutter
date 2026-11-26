@@ -1,4 +1,4 @@
-import '../../../shared/browser_compute/browser_compute.dart';
+import '../../../shared/local_compute/local_compute.dart';
 import '../model/online_fortune.dart';
 import '../requests/fortune_report_api.dart';
 
@@ -10,12 +10,12 @@ class FortuneOnline {
   const FortuneOnline(
     this.api,
     this.readTime, {
-    this.compute = const BrowserCompute(),
+    this.compute = const LocalCompute(),
   });
 
   final FortuneReportApi api;
   final Future<DateTime> Function() readTime;
-  final BrowserCompute compute;
+  final LocalCompute compute;
 
   Future<PreparedFortunePeriod> prepare(
     Map<String, Object?> input,

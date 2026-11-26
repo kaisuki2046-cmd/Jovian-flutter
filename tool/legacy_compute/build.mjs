@@ -1,4 +1,4 @@
-import { mkdir } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -13,6 +13,7 @@ process.env.JOVIAN_LEGACY_NODE_ROOT = dependencyRoot;
 
 const entry = fileURLToPath(new URL('./worker.ts', import.meta.url));
 const output = join(repoRoot, 'app-flutter', 'web', 'legacy-compute.js');
+const nativeOutput = fileURLToPath(new URL('./native_assets/legacy-compute.html', import.meta.url));
 await mkdir(dirname(output), { recursive: true });
 const defaults = await getDefaultConfig(repoRoot);
 const config = mergeConfig(defaults, {
@@ -36,4 +37,14 @@ await runBuild(config, {
   dev: false,
   minify: true,
 });
-console.log('Built app-flutter/web/legacy-compute.js');
+const program = (await readFile(output)).toString('base64');
+const nativeRunner = await readFile(new URL('./native-runner.js', import.meta.url), 'utf8');
+await mkdir(dirname(nativeOutput), { recursive: true });
+await writeFile(nativeOutput, `<!doctype html>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; worker-src blob:; child-src blob:; base-uri 'none'; form-action 'none'">
+<title>Jovian local calculation</title>
+<script type="text/plain" id="jovian-compute-program">${program}</script>
+<script>${nativeRunner}</script>
+`);
+console.log('Built local calculation assets for Web and the native WebView.');

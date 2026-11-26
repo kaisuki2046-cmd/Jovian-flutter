@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:js_interop';
 
-import '../../src/shared/browser_compute/browser_compute.dart';
+import '../../src/shared/local_compute/local_compute.dart';
 
 @JS('runBrowserComputeTest')
 external set _runBrowserComputeTest(JSFunction callback);
@@ -12,7 +12,7 @@ void main() {
 }
 
 Future<JSString> _exercise(JSString input) async {
-  const compute = BrowserCompute();
+  const compute = LocalCompute();
   final profile = jsonDecode(input.toDart) as Map<String, Object?>;
   final stages = <String>[];
   final result = await compute.calculateDestiny(
@@ -23,7 +23,7 @@ Future<JSString> _exercise(JSString input) async {
   String? failure;
   try {
     await compute.calculateDestiny(profile, cancel: cancel.future);
-  } on BrowserComputeException catch (error) {
+  } on LocalComputeException catch (error) {
     failure = error.code;
   }
   return jsonEncode({

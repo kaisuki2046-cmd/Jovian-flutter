@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 
 import '../../../../shared/http/json_client.dart';
 import '../../history/requests/report_history_api.dart';
+import '../../reading-profile/model/account_birth_fields.dart';
+import '../../reading-profile/requests/account_birth_api.dart';
 import '../../settings/model/agreements.dart';
 import '../../settings/requests/agreements_api.dart';
 import '../model/session.dart';
@@ -13,6 +15,7 @@ class AccountController extends ChangeNotifier {
   final AccountApi _account;
   final AgreementsApi _agreements;
   late final reports = ReportHistoryApi(_account);
+  late final _birth = AccountBirthApi(_account);
 
   AccountSession? _session;
   AgreementCatalog? _catalog;
@@ -69,12 +72,32 @@ class AccountController extends ChangeNotifier {
     return saved;
   }
 
-  String? get socialMemberId {
+  String? get memberId {
     final session = authorizedSession;
     return !_closed && !_sessionChanging && session?.kind == AccountKind.member
         ? session!.id
         : null;
   }
+
+  String? get socialMemberId => memberId;
+
+  Future<AccountBirthFields> readBirthFields(
+    String owner, {
+    Future<void>? cancel,
+  }) => _birth.read(owner, isCurrent: () => memberId == owner, cancel: cancel);
+
+  Future<AccountBirthFields> confirmBirthFields(
+    String owner,
+    AccountBirthFields expected,
+    AccountBirthFields profile, {
+    Future<void>? cancel,
+  }) => _birth.confirm(
+    owner,
+    expected,
+    profile,
+    isCurrent: () => memberId == owner,
+    cancel: cancel,
+  );
 
   Future<Map<String, Object?>> requestSocial(
     String memberId,

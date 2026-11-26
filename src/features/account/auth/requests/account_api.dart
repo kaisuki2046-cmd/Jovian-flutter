@@ -46,6 +46,8 @@ class AccountApi {
     bool authenticated = false,
     String? method,
     Map<String, String>? query,
+    bool Function()? isCurrent,
+    Future<void>? cancel,
   }) async =>
       await requestNullable(
         path,
@@ -53,6 +55,8 @@ class AccountApi {
         authenticated: authenticated,
         method: method,
         query: query,
+        isCurrent: isCurrent,
+        cancel: cancel,
       ) ??
       (throw const JsonRequestError('invalid_response'));
 
@@ -62,12 +66,16 @@ class AccountApi {
     bool authenticated = false,
     String? method,
     Map<String, String>? query,
+    bool Function()? isCurrent,
+    Future<void>? cancel,
   }) => _requestAt(
     ['account', ...path],
     body: body,
     authenticated: authenticated,
     method: method,
     query: query,
+    isCurrent: isCurrent,
+    cancel: cancel,
   );
 
   Future<Map<String, Object?>> requestSocial(
@@ -92,6 +100,7 @@ class AccountApi {
     String? method,
     Map<String, String>? query,
     bool Function()? isCurrent,
+    Future<void>? cancel,
   }) async {
     if (isCurrent?.call() == false) {
       throw const JsonRequestError('account_changed', status: 401);
@@ -109,6 +118,7 @@ class AccountApi {
       body: body,
       method: method,
       query: query,
+      cancel: cancel,
       headers: {
         if (_nativeSession != null) 'X-App-Client': 'native',
         if (session != null) 'Authorization': 'Bearer $session',

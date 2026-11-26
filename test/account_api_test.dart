@@ -6,6 +6,8 @@ import 'package:http/testing.dart';
 
 import '../src/features/account/auth/model/session.dart';
 import '../src/features/account/auth/requests/account_api.dart';
+import '../src/features/account/reading-profile/model/account_birth_fields.dart';
+import '../src/features/account/reading-profile/requests/account_birth_api.dart';
 import '../src/features/account/settings/model/agreements.dart';
 import '../src/features/account/settings/requests/agreements_api.dart';
 import '../src/shared/http/json_client.dart';
@@ -52,6 +54,12 @@ void main() {
       final storage = _TestTokenStore();
       final token = 'a' * 43;
       const user = {'id': 'member-id', 'uid': '12345678', 'displayName': '甲'};
+      const birthFields = AccountBirthFields(
+        birthDate: '1990-07-01',
+        birthTime: '12:??',
+        birthPlace: '中国 · 上海市',
+        gender: 'female',
+      );
       final routes = <String>[];
       final api = AccountApi(
         JsonHttpClient(
@@ -91,6 +99,21 @@ void main() {
               case 'GET /account/session':
                 expect(request.headers['authorization'], 'Bearer $token');
                 return _json({'user': user});
+              case 'GET /account/reading-profile/birth-profile':
+                expect(request.headers['authorization'], 'Bearer $token');
+                expect(request.url.queryParameters, {
+                  'expectedOwnerId': 'member-id',
+                  'fields': 'birthDate,birthTime,birthPlace,gender',
+                });
+                return _json(birthFields.toJson());
+              case 'PATCH /account/reading-profile/birth-profile':
+                expect(request.headers['authorization'], 'Bearer $token');
+                expect(jsonDecode(request.body), {
+                  'expectedOwnerId': 'member-id',
+                  'expected': birthFields.toJson(),
+                  'profile': birthFields.toJson(),
+                });
+                return _json(birthFields.toJson());
               case 'POST /account/agreements/permission':
                 expect(request.headers['authorization'], 'Bearer $token');
                 final payload = jsonDecode(request.body);
@@ -132,6 +155,33 @@ void main() {
       expect(session.scope, 'member:member-id');
       expect(await api.readNativeSession(), token);
       expect((await api.restore())?.scope, session.scope);
+      final birth = AccountBirthApi(api);
+      final expected = await birth.read(session.id, isCurrent: () => true);
+      expect(expected.birthTime, '12:??');
+      await expectLater(
+        birth.confirm(
+          session.id,
+          expected,
+          birthFields,
+          isCurrent: () => false,
+        ),
+        throwsA(
+          isA<JsonRequestError>().having(
+            (error) => error.code,
+            'code',
+            'account_changed',
+          ),
+        ),
+      );
+      expect(
+        (await birth.confirm(
+          session.id,
+          expected,
+          birthFields,
+          isCurrent: () => true,
+        )).toJson(),
+        birthFields.toJson(),
+      );
       final state = await agreements.choose(
         catalog.ai,
         'divination.cloud_assistance',
@@ -146,6 +196,8 @@ void main() {
         'GET /account/agreements/catalog',
         'POST /account/auth/login',
         'GET /account/session',
+        'GET /account/reading-profile/birth-profile',
+        'PATCH /account/reading-profile/birth-profile',
         'POST /account/agreements/permission',
         'POST /account/auth/logout',
       ]);

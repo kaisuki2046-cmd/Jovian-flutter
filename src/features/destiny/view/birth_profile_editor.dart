@@ -2,6 +2,8 @@ import 'package:flutter/services.dart';
 import 'package:jovian_destiny/jovian_destiny.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../model/birth_profile_draft.dart';
+
 class BirthProfileEditor extends StatefulWidget {
   const BirthProfileEditor({
     super.key,
@@ -10,7 +12,7 @@ class BirthProfileEditor extends StatefulWidget {
     required this.onSubmit,
     this.busy = false,
     this.requireKnownTime = false,
-    this.initialProfile,
+    this.initialDraft = const BirthProfileDraft(),
   });
 
   final Future<List<BirthPlace>> Function() loadPlaces;
@@ -18,7 +20,7 @@ class BirthProfileEditor extends StatefulWidget {
   final ValueChanged<BirthProfile> onSubmit;
   final bool busy;
   final bool requireKnownTime;
-  final BirthProfile? initialProfile;
+  final BirthProfileDraft initialDraft;
 
   @override
   State<BirthProfileEditor> createState() => _BirthProfileEditorState();
@@ -26,20 +28,19 @@ class BirthProfileEditor extends StatefulWidget {
 
 class _BirthProfileEditorState extends State<BirthProfileEditor> {
   late final _date = TextEditingController(
-    text: widget.initialProfile?.date.utcMidnight.toIso8601String().substring(
-      0,
-      10,
-    ),
+    text: widget.initialDraft.date == null
+        ? null
+        : birthDateText(widget.initialDraft.date!),
   );
   late final _hour = TextEditingController(
-    text: widget.initialProfile?.time.hour?.toString(),
+    text: widget.initialDraft.time?.hour?.toString().padLeft(2, '0'),
   );
   late final _minute = TextEditingController(
-    text: widget.initialProfile?.time.minute?.toString(),
+    text: widget.initialDraft.time?.minute?.toString().padLeft(2, '0'),
   );
   late Future<List<BirthPlace>> _places = widget.loadPlaces();
-  late BirthPlace? _place = widget.initialProfile?.place;
-  late BirthGender? _gender = widget.initialProfile?.gender;
+  late BirthPlace? _place = widget.initialDraft.place;
+  late BirthGender? _gender = widget.initialDraft.gender;
   String? _error;
 
   @override
@@ -134,9 +135,7 @@ class _BirthProfileEditorState extends State<BirthProfileEditor> {
   );
 
   Widget _placeField(List<BirthPlace> places) => Autocomplete<BirthPlace>(
-    initialValue: TextEditingValue(
-      text: widget.initialProfile?.place.name ?? '',
-    ),
+    initialValue: TextEditingValue(text: widget.initialDraft.place?.name ?? ''),
     displayStringForOption: (place) => place.name,
     fieldViewBuilder: (context, field, focus, submit) => TextField(
       enabled: !widget.busy,

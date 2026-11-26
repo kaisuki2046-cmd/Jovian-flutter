@@ -105,7 +105,20 @@ class _JovianAppState extends State<JovianApp> {
     themeMode: _themeMode,
     builder: (context, child) => JovianViewport(child: child!),
     routes: {
-      '/destiny': (context) => _destinyPage(context, account: widget.account),
+      '/destiny': (context) {
+        final account = widget.account;
+        if (account == null) return _destinyPage(context);
+        return ListenableBuilder(
+          listenable: account,
+          builder: (context, _) => _destinyPage(
+            context,
+            key: ValueKey(
+              account.sessionChanging ? null : account.authorizedSession?.scope,
+            ),
+            account: account,
+          ),
+        );
+      },
       '/fortune': _fortunePage,
       '/modules/fortune': _fortunePage,
     },
@@ -134,6 +147,7 @@ Widget _destinyPage(
   BuildContext context, {
   Key? key,
   AccountController? account,
+  bool active = true,
 }) => DestinyPage(
   key: key,
   loadPlaces: loadBirthPlaces,
@@ -143,6 +157,7 @@ Widget _destinyPage(
     readNativeSession: account?.readNativeSession,
   ),
   account: account,
+  active: active,
   openFortune: (archiveId) =>
       Navigator.pushNamed(context, '/fortune', arguments: archiveId),
 );
@@ -213,6 +228,7 @@ class _AppHomeState extends State<_AppHome> {
         context,
         key: ValueKey(_scope),
         account: widget.account,
+        active: active,
       ),
       JovianTab.synastry => SynastryPage(
         key: ValueKey(_scope),

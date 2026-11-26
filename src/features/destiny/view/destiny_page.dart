@@ -5,8 +5,11 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../ui/theme.dart';
 import '../../account/account.dart';
+import '../frontend/control/destiny_birth_controller.dart';
 import '../frontend/control/destiny_page_controller.dart';
+import '../model/birth_profile_draft.dart';
 import '../model/destiny_reading.dart';
+import 'birth_profile_confirmation.dart';
 import 'birth_profile_editor.dart';
 import 'destiny_chart_dialog.dart';
 import 'destiny_report_text.dart';
@@ -27,6 +30,7 @@ class DestinyPage extends StatefulWidget {
     this.requestReport,
     this.openFortune,
     this.account,
+    this.active = true,
   });
 
   final Future<List<BirthPlace>> Function() loadPlaces;
@@ -41,6 +45,7 @@ class DestinyPage extends StatefulWidget {
   requestReport;
   final void Function(String? archiveId)? openFortune;
   final AccountController? account;
+  final bool active;
 
   @override
   State<DestinyPage> createState() => _DestinyPageState();
@@ -48,7 +53,11 @@ class DestinyPage extends StatefulWidget {
 
 class _DestinyPageState extends State<DestinyPage> {
   late final DestinyPageController _controller;
+  late final DestinyBirthController _birth;
   BirthProfile? _draft;
+  BirthProfileDraft _prefill = const BirthProfileDraft();
+  AccountBirthFields? _baseline;
+  DialogRoute<BirthProfile>? _confirmation;
   bool _editing = false;
 
   @override
@@ -60,11 +69,25 @@ class _DestinyPageState extends State<DestinyPage> {
       requestReport: widget.requestReport,
       account: widget.account,
     );
+    _birth = DestinyBirthController(widget.account, widget.loadPlaces);
+    if (widget.active) unawaited(_birth.refresh());
     unawaited(_controller.restoreReport());
   }
 
   @override
+  void didUpdateWidget(covariant DestinyPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.active && !oldWidget.active) unawaited(_birth.refresh());
+  }
+
+  @override
   void dispose() {
+    if (_confirmation case final route?) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (route.isActive) route.navigator?.removeRoute(route);
+      });
+    }
+    _birth.dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -75,7 +98,7 @@ class _DestinyPageState extends State<DestinyPage> {
     body: SafeArea(
       top: false,
       child: ListenableBuilder(
-        listenable: _controller,
+        listenable: Listenable.merge([_controller, _birth]),
         builder: (context, _) => ListView(
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           padding: jovianPagePadding,
@@ -98,7 +121,7 @@ class _DestinyPageState extends State<DestinyPage> {
                 onPressed: _controller.restoreReport,
                 child: const Text('已存报告读取失败，点此重试'),
               ),
-            if (widget.calculateReading == null)
+            if (widget.calculateReading == null && widget.account == null)
               _editor(context, legacy: false)
             else if (_controller.stage case final stage?
                 when !_controller.saving)
@@ -120,11 +143,32 @@ class _DestinyPageState extends State<DestinyPage> {
               else
                 const Text('解读服务暂未配置。'),
               TextButton(
-                onPressed: () => setState(() => _editing = true),
+                onPressed: _canEdit
+                    ? () => _openEditor(useCurrentDraft: true)
+                    : null,
                 child: const Text('修改出生资料'),
               ),
-            ] else
+            ] else if (_controller.chart != null)
+              TextButton(
+                onPressed: _canEdit
+                    ? () => _openEditor(useCurrentDraft: true)
+                    : null,
+                child: const Text('修改出生资料'),
+              )
+            else
               _entry(context),
+            if (_birth.loading)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                child: LinearProgressIndicator(),
+              ),
+            if (_birth.readError case final error?) ...[
+              _status(context, error),
+              TextButton(
+                onPressed: _birth.refresh,
+                child: const Text('重试读取账户出生资料'),
+              ),
+            ],
             if (_controller.calculationError case final error?)
               _status(context, error),
             if (_controller.chart case final chart?) ...[
@@ -158,8 +202,8 @@ class _DestinyPageState extends State<DestinyPage> {
         const Text('从出生资料展开你的命盘'),
         const SizedBox(height: 16),
         FilledButton(
-          onPressed: () => setState(() => _editing = true),
-          child: const Text('开始解读'),
+          onPressed: _canEdit ? _openEditor : null,
+          child: Text(_birth.current?.fields.hasData == true ? '核对资料' : '开始解读'),
         ),
       ],
     ),
@@ -175,7 +219,7 @@ class _DestinyPageState extends State<DestinyPage> {
       const SizedBox(height: 12),
       BirthProfileEditor(
         loadPlaces: widget.loadPlaces,
-        initialProfile: legacy ? _draft : null,
+        initialDraft: legacy ? _prefill : const BirthProfileDraft(),
         submitLabel: legacy
             ? '核对出生资料'
             : _controller.calculating
@@ -186,6 +230,9 @@ class _DestinyPageState extends State<DestinyPage> {
             ? (profile) => _confirm(context, profile)
             : _controller.submit,
       ),
+      if (_baseline case final fields?
+          when legacy && fields.birthPlace.isNotEmpty && _prefill.place == null)
+        _status(context, '账户出生地点「${fields.birthPlace}」无法唯一匹配，请重新选择。'),
       if (legacy)
         TextButton(
           onPressed: () => setState(() => _editing = false),
@@ -194,40 +241,69 @@ class _DestinyPageState extends State<DestinyPage> {
     ],
   );
 
+  bool get _canEdit =>
+      !_controller.busy &&
+      (!_birth.member || (_birth.current != null && !_birth.loading));
+
+  void _openEditor({bool useCurrentDraft = false}) {
+    final current = _birth.current;
+    setState(() {
+      _baseline = current?.fields;
+      _prefill = useCurrentDraft && _draft != null
+          ? BirthProfileDraft.fromProfile(_draft!)
+          : current?.draft ?? const BirthProfileDraft();
+      _editing = true;
+    });
+  }
+
   Future<void> _confirm(BuildContext context, BirthProfile profile) async {
-    final time = profile.time;
-    final clock = time.timeKnown
-        ? '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}'
-        : '时刻未完全确定';
-    final confirmed = await showDialog<bool>(
+    if (_confirmation != null || !_birth.isCurrent) return;
+    final navigator = Navigator.of(context, rootNavigator: true);
+    final entered = accountFieldsFor(profile);
+    late final DialogRoute<BirthProfile> route;
+    route = DialogRoute<BirthProfile>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('核对出生资料'),
-        content: Text(
-          '${profile.date.utcMidnight.toIso8601String().substring(0, 10)} · $clock\n${profile.place.name} · ${switch (profile.gender) {
-            BirthGender.female => '女',
-            BirthGender.male => '男',
-            BirthGender.other => '其他',
-          }}',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('返回修改'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('确认测算'),
-          ),
-        ],
+      barrierDismissible: false,
+      builder: (_) => ListenableBuilder(
+        listenable: _birth,
+        builder: (context, _) {
+          if (!_birth.isCurrent) return const SizedBox.shrink();
+          final latest = _birth.conflict;
+          final alternative = latest?.draft.completeProfile;
+          return BirthProfileConfirmation(
+            entered: entered,
+            member: _birth.member,
+            saving: _birth.saving,
+            latest: latest?.fields,
+            message: _birth.saveError,
+            useLatest: alternative == null
+                ? null
+                : () => navigator.pop(alternative),
+            confirm: () async {
+              if (_birth.member) {
+                final expected = latest?.fields ?? _baseline;
+                if (expected == null ||
+                    !await _birth.confirm(profile, expected))
+                  return;
+              }
+              if (mounted && _birth.isCurrent && route.isCurrent)
+                navigator.pop(profile);
+            },
+          );
+        },
       ),
     );
-    if (!mounted || confirmed != true) return;
+    _confirmation = route;
+    final confirmed = await navigator.push(route);
+    _confirmation = null;
+    if (!mounted || !_birth.isCurrent) return;
+    _birth.clearConfirmation();
+    if (confirmed == null) return;
     setState(() {
-      _draft = profile;
+      _draft = confirmed;
       _editing = false;
     });
-    await _controller.submit(profile);
+    await _controller.submit(confirmed);
   }
 
   Widget _progress(BuildContext context, String stage) => Card(
@@ -302,9 +378,9 @@ class _DestinyPageState extends State<DestinyPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           TextButton(
-            onPressed: _controller.saving
-                ? null
-                : () => setState(() => _editing = true),
+            onPressed: _canEdit
+                ? () => _openEditor(useCurrentDraft: _draft != null)
+                : null,
             child: Text(_draft == null ? '重新测算' : '编辑出生资料'),
           ),
           if (_controller.reading != null)

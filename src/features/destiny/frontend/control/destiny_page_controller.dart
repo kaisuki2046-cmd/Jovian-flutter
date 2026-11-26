@@ -127,6 +127,7 @@ class DestinyPageController extends ChangeNotifier {
   Future<void> returnToArchive() async {
     if (busy) return;
     _revision++;
+    chart = null;
     reading = null;
     report = null;
     archivedCharts = null;

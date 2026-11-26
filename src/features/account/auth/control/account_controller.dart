@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 
 import '../../../../shared/http/json_client.dart';
 import '../../history/requests/report_history_api.dart';
+import '../../profile/model/profile_preview.dart';
+import '../../profile/requests/profile_preview_api.dart';
 import '../../reading-profile/model/account_birth_fields.dart';
 import '../../reading-profile/model/account_reading_profile.dart';
 import '../../reading-profile/requests/account_birth_api.dart';
@@ -17,6 +19,7 @@ class AccountController extends ChangeNotifier {
   final AgreementsApi _agreements;
   late final reports = ReportHistoryApi(_account);
   late final _birth = AccountBirthApi(_account);
+  late final _profilePreview = ProfilePreviewApi(_account);
 
   AccountSession? _session;
   AgreementCatalog? _catalog;
@@ -81,6 +84,26 @@ class AccountController extends ChangeNotifier {
   }
 
   String? get socialMemberId => memberId;
+
+  Future<ProfilePreview> readProfilePreview(
+    String owner, {
+    Future<void>? cancel,
+  }) => _profilePreview.preview(
+    owner,
+    isCurrent: () => memberId == owner,
+    cancel: cancel,
+  );
+
+  Future<VisitorProfile> readVisitorProfile(
+    String viewer,
+    String target, {
+    Future<void>? cancel,
+  }) => _profilePreview.visitor(
+    viewer,
+    target,
+    isCurrent: () => memberId == viewer,
+    cancel: cancel,
+  );
 
   Future<AccountReadingProfile> readBirthSettings(
     String owner, {

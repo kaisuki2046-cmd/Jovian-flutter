@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../account/account.dart';
 import '../control/social_controller.dart';
 import '../model/social.dart';
 import 'social_records.dart';
@@ -254,146 +257,207 @@ class _SocialProfilePageState extends State<SocialProfilePage> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text('用户主页')),
-    body: FutureBuilder<SocialProfile>(
-      future: _profile,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) {
-          return const LinearProgressIndicator();
-        }
-        if (snapshot.hasError) {
-          return ListView(
-            padding: const EdgeInsets.all(20),
-            children: [
-              Text(
-                describeSocialError(
-                  snapshot.error!,
-                  '暂时无法加载用户资料。',
-                  missing: '该用户主页不可查看。',
-                ),
-              ),
-              TextButton(onPressed: _reload, child: const Text('重新加载')),
-            ],
-          );
-        }
-        final profile = snapshot.data!;
+    body: ListenableBuilder(
+      listenable: widget.controller.sessionChanges,
+      builder: (context, _) => widget.controller.isCurrentMember
+          ? _profileBody()
+          : const Center(child: Text('当前会话已变更。')),
+    ),
+  );
+
+  Widget _profileBody() => FutureBuilder<SocialProfile>(
+    future: _profile,
+    builder: (context, snapshot) {
+      if (snapshot.connectionState != ConnectionState.done) {
+        return const LinearProgressIndicator();
+      }
+      if (snapshot.hasError) {
         return ListView(
           padding: const EdgeInsets.all(20),
           children: [
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(18),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const CircleAvatar(
-                          radius: 24,
-                          child: Icon(Icons.person_outline),
-                        ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: Text(
-                            profile.name,
-                            style: Theme.of(context).textTheme.titleLarge,
-                          ),
-                        ),
-                        if (!_own)
-                          PopupMenuButton<String>(
-                            enabled: !_busy,
-                            tooltip: '更多操作',
-                            onSelected: (action) =>
-                                action == 'block' ? _block() : _report(),
-                            itemBuilder: (context) => const [
-                              PopupMenuItem(value: 'block', child: Text('拉黑')),
-                              PopupMenuItem(value: 'report', child: Text('举报')),
-                            ],
-                          ),
-                      ],
-                    ),
-                    if (profile.uid case final uid?)
-                      Semantics(
-                        button: true,
-                        child: GestureDetector(
-                          onLongPress: () async {
-                            await Clipboard.setData(ClipboardData(text: uid));
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('UID 已复制')),
-                              );
-                            }
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: Text('UID $uid · 长按复制'),
-                          ),
-                        ),
-                      ),
-                    if (profile.bio?.isNotEmpty == true) Text(profile.bio!),
-                    const SizedBox(height: 12),
-                    Wrap(
-                      spacing: 16,
-                      runSpacing: 6,
-                      children: [
-                        for (final (direction, label) in [
-                          (
-                            SocialList.following,
-                            '关注 ${profile.relation.following}',
-                          ),
-                          (
-                            SocialList.followers,
-                            '粉丝 ${profile.relation.followers}',
-                          ),
-                        ])
-                          if (_own)
-                            TextButton(
-                              onPressed: () async {
-                                await Navigator.of(context).push<void>(
-                                  MaterialPageRoute(
-                                    builder: (_) => SocialConnectionsPanel(
-                                      controller: widget.controller,
-                                      direction: direction,
-                                    ),
-                                  ),
-                                );
-                                if (mounted) _reload();
-                              },
-                              child: Text(label),
-                            )
-                          else
-                            Text(label),
-                      ],
-                    ),
-                    if (!_own) ...[
-                      const SizedBox(height: 14),
-                      FilledButton.tonal(
-                        onPressed: _busy
-                            ? null
-                            : () => _perform(() async {
-                                final updated = await widget.controller
-                                    .toggleFollow(profile);
-                                if (mounted) {
-                                  setState(() {
-                                    _profile = Future.value(updated);
-                                  });
-                                }
-                              }, '关注状态更新失败，请重试。'),
-                        child: Text(profile.relation.followLabel),
-                      ),
-                    ],
-                  ],
-                ),
+            Text(
+              describeSocialError(
+                snapshot.error!,
+                '暂时无法加载用户资料。',
+                missing: '该用户主页不可查看。',
               ),
             ),
-            if (_notice != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 12),
-                child: Semantics(liveRegion: true, child: Text(_notice!)),
-              ),
+            TextButton(onPressed: _reload, child: const Text('重新加载')),
           ],
         );
-      },
-    ),
+      }
+      final profile = snapshot.data!;
+      return ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(18),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const CircleAvatar(
+                        radius: 24,
+                        child: Icon(Icons.person_outline),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Text(
+                          profile.name,
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                      ),
+                      if (!_own)
+                        PopupMenuButton<String>(
+                          enabled: !_busy,
+                          tooltip: '更多操作',
+                          onSelected: (action) =>
+                              action == 'block' ? _block() : _report(),
+                          itemBuilder: (context) => const [
+                            PopupMenuItem(value: 'block', child: Text('拉黑')),
+                            PopupMenuItem(value: 'report', child: Text('举报')),
+                          ],
+                        ),
+                    ],
+                  ),
+                  if (profile.uid case final uid?)
+                    Semantics(
+                      button: true,
+                      child: GestureDetector(
+                        onLongPress: () async {
+                          await Clipboard.setData(ClipboardData(text: uid));
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('UID 已复制')),
+                            );
+                          }
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: Text('UID $uid · 长按复制'),
+                        ),
+                      ),
+                    ),
+                  if (profile.bio?.isNotEmpty == true) Text(profile.bio!),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 16,
+                    runSpacing: 6,
+                    children: [
+                      for (final (direction, label) in [
+                        (
+                          SocialList.following,
+                          '关注 ${profile.relation.following}',
+                        ),
+                        (
+                          SocialList.followers,
+                          '粉丝 ${profile.relation.followers}',
+                        ),
+                      ])
+                        if (_own)
+                          TextButton(
+                            onPressed: () async {
+                              await Navigator.of(context).push<void>(
+                                MaterialPageRoute(
+                                  builder: (_) => SocialConnectionsPanel(
+                                    controller: widget.controller,
+                                    direction: direction,
+                                  ),
+                                ),
+                              );
+                              if (mounted) _reload();
+                            },
+                            child: Text(label),
+                          )
+                        else
+                          Text(label),
+                    ],
+                  ),
+                  if (!_own) ...[
+                    const SizedBox(height: 14),
+                    FilledButton.tonal(
+                      onPressed: _busy
+                          ? null
+                          : () => _perform(() async {
+                              final updated = await widget.controller
+                                  .toggleFollow(profile);
+                              if (mounted) {
+                                setState(() {
+                                  _profile = Future.value(updated);
+                                });
+                              }
+                            }, '关注状态更新失败，请重试。'),
+                      child: Text(profile.relation.followLabel),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+          _PublicBirthPreview(controller: widget.controller, id: profile.id),
+          if (_notice != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 12),
+              child: Semantics(liveRegion: true, child: Text(_notice!)),
+            ),
+        ],
+      );
+    },
+  );
+}
+
+class _PublicBirthPreview extends StatefulWidget {
+  const _PublicBirthPreview({required this.controller, required this.id});
+  final SocialController controller;
+  final String id;
+
+  @override
+  State<_PublicBirthPreview> createState() => _PublicBirthPreviewState();
+}
+
+class _PublicBirthPreviewState extends State<_PublicBirthPreview> {
+  final _cancel = Completer<void>();
+  late Future<VisitorProfile> _result = _read();
+
+  Future<VisitorProfile> _read() =>
+      widget.controller.publicProfile(widget.id, cancel: _cancel.future);
+
+  @override
+  void dispose() {
+    _cancel.complete();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => FutureBuilder<VisitorProfile>(
+    future: _result,
+    builder: (context, snapshot) {
+      if (snapshot.connectionState != ConnectionState.done)
+        return const LinearProgressIndicator();
+      if (snapshot.data case final profile?)
+        return PublicBirthDetails(profile: profile);
+      return Padding(
+        padding: const EdgeInsets.only(top: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              describeSocialError(
+                snapshot.error!,
+                '暂时无法读取公开出生资料。',
+                missing: '该用户公开资料暂不可查看。',
+              ),
+            ),
+            TextButton(
+              onPressed: () => setState(() => _result = _read()),
+              child: const Text('重试读取公开资料'),
+            ),
+          ],
+        ),
+      );
+    },
   );
 }
 

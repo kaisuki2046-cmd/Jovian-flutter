@@ -93,6 +93,30 @@ class AccountApi {
       ) ??
       (throw const JsonRequestError('invalid_response'));
 
+  Future<Map<String, Object?>> readAsMember(
+    List<String> path,
+    String memberId, {
+    required bool Function() isCurrent,
+    Future<void>? cancel,
+  }) async {
+    final result = await request(
+      path,
+      authenticated: true,
+      isCurrent: isCurrent,
+      cancel: cancel,
+    );
+    // Older account read responses have no owner ID of their own.
+    final session = await request(
+      ['session'],
+      authenticated: true,
+      isCurrent: isCurrent,
+      cancel: cancel,
+    );
+    if (session['user'] case {'id': final String id} when id == memberId)
+      return result;
+    throw const JsonRequestError('account_changed', status: 401);
+  }
+
   Future<Map<String, Object?>?> _requestAt(
     List<String> path, {
     Map<String, Object?>? body,

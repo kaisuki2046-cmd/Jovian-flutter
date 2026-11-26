@@ -220,7 +220,7 @@ class _ReadingProfilePanelState extends State<ReadingProfilePanel>
   Widget _field(ReadingField field, String value, bool disabled) => ListTile(
     contentPadding: EdgeInsets.zero,
     title: Text(field.label),
-    subtitle: Text(value.isEmpty ? '未填写' : value.replaceAll('??', '未知')),
+    subtitle: Text(value.isEmpty ? '未填写' : field.display(value)),
     trailing: const Icon(Icons.chevron_right),
     onTap: disabled ? null : () => _select(field, value),
   );

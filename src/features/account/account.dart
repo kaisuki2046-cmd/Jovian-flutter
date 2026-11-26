@@ -8,6 +8,8 @@ export 'history/model/archived_charts.dart'
     show ArchivedChartMethod, ArchivedDestinyCharts;
 export 'history/requests/report_history_api.dart' show ReportHistoryApi;
 export 'history/view/reports_page.dart' show ReportsPage;
+export 'profile/model/profile_preview.dart' show VisitorProfile;
+export 'profile/view/public_birth_details.dart' show PublicBirthDetails;
 export 'reading-profile/model/account_birth_fields.dart'
     show AccountBirthFields;
 export 'settings/requests/agreements_api.dart' show AgreementsApi;

@@ -134,6 +134,10 @@ Flutter Web 的「命理」沿用原版出生资料核对流程，使用原 Type
 
 「基础个人资料」可编辑出生日期、时分、地点和性别。省市区选择沿用原账户目录，也可手动保留境外城市和历史地名。「隐私设置」逐项管理出生资料可见性。遇到同时编辑时，页面保留草稿并提示重新加载账户最新值。[原地点目录与许可](../src/features/account/reading-profile/places/README.md)
 
+「隐私设置」中的「预览他人可见内容」显示已保存的公开资料。其他已登录用户从消息页找人、关注或粉丝列表进入用户主页时，读取原账户服务提供的公开出生资料。只有本人预览显示每项可见性状态。
+
+「社交隐私」可设置是否允许按 UID 找到自己，昵称搜索还需要公开昵称。这里也可查看黑名单和解除拉黑。
+
 星盘的黄道与行星符号使用离线字体。[Noto Sans Symbols](https://notofonts.github.io/symbols/) · [字体许可证](src/features/destiny/assets/NotoSansSymbols-OFL.txt)
 
 在 `src/features/account/server/` 运行 `dart pub get` 和 `dart run bin/account.dart` 可启动迁移中的 Dart 账户服务。默认监听回环地址，临时 SQLite 文件位于系统临时目录。沿用 `APP_ACCOUNT_PORT`、`APP_ACCOUNT_HOST`、`APP_ACCOUNT_DB`、`APP_WEB_ORIGIN`、`APP_ACCOUNT_ISOLATE_WEB_SESSION` 和 `APP_AGREEMENTS_FILE`。当前支持密码登录、回环开发环境免验证码注册、游客、UID、协议、分用途 AI 授权，以及命理、运势和合盘归档接口。短信和邮箱发码、正式第三方登录、隐私请求仍待迁移。
@@ -156,7 +160,7 @@ Flutter Web 的「命理」沿用原版出生资料核对流程，使用原 Type
 | 账户 | 密码登录、会话、UID、报告与档案、设置、出生资料与可见性编辑和实名认证占位表单 | 实名验证服务、密码设置界面、正式第三方登录与隐私请求 |
 | 合规 | 三份现有草案正文、版本与摘要，发布参数校验 | 合规中心界面及服务接线 |
 | 合盘 | 双人排盘和比较、本人档案、在线四类解读与归档 | 原生平台真机回归 |
-| 社交和其他业务 | 消息通知、关注与粉丝、按 UID 或昵称查找用户 | 推荐 |
+| 社交和其他业务 | 消息通知、关注与粉丝、按 UID 或昵称查找用户、公开资料预览、搜索开关和黑名单 | 推荐 |
 | 切换 | 本地迁移分支 | 各模块旧数据回读、服务装配、启动脚本、平台回归 |
 
 牌图按旧版[资源清单](../src/features/divination/data/asset_manifest.json)逐张校验。Dart 的 Pro 提示词统一用 LF 换行生成版本摘要，已归档报告沿用原有数据格式。

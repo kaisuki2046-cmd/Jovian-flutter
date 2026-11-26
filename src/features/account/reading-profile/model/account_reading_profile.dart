@@ -8,6 +8,17 @@ enum ReadingField {
 
   const ReadingField(this.label);
   final String label;
+
+  String display(String value) => switch (this) {
+    ReadingField.birthTime => value.replaceAll('??', '未知'),
+    ReadingField.gender => switch (value) {
+      'female' => '女',
+      'male' => '男',
+      'other' => '其他',
+      _ => value,
+    },
+    _ => value,
+  };
 }
 
 class AccountReadingProfile {

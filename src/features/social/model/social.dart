@@ -5,6 +5,21 @@ enum SocialList { following, followers }
 
 typedef SocialCounts = ({int following, int followers});
 
+class BlockedMember {
+  const BlockedMember(this.id, this.uid);
+  final String id;
+  final String? uid;
+
+  factory BlockedMember.fromJson(Object? value) {
+    final json = _object(value);
+    final uid = _optionalString(json, 'uid');
+    return BlockedMember(
+      _id(json['id']),
+      uid != null && socialUid.hasMatch(uid) ? uid : null,
+    );
+  }
+}
+
 SocialCounts decodeSocialCounts(Map<String, Object?> json) => (
   following: _count(json['following']),
   followers: _count(json['followers']),

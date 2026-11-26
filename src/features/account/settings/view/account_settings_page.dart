@@ -1,11 +1,13 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../../../social/social.dart';
 import '../../auth/control/account_controller.dart';
 import '../../auth/model/session.dart';
 import '../../auth/view/identity_preview_page.dart';
 import '../../profile/view/profile_editor_page.dart';
-import 'account_permissions.dart';
+import '../../profile/view/profile_preview_page.dart';
 import '../../reading-profile/view/reading_profile_panel.dart';
+import 'account_permissions.dart';
 import 'agreement_document_page.dart';
 
 class AccountSettingsPage extends StatefulWidget {
@@ -263,6 +265,30 @@ class _PrivacyPage extends StatelessWidget {
             if (account.busy) const LinearProgressIndicator(),
             if (account.notice case final message?)
               Semantics(liveRegion: true, child: Text(message)),
+            if (account.memberId case final owner?) ...[
+              _SettingsEntry(
+                title: '预览他人可见内容',
+                icon: Icons.visibility_outlined,
+                onTap: () => Navigator.of(context).push<void>(
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        ProfilePreviewPage(account: account, owner: owner),
+                  ),
+                ),
+              ),
+              _SettingsEntry(
+                title: '社交隐私',
+                icon: Icons.manage_accounts_outlined,
+                onTap: () => Navigator.of(context).push<void>(
+                  MaterialPageRoute(
+                    builder: (_) => SocialPrivacyPage(
+                      controller: SocialController.forMember(account, owner),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
             if (account.session == null || account.sessionChanging)
               const Text('登录或进入游客体验后可查看和管理授权。')
             else if (account.catalog != null && account.agreementState != null)

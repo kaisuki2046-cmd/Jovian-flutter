@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import '../../account/account.dart';
 import '../model/social.dart';
 
@@ -6,6 +8,8 @@ class SocialApi {
 
   final AccountController _account;
   final String memberId;
+  Listenable get sessionChanges => _account;
+  bool get isCurrentMember => _account.memberId == memberId;
 
   Future<Map<String, Object?>> _request(
     List<String> path, {
@@ -18,6 +22,20 @@ class SocialApi {
 
   Future<SocialCounts> counts() async =>
       decodeSocialCounts(await _request(['me']));
+
+  Future<bool> discoverability() async => _discoverable(await _request(['me']));
+
+  Future<bool> setDiscoverability(bool value) async => _discoverable(
+    await _request(['discoverability'], body: {'allowed': value}),
+  );
+
+  bool _discoverable(Map<String, Object?> data) {
+    if (data['discoverable'] case final bool value) return value;
+    throw const FormatException('Invalid discoverability setting.');
+  }
+
+  Future<List<BlockedMember>> blockedMembers() async =>
+      decodeSocialItems(await _request(['blocks']), BlockedMember.fromJson);
 
   Future<SocialResultPage<FollowerAlert>> notifications(String? before) async {
     final json = await _request([
@@ -52,17 +70,20 @@ class SocialApi {
     return profile;
   }
 
+  Future<VisitorProfile> publicProfile(String id, {Future<void>? cancel}) =>
+      _account.readVisitorProfile(memberId, id, cancel: cancel);
+
   Future<SocialRelation> follow(String id, bool active) async =>
       SocialRelation.fromJson(
         await _request(['follows'], body: {'id': id, 'active': active}),
       );
 
-  Future<void> block(String id) async {
+  Future<void> block(String id, {bool active = true}) async {
     final response = await _request(
       ['blocks'],
-      body: {'id': id, 'active': true},
+      body: {'id': id, 'active': active},
     );
-    if (response['blocked'] != true)
+    if (response['blocked'] != active)
       throw const FormatException('Invalid social block status');
   }
 

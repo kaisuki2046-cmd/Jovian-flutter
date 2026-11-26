@@ -6,6 +6,7 @@ import 'package:http/testing.dart';
 
 import '../src/features/account/auth/model/session.dart';
 import '../src/features/account/auth/requests/account_api.dart';
+import '../src/features/account/profile/model/profile_preview.dart';
 import '../src/features/account/reading-profile/model/account_birth_fields.dart';
 import '../src/features/account/reading-profile/model/account_reading_profile.dart';
 import '../src/features/account/reading-profile/requests/account_birth_api.dart';
@@ -38,6 +39,44 @@ Map<String, Object?> _document(String id) => {
 };
 
 void main() {
+  test(
+    'visitor preview keeps only fields allowed by the public projection',
+    () {
+      final preview = ProfilePreview.fromResponse({
+        'profile': {
+          'displayName': '资料主人',
+          'bio': '保密简介',
+          'email': 'example@example.test',
+          'reading': {
+            'birthDate': '1990-07-01',
+            'birthTime': '12:??',
+            'birthPlace': '上海市',
+          },
+        },
+        'visibility': {
+          'displayName': true,
+          'bio': false,
+          'birthDate': false,
+          'birthTime': true,
+          'birthPlace': true,
+          'gender': false,
+        },
+      });
+      expect(preview.profile.displayName, '资料主人');
+      expect(preview.profile.bio, isNull);
+      expect(preview.profile.reading, {
+        ReadingField.birthTime: '12:??',
+        ReadingField.birthPlace: '上海市',
+      });
+      expect(
+        ReadingField.birthTime.display(
+          preview.profile.reading[ReadingField.birthTime]!,
+        ),
+        '12:未知',
+      );
+    },
+  );
+
   test('matches the account service identifier rules', () {
     expect(AccountIdentifier.parse(' Test@Example.test ')?.field, 'email');
     expect(

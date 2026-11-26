@@ -13,10 +13,23 @@ class SocialController {
 
   final SocialApi _api;
   String get memberId => _api.memberId;
+  Listenable get sessionChanges => _api.sessionChanges;
+  bool get isCurrentMember => _api.isCurrentMember;
 
   Future<SocialInboxSummary> inbox() => _api.inbox();
 
   Future<SocialCounts> counts() => _api.counts();
+
+  Future<({bool discoverable, List<BlockedMember> blocks})> privacy() async {
+    final (discoverable, blocks) = await (
+      _api.discoverability(),
+      _api.blockedMembers(),
+    ).wait;
+    return (discoverable: discoverable, blocks: blocks);
+  }
+
+  Future<bool> setDiscoverability(bool value) => _api.setDiscoverability(value);
+  Future<void> unblock(String id) => _api.block(id, active: false);
 
   SocialPaginator<FollowerAlert> notifications() =>
       SocialPaginator(_api.notifications, (item) => item.id);
@@ -74,6 +87,9 @@ class SocialController {
   }
 
   Future<SocialProfile> profile(String id) => _api.profile(id);
+
+  Future<VisitorProfile> publicProfile(String id, {Future<void>? cancel}) =>
+      _api.publicProfile(id, cancel: cancel);
 
   Future<SocialProfile> toggleFollow(SocialProfile profile) async => profile
       .withRelation(await _api.follow(profile.id, !profile.relation.follows));

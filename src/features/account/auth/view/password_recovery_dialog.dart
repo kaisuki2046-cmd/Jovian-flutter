@@ -1,6 +1,8 @@
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/interface_language.dart';
+
 import '../control/account_controller.dart';
 import '../model/password.dart';
 import '../model/phone_binding.dart';
@@ -140,17 +142,17 @@ class _PasswordRecoveryDialogState extends State<PasswordRecoveryDialog> {
           actions: [
             TextButton(
               onPressed: busy ? null : () => Navigator.of(context).pop(),
-              child: const Text('返回登录'),
+              child: const UiText('返回登录'),
             ),
             if (verified)
               FilledButton(
                 onPressed: busy ? null : _submit,
-                child: const Text('确认重置密码'),
+                child: const UiText('确认重置密码'),
               )
             else if (challenge != null)
               FilledButton(
                 onPressed: busy ? null : _verify,
-                child: const Text('验证并继续'),
+                child: const UiText('验证并继续'),
               ),
           ],
         ),

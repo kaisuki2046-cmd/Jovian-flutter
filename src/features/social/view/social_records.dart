@@ -1,5 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../../../ui/interface_language.dart';
+
+import '../../account/account.dart';
 import '../control/social_controller.dart';
 import '../model/social.dart';
 import 'social_profile.dart';
@@ -61,7 +64,7 @@ class _FollowerAlertsPageState extends State<FollowerAlertsPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('新增粉丝')),
+    appBar: AppBar(title: const UiText('新增粉丝')),
     body: _PagedList(
       paginator: _alerts,
       empty: '暂无新增粉丝提醒。',
@@ -70,7 +73,7 @@ class _FollowerAlertsPageState extends State<FollowerAlertsPage> {
         if (_error != null) _LiveStatus(_error!),
         TextButton(
           onPressed: _busy || _alerts.loading ? null : () => _update(),
-          child: const Text('全部标为已读'),
+          child: const UiText('全部标为已读'),
         ),
       ],
       itemBuilder: (context, alert) {
@@ -100,14 +103,14 @@ class _FollowerAlertsPageState extends State<FollowerAlertsPage> {
                           onPressed: _busy || _alerts.loading
                               ? null
                               : () => _update(alert: alert, openProfile: true),
-                          child: const Text('查看主页'),
+                          child: const UiText('查看主页'),
                         ),
                       if (unread)
                         TextButton(
                           onPressed: _busy || _alerts.loading
                               ? null
                               : () => _update(alert: alert),
-                          child: const Text('标为已读'),
+                          child: const UiText('标为已读'),
                         ),
                     ],
                   ),
@@ -211,7 +214,7 @@ class _SocialReportsPageState extends State<SocialReportsPage> {
                   onPressed: _busy || _reports.loading
                       ? null
                       : () => _review(item),
-                  child: const Text('处理举报'),
+                  child: const UiText('处理举报'),
                 ),
             ],
           ),
@@ -233,7 +236,7 @@ class _ReviewDialogState extends State<_ReviewDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-    title: const Text('处理举报'),
+    title: const UiText('处理举报'),
     content: TextField(
       decoration: const InputDecoration(labelText: '处理结论（举报者可见）'),
       maxLength: 400,
@@ -243,7 +246,7 @@ class _ReviewDialogState extends State<_ReviewDialog> {
     actions: [
       TextButton(
         onPressed: () => Navigator.pop(context),
-        child: const Text('取消'),
+        child: const UiText('取消'),
       ),
       for (final status in [
         SocialReportStatus.dismissed,
@@ -309,13 +312,14 @@ class _SocialConnectionsPanelState extends State<SocialConnectionsPanel> {
         itemBuilder: (context, person) => SocialProfileTile(
           profile: person,
           onTap: () async {
-            await Navigator.of(context).push<void>(
-              MaterialPageRoute(
-                builder: (_) => SocialProfilePage(
-                  controller: widget.controller,
-                  id: person.id,
-                ),
+            await AccountSectionLinks.openPage(
+              context,
+              AccountSection.socialProfile,
+              () => SocialProfilePage(
+                controller: widget.controller,
+                id: person.id,
               ),
+              profileId: person.id,
             );
             if (mounted) await _people.load();
           },
@@ -358,7 +362,7 @@ class _PagedList<T> extends StatelessWidget {
               _LiveStatus(describeSocialError(error, '加载失败，请重试。')),
               TextButton(
                 onPressed: disabled ? null : paginator.load,
-                child: const Text('重试'),
+                child: const UiText('重试'),
               ),
             ],
             if (page != null && page.items.isEmpty) _LiveStatus(empty),
@@ -370,7 +374,7 @@ class _PagedList<T> extends StatelessWidget {
             if (page?.next != null)
               OutlinedButton(
                 onPressed: disabled ? null : () => paginator.load(more: true),
-                child: const Text('加载更多'),
+                child: const UiText('加载更多'),
               ),
           ],
         ),

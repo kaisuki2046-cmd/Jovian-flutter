@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/interface_language.dart';
+
 import '../../../../ui/theme.dart';
 import '../../../compliance/agreements.dart';
 import '../../auth/control/account_controller.dart';
@@ -15,7 +17,7 @@ class AccountAgreementsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('协议与政策')),
+    appBar: AppBar(title: const UiText('协议与政策')),
     body: SafeArea(
       top: false,
       child: ListenableBuilder(
@@ -221,7 +223,7 @@ class _ConfirmedAgreementReaderState extends State<_ConfirmedAgreementReader> {
                       _document = document;
                     });
                   },
-                  child: const Text('重试读取'),
+                  child: const UiText('重试读取'),
                 ),
               ],
             ),

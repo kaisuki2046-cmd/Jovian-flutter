@@ -1,5 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../../../ui/interface_language.dart';
+
 import '../../account/account.dart';
 
 class BirthProfileConfirmation extends StatelessWidget {
@@ -63,12 +65,12 @@ class BirthProfileConfirmation extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: saving ? null : () => Navigator.pop(context),
-          child: const Text('返回修改'),
+          child: const UiText('返回修改'),
         ),
         if (useLatest case final action?)
           TextButton(
             onPressed: saving ? null : action,
-            child: const Text('使用账户最新资料'),
+            child: const UiText('使用账户最新资料'),
           ),
         FilledButton(
           onPressed: saving ? null : confirm,

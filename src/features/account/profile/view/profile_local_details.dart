@@ -1,6 +1,8 @@
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/interface_language.dart';
+
 import '../../auth/control/account_controller.dart';
 import '../model/profile_details.dart';
 import '../model/profile_details_store.dart';
@@ -192,11 +194,11 @@ class _DetailsEditorState extends State<_DetailsEditor> {
   Widget build(BuildContext context) {
     if (!_current) {
       return AlertDialog(
-        title: const Text('当前会话已变更'),
+        title: const UiText('当前会话已变更'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('关闭'),
+            child: const UiText('关闭'),
           ),
         ],
       );
@@ -223,7 +225,7 @@ class _DetailsEditorState extends State<_DetailsEditor> {
             if (_failed)
               Semantics(
                 liveRegion: true,
-                child: Text(
+                child: UiText(
                   '无法保存本机资料，请重试。',
                   style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
@@ -233,7 +235,7 @@ class _DetailsEditorState extends State<_DetailsEditor> {
         actions: [
           TextButton(
             onPressed: _saving ? null : () => Navigator.pop(context),
-            child: const Text('取消'),
+            child: const UiText('取消'),
           ),
           FilledButton(
             onPressed: _saving ? null : _save,

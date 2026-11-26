@@ -13,6 +13,51 @@ import '../src/shared/http/json_client.dart';
 
 void main() {
   testWidgets(
+    'direct account security requires current consent and preserves the nested back stack',
+    (tester) async {
+      final platform = tester.binding.platformDispatcher;
+      platform.defaultRouteNameTestValue = '/account/phone';
+      addTearDown(platform.clearDefaultRouteNameTestValue);
+      final account = _account(
+        (request) async => switch ('${request.method} ${request.url.path}') {
+          'GET /account/session' => _json({
+            'user': {
+              'id': 'member-fixture',
+              'displayName': '测试会员',
+              'phone': '13800000000',
+            },
+          }),
+          'GET /account/auth/capabilities' => _json({}),
+          'GET /account/agreements/catalog' => _json(_catalog),
+          'GET /account/agreements' => _agreementState(false),
+          'POST /account/agreements/confirmation' => _agreementState(true),
+          _ => _json({}, 404),
+        },
+      );
+      await tester.pumpWidget(JovianApp(account: account));
+      await tester.pumpAndSettle();
+      expect(find.widgetWithText(AppBar, '手机号'), findsNothing);
+      await _press(tester, '阅读并确认协议');
+      await _press(tester, '同意并继续');
+      expect(find.widgetWithText(AppBar, '手机号'), findsOneWidget);
+      expect(find.byType(NavigationBar), findsOneWidget);
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      expect(find.widgetWithText(AppBar, '账户与安全'), findsOneWidget);
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      expect(find.widgetWithText(AppBar, '设置'), findsOneWidget);
+      await tester.binding.handlePushRoute('/account/appearance');
+      await tester.pumpAndSettle();
+      expect(find.widgetWithText(AppBar, '外观模式'), findsOneWidget);
+      await tester.binding.handlePushRoute('/account');
+      await tester.pumpAndSettle();
+      expect(find.text('测试会员'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
     'cold start waits for restore and opens tabs after guest consent',
     (tester) async {
       final restoring = Completer<http.Response>();
@@ -34,7 +79,8 @@ void main() {
         };
       });
       await tester.pumpWidget(JovianApp(account: account));
-      expect(find.bySemanticsLabel('正在检查登录状态'), findsOneWidget);
+      await tester.pump();
+      expect(find.bySemanticsLabel('正在检查登录状态…'), findsOneWidget);
       expect(find.byType(NavigationBar), findsNothing);
       restoring.complete(_json({}, 401));
       await tester.pumpAndSettle();
@@ -102,7 +148,7 @@ void main() {
       },
     ]);
     expect(find.widgetWithText(AppBar, '周期运势'), findsOneWidget);
-    await tester.pageBack();
+    await tester.tap(find.byType(BackButton));
     await tester.pumpAndSettle();
     expect(find.byType(NavigationBar), findsOneWidget);
     expect(tester.takeException(), isNull);

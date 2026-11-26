@@ -1,11 +1,21 @@
+import 'dart:async';
+
 import 'package:jovian_fortune/jovian_fortune.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../ui/interface_language.dart';
+
 import '../../../ui/theme.dart';
+import '../control/fortune_local.dart';
 
 class FortuneCalendarPage extends StatefulWidget {
-  const FortuneCalendarPage({super.key, required this.reference});
+  const FortuneCalendarPage({
+    super.key,
+    required this.reference,
+    this.local = const FortuneLocal(),
+  });
   final FortuneReference reference;
+  final FortuneLocal local;
 
   @override
   State<FortuneCalendarPage> createState() => _FortuneCalendarPageState();
@@ -15,30 +25,56 @@ class _FortuneCalendarPageState extends State<FortuneCalendarPage> {
   late final _date = TextEditingController(text: widget.reference.date);
   late final _time = TextEditingController(text: widget.reference.time);
   FortuneCalendar? _result;
-  bool _invalid = false;
+  String? _error;
+  Completer<void>? _work;
 
   @override
   void dispose() {
+    _cancelQuery();
     _date.dispose();
     _time.dispose();
     super.dispose();
   }
 
-  void _query() {
+  Future<void> _query() async {
+    if (_work != null) return;
     FocusManager.instance.primaryFocus?.unfocus();
-    final result = calculateFortuneCalendar(
-      FortuneReference(_date.text.trim(), _time.text.trim()),
-    );
+    final work = Completer<void>();
     setState(() {
-      _result = result;
-      _invalid = result == null;
+      _work = work;
+      _result = null;
+      _error = null;
     });
+    try {
+      final result = await widget.local.queryCalendar(
+        FortuneReference(_date.text.trim(), _time.text.trim()),
+        work.future,
+      );
+      if (_work != work) return;
+      setState(() {
+        _work = null;
+        _result = result;
+        if (result == null) _error = '请输入 1900 至 2099 年间的有效日期和 24 小时时间。';
+      });
+    } catch (_) {
+      if (_work != work) return;
+      setState(() {
+        _work = null;
+        _error = '历法查询暂不可用，请重试。';
+      });
+    }
+  }
+
+  void _cancelQuery() {
+    _work?.complete();
+    _work = null;
   }
 
   void _clearFeedback() {
-    if (_result == null && !_invalid) return;
+    if (_result == null && _error == null && _work == null) return;
     setState(() {
-      _invalid = false;
+      _cancelQuery();
+      _error = null;
       _result = null;
     });
   }
@@ -91,14 +127,14 @@ class _FortuneCalendarPageState extends State<FortuneCalendarPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('历法查询')),
+    appBar: AppBar(title: const UiText('历法查询')),
     body: SafeArea(
       top: false,
       child: ListView(
         padding: jovianPagePadding,
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         children: [
-          const Text('以北京时间查询周期窗口与干支。'),
+          const UiText('以北京时间查询周期窗口与干支。'),
           const SizedBox(height: 10),
           _CalendarCard(
             children: [
@@ -133,17 +169,21 @@ class _FortuneCalendarPageState extends State<FortuneCalendarPage> {
                   ),
                 ),
               ),
-              if (_invalid)
+              if (_error case final error?)
                 Semantics(
                   liveRegion: true,
                   child: Text(
-                    '请输入 1900 至 2099 年间的有效日期和 24 小时时间。',
+                    error,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.error,
                     ),
                   ),
                 ),
-              FilledButton(onPressed: _query, child: const Text('查询历法')),
+              if (_work != null) const LinearProgressIndicator(),
+              FilledButton(
+                onPressed: _work == null ? _query : null,
+                child: const UiText('查询历法'),
+              ),
             ],
           ),
           if (_result case final result?) ...[
@@ -158,12 +198,12 @@ class _FortuneCalendarPageState extends State<FortuneCalendarPage> {
             const SizedBox(height: 12),
             Semantics(
               header: true,
-              child: Text(
+              child: UiText(
                 '查询窗口',
                 style: Theme.of(context).textTheme.titleMedium,
               ),
             ),
-            const Text('周一为每周起点，窗口结束时刻不计入。'),
+            const UiText('周一为每周起点，窗口结束时刻不计入。'),
             for (final window in result.windows)
               _CalendarCard(
                 title: _periodLabels[window.period]!,

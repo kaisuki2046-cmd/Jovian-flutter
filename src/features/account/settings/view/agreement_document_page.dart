@@ -1,5 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/interface_language.dart';
+
 import '../model/agreements.dart';
 
 class AgreementLink extends StatelessWidget {
@@ -69,7 +71,7 @@ class AgreementDocumentPage extends StatelessWidget {
                 if (version case final current?)
                   Text('版本 $current', style: theme.textTheme.bodySmall),
                 if (preview)
-                  Text('内测草案，未发布生效。', style: theme.textTheme.bodySmall),
+                  UiText('内测草案，未发布生效。', style: theme.textTheme.bodySmall),
                 if (sections.isEmpty)
                   const Padding(
                     padding: EdgeInsets.only(top: 16),
@@ -118,11 +120,11 @@ Future<bool> confirmAccountAgreements(
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('取消'),
+            child: const UiText('取消'),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('同意并继续'),
+            child: const UiText('同意并继续'),
           ),
         ],
       ),

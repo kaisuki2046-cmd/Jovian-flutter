@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../ui/interface_language.dart';
+
 import '../../account/account.dart';
 import '../control/social_controller.dart';
 import '../model/social.dart';
@@ -73,11 +75,11 @@ class _SocialSearchPageState extends State<SocialSearchPage> {
     _openingProfile = true;
     FocusScope.of(context).unfocus();
     try {
-      await Navigator.of(context).push<void>(
-        MaterialPageRoute(
-          builder: (_) =>
-              SocialProfilePage(controller: widget.controller, id: profile.id),
-        ),
+      await AccountSectionLinks.openPage(
+        context,
+        AccountSection.socialProfile,
+        () => SocialProfilePage(controller: widget.controller, id: profile.id),
+        profileId: profile.id,
       );
     } finally {
       _openingProfile = false;
@@ -93,7 +95,7 @@ class _SocialSearchPageState extends State<SocialSearchPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('找用户')),
+    appBar: AppBar(title: const UiText('找用户')),
     body: ListView(
       padding: const EdgeInsets.all(20),
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -144,12 +146,15 @@ class _SocialSearchPageState extends State<SocialSearchPage> {
         if (_loading && _results != null)
           Padding(
             padding: const EdgeInsets.only(top: 12),
-            child: Semantics(liveRegion: true, child: const Text('正在核对搜索结果…')),
+            child: Semantics(
+              liveRegion: true,
+              child: const UiText('正在核对搜索结果…'),
+            ),
           ),
         if (_results?.isEmpty == true)
           const Padding(
             padding: EdgeInsets.only(top: 16),
-            child: Text('未找到该用户。'),
+            child: UiText('未找到该用户。'),
           ),
         for (final profile in _results ?? const <SocialProfile>[])
           Padding(
@@ -249,7 +254,7 @@ class _SocialProfilePageState extends State<SocialProfilePage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('取消'),
+            child: const UiText('取消'),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
@@ -285,12 +290,12 @@ class _SocialProfilePageState extends State<SocialProfilePage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('用户主页')),
+    appBar: AppBar(title: const UiText('用户主页')),
     body: ListenableBuilder(
       listenable: widget.controller.sessionChanges,
       builder: (context, _) => widget.controller.isCurrentMember
           ? _profileBody()
-          : const Center(child: Text('当前会话已变更。')),
+          : const Center(child: UiText('当前会话已变更。')),
     ),
   );
 
@@ -311,7 +316,7 @@ class _SocialProfilePageState extends State<SocialProfilePage> {
                 missing: '该用户主页不可查看。',
               ),
             ),
-            TextButton(onPressed: _reload, child: const Text('重新加载')),
+            TextButton(onPressed: _reload, child: const UiText('重新加载')),
           ],
         );
       }
@@ -508,7 +513,7 @@ class _ReportDialogState extends State<_ReportDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-    title: const Text('举报用户'),
+    title: const UiText('举报用户'),
     content: SingleChildScrollView(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -534,13 +539,13 @@ class _ReportDialogState extends State<_ReportDialog> {
     actions: [
       TextButton(
         onPressed: () => Navigator.pop(context),
-        child: const Text('取消'),
+        child: const UiText('取消'),
       ),
       FilledButton(
         onPressed: _reason == null
             ? null
             : () => Navigator.pop(context, (reason: _reason!, detail: _detail)),
-        child: const Text('提交举报'),
+        child: const UiText('提交举报'),
       ),
     ],
   );

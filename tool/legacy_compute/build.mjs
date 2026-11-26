@@ -2,9 +2,9 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { frontendRoot, legacyRoot } from './paths.mjs';
 
-const repoRoot = resolve(fileURLToPath(new URL('../../../', import.meta.url)));
-const dependencyRoot = resolve(process.env.JOVIAN_LEGACY_NODE_ROOT ?? repoRoot);
+const dependencyRoot = resolve(process.env.JOVIAN_LEGACY_NODE_ROOT ?? legacyRoot);
 const modules = join(dependencyRoot, 'node_modules');
 const require = createRequire(join(dependencyRoot, 'package.json'));
 const { runBuild } = require('metro');
@@ -12,16 +12,23 @@ const { getDefaultConfig, mergeConfig } = require('metro-config');
 process.env.JOVIAN_LEGACY_NODE_ROOT = dependencyRoot;
 
 const entry = fileURLToPath(new URL('./worker.ts', import.meta.url));
-const output = join(repoRoot, 'app-flutter', 'web', 'legacy-compute.js');
+const output = join(frontendRoot, 'web', 'legacy-compute.js');
 const nativeOutput = fileURLToPath(new URL('./native_assets/legacy-compute.html', import.meta.url));
 await mkdir(dirname(output), { recursive: true });
-const defaults = await getDefaultConfig(repoRoot);
+const defaults = await getDefaultConfig(legacyRoot);
 const config = mergeConfig(defaults, {
-  watchFolders: [join(repoRoot, 'src'), dirname(entry), modules],
+  watchFolders: [join(legacyRoot, 'src'), dirname(entry), modules],
   resolver: {
     nodeModulesPaths: [modules],
     sourceExts: [...defaults.resolver.sourceExts, 'mjs'],
     useWatchman: false,
+    resolveRequest(context, specifier, platform) {
+      const prefix = 'jovian-legacy/';
+      const target = specifier.startsWith(prefix)
+        ? join(legacyRoot, 'src', specifier.slice(prefix.length))
+        : specifier;
+      return context.resolveRequest(context, target, platform);
+    },
   },
   transformer: {
     babelTransformerPath: fileURLToPath(new URL('./transformer.cjs', import.meta.url)),

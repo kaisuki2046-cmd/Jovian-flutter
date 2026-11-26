@@ -1,5 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/interface_language.dart';
+
 import '../../reading-profile/model/account_reading_profile.dart';
 import '../model/profile_preview.dart';
 
@@ -18,7 +20,7 @@ class PublicBirthDetails extends StatelessWidget {
           children: [
             Semantics(
               header: true,
-              child: Text(
+              child: UiText(
                 '出生资料',
                 style: Theme.of(context).textTheme.titleMedium,
               ),

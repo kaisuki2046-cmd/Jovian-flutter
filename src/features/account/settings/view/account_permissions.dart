@@ -1,5 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/interface_language.dart';
+
 import '../../auth/control/account_controller.dart';
 import '../model/agreements.dart';
 import 'agreement_document_page.dart';
@@ -23,7 +25,7 @@ class AccountPermissions extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('隐私与授权', style: Theme.of(context).textTheme.titleMedium),
+        UiText('隐私与授权', style: Theme.of(context).textTheme.titleMedium),
         Wrap(
           children: [
             AgreementLink(document: catalog.terms),
@@ -53,7 +55,7 @@ class AccountPermissions extends StatelessWidget {
                       await account.grantAll(catalog.ai);
                     }
                   },
-            child: const Text('查看告知并授权全部'),
+            child: const UiText('查看告知并授权全部'),
           ),
         for (final MapEntry(:key, :value) in aiPurposes.entries)
           SwitchListTile(
@@ -96,7 +98,7 @@ class AccountPermissions extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('取消'),
+              child: const UiText('取消'),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(context, true),

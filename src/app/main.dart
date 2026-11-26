@@ -16,6 +16,7 @@ import '../features/divination/divination.dart';
 import '../features/fortune/fortune.dart';
 import '../features/social/social.dart';
 import '../features/synastry/synastry.dart';
+import '../ui/interface_language.dart';
 import '../ui/tab_glyph.dart';
 import '../ui/theme.dart';
 import 'app_navigation.dart';
@@ -62,6 +63,7 @@ class JovianApp extends StatefulWidget {
 
 class _JovianAppState extends State<JovianApp> {
   static const _appearanceKey = 'jovian.ui.theme.v1';
+  static const _languageKey = 'jovian.ui.language.v1';
   static const _appearance = FlutterSecureStorage();
   late final _navigation = JovianRouter(
     shell: _shellPage,
@@ -77,13 +79,19 @@ class _JovianAppState extends State<JovianApp> {
     backButtonDispatcher: RootBackButtonDispatcher(),
   );
   late ThemeMode _themeMode = widget.themeMode;
+  InterfaceLanguage _language = InterfaceLanguage.chinese;
   bool _appearanceChanged = false;
+  bool _languageChanged = false;
   Future<void> _appearanceWrites = Future<void>.value();
+  Future<void> _languageWrites = Future<void>.value();
 
   @override
   void initState() {
     super.initState();
-    if (widget.persistTheme) unawaited(_readAppearance());
+    if (widget.persistTheme) {
+      unawaited(_readAppearance());
+      unawaited(_readLanguage());
+    }
     _restoreAccount();
   }
 
@@ -148,20 +156,61 @@ class _JovianAppState extends State<JovianApp> {
     await _appearanceWrites;
   }
 
+  Future<void> _readLanguage() async {
+    try {
+      final stored = await _appearance
+          .read(key: _languageKey)
+          .onError((_, _) => null);
+      final language =
+          InterfaceLanguage.parse(stored) ??
+          InterfaceLanguage.parse(readLegacyWebLanguage());
+      if (mounted && !_languageChanged && language != null) {
+        setState(() => _language = language);
+      }
+    } catch (_) {
+      // The default language remains available without device storage.
+    }
+  }
+
+  void _changeLanguage(InterfaceLanguage language) {
+    if (language == _language) return;
+    _languageChanged = true;
+    setState(() => _language = language);
+    if (!widget.persistTheme) return;
+    _languageWrites = _languageWrites.then((_) async {
+      try {
+        await _appearance.write(key: _languageKey, value: language.code);
+      } catch (_) {
+        // Keep applying the selected language for this session.
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) => MaterialApp.router(
-    title: '木星环',
+    onGenerateTitle: (context) => context.uiLabel('木星环'),
     debugShowCheckedModeBanner: false,
     theme: jovianTheme(Brightness.light),
     darkTheme: jovianTheme(Brightness.dark),
     themeMode: _themeMode,
+    locale: _language.locale,
+    supportedLocales: [
+      for (final language in InterfaceLanguage.values) language.locale,
+    ],
+    localizationsDelegates: const [
+      interfaceStringsDelegate,
+      ...GlobalMaterialLocalizations.delegates,
+    ],
     routerConfig: _router,
     builder: (context, child) {
       final nav = switch (widget.account) {
         final account? => NicknameSetupGate(account: account, child: child!),
         null => child!,
       };
-      final viewport = JovianViewport(child: nav);
+      final viewport = InterfaceLanguageScope(
+        onChanged: _changeLanguage,
+        child: JovianViewport(child: nav),
+      );
       return switch (widget.updates) {
         final updates? => AppUpdateHost(
           key: ValueKey(updates),
@@ -175,20 +224,27 @@ class _JovianAppState extends State<JovianApp> {
     },
   );
 
-  Widget _shellPage(JovianTab tab) => _accountEntry(
-    _AppHome(
-      key: ObjectKey(widget.account),
-      account: widget.account,
-      onlineGuide: widget.onlineGuide,
-      tab: tab,
-      onTabSelected: _navigation.selectTab,
-      openFortune: _navigation.openFortune,
-      themeMode: _themeMode,
-      onThemeModeChanged: _changeAppearance,
+  Widget _shellPage(JovianLocation location) => _accountEntry(
+    AccountSectionLinks(
+      open: _navigation.openAccountSection,
+      child: _AppHome(
+        key: ObjectKey(widget.account),
+        account: widget.account,
+        onlineGuide: widget.onlineGuide,
+        tab: location.tab,
+        onTabSelected: _navigation.selectTab,
+        openFortune: _navigation.openFortune,
+        openWelcome: _navigation.openWelcome,
+        sectionsFor: _navigation.sectionsFor,
+        onSectionPopped: _navigation.accountSectionPopped,
+        themeMode: _themeMode,
+        onThemeModeChanged: _changeAppearance,
+      ),
     ),
+    welcome: location.welcome,
   );
 
-  Widget _accountEntry(Widget child) {
+  Widget _accountEntry(Widget child, {bool welcome = false}) {
     final account = widget.account;
     if (account == null) return child;
     return ListenableBuilder(
@@ -196,11 +252,20 @@ class _JovianAppState extends State<JovianApp> {
       listenable: account,
       child: child,
       builder: (context, admitted) {
-        if (account.authorizedSession != null) return admitted!;
+        final authorized = account.authorizedSession;
+        if (authorized != null && !welcome) return admitted!;
+        if (welcome && account.memberId != null) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (context.mounted) _navigation.closeWelcome();
+          });
+          return admitted!;
+        }
         if (!account.restored && account.notice == null) {
-          return const Scaffold(
+          return Scaffold(
             body: Center(
-              child: CircularProgressIndicator(semanticsLabel: '正在检查登录状态'),
+              child: CircularProgressIndicator(
+                semanticsLabel: context.uiLabel('正在检查登录状态…'),
+              ),
             ),
           );
         }
@@ -209,6 +274,7 @@ class _JovianAppState extends State<JovianApp> {
           standalone: true,
           themeMode: _themeMode,
           onThemeModeChanged: _changeAppearance,
+          onWelcomeExit: welcome ? _navigation.closeWelcome : null,
         );
       },
     );
@@ -236,6 +302,9 @@ class _AppHome extends StatefulWidget {
     required this.tab,
     required this.onTabSelected,
     required this.openFortune,
+    required this.openWelcome,
+    required this.sectionsFor,
+    required this.onSectionPopped,
     required this.themeMode,
     required this.onThemeModeChanged,
   });
@@ -245,6 +314,9 @@ class _AppHome extends StatefulWidget {
   final JovianTab tab;
   final ValueChanged<JovianTab> onTabSelected;
   final ValueChanged<String?> openFortune;
+  final VoidCallback openWelcome;
+  final List<AccountDestination> Function(JovianTab) sectionsFor;
+  final void Function(JovianTab, AccountDestination) onSectionPopped;
   final ThemeMode themeMode;
   final ValueChanged<ThemeMode> onThemeModeChanged;
 
@@ -327,13 +399,20 @@ class _AppHomeState extends State<_AppHome> {
         openSynastry: () => selectTab(JovianTab.synastry),
         active: active,
       ),
-      JovianTab.messages => SocialPage(
-        account: widget.account,
+      JovianTab.messages => _sectionNavigator(
+        context,
+        tab,
         active: active,
-        openAccount: () => selectTab(JovianTab.account),
+        child: SocialPage(
+          account: widget.account,
+          active: active,
+          openAccount: () => selectTab(JovianTab.account),
+        ),
       ),
       JovianTab.account => switch (widget.account) {
-        final account? => JovianTabNavigator(
+        final account? => _sectionNavigator(
+          context,
+          tab,
           active: active,
           child: AccountPage(
             account: account,
@@ -349,6 +428,26 @@ class _AppHomeState extends State<_AppHome> {
         ),
       },
     },
+  );
+
+  Widget _sectionNavigator(
+    BuildContext context,
+    JovianTab tab, {
+    required bool active,
+    required Widget child,
+  }) => JovianTabNavigator(
+    active: active,
+    sections: widget.sectionsFor(tab),
+    buildSection: (target) => AccountSectionPage(
+      account: widget.account,
+      target: target,
+      themeMode: widget.themeMode,
+      onThemeModeChanged: widget.onThemeModeChanged,
+      openAccount: widget.openWelcome,
+    ),
+    onSectionPopped: (section) =>
+        Router.neglect(context, () => widget.onSectionPopped(tab, section)),
+    child: child,
   );
 }
 

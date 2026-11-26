@@ -2,6 +2,8 @@ import 'package:flutter/services.dart';
 import 'package:jovian_divination/jovian_divination.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../ui/interface_language.dart';
+
 import '../../../ui/report_body.dart';
 import 'guide_composer.dart';
 import 'reading_reference.dart'
@@ -177,7 +179,7 @@ class _GuideFollowUpReplyState extends State<GuideFollowUpReply> {
               const Divider(height: 1),
               Semantics(
                 header: true,
-                child: Text('下一步', style: theme.textTheme.titleSmall),
+                child: UiText('下一步', style: theme.textTheme.titleSmall),
               ),
               for (final step in turn.nextSteps) Text('• $step'),
             ],
@@ -192,7 +194,7 @@ class _GuideFollowUpReplyState extends State<GuideFollowUpReply> {
               if (_showSources) ...[
                 const Divider(height: 1),
                 for (final source in sources) _EvidenceSource(source: source),
-                Text(
+                UiText(
                   '说明为 Jovian 整理，参考链接指向原文。',
                   style: theme.textTheme.bodySmall,
                 ),
@@ -238,7 +240,7 @@ class _EvidenceSource extends StatelessWidget {
                     _linkFeedback(context, '暂时无法打开参考链接。');
                   }
                 },
-                child: const Text('打开参考原文'),
+                child: const UiText('打开参考原文'),
               ),
               TextButton(
                 onPressed: () async {

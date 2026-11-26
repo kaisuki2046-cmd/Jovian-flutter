@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/interface_language.dart';
+
 import '../../../../ui/theme.dart';
 import '../../auth/control/account_controller.dart';
 import '../../auth/model/session.dart';
@@ -22,7 +24,7 @@ class PrivacyRightsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('个人信息权利')),
+    appBar: AppBar(title: const UiText('个人信息权利')),
     body: SafeArea(
       top: false,
       child: ListenableBuilder(
@@ -140,7 +142,7 @@ class _PrivacyRightsPanelState extends State<_PrivacyRightsPanel> {
       ),
       TextButton(
         onPressed: _controller.saving ? null : _select,
-        child: const Text('取消'),
+        child: const UiText('取消'),
       ),
     ],
   );
@@ -292,7 +294,7 @@ class _PrivacyRightsPanelState extends State<_PrivacyRightsPanel> {
           if (_controller.next != null)
             OutlinedButton(
               onPressed: _controller.busy ? null : _controller.more,
-              child: const Text('加载更多'),
+              child: const UiText('加载更多'),
             ),
           TextButton(
             onPressed: _controller.busy ? null : _controller.refresh,

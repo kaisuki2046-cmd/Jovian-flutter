@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:jovian_destiny/jovian_destiny.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../ui/interface_language.dart';
+
 import '../../../ui/report_body.dart';
 import '../../../ui/theme.dart';
 import '../../account/account.dart';
@@ -118,7 +120,7 @@ class _SynastryPageState extends State<SynastryPage> {
               padding: jovianPagePadding,
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               children: [
-                const Text('资料在本机排盘，用于本次合盘。'),
+                const UiText('资料在本机排盘，用于本次合盘。'),
                 const SizedBox(height: 12),
                 BirthProfileEditor(
                   loadPlaces: widget.loadPlaces,
@@ -168,7 +170,7 @@ class _SynastryPageState extends State<SynastryPage> {
     listenable: Listenable.merge([_synastry, widget.account]),
     builder: (context, _) => Scaffold(
       appBar: AppBar(
-        title: const Text('合盘'),
+        title: const UiText('合盘'),
         actions: [
           if (_synastry.hasSession)
             IconButton(
@@ -184,11 +186,11 @@ class _SynastryPageState extends State<SynastryPage> {
           controller: _scroll,
           padding: jovianPagePadding,
           children: [
-            const Text('从亲情、友情、爱情和合作四个角度看两人的相处。'),
+            const UiText('从亲情、友情、爱情和合作四个角度看两人的相处。'),
             if (_synastry.hasSession && !_synastry.member)
               const Padding(
                 padding: EdgeInsets.only(top: 8),
-                child: Text('访客可手动填写双方资料，报告保留在当前游客会话。'),
+                child: UiText('访客可手动填写双方资料，报告保留在当前游客会话。'),
               ),
             if (_synastry.busy) ...[
               const SizedBox(height: 10),
@@ -236,7 +238,7 @@ class _SynastryPageState extends State<SynastryPage> {
                       widget.openDestiny != null)
                     TextButton(
                       onPressed: widget.openDestiny,
-                      child: const Text('前往命理'),
+                      child: const UiText('前往命理'),
                     ),
                 ],
               ),
@@ -246,12 +248,12 @@ class _SynastryPageState extends State<SynastryPage> {
               if (_synastry.manualProfile(SynastrySide.b) case final profile?)
                 _ManualProfileSummary(profile),
               if (_synastry.b case final chart?) _ChartSummary(chart),
-              const Text('盘面在本机计算。生成在线解读时，会发送双方的盘面对照结果。'),
+              const UiText('盘面在本机计算。生成在线解读时，会发送双方的盘面对照结果。'),
               CheckboxListTile(
                 value: _synastry.allowed,
                 contentPadding: EdgeInsets.zero,
                 controlAffinity: ListTileControlAffinity.leading,
-                title: const Text('我已获准使用 B 方资料进行本次合盘'),
+                title: const UiText('我已获准使用 B 方资料进行本次合盘'),
                 onChanged: (value) => _synastry.confirmConsent(value == true),
               ),
               OutlinedButton(
@@ -267,7 +269,7 @@ class _SynastryPageState extends State<SynastryPage> {
             const SizedBox(height: 14),
             FilledButton(
               onPressed: _synastry.canCompare ? _compare : null,
-              child: const Text('比较盘面'),
+              child: const UiText('比较盘面'),
             ),
             if (_synastry.message case final message?)
               Padding(
@@ -316,7 +318,7 @@ class _SynastryPageState extends State<SynastryPage> {
   Widget _recentReports(BuildContext context) => Card(
     margin: EdgeInsets.zero,
     child: ExpansionTile(
-      title: const Text('查看已存解读'),
+      title: const UiText('查看已存解读'),
       childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
       expandedCrossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -329,7 +331,7 @@ class _SynastryPageState extends State<SynastryPage> {
             child: const Text('重试读取历史'),
           ),
         ] else if (_synastry.recentReports.isEmpty)
-          const Text('暂无合盘报告。')
+          const UiText('暂无合盘报告。')
         else
           for (final entry in _synastry.recentReports)
             ListTile(
@@ -341,7 +343,7 @@ class _SynastryPageState extends State<SynastryPage> {
               enabled: !_synastry.busy,
               onTap: () => _openSaved(entry.id),
             ),
-        TextButton(onPressed: _history, child: const Text('查看全部合盘报告')),
+        TextButton(onPressed: _history, child: const UiText('查看全部合盘报告')),
       ],
     ),
   );
@@ -356,7 +358,7 @@ class _SynastryPageState extends State<SynastryPage> {
     }
     return FilledButton(
       onPressed: _synastry.busy ? null : _generateSummary,
-      child: const Text('生成合盘解读'),
+      child: const UiText('生成合盘解读'),
     );
   }
 
@@ -374,7 +376,7 @@ class _SynastryPageState extends State<SynastryPage> {
       if (_synastry.needsSave)
         OutlinedButton(
           onPressed: _synastry.busy ? null : _synastry.retrySave,
-          child: const Text('重试存档'),
+          child: const UiText('重试存档'),
         ),
     ]);
   }

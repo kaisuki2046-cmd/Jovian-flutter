@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:jovian_destiny/jovian_destiny.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../ui/interface_language.dart';
+
 import '../../../ui/theme.dart';
 import '../../account/account.dart';
 import '../frontend/control/destiny_birth_controller.dart';
@@ -94,7 +96,7 @@ class _DestinyPageState extends State<DestinyPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('命理')),
+    appBar: AppBar(title: const UiText('命理')),
     body: SafeArea(
       top: false,
       child: ListenableBuilder(
@@ -108,8 +110,8 @@ class _DestinyPageState extends State<DestinyPage> {
                 child: ListTile(
                   onTap: () => open(null),
                   leading: const Icon(Icons.calendar_month_outlined),
-                  title: const Text('周期运势'),
-                  subtitle: const Text('日、周、月、年'),
+                  title: const UiText('周期运势'),
+                  subtitle: const UiText('日、周、月、年'),
                   trailing: const Icon(Icons.chevron_right),
                 ),
               ),
@@ -133,7 +135,7 @@ class _DestinyPageState extends State<DestinyPage> {
             else if (_controller.reading case final reading?) ...[
               FilledButton.tonal(
                 onPressed: () => showDestinyCharts(context, reading.charts),
-                child: const Text('查看命盘'),
+                child: const UiText('查看命盘'),
               ),
               if (widget.requestReport != null)
                 FilledButton(
@@ -143,19 +145,19 @@ class _DestinyPageState extends State<DestinyPage> {
                   ),
                 )
               else
-                const Text('解读服务暂未配置。'),
+                const UiText('解读服务暂未配置。'),
               TextButton(
                 onPressed: _canEdit
                     ? () => _openEditor(useCurrentDraft: true)
                     : null,
-                child: const Text('修改出生资料'),
+                child: const UiText('修改出生资料'),
               ),
             ] else if (_controller.chart != null)
               TextButton(
                 onPressed: _canEdit
                     ? () => _openEditor(useCurrentDraft: true)
                     : null,
-                child: const Text('修改出生资料'),
+                child: const UiText('修改出生资料'),
               )
             else
               _entry(context),
@@ -185,7 +187,7 @@ class _DestinyPageState extends State<DestinyPage> {
               if (_draft case final draft?)
                 FilledButton.tonal(
                   onPressed: () => _controller.submit(draft),
-                  child: const Text('重试测算'),
+                  child: const UiText('重试测算'),
                 ),
             if (_controller.chart case final chart?) ...[
               const SizedBox(height: 16),
@@ -216,8 +218,8 @@ class _DestinyPageState extends State<DestinyPage> {
           height: 154,
           excludeFromSemantics: true,
         ),
-        Text('星象手记', style: Theme.of(context).textTheme.headlineMedium),
-        const Text('从出生资料展开你的命盘'),
+        UiText('星象手记', style: Theme.of(context).textTheme.headlineMedium),
+        const UiText('从出生资料展开你的命盘'),
         const SizedBox(height: 16),
         FilledButton(
           onPressed: _canEdit ? _openEditor : null,
@@ -259,7 +261,7 @@ class _DestinyPageState extends State<DestinyPage> {
       if (legacy)
         TextButton(
           onPressed: () => setState(() => _editing = false),
-          child: const Text('返回入口'),
+          child: const UiText('返回入口'),
         ),
     ],
   );
@@ -299,7 +301,7 @@ class _DestinyPageState extends State<DestinyPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('本机出生资料', style: Theme.of(context).textTheme.titleMedium),
+            UiText('本机出生资料', style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
             Text('${fields.birthDate} · $time'),
             Text('${fields.birthPlace} · $gender'),
@@ -308,11 +310,11 @@ class _DestinyPageState extends State<DestinyPage> {
               children: [
                 TextButton(
                   onPressed: _canEdit ? _openEditor : null,
-                  child: const Text('编辑出生资料'),
+                  child: const UiText('编辑出生资料'),
                 ),
                 TextButton(
                   onPressed: _birth.localWriting ? null : _confirmLocalDeletion,
-                  child: const Text('删除本机档案'),
+                  child: const UiText('删除本机档案'),
                 ),
               ],
             ),
@@ -331,7 +333,7 @@ class _DestinyPageState extends State<DestinyPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('取消'),
+            child: const UiText('取消'),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
@@ -421,7 +423,7 @@ class _DestinyPageState extends State<DestinyPage> {
               _controller.cancelTask();
               unawaited(_controller.returnToArchive());
             },
-            child: const Text('取消测算'),
+            child: const UiText('取消测算'),
           ),
         ],
       ),
@@ -441,15 +443,15 @@ class _DestinyPageState extends State<DestinyPage> {
       ),
       if (_controller.saving) ...[
         const LinearProgressIndicator(),
-        Semantics(liveRegion: true, child: const Text('正在保存本次解读…')),
+        Semantics(liveRegion: true, child: const UiText('正在保存本次解读…')),
       ] else if (_controller.summarySaved)
-        const Text('已保存解读和基础盘面，完整盘面暂未归档。')
+        const UiText('已保存解读和基础盘面，完整盘面暂未归档。')
       else if (fresh && entry != null)
-        Semantics(liveRegion: true, child: const Text('已保存，下次进入命理页可直接查看。')),
+        Semantics(liveRegion: true, child: const UiText('已保存，下次进入命理页可直接查看。')),
       if (charts != null)
         FilledButton.tonal(
           onPressed: () => showDestinyCharts(context, charts),
-          child: const Text('查看命盘'),
+          child: const UiText('查看命盘'),
         ),
       if ((_controller.fortuneArchiveId, widget.openFortune) case (
         final id?,
@@ -458,7 +460,7 @@ class _DestinyPageState extends State<DestinyPage> {
         Card(
           child: ListTile(
             leading: const Icon(Icons.calendar_month_outlined),
-            title: const Text('查看此盘的周期运势'),
+            title: const UiText('查看此盘的周期运势'),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => open(id),
           ),
@@ -471,7 +473,7 @@ class _DestinyPageState extends State<DestinyPage> {
               builder: (_) => ArchivedChartsPage(account: account),
             ),
           ),
-          child: const Text('查看命盘记录'),
+          child: const UiText('查看命盘记录'),
         ),
       Wrap(
         alignment: WrapAlignment.center,
@@ -487,7 +489,7 @@ class _DestinyPageState extends State<DestinyPage> {
               onPressed: _controller.saving
                   ? null
                   : _controller.returnToArchive,
-              child: const Text('返回入口'),
+              child: const UiText('返回入口'),
             ),
         ],
       ),
@@ -563,7 +565,7 @@ class _BaZiResult extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('八字四柱', style: Theme.of(context).textTheme.titleLarge),
+            UiText('八字四柱', style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 8),
             if (exact == null) const Text('出生时分不完整，有多个可能值时会同时显示。'),
             for (final position in Pillar.values)
@@ -576,7 +578,7 @@ class _BaZiResult extends StatelessWidget {
                 when periods.isNotEmpty)
               ExpansionTile(
                 tilePadding: EdgeInsets.zero,
-                title: const Text('大运'),
+                title: const UiText('大运'),
                 children: [
                   for (final Map period in periods)
                     ListTile(

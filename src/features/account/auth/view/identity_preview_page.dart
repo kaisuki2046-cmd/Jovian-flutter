@@ -1,6 +1,11 @@
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/interface_language.dart';
+
+import '../../model/account_section.dart';
+import '../../view/account_section_links.dart';
+
 import '../../../../shared/http/json_client.dart';
 import '../../../../ui/theme.dart';
 import '../../settings/model/agreements.dart';
@@ -116,7 +121,7 @@ class _IdentityPreviewPageState extends State<IdentityPreviewPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('实名认证')),
+    appBar: AppBar(title: const UiText('实名认证')),
     body: SafeArea(
       top: false,
       child: ListenableBuilder(
@@ -125,7 +130,7 @@ class _IdentityPreviewPageState extends State<IdentityPreviewPage> {
           if (widget.account.socialMemberId != widget.memberId) {
             return const Padding(
               padding: jovianPagePadding,
-              child: Text('请登录后继续。'),
+              child: UiText('请登录后继续。'),
             );
           }
           return Padding(
@@ -197,7 +202,7 @@ class _IdentityPreviewPageState extends State<IdentityPreviewPage> {
                       child: Wrap(
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          Text(
+                          UiText(
                             '我已知悉并同意',
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
@@ -230,7 +235,7 @@ class AccountSecurityPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('账户与安全')),
+    appBar: AppBar(title: const UiText('账户与安全')),
     body: SafeArea(
       top: false,
       child: ListenableBuilder(
@@ -255,14 +260,14 @@ class AccountSecurityPage extends StatelessWidget {
                   Card(
                     child: ListTile(
                       leading: const Icon(Icons.phone_android_outlined),
-                      title: const Text('手机号'),
+                      title: const UiText('手机号'),
                       trailing: const Icon(Icons.chevron_right),
-                      onTap: () => Navigator.of(context).push<void>(
-                        MaterialPageRoute(
-                          builder: (_) => PhoneSecurityPage(
-                            account: account,
-                            owner: memberId,
-                          ),
+                      onTap: () => AccountSectionLinks.openPage(
+                        context,
+                        AccountSection.phone,
+                        () => PhoneSecurityPage(
+                          account: account,
+                          owner: memberId,
                         ),
                       ),
                     ),
@@ -272,12 +277,12 @@ class AccountSecurityPage extends StatelessWidget {
                       leading: const Icon(Icons.lock_outline),
                       title: Text(member.hasPassword ? '修改密码' : '设置密码'),
                       trailing: const Icon(Icons.chevron_right),
-                      onTap: () => Navigator.of(context).push<void>(
-                        MaterialPageRoute(
-                          builder: (_) => PasswordSecurityPage(
-                            account: account,
-                            owner: memberId,
-                          ),
+                      onTap: () => AccountSectionLinks.openPage(
+                        context,
+                        AccountSection.password,
+                        () => PasswordSecurityPage(
+                          account: account,
+                          owner: memberId,
                         ),
                       ),
                     ),
@@ -286,14 +291,14 @@ class AccountSecurityPage extends StatelessWidget {
                 Card(
                   child: ListTile(
                     leading: const Icon(Icons.badge_outlined),
-                    title: const Text('实名认证'),
+                    title: const UiText('实名认证'),
                     trailing: const Icon(Icons.chevron_right),
-                    onTap: () => Navigator.of(context).push<void>(
-                      MaterialPageRoute(
-                        builder: (_) => IdentityPreviewPage(
-                          account: account,
-                          memberId: memberId,
-                        ),
+                    onTap: () => AccountSectionLinks.openPage(
+                      context,
+                      AccountSection.identity,
+                      () => IdentityPreviewPage(
+                        account: account,
+                        memberId: memberId,
                       ),
                     ),
                   ),
@@ -302,15 +307,15 @@ class AccountSecurityPage extends StatelessWidget {
                   Card(
                     child: ListTile(
                       leading: const Icon(Icons.person_remove_outlined),
-                      title: const Text('注销账号'),
+                      title: const UiText('注销账号'),
                       subtitle: const Text('查看数据处理范围并申请注销'),
                       trailing: const Icon(Icons.chevron_right),
-                      onTap: () => Navigator.of(context).push<void>(
-                        MaterialPageRoute(
-                          builder: (_) => AccountDeletionPage(
-                            account: account,
-                            owner: memberId,
-                          ),
+                      onTap: () => AccountSectionLinks.openPage(
+                        context,
+                        AccountSection.deletion,
+                        () => AccountDeletionPage(
+                          account: account,
+                          owner: memberId,
                         ),
                       ),
                     ),

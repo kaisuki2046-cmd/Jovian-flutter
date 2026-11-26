@@ -39,6 +39,28 @@ class LocalCompute {
     'b': b,
   }, cancel: cancel);
 
+  Future<Map<String, Object?>> previewFortune(
+    int asOf,
+    String period,
+    String timeZone, {
+    Map<String, Object?>? archive,
+    Future<void>? cancel,
+  }) => platform.runLocalCompute({
+    'name': 'previewFortune',
+    'asOf': asOf,
+    'period': period,
+    'timeZone': timeZone,
+    'archive': ?archive,
+  }, cancel: cancel);
+
+  Future<Map<String, Object?>> queryFortuneCalendar(
+    Map<String, String> reference, {
+    Future<void>? cancel,
+  }) => platform.runLocalCompute({
+    'name': 'queryFortuneCalendar',
+    'reference': reference,
+  }, cancel: cancel);
+
   Future<Map<String, Object?>> buildFortuneFactSubmission(
     Map<String, Object?> input,
     int asOf,

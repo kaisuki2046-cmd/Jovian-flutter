@@ -1,5 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/interface_language.dart';
+
 import '../../../../ui/theme.dart';
 import '../control/account_controller.dart';
 
@@ -94,10 +96,13 @@ class _NicknamePageState extends State<_NicknamePage> {
                 children: [
                   Semantics(
                     header: true,
-                    child: Text('设置昵称', style: theme.textTheme.headlineMedium),
+                    child: UiText(
+                      '设置昵称',
+                      style: theme.textTheme.headlineMedium,
+                    ),
                   ),
                   const SizedBox(height: 6),
-                  const Text('设置一个专属昵称后开始使用木星环。'),
+                  const UiText('设置一个专属昵称后开始使用木星环。'),
                   const SizedBox(height: 18),
                   Card(
                     child: Padding(
@@ -150,7 +155,7 @@ class _NicknamePageState extends State<_NicknamePage> {
                                     setState(() => _showNotice = true);
                                     widget.account.signOut();
                                   },
-                            child: const Text('退出登录'),
+                            child: const UiText('退出登录'),
                           ),
                         ],
                       ),

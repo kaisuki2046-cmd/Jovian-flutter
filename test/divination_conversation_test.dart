@@ -18,6 +18,7 @@ import '../src/features/divination/requests/reading_history_codec.dart';
 import '../src/features/divination/requests/reading_recovery.dart';
 import '../src/features/divination/view/divination_page.dart';
 import '../src/features/divination/view/composer_attachment.dart';
+import '../src/features/divination/view/guide_composer.dart';
 import '../src/features/divination/view/guide_form.dart';
 import '../src/features/divination/view/reading_report.dart';
 import '../src/shared/http/json_client.dart';
@@ -329,6 +330,150 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('stopping question analysis restores the original draft', (
+    tester,
+  ) async {
+    final understand = Completer<void>();
+    final service = _ReadingService()..understanding = understand.future;
+    final online = service.connect(_Recovery());
+    addTearDown(online.dispose);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: GuideForm(
+          online: online,
+          attachmentPicker: (_) async => [
+            ComposerAttachment(
+              file: XFile.fromData(
+                Uint8List(1),
+                path: 'local-draft.txt',
+                name: 'local-draft.txt',
+              ),
+              kind: ComposerAttachmentKind.file,
+            ),
+          ],
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final composer = find.byType(TextFormField);
+    const draft = '  $_details  ';
+    await tester.enterText(composer, draft);
+    await _openAttachmentMenu(tester, '添加文件');
+    await tester.tap(find.byTooltip('发送消息'));
+    await tester.pump();
+
+    expect(find.text('正在理解你的问题…'), findsOneWidget);
+    expect(service.calls, ['POST /reading/understand']);
+    await tester.tap(find.byTooltip('停止'));
+    await tester.pumpAndSettle();
+    expect(find.text('已停止，问题已恢复到输入框。'), findsOneWidget);
+    expect(tester.widget<TextFormField>(composer).controller?.text, draft);
+    expect(find.byTooltip('移除附件 local-draft.txt'), findsOneWidget);
+    expect(find.byTooltip('停止'), findsNothing);
+
+    // An earlier response arrives after the user stopped waiting.
+    understand.complete();
+    await tester.pumpAndSettle();
+    expect(service.calls, ['POST /reading/understand']);
+    expect(online.reading, isNull);
+    expect(online.canRetry, isFalse);
+
+    await _send(tester);
+    expect(service.calls, [
+      'POST /reading/understand',
+      'POST /reading/understand',
+      'POST /reading',
+    ]);
+    expect(service.understood, [_details, _details]);
+    await tester.tap(find.byTooltip('暂停仪式'));
+    await tester.pumpAndSettle();
+    expect(find.text('local-draft.txt'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('another question starts without the prior question context', (
+    tester,
+  ) async {
+    final service = _ReadingService()..failReport = false;
+    final recovery = _Recovery();
+    final initial = service.connect(recovery);
+    await initial.start(_details, automatic: true);
+    initial.dispose();
+    final online = service.connect(recovery);
+    addTearDown(online.dispose);
+    await tester.pumpWidget(_app(online));
+    await tester.pumpAndSettle();
+    service.calls.clear();
+    service.transmitted.clear();
+
+    await _tap(tester, '另问一件事');
+    await tester.enterText(find.byType(TextFormField), '下个月适合搬家吗？');
+    await _send(tester);
+    expect(service.calls, ['POST /reading/understand', 'POST /reading']);
+    for (final request in service.transmitted) {
+      expect(request['question'], '下个月适合搬家吗？');
+      expect(request.containsKey('previousQuestion'), isFalse);
+    }
+    await tester.tap(find.byTooltip('暂停仪式'));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('return to latest preserves reading position until requested', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(320, 570));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    final reply = Completer<void>();
+    final service = _ReadingService()
+      ..failReport = false
+      ..followUpReply = reply.future
+      ..longReport = true;
+    final recovery = _Recovery();
+    final initial = service.connect(recovery);
+    await initial.start(_details, automatic: true);
+    initial.dispose();
+    final online = service.connect(recovery);
+    addTearDown(online.dispose);
+    await tester.pumpWidget(_app(online));
+    await tester.pumpAndSettle();
+
+    final thread = find.descendant(
+      of: find.byType(GuideThread),
+      matching: find.byType(SingleChildScrollView),
+    );
+    final position = tester
+        .widget<SingleChildScrollView>(thread)
+        .controller!
+        .position;
+    final latest = find.byTooltip('返回最新消息');
+    expect(position.pixels, 0);
+    expect(latest, findsOneWidget);
+    await tester.tap(latest);
+    await tester.pumpAndSettle();
+    expect(position.extentAfter, closeTo(0, 1));
+    expect(latest, findsNothing);
+
+    await tester.enterText(find.byType(TextFormField), _followUp);
+    await tester.pump();
+    await tester.tap(find.byTooltip('发送消息'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
+    position.jumpTo(30);
+    await tester.pump();
+    expect(latest, findsOneWidget);
+    reply.complete();
+    await tester.pumpAndSettle();
+    expect(position.pixels, closeTo(30, 1));
+
+    await tester.tap(latest);
+    await tester.pumpAndSettle();
+    expect(position.extentAfter, closeTo(0, 1));
+    expect(latest, findsNothing);
+    expect(find.text('先确认后续时间。').hitTestable(), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('reading paragraphs expand independently on a narrow screen', (
     tester,
   ) async {
@@ -558,7 +703,9 @@ class _ReadingService {
   bool failReport = true;
   bool expired = false;
   bool extendedFollowUp = false;
+  bool longReport = false;
   Future<void>? understanding;
+  Future<void>? followUpReply;
   final understood = <String>[];
   final calls = <String>[];
   final transmitted = <Map<Object?, Object?>>[];
@@ -606,6 +753,8 @@ class _ReadingService {
         expectSync(body['focus'], _concern);
         expectSync(body['proof'], 'accepted-proof');
         automatic.add(body['automatic'] == true);
+        _hasReport = false;
+        _followUps.clear();
         _ritual = GuideRitual(
           question: body['question'] as String,
           focus: _concern,
@@ -645,6 +794,7 @@ class _ReadingService {
         return _json(_state());
       case 'POST /reading/follow-up':
         expectSync(body, {'step': 0, 'question': _followUp});
+        await followUpReply;
         _followUps.add({
           'question': _followUp,
           'report': {
@@ -684,7 +834,7 @@ class _ReadingService {
       ],
     if (_hasReport)
       'proReport': {
-        'tarot': '塔罗对照报告。',
+        'tarot': longReport ? '留意这次面试的后续通知。' * 60 : '塔罗对照报告。',
         'meihua': '梅花对照报告。',
         'liuyao': '六爻对照报告。',
       },

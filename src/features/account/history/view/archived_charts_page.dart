@@ -2,6 +2,8 @@ import 'package:jovian_destiny/jovian_destiny.dart'
     show RestoredBaZiRow, restoreArchivedBaZiRows;
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/interface_language.dart';
+
 import '../../../../shared/http/json_client.dart';
 import '../../../../ui/theme.dart';
 import '../../auth/control/account_controller.dart';
@@ -13,7 +15,7 @@ class ArchivedChartsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('命理档案')),
+    appBar: AppBar(title: const UiText('命理档案')),
     body: SafeArea(
       top: false,
       child: ListenableBuilder(
@@ -40,7 +42,7 @@ class ArchivedChartsPage extends StatelessWidget {
                     if (!account.busy && account.notice != null)
                       TextButton(
                         onPressed: account.initialize,
-                        child: const Text('重新连接'),
+                        child: const UiText('重新连接'),
                       ),
                   ],
                 ),
@@ -152,7 +154,7 @@ class _ChartPanel extends StatelessWidget {
       children: [
         Semantics(
           header: true,
-          child: Text('三套盘面', style: theme.textTheme.titleLarge),
+          child: UiText('三套盘面', style: theme.textTheme.titleLarge),
         ),
         Text(
           '$date $clock${archive.timeKnown ? '' : ' · 出生时刻未完全确定'}',
@@ -171,7 +173,7 @@ class _ChartPanel extends StatelessWidget {
         ),
         if (chart.note case final note?) Text(note),
         if (chart.rows.isEmpty && chart.note == null)
-          const Text('这次记录没有保存该盘面的基础数据。'),
+          const UiText('这次记录没有保存该盘面的基础数据。'),
         if (chart.rows.isNotEmpty && method == ArchivedChartMethod.bazi)
           _Pillars(rows: restoreArchivedBaZiRows(chart.rows))
         else

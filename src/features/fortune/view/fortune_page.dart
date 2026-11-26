@@ -1,9 +1,12 @@
 import 'package:jovian_fortune/jovian_fortune.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../ui/interface_language.dart';
+
 import '../../../ui/report_body.dart';
 import '../../../ui/theme.dart';
 import '../../account/account.dart';
+import '../control/fortune_local.dart';
 import '../control/fortune_online.dart';
 import '../control/fortune_page_controller.dart';
 import 'fortune_calendar_page.dart';
@@ -18,6 +21,7 @@ class FortunePage extends StatelessWidget {
     this.account,
     this.archiveId,
     this.connectOnline,
+    this.local = const FortuneLocal(),
   });
 
   final Future<FortuneDisplay> Function() loadDisplay;
@@ -25,6 +29,7 @@ class FortunePage extends StatelessWidget {
   final AccountController? account;
   final String? archiveId;
   final FortuneOnline? Function()? connectOnline;
+  final FortuneLocal local;
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +54,7 @@ class FortunePage extends StatelessWidget {
     ownerId: owner,
     archiveId: archiveId,
     connectOnline: connectOnline,
+    local: local,
   );
 }
 
@@ -61,6 +67,7 @@ class _FortuneSession extends StatefulWidget {
     required this.ownerId,
     required this.archiveId,
     required this.connectOnline,
+    required this.local,
   });
 
   final Future<FortuneDisplay> Function() loadDisplay;
@@ -69,6 +76,7 @@ class _FortuneSession extends StatefulWidget {
   final String? ownerId;
   final String? archiveId;
   final FortuneOnline? Function()? connectOnline;
+  final FortuneLocal local;
 
   @override
   State<_FortuneSession> createState() => _FortuneSessionState();
@@ -87,6 +95,7 @@ class _FortuneSessionState extends State<_FortuneSession> {
       ownerId: widget.ownerId,
       archiveId: widget.archiveId,
       online: widget.connectOnline?.call(),
+      local: widget.local,
     )..initialize();
   }
 
@@ -101,7 +110,7 @@ class _FortuneSessionState extends State<_FortuneSession> {
     listenable: _fortune,
     builder: (context, _) => Scaffold(
       appBar: AppBar(
-        title: const Text('周期运势'),
+        title: const UiText('周期运势'),
         actions: [
           TextButton(
             onPressed: () {
@@ -112,11 +121,12 @@ class _FortuneSessionState extends State<_FortuneSession> {
                     reference: fortuneReferenceFields(
                       instant.millisecondsSinceEpoch,
                     ),
+                    local: widget.local,
                   ),
                 ),
               );
             },
-            child: const Text('历法查询'),
+            child: const UiText('历法查询'),
           ),
         ],
       ),
@@ -141,7 +151,8 @@ class _FortuneSessionState extends State<_FortuneSession> {
                     ),
                 ],
               ),
-              if (_fortune.syncingTime) const LinearProgressIndicator(),
+              if (_fortune.syncingTime || _fortune.loadingPreview)
+                const LinearProgressIndicator(),
               _dateControls(context),
               if (_fortune.ownerId != null) ...[
                 _archives(context),
@@ -176,11 +187,11 @@ class _FortuneSessionState extends State<_FortuneSession> {
                   alignment: AlignmentDirectional.centerStart,
                   child: TextButton(
                     onPressed: _openHistory,
-                    child: const Text('运势报告历史'),
+                    child: const UiText('运势报告历史'),
                   ),
                 ),
               ] else
-                const Text('登录或进入游客体验后，可以保存并查看运势解读。'),
+                const UiText('登录或进入游客体验后，可以保存并查看运势解读。'),
               if (_fortune.online == null) ...[
                 if (_fortune.preview case final preview?)
                   _PreviewCard(
@@ -246,9 +257,13 @@ class _FortuneSessionState extends State<_FortuneSession> {
             '日期时区 ${_fortune.displayedZone}${_fortune.usingFallbackTime ? ' · 暂用设备时间' : ''}',
           ),
         if (_fortune.clockError case final error?) Text(error),
+        if (_fortune.previewError case final error?)
+          Semantics(liveRegion: true, child: Text(error)),
         TextButton(
-          onPressed: _fortune.syncingTime ? null : _fortune.refreshTime,
-          child: const Text('刷新日期'),
+          onPressed: _fortune.syncingTime || _fortune.loadingPreview
+              ? null
+              : _fortune.refreshTime,
+          child: const UiText('刷新日期'),
         ),
       ],
     );
@@ -258,7 +273,7 @@ class _FortuneSessionState extends State<_FortuneSession> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (_fortune.loadingArchive) const Text('正在读取命理档案…'),
+        if (_fortune.loadingArchive) const UiText('正在读取命理档案…'),
         if (_fortune.archiveError case final error?)
           Wrap(
             crossAxisAlignment: WrapCrossAlignment.center,
@@ -267,7 +282,7 @@ class _FortuneSessionState extends State<_FortuneSession> {
               if (_fortune.selectedArchiveMissing && Navigator.canPop(context))
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('返回命理'),
+                  child: const UiText('返回命理'),
                 ),
               if (!_fortune.selectedArchiveMissing)
                 TextButton(
@@ -301,7 +316,7 @@ class _FortuneSessionState extends State<_FortuneSession> {
                     saved.entry.title,
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
-                  const Text('已存档'),
+                  const UiText('已存档'),
                   ReportBody(saved.body),
                 ],
               ),
@@ -326,13 +341,13 @@ class _PreviewCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('参考干支', style: Theme.of(context).textTheme.titleMedium),
+            UiText('参考干支', style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
             Text('${current.year}年 · ${current.month}月 · ${current.day}日'),
             if (current.tenGod case final god?) Text('与本命日干的关系 $god'),
             ExpansionTile(
               tilePadding: EdgeInsets.zero,
-              title: const Text('查看周期变化'),
+              title: const UiText('查看周期变化'),
               children: [
                 for (final event in preview.events)
                   ListTile(
@@ -363,7 +378,7 @@ class _AlmanacCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('黄历', style: Theme.of(context).textTheme.titleMedium),
+          UiText('黄历', style: Theme.of(context).textTheme.titleMedium),
           Text('${day.date} 北京时间 · ${day.lunarDate} · ${day.dayPillar}日'),
           Text(
             '值日 ${day.officer}${day.solarTerm == null ? '' : ' · ${day.solarTerm}'}',

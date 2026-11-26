@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/interface_language.dart';
+
 import '../../auth/control/account_controller.dart';
 import '../control/reading_profile_controller.dart';
 import '../model/account_reading_profile.dart';
@@ -74,21 +76,21 @@ class _ReadingProfilePanelState extends State<ReadingProfilePanel>
     final shouldSave = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('尚未保存修改'),
+        title: const UiText('尚未保存修改'),
         content: const Text('本次出生资料或可见性修改还未保存。'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('继续编辑'),
+            child: const UiText('继续编辑'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('放弃修改'),
+            child: const UiText('放弃修改'),
           ),
           if (!_profile.conflict)
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('保存并离开'),
+              child: const UiText('保存并离开'),
             ),
         ],
       ),
@@ -185,12 +187,12 @@ class _ReadingProfilePanelState extends State<ReadingProfilePanel>
                       onPressed: busy
                           ? null
                           : () => _profile.load(discard: true),
-                      child: const Text('放弃本次修改并加载最新资料'),
+                      child: const UiText('放弃本次修改并加载最新资料'),
                     )
                   else if (_profile.failed)
                     OutlinedButton(
                       onPressed: busy ? null : () => _profile.load(),
-                      child: const Text('重新加载出生资料'),
+                      child: const UiText('重新加载出生资料'),
                     )
                   else if (draft != null)
                     Padding(

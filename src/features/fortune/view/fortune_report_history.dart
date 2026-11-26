@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:material_ui/material_ui.dart';
 
+import '../../../ui/interface_language.dart';
+
 import '../../../ui/report_body.dart';
 import '../../../ui/theme.dart';
 import '../../account/account.dart';
@@ -48,7 +50,7 @@ class _FortuneReportHistoryState extends State<FortuneReportHistory> {
   }
 
   Widget _reader(ReportEntry entry) => Scaffold(
-    appBar: AppBar(title: const Text('运势解读')),
+    appBar: AppBar(title: const UiText('运势解读')),
     body: SafeArea(
       top: false,
       child: ListenableBuilder(
@@ -63,7 +65,7 @@ class _FortuneReportHistoryState extends State<FortuneReportHistory> {
                   Text(error),
                   TextButton(
                     onPressed: () => _history.select(entry.id),
-                    child: const Text('重试读取'),
+                    child: const UiText('重试读取'),
                   ),
                 ],
               ),
@@ -98,7 +100,7 @@ class _FortuneReportHistoryState extends State<FortuneReportHistory> {
       final format = MaterialLocalizations.of(context);
       return Scaffold(
         appBar: AppBar(
-          title: const Text('运势报告历史'),
+          title: const UiText('运势报告历史'),
           actions: [
             IconButton(
               tooltip: '刷新运势报告',
@@ -129,7 +131,7 @@ class _FortuneReportHistoryState extends State<FortuneReportHistory> {
                           title: Text(error),
                           trailing: TextButton(
                             onPressed: _history.refresh,
-                            child: const Text('重试'),
+                            child: const UiText('重试'),
                           ),
                         ),
                       if (page != null) ...[
@@ -158,7 +160,7 @@ class _FortuneReportHistoryState extends State<FortuneReportHistory> {
                         if (page.nextCursor != null)
                           TextButton(
                             onPressed: _history.loading ? null : _history.more,
-                            child: const Text('加载更多'),
+                            child: const UiText('加载更多'),
                           ),
                       ],
                     ],
@@ -231,7 +233,7 @@ class _SavedFortuneReportState extends State<_SavedFortuneReport> {
             );
           },
         ),
-        Text('已存档', style: theme.bodySmall),
+        UiText('已存档', style: theme.bodySmall),
         const SizedBox(height: 12),
         Card(
           child: Padding(

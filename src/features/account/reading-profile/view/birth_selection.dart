@@ -4,6 +4,8 @@ import 'dart:math' as math;
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/interface_language.dart';
+
 import '../model/account_reading_profile.dart';
 
 class BirthSelection extends StatelessWidget {
@@ -44,7 +46,7 @@ class BirthSelection extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('取消'),
+                    child: const UiText('取消'),
                   ),
                 ],
               ),
@@ -281,7 +283,7 @@ class _PlaceSelectionState extends State<_PlaceSelection> {
           if (_divisions != null)
             TextButton(
               onPressed: () => setState(() => _manual = false),
-              child: const Text('切换到省市区选择'),
+              child: const UiText('切换到省市区选择'),
             ),
           if (_failed)
             TextButton(onPressed: _load, child: const Text('重新加载省市区目录')),
@@ -289,7 +291,7 @@ class _PlaceSelectionState extends State<_PlaceSelection> {
             onPressed: _custom.text.trim().isEmpty
                 ? null
                 : () => widget.choose(_custom.text.trim()),
-            child: const Text('确认地点'),
+            child: const UiText('确认地点'),
           ),
         ],
       );
@@ -343,7 +345,7 @@ class _PlaceSelectionState extends State<_PlaceSelection> {
         onSubmit: () => widget.choose(_format(location)),
         extra: TextButton(
           onPressed: () => setState(() => _manual = true),
-          child: const Text('手动填写地点'),
+          child: const UiText('手动填写地点'),
         ),
       );
     }

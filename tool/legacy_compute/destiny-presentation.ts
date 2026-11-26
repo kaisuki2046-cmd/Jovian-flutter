@@ -1,5 +1,5 @@
-import { signIndex, zodiacNames, ziweiAssistantBrightnessLabel } from '../../../src/features/destiny/control/charts';
-import type { Reading } from '../../../src/features/destiny/control/local-reading';
+import { signIndex, zodiacNames, ziweiAssistantBrightnessLabel } from 'jovian-legacy/features/destiny/control/charts';
+import type { Reading } from 'jovian-legacy/features/destiny/control/local-reading';
 
 function zodiacPosition(longitude: number) {
   const sign = signIndex(longitude);

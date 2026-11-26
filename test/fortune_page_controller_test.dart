@@ -7,8 +7,10 @@ import 'package:http/testing.dart';
 import 'package:jovian_fortune/jovian_fortune.dart';
 
 import '../src/features/account/account.dart';
+import '../src/features/fortune/control/fortune_local.dart';
 import '../src/features/fortune/control/fortune_page_controller.dart';
 import '../src/shared/http/json_client.dart';
+import 'support/fortune_local_fixture.dart';
 
 void main() {
   test(
@@ -67,6 +69,7 @@ void main() {
         account: account,
         ownerId: owner,
         archiveId: null,
+        local: const FortuneLocalFixture(),
       );
       addTearDown(() {
         controller.dispose();
@@ -101,6 +104,7 @@ void main() {
         account: null,
         ownerId: null,
         archiveId: null,
+        local: const FortuneLocalFixture(),
         now: () => fallback,
       );
       addTearDown(controller.dispose);
@@ -114,6 +118,81 @@ void main() {
       );
     },
   );
+
+  test(
+    'switching the period cancels an older preview and recovers on refresh',
+    () async {
+      final local = _DelayedPreview();
+      final date = DateTime.utc(2026, 11, 11, 12);
+      final controller = FortunePageController(
+        loadDisplay: () async => (zone: 'UTC', clock: (int value) => value),
+        readServerTime: () async => date,
+        account: null,
+        ownerId: null,
+        archiveId: null,
+        local: local,
+      );
+      addTearDown(controller.dispose);
+
+      final initial = controller.refreshTime();
+      await Future<void>.delayed(Duration.zero);
+      final day = local.pending.single;
+      controller.selectPeriod(FortunePeriod.week);
+      final week = local.pending.last;
+      await day.cancel;
+      expect(controller.loadingPreview, isTrue);
+      expect(controller.preview, isNull);
+      final weekly = await const FortuneLocalFixture().preview(
+        date.millisecondsSinceEpoch,
+        FortunePeriod.week,
+        'UTC',
+        null,
+        week.cancel,
+      );
+      week.result.complete(weekly);
+      await Future<void>.delayed(Duration.zero);
+      expect(
+        controller.preview?.window.start,
+        DateTime.utc(2026, 11, 9).millisecondsSinceEpoch,
+      );
+      day.result.completeError(StateError('Superseded daily preview failed.'));
+      await initial;
+      expect(controller.preview?.window.start, weekly.preview.window.start);
+      expect(controller.previewError, isNull);
+      expect(controller.loadingPreview, isFalse);
+
+      final failed = controller.refreshTime();
+      await Future<void>.delayed(Duration.zero);
+      local.pending.last.result.completeError(StateError('worker missing'));
+      await failed;
+      expect(controller.previewError, '暂时无法计算当前运势日期，请重试。');
+
+      final retry = controller.refreshTime();
+      await Future<void>.delayed(Duration.zero);
+      local.pending.last.result.complete(weekly);
+      await retry;
+      expect(controller.preview?.window.start, weekly.preview.window.start);
+      expect(controller.previewError, isNull);
+    },
+  );
+}
+
+class _DelayedPreview extends FortuneLocal {
+  final pending =
+      <({Future<void> cancel, Completer<LocalFortunePreview> result})>[];
+
+  @override
+  Future<LocalFortunePreview> preview(
+    int asOf,
+    FortunePeriod period,
+    String zone,
+    ArchivedDestinyCharts? archive,
+    Future<void> cancel,
+  ) {
+    final result = Completer<LocalFortunePreview>();
+    pending.add((cancel: cancel, result: result));
+    return result.future;
+  }
 }
 
 Map<String, Object?> _entry(String id, String title) => {

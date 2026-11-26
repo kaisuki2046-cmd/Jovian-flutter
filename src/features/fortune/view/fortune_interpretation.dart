@@ -1,5 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../../../ui/interface_language.dart';
+
 import '../control/fortune_page_controller.dart';
 import '../model/online_fortune.dart';
 
@@ -74,7 +76,7 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
             onPressed: fortune.busy
                 ? null
                 : () => fortune.readReport(retry: true),
-            child: const Text('重试读取'),
+            child: const UiText('重试读取'),
           ),
         ],
         if (fortune.generationError case final error?) _FortuneStatus(error),
@@ -132,7 +134,7 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
           if (fortune.needsSave)
             OutlinedButton(
               onPressed: fortune.busy ? null : fortune.retrySave,
-              child: const Text('重试存档'),
+              child: const UiText('重试存档'),
             ),
         ],
       ],
@@ -263,7 +265,7 @@ class _FortuneAdviceState extends State<FortuneAdvice> {
               header: true,
               child: Text('幸运${group.kind}', style: theme.titleMedium),
             ),
-            if (group.items.isEmpty) const Text('目前没有可确认主题的对应建议。'),
+            if (group.items.isEmpty) const UiText('目前没有可确认主题的对应建议。'),
             for (final item in group.items) ...[
               Text(item.options.join('、')),
               Text(

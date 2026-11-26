@@ -1,17 +1,22 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/interface_language.dart';
+
 import '../../../social/social.dart';
 import '../../auth/control/account_controller.dart';
 import '../../auth/model/session.dart';
 import '../../auth/view/identity_preview_page.dart';
+import '../../model/account_section.dart';
 import '../../profile/view/profile_editor_page.dart';
 import '../../profile/view/profile_preview_page.dart';
 import '../../reading-profile/view/reading_profile_panel.dart';
+import '../../view/account_section_links.dart';
 import '../control/app_update_controller.dart';
 import 'account_permissions.dart';
 import 'agreements_page.dart';
 import 'appearance_page.dart';
 import 'app_update_host.dart';
+import 'language_page.dart';
 import 'privacy_rights_page.dart';
 
 class AccountSettingsPage extends StatefulWidget {
@@ -44,7 +49,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
   }
 
   void _openAppearance() => _open(
-    AppearancePage(
+    AccountSection.appearance,
+    () => AppearancePage(
       initialMode: _themeMode,
       onChanged: (mode) {
         if (!mounted) return;
@@ -62,18 +68,18 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
     final accepted = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(guest ? '结束游客体验' : '退出登录'),
-        content: Text(
+        title: UiText(guest ? '结束游客体验' : '退出登录'),
+        content: UiText(
           guest ? '结束后将无法访问本次游客会话中的档案和报告。' : '退出后，可重新登录查看已保存的档案和报告。',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('取消'),
+            child: const UiText('取消'),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: Text(guest ? '确认结束' : '确认退出'),
+            child: UiText(guest ? '确认结束' : '确认退出'),
           ),
         ],
       ),
@@ -90,8 +96,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
     onSignedOut?.call();
   }
 
-  void _open(Widget page) =>
-      Navigator.of(context).push<void>(MaterialPageRoute(builder: (_) => page));
+  void _open(AccountSection section, Widget Function() page) =>
+      AccountSectionLinks.openPage(context, section, page);
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +105,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
     final version =
         AppUpdateScope.of(context)?.installed?.versionName ?? widget.appVersion;
     return Scaffold(
-      appBar: AppBar(title: const Text('设置')),
+      appBar: AppBar(title: const UiText('设置')),
       body: SafeArea(
         top: false,
         child: ListenableBuilder(
@@ -116,7 +122,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                     title: '基础个人资料',
                     icon: Icons.person_outline,
                     onTap: () => _open(
-                      ProfileEditorPage(account: account, member: member),
+                      AccountSection.profile,
+                      () => ProfileEditorPage(account: account, member: member),
                     ),
                   ),
                   const SizedBox(height: 9),
@@ -125,21 +132,30 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                   title: '账户与安全',
                   subtitle: '查看登录方式',
                   icon: Icons.shield_outlined,
-                  onTap: () => _open(AccountSecurityPage(account: account)),
+                  onTap: () => _open(
+                    AccountSection.security,
+                    () => AccountSecurityPage(account: account),
+                  ),
                 ),
                 const SizedBox(height: 9),
                 _SettingsEntry(
                   title: '隐私设置',
                   subtitle: '管理 AI 数据共享授权',
                   icon: Icons.privacy_tip_outlined,
-                  onTap: () => _open(_PrivacyPage(account: account)),
+                  onTap: () => _open(
+                    AccountSection.privacy,
+                    () => AccountPrivacyPage(account: account),
+                  ),
                 ),
                 const SizedBox(height: 9),
                 _SettingsEntry(
                   title: '协议与政策',
                   subtitle: '查看现行版本和确认记录',
                   icon: Icons.description_outlined,
-                  onTap: () => _open(AccountAgreementsPage(account: account)),
+                  onTap: () => _open(
+                    AccountSection.agreements,
+                    () => AccountAgreementsPage(account: account),
+                  ),
                 ),
                 if (widget.onThemeModeChanged != null) ...[
                   const SizedBox(height: 16),
@@ -147,7 +163,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                     padding: const EdgeInsets.fromLTRB(4, 0, 4, 6),
                     child: Semantics(
                       header: true,
-                      child: Text(
+                      child: UiText(
                         '偏好设置',
                         style: Theme.of(context).textTheme.titleSmall,
                       ),
@@ -159,14 +175,25 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                     icon: Icons.tonality_outlined,
                     onTap: _openAppearance,
                   ),
+                  const SizedBox(height: 9),
+                  _SettingsEntry(
+                    title: '语言',
+                    subtitle: context.uiLanguage.displayName,
+                    icon: Icons.language_outlined,
+                    onTap: () =>
+                        _open(AccountSection.language, LanguagePage.new),
+                  ),
                 ],
                 const SizedBox(height: 12),
                 _SettingsEntry(
                   title: '关于木星环',
-                  subtitle: version.trim().isEmpty ? '查看版本信息' : '版本 $version',
+                  subtitle: version.trim().isEmpty
+                      ? '查看版本信息'
+                      : '${context.uiLabel('版本')} $version',
                   icon: Icons.info_outline,
                   onTap: () => _open(
-                    _AboutPage(
+                    AccountSection.about,
+                    () => AccountAboutPage(
                       account: account,
                       fallbackVersion: widget.appVersion,
                     ),
@@ -174,13 +201,13 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                 ),
                 if (account.notice case final message?) ...[
                   const SizedBox(height: 12),
-                  Semantics(liveRegion: true, child: Text(message)),
+                  Semantics(liveRegion: true, child: UiText(message)),
                 ],
                 if (session != null) ...[
                   const SizedBox(height: 20),
                   OutlinedButton(
                     onPressed: account.busy ? null : _exit,
-                    child: Text(guest ? '结束游客体验' : '退出登录'),
+                    child: UiText(guest ? '结束游客体验' : '退出登录'),
                   ),
                 ],
               ],
@@ -224,8 +251,8 @@ class _SettingsEntry extends StatelessWidget {
           alignment: Alignment.center,
           child: Icon(icon, color: colors.onSurface, size: 21),
         ),
-        title: Text(title, style: theme.textTheme.titleMedium),
-        subtitle: subtitle == null ? null : Text(subtitle!),
+        title: UiText(title, style: theme.textTheme.titleMedium),
+        subtitle: subtitle == null ? null : UiText(subtitle!),
         trailing: const Icon(Icons.chevron_right),
         onTap: onTap,
       ),
@@ -239,92 +266,103 @@ String _modeLabel(ThemeMode mode) => switch (mode) {
   ThemeMode.dark => '深色',
 };
 
-class _PrivacyPage extends StatelessWidget {
-  const _PrivacyPage({required this.account});
+class AccountPrivacyPage extends StatelessWidget {
+  const AccountPrivacyPage({
+    super.key,
+    required this.account,
+    this.onlyAiPermissions = false,
+  });
 
   final AccountController account;
+  final bool onlyAiPermissions;
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('隐私设置')),
+    appBar: AppBar(title: UiText(onlyAiPermissions ? 'AI 数据共享授权' : '隐私设置')),
     body: SafeArea(
       top: false,
       child: ListenableBuilder(
         listenable: account,
-        builder: (context, _) => ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            if (account.busy) const LinearProgressIndicator(),
-            if (account.notice case final message?)
-              Semantics(liveRegion: true, child: Text(message)),
-            if (account.memberId case final owner?) ...[
-              _SettingsEntry(
-                title: '个人信息权利',
-                icon: Icons.assignment_ind_outlined,
-                onTap: () => Navigator.of(context).push<void>(
-                  MaterialPageRoute(
-                    builder: (_) =>
-                        PrivacyRightsPage(account: account, owner: owner),
+        builder: (context, _) {
+          final memberId = account.memberId;
+          return ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              if (account.busy) const LinearProgressIndicator(),
+              if (account.notice case final message?)
+                Semantics(liveRegion: true, child: Text(message)),
+              if (!onlyAiPermissions && memberId != null) ...[
+                _SettingsEntry(
+                  title: '个人信息权利',
+                  icon: Icons.assignment_ind_outlined,
+                  onTap: () => AccountSectionLinks.openPage(
+                    context,
+                    AccountSection.privacyRights,
+                    () => PrivacyRightsPage(account: account, owner: memberId),
                   ),
                 ),
-              ),
-              const SizedBox(height: 9),
-              _SettingsEntry(
-                title: '预览他人可见内容',
-                icon: Icons.visibility_outlined,
-                onTap: () => Navigator.of(context).push<void>(
-                  MaterialPageRoute(
-                    builder: (_) =>
-                        ProfilePreviewPage(account: account, owner: owner),
+                const SizedBox(height: 9),
+                _SettingsEntry(
+                  title: '预览他人可见内容',
+                  icon: Icons.visibility_outlined,
+                  onTap: () => AccountSectionLinks.openPage(
+                    context,
+                    AccountSection.profilePreview,
+                    () => ProfilePreviewPage(account: account, owner: memberId),
                   ),
                 ),
-              ),
-              _SettingsEntry(
-                title: '社交隐私',
-                icon: Icons.manage_accounts_outlined,
-                onTap: () => Navigator.of(context).push<void>(
-                  MaterialPageRoute(
-                    builder: (_) => SocialPrivacyPage(
-                      controller: SocialController.forMember(account, owner),
+                _SettingsEntry(
+                  title: '社交隐私',
+                  icon: Icons.manage_accounts_outlined,
+                  onTap: () => AccountSectionLinks.openPage(
+                    context,
+                    AccountSection.socialPrivacy,
+                    () => SocialPrivacyPage(
+                      controller: SocialController.forMember(account, memberId),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 12),
-            ],
-            if (account.session == null || account.sessionChanging)
-              const Text('登录或进入游客体验后可查看和管理授权。')
-            else if (account.catalog != null && account.agreementState != null)
-              Card(
-                margin: EdgeInsets.zero,
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: AccountPermissions(account: account),
+                const SizedBox(height: 12),
+              ],
+              if (account.session == null || account.sessionChanging)
+                const Text('登录或进入游客体验后可查看和管理授权。')
+              else if (account.catalog != null &&
+                  account.agreementState != null)
+                Card(
+                  margin: EdgeInsets.zero,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: AccountPermissions(account: account),
+                  ),
+                )
+              else if (!account.busy)
+                TextButton(
+                  onPressed: account.initialize,
+                  child: const Text('重新加载授权状态'),
                 ),
-              )
-            else if (!account.busy)
-              TextButton(
-                onPressed: account.initialize,
-                child: const Text('重新加载授权状态'),
-              ),
-            if (account.memberId case final memberId?) ...[
-              const SizedBox(height: 12),
-              ReadingProfilePanel(
-                key: ValueKey(memberId),
-                account: account,
-                owner: memberId,
-                privacy: true,
-              ),
+              if (!onlyAiPermissions && memberId != null) ...[
+                const SizedBox(height: 12),
+                ReadingProfilePanel(
+                  key: ValueKey(memberId),
+                  account: account,
+                  owner: memberId,
+                  privacy: true,
+                ),
+              ],
             ],
-          ],
-        ),
+          );
+        },
       ),
     ),
   );
 }
 
-class _AboutPage extends StatelessWidget {
-  const _AboutPage({required this.account, required this.fallbackVersion});
+class AccountAboutPage extends StatelessWidget {
+  const AccountAboutPage({
+    super.key,
+    required this.account,
+    this.fallbackVersion = const String.fromEnvironment('APP_DISPLAY_VERSION'),
+  });
 
   final AccountController account;
   final String fallbackVersion;
@@ -341,7 +379,7 @@ class _AboutPage extends StatelessWidget {
       _ => null,
     };
     return Scaffold(
-      appBar: AppBar(title: const Text('关于木星环')),
+      appBar: AppBar(title: const UiText('关于木星环')),
       body: SafeArea(
         top: false,
         child: ListView(
@@ -359,7 +397,10 @@ class _AboutPage extends StatelessWidget {
                       color: Theme.of(context).colorScheme.primary,
                     ),
                     const SizedBox(height: 12),
-                    Text('木星环', style: Theme.of(context).textTheme.titleLarge),
+                    UiText(
+                      '木星环',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
                     if (version.trim().isNotEmpty) Text('版本 $version'),
                     if (updates case final checker? when checker.canCheck) ...[
                       const SizedBox(height: 8),
@@ -384,7 +425,10 @@ class _AboutPage extends StatelessWidget {
                         ),
                       ),
                     const SizedBox(height: 8),
-                    const Text('测算与解读仅供自我探索和参考。', textAlign: TextAlign.center),
+                    const UiText(
+                      '测算与解读仅供自我探索和参考。',
+                      textAlign: TextAlign.center,
+                    ),
                   ],
                 ),
               ),
@@ -393,10 +437,10 @@ class _AboutPage extends StatelessWidget {
             _SettingsEntry(
               title: '协议与政策',
               icon: Icons.description_outlined,
-              onTap: () => Navigator.of(context).push<void>(
-                MaterialPageRoute(
-                  builder: (_) => AccountAgreementsPage(account: account),
-                ),
+              onTap: () => AccountSectionLinks.openPage(
+                context,
+                AccountSection.agreements,
+                () => AccountAgreementsPage(account: account),
               ),
             ),
           ],

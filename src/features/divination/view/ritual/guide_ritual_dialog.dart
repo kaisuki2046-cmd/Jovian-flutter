@@ -3,6 +3,8 @@ import 'dart:math' as math;
 import 'package:jovian_divination/jovian_divination.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/interface_language.dart';
+
 import 'coin_cast_ritual.dart';
 import 'tarot_preparation.dart';
 import 'tarot_ritual.dart';
@@ -255,7 +257,7 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
             padding: const EdgeInsets.all(16),
             child: OutlinedButton(
               onPressed: widget.pause,
-              child: const Text('暂停'),
+              child: const UiText('暂停'),
             ),
           ),
         ],

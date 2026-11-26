@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../src/app/app_navigation.dart';
 import '../src/app/main.dart';
+import '../src/features/account/account.dart';
 
 void main() {
   test(
@@ -31,6 +32,58 @@ void main() {
       );
       expect(unknown.tab, JovianTab.destiny);
       expect(unknown.archiveId, isNull);
+    },
+  );
+
+  test(
+    'legacy account URLs retain their parent stack and known aliases',
+    () async {
+      const parser = JovianRouteParser();
+      Future<JovianLocation> parse(String path, {Object? state}) =>
+          parser.parseRouteInformation(
+            RouteInformation(uri: Uri.parse(path), state: state),
+          );
+
+      final password = await parse('/account/password/');
+      expect(password.tab, JovianTab.account);
+      expect(password.sections.map((item) => item.section), [
+        AccountSection.settings,
+        AccountSection.security,
+        AccountSection.password,
+      ]);
+      expect(
+        parser.restoreRouteInformation(password).uri.path,
+        '/account/password',
+      );
+      expect(
+        await parser.parseRouteInformation(
+          parser.restoreRouteInformation(password),
+        ),
+        password,
+      );
+      expect((await parse('/welcome')).welcome, isTrue);
+      expect((await parse('/modules/social')).tab, JovianTab.messages);
+      expect((await parse('/modules/account')).tab, JovianTab.account);
+      expect((await parse('/modules/divination')).tab, JovianTab.divination);
+      expect((await parse('/account/obsolete')).tab, JovianTab.account);
+      final search = await parse('/account/find-user');
+      expect(search.tab, JovianTab.messages);
+      expect(search.sections.single.section, AccountSection.findUser);
+      final public = await parse(
+        '/account/social-profile?id=public-123&from=followers&ignored=private',
+      );
+      expect(public.tab, JovianTab.account);
+      expect(public.sections.first.section, AccountSection.followers);
+      expect(public.sections.last.profileId, 'public-123');
+      expect(parser.restoreRouteInformation(public).uri.queryParameters, {
+        'id': 'public-123',
+        'from': 'followers',
+      });
+      final invalid = await parse(
+        '/account/social-profile?id=user%40example.test',
+      );
+      expect(invalid.sections.single.section, AccountSection.findUser);
+      expect(parser.restoreRouteInformation(invalid).uri.hasQuery, isFalse);
     },
   );
 

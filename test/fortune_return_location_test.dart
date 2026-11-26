@@ -12,6 +12,7 @@ import '../src/features/fortune/model/online_fortune.dart';
 import '../src/features/fortune/requests/fortune_report_api.dart';
 import '../src/features/fortune/view/fortune_page.dart';
 import '../src/shared/http/json_client.dart';
+import 'support/fortune_local_fixture.dart';
 
 const _owner = 'active-member';
 final _snapshotId = 'a' * 64;
@@ -75,6 +76,7 @@ void main() {
           ),
           home: FortunePage(
             loadDisplay: _utc,
+            local: const FortuneLocalFixture(),
             readServerTime: () async => _today,
             account: account,
             connectOnline: () => service,
@@ -152,6 +154,7 @@ void main() {
                     MaterialPageRoute<void>(
                       builder: (_) => FortunePage(
                         loadDisplay: _utc,
+                        local: const FortuneLocalFixture(),
                         readServerTime: () async => _today,
                         account: account,
                         archiveId: _snapshotId,

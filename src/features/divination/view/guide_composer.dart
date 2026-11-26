@@ -1,7 +1,10 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:jovian_divination/jovian_divination.dart';
 import 'package:material_ui/material_ui.dart';
+
+import '../../../ui/interface_language.dart';
 
 import 'composer_attachment.dart';
 import 'composer_attachment_view.dart';
@@ -40,7 +43,7 @@ class GuideWelcome extends StatelessWidget {
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-              child: Text(
+              child: UiText(
                 '有什么事情想知道吗？',
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodyLarge?.copyWith(
@@ -74,7 +77,7 @@ class GuideWelcome extends StatelessWidget {
           if (offline)
             Padding(
               padding: const EdgeInsets.only(top: 8),
-              child: Text(
+              child: UiText(
                 '本机起盘 · 六爻、塔罗和梅花易数',
                 style: theme.textTheme.labelMedium?.copyWith(
                   color: colors.onSurfaceVariant,
@@ -119,7 +122,7 @@ class GuideSuggestions extends StatelessWidget {
       children: [
         Semantics(
           header: true,
-          child: Text(
+          child: UiText(
             '为你推荐',
             style: theme.textTheme.labelMedium?.copyWith(
               color: colors.onSurfaceVariant,
@@ -168,6 +171,7 @@ class GuideComposer extends StatelessWidget {
     required this.suggest,
     required this.startQuestion,
     this.focus,
+    this.stop,
     this.openSynastry,
     this.attachmentError,
     this.actions = const [],
@@ -180,6 +184,7 @@ class GuideComposer extends StatelessWidget {
   final String hint;
   final String sendLabel;
   final VoidCallback send;
+  final VoidCallback? stop;
   final bool busy;
   final bool showAssistant;
   final ValueChanged<String> suggest;
@@ -289,17 +294,23 @@ class GuideComposer extends StatelessWidget {
                         ValueListenableBuilder<TextEditingValue>(
                           valueListenable: text,
                           builder: (context, draft, _) {
-                            if (draft.text.trim().isEmpty &&
-                                attachments.isEmpty)
+                            if (stop == null &&
+                                draft.text.trim().isEmpty &&
+                                attachments.isEmpty) {
                               return const SizedBox(width: 8);
+                            }
                             return IconButton.filled(
-                              tooltip: sendLabel,
-                              onPressed: busy ? null : send,
+                              tooltip: stop == null ? sendLabel : '停止',
+                              onPressed: stop ?? (busy ? null : send),
                               style: IconButton.styleFrom(
                                 backgroundColor: colors.onSurface,
                                 foregroundColor: colors.surface,
                               ),
-                              icon: const Icon(Icons.arrow_upward_rounded),
+                              icon: Icon(
+                                stop == null
+                                    ? Icons.arrow_upward_rounded
+                                    : Icons.stop_rounded,
+                              ),
                             );
                           },
                         ),
@@ -353,17 +364,17 @@ class _GuideComposerMenuState extends State<_GuideComposerMenu> {
                 closeOnActivate: false,
                 leadingIcon: const Icon(Icons.arrow_back),
                 onPressed: () => setState(() => _shortcuts = false),
-                child: const Text('返回'),
+                child: const UiText('返回'),
               ),
               MenuItemButton(
                 onPressed: widget.startQuestion,
-                child: const Text('算一件事'),
+                child: const UiText('算一件事'),
               ),
               if (widget.openSynastry case final open?)
-                MenuItemButton(onPressed: open, child: const Text('看合盘')),
+                MenuItemButton(onPressed: open, child: const UiText('看合盘')),
               MenuItemButton(
                 onPressed: () => widget.suggest('帮我看看最近的整体运势'),
-                child: const Text('帮我看看最近的整体运势'),
+                child: const UiText('帮我看看最近的整体运势'),
               ),
             ]
           : [
@@ -371,19 +382,19 @@ class _GuideComposerMenuState extends State<_GuideComposerMenu> {
                 leadingIcon: const Icon(Icons.photo_outlined),
                 onPressed: () =>
                     widget.addAttachment(ComposerAttachmentKind.image),
-                child: const Text('添加图片'),
+                child: const UiText('添加图片'),
               ),
               MenuItemButton(
                 leadingIcon: const Icon(Icons.insert_drive_file_outlined),
                 onPressed: () =>
                     widget.addAttachment(ComposerAttachmentKind.file),
-                child: const Text('添加文件'),
+                child: const UiText('添加文件'),
               ),
               MenuItemButton(
                 closeOnActivate: false,
                 leadingIcon: const Icon(Icons.bolt_outlined),
                 onPressed: () => setState(() => _shortcuts = true),
-                child: const Text('快捷提问'),
+                child: const UiText('快捷提问'),
               ),
             ],
       builder: (context, menu, _) => IconButton(
@@ -416,19 +427,77 @@ class _GuideComposerMenuState extends State<_GuideComposerMenu> {
   }
 }
 
-class GuideThread extends StatelessWidget {
+class GuideThread extends StatefulWidget {
   const GuideThread({
     super.key,
     required this.messages,
+    required this.latestMessage,
+    required this.sentRevision,
     this.composer,
     this.welcome,
-    this.scroll,
   });
 
   final List<Widget> messages;
+  final Object latestMessage;
+  final int sentRevision;
   final Widget? composer;
   final GuideWelcome? welcome;
-  final ScrollController? scroll;
+
+  @override
+  State<GuideThread> createState() => _GuideThreadState();
+}
+
+class _GuideThreadState extends State<GuideThread> {
+  final _scroll = ScrollController();
+  bool _showLatest = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scroll.addListener(_updateLatestButton);
+  }
+
+  @override
+  void didUpdateWidget(GuideThread oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.sentRevision != oldWidget.sentRevision ||
+        (widget.latestMessage != oldWidget.latestMessage && !_showLatest)) {
+      // After the new reply is laid out, keep the reader at the latest turn.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _scroll.hasClients) {
+          _scroll.jumpTo(_scroll.position.maxScrollExtent);
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  void _updateLatestButton() {
+    if (!_scroll.hasClients || !_scroll.position.hasContentDimensions) return;
+    final show = _scroll.position.extentAfter > 80;
+    if (show != _showLatest) setState(() => _showLatest = show);
+  }
+
+  void _goToLatest() {
+    final end = _scroll.position.maxScrollExtent;
+    if (MediaQuery.disableAnimationsOf(context) ||
+        MediaQuery.accessibleNavigationOf(context)) {
+      _scroll.jumpTo(end);
+    } else {
+      unawaited(
+        _scroll.animateTo(
+          end,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) => Center(
@@ -438,37 +507,59 @@ class GuideThread extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Expanded(
-            child: LayoutBuilder(
-              builder: (context, viewport) => SingleChildScrollView(
-                controller: scroll,
-                padding: const EdgeInsets.fromLTRB(18, 8, 18, 8),
-                keyboardDismissBehavior:
-                    ScrollViewKeyboardDismissBehavior.onDrag,
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: (viewport.maxHeight - 16).clamp(
-                      0,
-                      double.infinity,
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: NotificationListener<ScrollMetricsNotification>(
+                    onNotification: (_) {
+                      _updateLatestButton();
+                      return false;
+                    },
+                    child: LayoutBuilder(
+                      builder: (context, viewport) => SingleChildScrollView(
+                        controller: _scroll,
+                        padding: const EdgeInsets.fromLTRB(18, 8, 18, 8),
+                        keyboardDismissBehavior:
+                            ScrollViewKeyboardDismissBehavior.onDrag,
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minHeight: (viewport.maxHeight - 16).clamp(
+                              0,
+                              double.infinity,
+                            ),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: widget.welcome == null
+                                ? MainAxisAlignment.start
+                                : MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              if (widget.welcome case final stage?) stage,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: widget.messages,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                  child: Column(
-                    mainAxisAlignment: welcome == null
-                        ? MainAxisAlignment.start
-                        : MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      if (welcome case final stage?) stage,
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: messages,
-                      ),
-                    ],
-                  ),
                 ),
-              ),
+                if (_showLatest && widget.welcome == null)
+                  PositionedDirectional(
+                    end: 16,
+                    bottom: 8,
+                    child: IconButton.filledTonal(
+                      tooltip: '返回最新消息',
+                      onPressed: _goToLatest,
+                      icon: const Icon(Icons.arrow_downward_rounded),
+                    ),
+                  ),
+              ],
             ),
           ),
-          if (composer case final footer?) footer,
+          if (widget.composer case final footer?) footer,
         ],
       ),
     ),
@@ -517,7 +608,7 @@ class GuideAssistantMessage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
+                UiText(
                   'AI 助手',
                   style: theme.textTheme.labelMedium?.copyWith(
                     fontWeight: FontWeight.w600,

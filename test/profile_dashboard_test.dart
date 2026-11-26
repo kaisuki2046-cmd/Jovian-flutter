@@ -367,7 +367,10 @@ void main() {
       await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
       expect(find.text('深色'), findsOneWidget);
-      await tester.tap(find.text('关于木星环'));
+      final about = find.text('关于木星环');
+      await tester.ensureVisible(about);
+      await tester.pumpAndSettle();
+      await tester.tap(about);
       await tester.pumpAndSettle();
       expect(find.text('版本 0.1.0'), findsOneWidget);
       await tester.tap(find.byType(BackButton));

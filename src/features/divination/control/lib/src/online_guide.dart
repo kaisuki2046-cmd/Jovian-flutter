@@ -206,6 +206,7 @@ abstract interface class GuideGateway {
   Future<ReadingConfirmation> understand(
     String question, {
     String? previousQuestion,
+    Future<void>? cancel,
   });
   Future<OpenedReading> start(
     String question,
@@ -239,9 +240,11 @@ class OnlineGuideController {
   PendingGuideAction? _pending;
   String? _clarificationQuestion;
   String? _previousQuestion;
+  Completer<void>? _understanding;
   Future<void> Function()? _retry;
   OnlineReading? _reading;
   bool _busy = false;
+  bool _questionStopped = false;
   String? _message;
 
   Stream<void> get changes => _changes.stream;
@@ -254,6 +257,8 @@ class OnlineGuideController {
   bool get busy => _busy;
   String? get message => _message;
   bool get canRetry => _retry != null;
+  bool get canStopUnderstanding => _understanding != null;
+  bool get questionStopped => _questionStopped;
 
   GuideHistoryStore? get _historyStore => switch (_recovery) {
     final GuideHistoryStore store => store,
@@ -315,10 +320,12 @@ class OnlineGuideController {
         : text;
     return _run(() async {
       final previous = _previousQuestion;
-      final understood = await _gateway.understand(
-        question,
-        previousQuestion: previous,
-      );
+      final understood = await _understand(question, previous);
+      if (understood == null) {
+        _questionStopped = true;
+        _message = '已停止，问题已恢复到输入框。';
+        return;
+      }
       if (understood.clarification.isNotEmpty) {
         _clarificationQuestion = understood.chatOnly ? null : question;
         _message = understood.clarification;
@@ -343,6 +350,38 @@ class OnlineGuideController {
       _emit();
       await _reportIfReady();
     });
+  }
+
+  Future<ReadingConfirmation?> _understand(
+    String question,
+    String? previous,
+  ) async {
+    final stopped = Completer<void>();
+    _understanding = stopped;
+    _emit();
+    try {
+      final result = await Future.any<ReadingConfirmation?>([
+        _gateway.understand(
+          question,
+          previousQuestion: previous,
+          cancel: stopped.future,
+        ),
+        stopped.future.then((_) => null),
+      ]);
+      return stopped.isCompleted ? null : result;
+    } on ReadingConnectionError {
+      if (!stopped.isCompleted) rethrow;
+      return null;
+    } finally {
+      _understanding = null;
+      _emit();
+    }
+  }
+
+  void stopUnderstanding() {
+    if (_understanding case final stopped? when !stopped.isCompleted) {
+      stopped.complete();
+    }
   }
 
   Future<void> toss() {
@@ -464,6 +503,7 @@ class OnlineGuideController {
     if (_busy || _changes.isClosed) return;
     final previous = _reading;
     _busy = true;
+    _questionStopped = false;
     _message = null;
     _retry = action;
     _emit();
@@ -504,6 +544,7 @@ class OnlineGuideController {
 
   void dispose() {
     if (_changes.isClosed) return;
+    stopUnderstanding();
     unawaited(_changes.close());
     _onDispose?.call();
   }

@@ -40,6 +40,7 @@ class _MockGateway implements GuideGateway {
   Future<ReadingConfirmation> understand(
     String question, {
     String? previousQuestion,
+    Future<void>? cancel,
   }) async =>
       (focus: '面试后续', clarification: '', proof: 'verified', chatOnly: false);
 

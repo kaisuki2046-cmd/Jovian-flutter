@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/interface_language.dart';
+
 import '../../auth/control/account_controller.dart';
 import '../control/app_update_controller.dart';
 import '../model/android_release.dart';
@@ -161,14 +163,14 @@ class _UpdateDialogState extends State<_UpdateDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-    title: const Text('发现新版'),
+    title: const UiText('发现新版'),
     scrollable: true,
     content: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('版本 ${widget.release.version.versionName}'),
         const SizedBox(height: 12),
-        Semantics(header: true, child: const Text('更新内容')),
+        Semantics(header: true, child: const UiText('更新内容')),
         for (final note in widget.release.notes)
           Padding(
             padding: const EdgeInsets.only(top: 5),
@@ -178,18 +180,18 @@ class _UpdateDialogState extends State<_UpdateDialog> {
           Semantics(
             container: true,
             liveRegion: true,
-            child: const Text('无法打开下载链接，请重试。'),
+            child: const UiText('无法打开下载链接，请重试。'),
           ),
       ],
     ),
     actions: [
       TextButton(
         onPressed: _opening ? null : () => Navigator.of(context).pop(),
-        child: const Text('稍后'),
+        child: const UiText('稍后'),
       ),
       FilledButton(
         onPressed: _opening ? null : _download,
-        child: const Text('下载新版'),
+        child: const UiText('下载新版'),
       ),
     ],
   );

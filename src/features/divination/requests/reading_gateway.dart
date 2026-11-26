@@ -11,9 +11,11 @@ class HttpGuideGateway implements GuideGateway {
   Future<ReadingConfirmation> understand(
     String question, {
     String? previousQuestion,
+    Future<void>? cancel,
   }) async {
     final response = await _request(
       'understand',
+      cancel: cancel,
       body: {
         'question': question,
         'requireModel': true,
@@ -100,6 +102,7 @@ class HttpGuideGateway implements GuideGateway {
     String? action, {
     String? token,
     Map<String, Object?>? body,
+    Future<void>? cancel,
   }) async {
     final String? native;
     try {
@@ -118,6 +121,7 @@ class HttpGuideGateway implements GuideGateway {
           if (native != null) 'X-Account-Session': native,
         },
         body: body,
+        cancel: cancel,
       );
     } on JsonRequestError catch (error) {
       throw ReadingConnectionError(error.code, status: error.status);

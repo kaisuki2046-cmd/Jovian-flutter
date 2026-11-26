@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/interface_language.dart';
+
 import '../../../../ui/report_body.dart';
 import '../../../../ui/theme.dart';
 import '../../auth/control/account_controller.dart';
@@ -26,7 +28,7 @@ class _ReportsPageState extends State<ReportsPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('我的报告')),
+    appBar: AppBar(title: const UiText('我的报告')),
     body: SafeArea(
       top: false,
       child: ListenableBuilder(
@@ -54,7 +56,7 @@ class _ReportsPageState extends State<ReportsPage> {
                     if (!account.busy && account.notice != null)
                       TextButton(
                         onPressed: account.initialize,
-                        child: const Text('重新连接'),
+                        child: const UiText('重新连接'),
                       ),
                   ],
                 ),
@@ -168,14 +170,14 @@ class _CategoryState extends State<_Category> {
                 title: Text(error),
                 trailing: TextButton(
                   onPressed: _history.refresh,
-                  child: const Text('重试'),
+                  child: const UiText('重试'),
                 ),
               ),
             if (_history.page case final page?) ...[
               if (page.entries.isEmpty)
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 16),
-                  child: Text('暂无已保存的报告。'),
+                  child: UiText('暂无已保存的报告。'),
                 ),
               for (final entry in page.entries)
                 Card(
@@ -191,11 +193,11 @@ class _CategoryState extends State<_Category> {
               if (page.nextCursor != null)
                 TextButton(
                   onPressed: _history.loading ? null : _history.more,
-                  child: const Text('加载更多'),
+                  child: const UiText('加载更多'),
                 ),
               TextButton(
                 onPressed: _history.loading ? null : _history.refresh,
-                child: const Text('刷新报告'),
+                child: const UiText('刷新报告'),
               ),
             ],
           ],
@@ -220,7 +222,7 @@ class _ReportReader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('报告详情')),
+    appBar: AppBar(title: const UiText('报告详情')),
     body: SafeArea(
       top: false,
       child: ListenableBuilder(
@@ -258,11 +260,11 @@ class _ReportReader extends StatelessWidget {
                       title: Text(error),
                       trailing: TextButton(
                         onPressed: () => history.select(entry.id),
-                        child: const Text('重试读取'),
+                        child: const UiText('重试读取'),
                       ),
                     )
                   else
-                    Semantics(liveRegion: true, child: const Text('正在读取报告…')),
+                    Semantics(liveRegion: true, child: const UiText('正在读取报告…')),
                 ],
               );
             },

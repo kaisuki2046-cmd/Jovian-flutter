@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/interface_language.dart';
+
 import '../../../../shared/http/json_client.dart';
 import '../../../../ui/theme.dart';
 import '../control/account_controller.dart';
@@ -114,7 +116,7 @@ class _AccountDeletionPageState extends State<AccountDeletionPage> {
   Future<void> _readNotice() => showDialog<void>(
     context: context,
     builder: (context) => AlertDialog(
-      title: const Text('账号注销与数据删除说明'),
+      title: const UiText('账号注销与数据删除说明'),
       scrollable: true,
       content: const Text(
         '请在申请前核对账号、命理档案、API 报告、算事记录、第三方登录关联及剩余权益。\n\n'
@@ -124,7 +126,7 @@ class _AccountDeletionPageState extends State<AccountDeletionPage> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('关闭'),
+          child: const UiText('关闭'),
         ),
       ],
     ),
@@ -140,7 +142,7 @@ class _AccountDeletionPageState extends State<AccountDeletionPage> {
     return PopScope(
       canPop: !_busy,
       child: Scaffold(
-        appBar: AppBar(title: const Text('注销账号')),
+        appBar: AppBar(title: const UiText('注销账号')),
         body: SafeArea(
           top: false,
           child: ListView(
@@ -217,11 +219,11 @@ class _AccountDeletionPageState extends State<AccountDeletionPage> {
                     onPressed: !_busy && _confirmed && _proof != null
                         ? _submit
                         : null,
-                    child: const Text('确认注销账号'),
+                    child: const UiText('确认注销账号'),
                   ),
                 ],
                 if (_setup == null && !_busy)
-                  TextButton(onPressed: _load, child: const Text('重新加载')),
+                  TextButton(onPressed: _load, child: const UiText('重新加载')),
                 if (_error case final error?)
                   Semantics(
                     liveRegion: true,

@@ -1,5 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../../../ui/interface_language.dart';
+
 import '../../account/account.dart';
 import '../control/social_controller.dart';
 import '../model/social.dart';
@@ -66,7 +68,7 @@ class _UnavailableMessages extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('消息')),
+    appBar: AppBar(title: const UiText('消息')),
     body: ListView(
       padding: const EdgeInsets.all(20),
       children: [
@@ -118,7 +120,7 @@ class SocialConnectionsPage extends StatelessWidget {
           appBar: AppBar(
             title: Text(direction == SocialList.followers ? '粉丝' : '关注'),
           ),
-          body: const Center(child: Text('登录后可以查看关注与粉丝。')),
+          body: const Center(child: UiText('登录后可以查看关注与粉丝。')),
         );
       }
       return _MemberNavigator(
@@ -178,22 +180,28 @@ class _MessagesHomeState extends State<_MessagesHome> {
     });
   }
 
-  Future<void> _open(Widget page) async {
-    await Navigator.of(
-      context,
-    ).push<void>(MaterialPageRoute(builder: (_) => page));
+  Future<void> _open(Widget Function() page, {AccountSection? section}) async {
+    if (section == null) {
+      await Navigator.of(
+        context,
+      ).push<void>(MaterialPageRoute(builder: (_) => page()));
+    } else {
+      await AccountSectionLinks.openPage(context, section, page);
+    }
     if (mounted) _refresh();
   }
 
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
-      title: const Text('消息'),
+      title: const UiText('消息'),
       actions: [
         IconButton(
           tooltip: '找用户',
-          onPressed: () =>
-              _open(SocialSearchPage(controller: widget.controller)),
+          onPressed: () => _open(
+            () => SocialSearchPage(controller: widget.controller),
+            section: AccountSection.findUser,
+          ),
           icon: const Icon(Icons.person_search_outlined),
         ),
       ],
@@ -213,7 +221,7 @@ class _MessagesHomeState extends State<_MessagesHome> {
                 children: [
                   ListTile(
                     leading: const Icon(Icons.person_add_alt_1_outlined),
-                    title: const Text('新增粉丝'),
+                    title: const UiText('新增粉丝'),
                     subtitle: Text(
                       (inbox?.unread ?? 0) > 0
                           ? '${inbox!.unread} 条未读'
@@ -221,30 +229,33 @@ class _MessagesHomeState extends State<_MessagesHome> {
                     ),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () => _open(
-                      FollowerAlertsPage(controller: widget.controller),
+                      () => FollowerAlertsPage(controller: widget.controller),
                     ),
                   ),
                   const Divider(height: 1, indent: 16, endIndent: 16),
                   ListTile(
                     leading: const Icon(Icons.flag_outlined),
-                    title: const Text('我的举报'),
-                    subtitle: const Text('查看举报处理进度'),
+                    title: const UiText('我的举报'),
+                    subtitle: const UiText('查看举报处理进度'),
                     trailing: const Icon(Icons.chevron_right),
-                    onTap: () =>
-                        _open(SocialReportsPage(controller: widget.controller)),
+                    onTap: () => _open(
+                      () => SocialReportsPage(controller: widget.controller),
+                      section: AccountSection.socialReports,
+                    ),
                   ),
                   if (inbox?.canModerate == true) ...[
                     const Divider(height: 1, indent: 16, endIndent: 16),
                     ListTile(
                       leading: const Icon(Icons.fact_check_outlined),
-                      title: const Text('举报处理'),
-                      subtitle: const Text('处理待办举报'),
+                      title: const UiText('举报处理'),
+                      subtitle: const UiText('处理待办举报'),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () => _open(
-                        SocialReportsPage(
+                        () => SocialReportsPage(
                           controller: widget.controller,
                           moderation: true,
                         ),
+                        section: AccountSection.socialModeration,
                       ),
                     ),
                   ],
@@ -258,7 +269,7 @@ class _MessagesHomeState extends State<_MessagesHome> {
                 ),
                 trailing: TextButton(
                   onPressed: _refresh,
-                  child: const Text('重试'),
+                  child: const UiText('重试'),
                 ),
               ),
           ],

@@ -1,0 +1,161 @@
+import 'package:material_ui/material_ui.dart';
+
+import '../../../ui/interface_language.dart';
+
+import '../../../ui/theme.dart';
+import '../../social/social.dart';
+import '../auth/control/account_controller.dart';
+import '../auth/view/account_deletion_page.dart';
+import '../auth/view/identity_preview_page.dart';
+import '../auth/view/password_security_page.dart';
+import '../auth/view/phone_security_page.dart';
+import '../history/view/archived_charts_page.dart';
+import '../history/view/reports_page.dart';
+import '../model/account_section.dart';
+import '../profile/view/profile_editor_page.dart';
+import '../profile/view/profile_preview_page.dart';
+import '../settings/view/account_settings_page.dart';
+import '../settings/view/agreements_page.dart';
+import '../settings/view/appearance_page.dart';
+import '../settings/view/language_page.dart';
+import '../settings/view/privacy_rights_page.dart';
+
+class AccountSectionPage extends StatelessWidget {
+  const AccountSectionPage({
+    super.key,
+    required this.account,
+    required this.target,
+    required this.themeMode,
+    required this.onThemeModeChanged,
+    required this.openAccount,
+  });
+
+  final AccountController? account;
+  final AccountDestination target;
+  final ThemeMode themeMode;
+  final ValueChanged<ThemeMode> onThemeModeChanged;
+  final VoidCallback openAccount;
+
+  @override
+  Widget build(BuildContext context) {
+    final current = account;
+    if (current == null) return _unavailable('账号服务暂不可用。');
+    return ListenableBuilder(
+      listenable: current,
+      builder: (context, _) => KeyedSubtree(
+        key: ValueKey(current.authorizedSession?.scope),
+        child: _section(current),
+      ),
+    );
+  }
+
+  Widget _section(AccountController account) {
+    switch (target.section) {
+      case AccountSection.settings:
+        return AccountSettingsPage(
+          account: account,
+          themeMode: themeMode,
+          onThemeModeChanged: onThemeModeChanged,
+        );
+      case AccountSection.security:
+        return account.memberId == null
+            ? _unavailable('登录后可管理账户安全。', openAccount)
+            : AccountSecurityPage(account: account);
+      case AccountSection.privacy:
+        return AccountPrivacyPage(account: account);
+      case AccountSection.aiPermissions:
+        return AccountPrivacyPage(account: account, onlyAiPermissions: true);
+      case AccountSection.agreements:
+        return AccountAgreementsPage(account: account);
+      case AccountSection.appearance:
+        return AppearancePage(
+          initialMode: themeMode,
+          onChanged: onThemeModeChanged,
+        );
+      case AccountSection.language:
+        return const LanguagePage();
+      case AccountSection.about:
+        return AccountAboutPage(account: account);
+      case AccountSection.charts:
+        return ArchivedChartsPage(account: account);
+      case AccountSection.reports:
+        return ReportsPage(account: account);
+      default:
+        final owner = account.memberId;
+        if (owner == null) return _unavailable('登录后可查看此页面。', openAccount);
+        return _memberSection(account, owner);
+    }
+  }
+
+  Widget _memberSection(AccountController account, String owner) =>
+      switch (target.section) {
+        AccountSection.phone => PhoneSecurityPage(
+          account: account,
+          owner: owner,
+        ),
+        AccountSection.password => PasswordSecurityPage(
+          account: account,
+          owner: owner,
+        ),
+        AccountSection.identity => IdentityPreviewPage(
+          account: account,
+          memberId: owner,
+        ),
+        AccountSection.deletion =>
+          account.deletion == null
+              ? _unavailable('账号注销服务暂不可用。')
+              : AccountDeletionPage(account: account, owner: owner),
+        AccountSection.profile => ProfileEditorPage(
+          account: account,
+          member: account.authorizedSession!,
+        ),
+        AccountSection.privacyRights => PrivacyRightsPage(
+          account: account,
+          owner: owner,
+        ),
+        AccountSection.profilePreview => ProfilePreviewPage(
+          account: account,
+          owner: owner,
+        ),
+        AccountSection.socialPrivacy => SocialPrivacyPage(
+          controller: SocialController.forMember(account, owner),
+        ),
+        AccountSection.following ||
+        AccountSection.followers => SocialConnectionsPage(
+          account: account,
+          direction: target.section == AccountSection.following
+              ? SocialList.following
+              : SocialList.followers,
+        ),
+        AccountSection.findUser => SocialSearchPage(
+          controller: SocialController.forMember(account, owner),
+        ),
+        AccountSection.socialReports ||
+        AccountSection.socialModeration => SocialReportsPage(
+          controller: SocialController.forMember(account, owner),
+          moderation: target.section == AccountSection.socialModeration,
+        ),
+        AccountSection.socialProfile =>
+          target.profileId == null
+              ? _unavailable('找不到该用户。')
+              : SocialProfilePage(
+                  controller: SocialController.forMember(account, owner),
+                  id: target.profileId!,
+                ),
+        _ => throw StateError(
+          'Account section already resolved: ${target.section.slug}',
+        ),
+      };
+
+  Widget _unavailable(String message, [VoidCallback? signIn]) => Scaffold(
+    appBar: AppBar(title: const UiText('个人中心')),
+    body: ListView(
+      padding: jovianPagePadding,
+      children: [
+        Text(message),
+        if (signIn != null)
+          TextButton(onPressed: signIn, child: const UiText('前往登录')),
+      ],
+    ),
+  );
+}

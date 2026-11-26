@@ -4,6 +4,8 @@ import 'dart:ui' as ui;
 
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/interface_language.dart';
+
 import '../../auth/control/account_controller.dart';
 import '../control/profile_photo.dart';
 import '../model/avatar_storage.dart';
@@ -236,11 +238,11 @@ class _PhotoEditorState extends State<_PhotoEditor> {
   Widget build(BuildContext context) {
     if (!_valid) {
       return AlertDialog(
-        title: const Text('当前会话已变更'),
+        title: const UiText('当前会话已变更'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('关闭'),
+            child: const UiText('关闭'),
           ),
         ],
       );
@@ -252,7 +254,7 @@ class _PhotoEditorState extends State<_PhotoEditor> {
     return PopScope(
       canPop: !_pending,
       child: AlertDialog(
-        title: const Text('更换头像'),
+        title: const UiText('更换头像'),
         scrollable: true,
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -303,7 +305,7 @@ class _PhotoEditorState extends State<_PhotoEditor> {
                 ),
               ),
             ],
-            const Text('头像保存在当前设备，不会上传。'),
+            const UiText('头像保存在当前设备，不会上传。'),
             if (_error case final message?)
               Semantics(
                 liveRegion: true,
@@ -316,18 +318,18 @@ class _PhotoEditorState extends State<_PhotoEditor> {
               const LinearProgressIndicator(semanticsLabel: '正在处理图片'),
             OutlinedButton(
               onPressed: _pending ? null : _pick,
-              child: const Text('选择照片'),
+              child: const UiText('选择照片'),
             ),
             TextButton(
               onPressed: _pending ? null : _reset,
-              child: const Text('恢复默认头像'),
+              child: const UiText('恢复默认头像'),
             ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: _pending ? null : () => Navigator.pop(context),
-            child: const Text('取消'),
+            child: const UiText('取消'),
           ),
           FilledButton(
             onPressed: _pending || !readyToSave ? null : _save,
@@ -335,7 +337,7 @@ class _PhotoEditorState extends State<_PhotoEditor> {
               backgroundColor: colors.primary,
               foregroundColor: colors.onPrimary,
             ),
-            child: const Text('保存头像'),
+            child: const UiText('保存头像'),
           ),
         ],
       ),

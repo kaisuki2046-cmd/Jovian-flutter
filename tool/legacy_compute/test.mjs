@@ -4,20 +4,20 @@ import { mkdir, readFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { createRequire, registerHooks } from 'node:module';
 import { extname, join, resolve } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { pathToFileURL } from 'node:url';
+import { frontendRoot, legacyRoot } from './paths.mjs';
 
-const root = resolve(fileURLToPath(new URL('../../../', import.meta.url)));
-const dependencies = resolve(process.env.JOVIAN_LEGACY_NODE_ROOT ?? root);
+const dependencies = resolve(process.env.JOVIAN_LEGACY_NODE_ROOT ?? legacyRoot);
 const browserDependencies = resolve(process.env.JOVIAN_BROWSER_TEST_ROOT ?? dependencies);
 const { chromium } = createRequire(join(browserDependencies, 'package.json'))('playwright-core');
-const worker = await readFile(join(root, 'app-flutter', 'web', 'legacy-compute.js'));
-const nativeRunner = pathToFileURL(join(root, 'app-flutter', 'tool', 'legacy_compute', 'native_assets', 'legacy-compute.html')).href;
-const testOutput = join(root, 'app-flutter', '.dart_tool', 'legacy_compute');
+const worker = await readFile(join(frontendRoot, 'web', 'legacy-compute.js'));
+const nativeRunner = pathToFileURL(join(frontendRoot, 'tool', 'legacy_compute', 'native_assets', 'legacy-compute.html')).href;
+const testOutput = join(frontendRoot, '.dart_tool', 'legacy_compute');
 await mkdir(testOutput, { recursive: true });
 const testBridgePath = join(testOutput, 'bridge-test.js');
 execFileSync(process.env.JOVIAN_DART_EXECUTABLE ?? 'dart', [
   'compile', 'js', 'tool/legacy_compute/bridge_test.dart', '-o', testBridgePath,
-], { cwd: join(root, 'app-flutter'), stdio: 'inherit' });
+], { cwd: frontendRoot, stdio: 'inherit' });
 const testBridge = await readFile(testBridgePath);
 
 registerHooks({ resolve(specifier, context, next) {
@@ -33,7 +33,7 @@ registerHooks({ resolve(specifier, context, next) {
   }
 } });
 
-const source = (path) => import(pathToFileURL(join(root, 'src', 'features', path)));
+const source = (path) => import(pathToFileURL(join(legacyRoot, 'src', 'features', path)));
 const { runReading } = await source('destiny/control/local-reading.ts');
 const { toDestinyArchiveWithSnapshot } = await source('destiny/control/account-report.ts');
 const { buildReportRequest } = await source('destiny/requests/report.ts');
@@ -42,6 +42,9 @@ const { findBirthPlace } = await source('destiny/model/birth-places.ts');
 const { compareCharts } = await source('synastry/control/compare.ts');
 const { adaptInterpretationFacts } = await source('synastry/control/interpretation-fact-adapter.ts');
 const { prepareSynastrySummary } = await source('synastry/control/summary.ts');
+const { buildAlmanacDay } = await source('fortune/control/almanac.ts');
+const { calculateFortuneCalendar } = await source('fortune/control/fortune-calendar.ts');
+const { buildFortunePreview, readNatalDay } = await source('fortune/control/fortune-preview.ts');
 const { buildFortuneFactSubmission } = await source('fortune/control/fortune-fact-submission.ts');
 const { archiveFortuneReport, fortuneArchiveContext } = await source('fortune/control/report-archive.ts');
 const { lillyReturnLocationTarget } = await source('fortune/control/lilly-returns.ts');
@@ -171,6 +174,41 @@ try {
   const bound = bindClientFortuneRun(fortune.input, batch.result, time, 'fixture-run', fortune.archive);
   assert.equal(bound.facts.length, batch.result.facts.length);
 
+  const calendarOperations = [
+    { name: 'queryFortuneCalendar', reference: { date: '2026-11-10', time: '23:40' } },
+    { name: 'queryFortuneCalendar', reference: { date: '2026-02-30', time: '12:00' } },
+  ];
+  const previewOperations = [
+    { name: 'previewFortune', asOf: Date.UTC(2026, 10, 1, 9, 30), period: 'day',
+      timeZone: 'America/Los_Angeles', archive },
+    { name: 'previewFortune', asOf: Date.UTC(2026, 10, 1, 9, 30), period: 'week',
+      timeZone: 'America/Los_Angeles', archive: { ...archive, chartSnapshot: {
+        timeKnown: false, bazi: { rawResult: [{ day: '丁丑' }, { day: '甲子' }] },
+      } } },
+  ];
+  for (const { name, reference } of calendarOperations) {
+    assertParity((await ask({ name, reference })).result, { calendar: calculateFortuneCalendar(reference) });
+  }
+  for (const request of previewOperations) {
+    const { asOf, period, timeZone, archive } = request;
+    const result = (await ask(request)).result;
+    assertParity(result, {
+      preview: buildFortunePreview(asOf, period, readNatalDay(archive), { timeZone }),
+      almanac: period === 'day' ? buildAlmanacDay(asOf) : null,
+    });
+    if (period === 'day') {
+      assert.equal(result.preview.window.end - result.preview.window.start, 25 * 60 * 60 * 1000);
+      assert.ok(result.preview.current.tenGod);
+    } else {
+      assert.equal('tenGod' in result.preview.current, false);
+    }
+  }
+  const flutterFortune = await page.evaluate(async ({ preview, reference }) =>
+    JSON.parse(await window.runBrowserFortuneTest(JSON.stringify({ preview, reference }))),
+  { preview: previewOperations[0], reference: calendarOperations[0].reference });
+  assertParity(flutterFortune.preview, (await ask(previewOperations[0])).result);
+  assertParity(flutterFortune.calendar, (await ask(calendarOperations[0])).result);
+
   for (const periodType of ['day', 'week', 'month', 'year']) {
     const input = { periodType, displayTimezone: 'America/Los_Angeles' };
     const asOf = Date.UTC(2026, 10, 1, 9, 30);
@@ -247,6 +285,9 @@ try {
   assert.ok(nativePartial.pieces > progress.length + 1, 'Large candidates use more than one bridge message');
   assertParity((await askNative({ name: 'compareSynastry', ...subjects })).result, fact.result);
   assertParity((await askNative({ name: 'buildFortuneFactSubmission', ...fortune })).result, batch.result);
+  for (const operation of [...previewOperations, ...calendarOperations]) {
+    assertParity((await askNative(operation)).result, (await ask(operation)).result);
+  }
   assert.equal((await askNative({ name: 'not_supported' })).error, '不支持的本机计算类型。');
   assert.deepEqual(nativeRequests, []);
   await nativeContext.close();

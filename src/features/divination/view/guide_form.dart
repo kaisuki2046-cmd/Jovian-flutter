@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:jovian_divination/jovian_divination.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../ui/interface_language.dart';
+
 import 'composer_attachment.dart';
 import 'guide_composer.dart';
 import 'guide_conversation.dart';
@@ -39,7 +41,6 @@ class _GuideFormState extends State<GuideForm>
   final _questionFocus = FocusNode();
   final _followUp = TextEditingController();
   final _followUpFocus = FocusNode();
-  final _reportScroll = ScrollController();
   final _clock = Stopwatch();
   final _ritualChanges = ValueNotifier(0);
   StreamSubscription<void>? _onlineChanges;
@@ -51,14 +52,15 @@ class _GuideFormState extends State<GuideForm>
       <
         ({String question, String reply, List<ComposerAttachment> attachments})
       >[];
-  String? _pendingQuestion;
+  ({String text, TextEditingValue draft, List<ComposerAttachment> attachments})?
+  _pendingQuestion;
+  int _sentRevision = 0;
   bool _showCharts = false;
   final _ownedAttachments = <ComposerAttachment>{};
   final _draftAttachments = <ComposerAttachment>[];
   final _localQuestionTurns = <ComposerAttachmentTurn>[];
   final _localFollowUpTurns = <ComposerAttachmentTurn>[];
   final _sentFollowUpAttachments = <int, List<ComposerAttachment>>{};
-  List<ComposerAttachment> _pendingQuestionAttachments = const [];
   List<ComposerAttachment> _readingAttachments = const [];
   ({int index, String question, List<ComposerAttachment> attachments})?
   _sendingFollowUp;
@@ -124,7 +126,6 @@ class _GuideFormState extends State<GuideForm>
     _questionFocus.dispose();
     _followUp.dispose();
     _followUpFocus.dispose();
-    _reportScroll.dispose();
     _releaseAttachments();
     super.dispose();
   }
@@ -141,8 +142,12 @@ class _GuideFormState extends State<GuideForm>
     _presentation = null;
     if (widget.online case final online?) {
       setState(() {
-        _pendingQuestion = question;
-        _pendingQuestionAttachments = _takeDraftAttachments();
+        _pendingQuestion = (
+          text: question,
+          draft: _question.value,
+          attachments: _takeDraftAttachments(),
+        );
+        _sentRevision++;
         _question.clear();
       });
       unawaited(_startOnline(online, question));
@@ -173,30 +178,30 @@ class _GuideFormState extends State<GuideForm>
   }
 
   void _finishQuestion(OnlineGuideController online) {
-    if (!mounted || widget.online != online || _pendingQuestion == null) return;
+    final pending = _pendingQuestion;
+    if (!mounted || widget.online != online || pending == null) return;
     if (online.reading != null) {
       setState(() {
-        _readingAttachments = _finishQuestionAttachments();
-        _pendingQuestion = null;
-        _question.clear();
+        _readingAttachments = _acceptQuestion();
       });
       if (_snapshot?.stage == GuideStage.cast) _openRitual();
-    } else if (online.message case final reply? when !online.canRetry) {
+    } else if (online.canRetry || online.questionStopped) {
+      setState(() {
+        if (_question.text.isEmpty) _question.value = pending.draft;
+        for (final attachment in pending.attachments) {
+          if (!_draftAttachments.contains(attachment)) {
+            _draftAttachments.add(attachment);
+          }
+        }
+        if (online.questionStopped) _pendingQuestion = null;
+      });
+    } else if (online.message case final reply?) {
       setState(() {
         _clarifications.add((
-          question: _pendingQuestion!,
+          question: pending.text,
           reply: reply,
-          attachments: _finishQuestionAttachments(),
+          attachments: _acceptQuestion(),
         ));
-        _pendingQuestion = null;
-        _question.clear();
-      });
-    } else if (online.canRetry) {
-      setState(() {
-        if (_question.text.isEmpty) _question.text = _pendingQuestion!;
-        for (final attachment in _pendingQuestionAttachments)
-          if (!_draftAttachments.contains(attachment))
-            _draftAttachments.add(attachment);
       });
     }
   }
@@ -208,17 +213,19 @@ class _GuideFormState extends State<GuideForm>
     return attachments;
   }
 
-  List<ComposerAttachment> _finishQuestionAttachments() {
-    final attachments = _pendingQuestionAttachments;
-    _draftAttachments.removeWhere(attachments.contains);
-    _pendingQuestionAttachments = const [];
-    return attachments;
+  List<ComposerAttachment> _acceptQuestion() {
+    final pending = _pendingQuestion!;
+    _draftAttachments.removeWhere(pending.attachments.contains);
+    if (_question.text == pending.draft.text) _question.clear();
+    _pendingQuestion = null;
+    return pending.attachments;
   }
 
   void _sendLocalAttachments(List<ComposerAttachmentTurn> turns, int after) {
     FocusScope.of(context).unfocus();
     setState(() {
       turns.add((after: after, attachments: _takeDraftAttachments()));
+      _sentRevision++;
     });
   }
 
@@ -256,7 +263,7 @@ class _GuideFormState extends State<GuideForm>
     setState(() {
       _draftAttachments.remove(attachment);
       _attachmentError = null;
-      if (!_pendingQuestionAttachments.contains(attachment) &&
+      if (_pendingQuestion?.attachments.contains(attachment) != true &&
           _sendingFollowUp?.attachments.contains(attachment) != true) {
         _ownedAttachments.remove(attachment);
         attachment.release();
@@ -368,10 +375,10 @@ class _GuideFormState extends State<GuideForm>
     });
   }
 
-  void _restart({bool carryContext = true}) {
+  void _restart() {
     FocusScope.of(context).unfocus();
     setState(_clearDraft);
-    unawaited(widget.online?.nextQuestion(carryContext: carryContext));
+    unawaited(widget.online?.nextQuestion(carryContext: false));
   }
 
   void _selectHistory(String id) {
@@ -401,7 +408,6 @@ class _GuideFormState extends State<GuideForm>
     _localQuestionTurns.clear();
     _localFollowUpTurns.clear();
     _sentFollowUpAttachments.clear();
-    _pendingQuestionAttachments = const [];
     _readingAttachments = const [];
     _sendingFollowUp = null;
     _attachmentError = null;
@@ -429,6 +435,17 @@ class _GuideFormState extends State<GuideForm>
     focus.requestFocus();
   }
 
+  Object get _latestMessage => (
+    _clarifications.length,
+    _localQuestionTurns.length,
+    _localFollowUpTurns.length,
+    _pendingQuestion?.text,
+    widget.online?.busy,
+    widget.online?.message,
+    widget.online?.reading?.report,
+    widget.online?.reading?.followUps.length,
+  );
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -446,7 +463,7 @@ class _GuideFormState extends State<GuideForm>
         toolbarHeight: 48,
         centerTitle: true,
         titleTextStyle: Theme.of(context).textTheme.titleMedium,
-        title: const Text('对话'),
+        title: const UiText('对话'),
         leading: IconButton(
           tooltip: '会话历史',
           icon: const Icon(Icons.menu_rounded),
@@ -459,9 +476,7 @@ class _GuideFormState extends State<GuideForm>
           IconButton(
             tooltip: '新对话',
             icon: const Icon(Icons.add_comment_outlined),
-            onPressed: online?.busy == true
-                ? null
-                : () => _restart(carryContext: false),
+            onPressed: online?.busy == true ? null : _restart,
           ),
         ],
       ),
@@ -491,16 +506,19 @@ class _GuideFormState extends State<GuideForm>
           !busy &&
           _pendingQuestion == null &&
           _clarifications.isEmpty &&
-          _localQuestionTurns.isEmpty;
+          _localQuestionTurns.isEmpty &&
+          online?.questionStopped != true;
       return GuideThread(
         key: const ValueKey('guide-question'),
+        latestMessage: _latestMessage,
+        sentRevision: _sentRevision,
         welcome: welcome ? GuideWelcome(offline: online == null) : null,
         messages: [
           ..._conversation(),
           if (_pendingQuestion case final submitted?) ...[
             GuideQuestionBubble(
-              submitted,
-              attachments: _pendingQuestionAttachments,
+              submitted.text,
+              attachments: submitted.attachments,
             ),
             const SizedBox(height: 12),
           ],
@@ -516,6 +534,9 @@ class _GuideFormState extends State<GuideForm>
           sendLabel: '发送消息',
           busy: busy || _attachmentSelection != null,
           send: _sendQuestion,
+          stop: online?.canStopUnderstanding == true
+              ? online!.stopUnderstanding
+              : null,
           suggest: _setSuggestedQuestion,
           startQuestion: _questionFocus.requestFocus,
           openSynastry: widget.openSynastry,
@@ -538,6 +559,8 @@ class _GuideFormState extends State<GuideForm>
 
   Widget _buildRitualPrompt(GuideRitualSnapshot ritual) => GuideThread(
     key: ValueKey(ritual.stage),
+    latestMessage: _latestMessage,
+    sentRevision: _sentRevision,
     messages: [
       ..._conversation(),
       ..._questionContext(ritual),
@@ -547,7 +570,7 @@ class _GuideFormState extends State<GuideForm>
           alignment: AlignmentDirectional.centerStart,
           child: OutlinedButton(
             onPressed: _openRitual,
-            child: const Text('继续本次仪式'),
+            child: const UiText('继续本次仪式'),
           ),
         )
       else
@@ -597,17 +620,18 @@ class _GuideFormState extends State<GuideForm>
     final live = online?.canContinue == true;
     final canFollowUp = live && hasReport && reading!.followUps.length < 8;
     return GuideThread(
-      key: const ValueKey('guide-result'),
-      scroll: _reportScroll,
+      key: ValueKey(('guide-result', online?.activeHistoryId)),
+      latestMessage: _latestMessage,
+      sentRevision: _sentRevision,
       messages: [
         ..._conversation(),
         ..._questionContext(ritual),
         if (online == null) ...[
-          Text('翻开三张塔罗', style: text.titleMedium),
+          UiText('翻开三张塔罗', style: text.titleMedium),
           const SizedBox(height: 12),
           TarotReveal(draw: chart.tarot),
         ],
-        ..._feedback(),
+        if (!hasReport) ..._feedback(),
         if (online != null && busy && !hasReport)
           const GuideConversationReply(body: '正在解读…'),
         if (live &&
@@ -618,7 +642,7 @@ class _GuideFormState extends State<GuideForm>
           const SizedBox(height: 12),
           OutlinedButton(
             onPressed: online.requestReport,
-            child: const Text('获取解读'),
+            child: const UiText('获取解读'),
           ),
         ],
         if (reading?.report case final report?) ...[
@@ -639,7 +663,7 @@ class _GuideFormState extends State<GuideForm>
         if (_showCharts) ...[
           const SizedBox(height: 20),
           if (online != null) ...[
-            Text('翻开三张塔罗', style: text.titleMedium),
+            UiText('翻开三张塔罗', style: text.titleMedium),
             const SizedBox(height: 12),
             TarotReveal(draw: chart.tarot),
             const SizedBox(height: 20),
@@ -662,7 +686,8 @@ class _GuideFormState extends State<GuideForm>
             attachments: _sentFollowUpAttachments,
             localTurns: _localFollowUpTurns,
           ),
-          if (live && !canFollowUp) const Text('这次算事的追问已达上限，可以另问一件事。'),
+          ..._feedback(),
+          if (live && !canFollowUp) const UiText('这次算事的追问已达上限，可以另问一件事。'),
         ],
       ],
       composer: canFollowUp
@@ -707,9 +732,11 @@ class _GuideFormState extends State<GuideForm>
     if (online == null) return const [];
     return [
       if (online.busy)
-        const Padding(
-          padding: EdgeInsets.symmetric(vertical: 8),
-          child: LinearProgressIndicator(semanticsLabel: '正在处理算事请求'),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: online.canStopUnderstanding
+              ? Semantics(liveRegion: true, child: const UiText('正在理解你的问题…'))
+              : const LinearProgressIndicator(semanticsLabel: '正在处理算事请求'),
         ),
       if (online.message case final message?
           when online.canRetry || _clarifications.lastOrNull?.reply != message)
@@ -727,9 +754,8 @@ class _GuideFormState extends State<GuideForm>
               : () async {
                   await online.retry();
                   _finishQuestion(online);
-                  _scrollReportToEnd();
                 },
-          child: const Text('重试'),
+          child: const UiText('重试'),
         ),
     ];
   }
@@ -746,7 +772,6 @@ class _GuideFormState extends State<GuideForm>
     final index = reading.followUps.length;
     if (question.isEmpty && _draftAttachments.isNotEmpty) {
       _sendLocalAttachments(_localFollowUpTurns, index);
-      _scrollReportToEnd();
       return;
     }
     if (_followUpForm.currentState?.validate() != true) return;
@@ -756,27 +781,7 @@ class _GuideFormState extends State<GuideForm>
       question: question,
       attachments: List.of(_draftAttachments),
     );
+    _sentRevision++;
     await online.followUp(question);
-    if (!mounted || widget.online != online) return;
-    _scrollReportToEnd();
-  }
-
-  void _scrollReportToEnd() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || !_reportScroll.hasClients) return;
-      final end = _reportScroll.position.maxScrollExtent;
-      if (MediaQuery.disableAnimationsOf(context) ||
-          MediaQuery.accessibleNavigationOf(context)) {
-        _reportScroll.jumpTo(end);
-      } else {
-        unawaited(
-          _reportScroll.animateTo(
-            end,
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeOut,
-          ),
-        );
-      }
-    });
   }
 }

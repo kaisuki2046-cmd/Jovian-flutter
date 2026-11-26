@@ -5,6 +5,8 @@ import 'package:jovian_destiny/jovian_destiny.dart'
     show RestoredBaZiRow, restoreArchivedBaZiRows;
 import 'package:material_ui/material_ui.dart';
 
+import '../../../ui/interface_language.dart';
+
 import '../model/destiny_reading.dart';
 
 const _chartSymbols = 'JovianChartSymbols';
@@ -48,7 +50,7 @@ class _ChartDialogState extends State<_ChartDialog> {
                       children: [
                         _Title('命盘结果'),
                         Text(charts.presentation == null ? '已保存的基础盘面' : '本次排盘'),
-                        if (!charts.timeKnown) const Text('出生时刻未完全确定'),
+                        if (!charts.timeKnown) const UiText('出生时刻未完全确定'),
                       ],
                     ),
                   ),
@@ -302,10 +304,7 @@ class _Pillars extends StatelessWidget {
                         spacing: 3,
                         children: [
                           for (final detail in row.details)
-                            Text(
-                              detail,
-                              style: theme.textTheme.bodyMedium,
-                            ),
+                            Text(detail, style: theme.textTheme.bodyMedium),
                         ],
                       ),
                     ),

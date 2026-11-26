@@ -1,6 +1,8 @@
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/interface_language.dart';
+
 import '../../../../ui/theme.dart';
 
 class AppearancePage extends StatefulWidget {
@@ -38,7 +40,7 @@ class _AppearancePageState extends State<AppearancePage> {
         autofocus: true,
         skipTraversal: true,
         child: Scaffold(
-          appBar: AppBar(title: const Text('外观模式')),
+          appBar: AppBar(title: const UiText('外观模式')),
           body: SafeArea(
             top: false,
             child: Center(
@@ -47,7 +49,7 @@ class _AppearancePageState extends State<AppearancePage> {
                 child: ListView(
                   padding: jovianPagePadding,
                   children: [
-                    Text('选择喜欢的阅读方式', style: theme.textTheme.bodyMedium),
+                    UiText('选择喜欢的阅读方式', style: theme.textTheme.bodyMedium),
                     const SizedBox(height: 18),
                     RadioGroup<ThemeMode>(
                       groupValue: _mode,
@@ -72,12 +74,12 @@ class _AppearancePageState extends State<AppearancePage> {
                                     ListTileControlAffinity.trailing,
                                 minTileHeight: 80,
                                 horizontalTitleGap: 14,
-                                title: Text(
+                                title: UiText(
                                   label,
                                   style: theme.textTheme.titleMedium,
                                 ),
                                 subtitle: mode == ThemeMode.system
-                                    ? const Text('自动同步设备的浅色或深色模式')
+                                    ? const UiText('自动同步设备的浅色或深色模式')
                                     : null,
                                 secondary: _ModeSwatch(mode),
                               ),

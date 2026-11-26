@@ -3,6 +3,8 @@ import 'dart:math' as math;
 import 'package:flutter/scheduler.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../features/account/account.dart';
+import '../ui/interface_language.dart';
 import '../ui/tab_dock.dart';
 import '../ui/tab_glyph.dart';
 
@@ -158,8 +160,8 @@ class _JovianShellState extends State<JovianShell> {
                   for (final tab in JovianTab.values)
                     NavigationDestination(
                       key: ValueKey(tab),
-                      label: tab.label,
-                      tooltip: tab.label,
+                      label: context.uiLabel(tab.label),
+                      tooltip: context.uiLabel(tab.label),
                       icon: TabGlyph(tab.glyph),
                       selectedIcon: TabGlyph(tab.glyph, selected: true),
                     ),
@@ -220,10 +222,16 @@ class JovianTabNavigator extends StatefulWidget {
     super.key,
     required this.active,
     required this.child,
+    this.sections = const [],
+    this.buildSection,
+    this.onSectionPopped,
   });
 
   final bool active;
   final Widget child;
+  final List<AccountDestination> sections;
+  final Widget Function(AccountDestination)? buildSection;
+  final ValueChanged<AccountDestination>? onSectionPopped;
 
   @override
   State<JovianTabNavigator> createState() => _JovianTabNavigatorState();
@@ -240,8 +248,17 @@ class _JovianTabNavigatorState extends State<JovianTabNavigator> {
       key: _navigation,
       pages: [
         MaterialPage<void>(key: const ValueKey('root'), child: widget.child),
+        for (final section in widget.sections)
+          MaterialPage<void>(
+            key: ValueKey(section),
+            child: widget.buildSection!(section),
+          ),
       ],
-      onDidRemovePage: (_) {},
+      onDidRemovePage: (page) {
+        if (page.key case ValueKey<AccountDestination>(value: final section)) {
+          widget.onSectionPopped?.call(section);
+        }
+      },
     ),
   );
 }

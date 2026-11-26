@@ -1,11 +1,15 @@
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/interface_language.dart';
+
 import '../../../../ui/theme.dart';
+import '../../model/account_section.dart';
 import '../../settings/model/agreements.dart';
 import '../../profile/view/profile_dashboard.dart';
 import '../../settings/view/account_settings_page.dart';
 import '../../settings/view/agreement_document_page.dart';
+import '../../view/account_section_links.dart';
 import '../control/account_controller.dart';
 import '../model/password.dart';
 import '../model/session.dart';
@@ -21,6 +25,7 @@ class AccountPage extends StatefulWidget {
     this.themeMode = ThemeMode.system,
     this.onThemeModeChanged,
     this.openMessages,
+    this.onWelcomeExit,
   });
 
   final AccountController account;
@@ -29,6 +34,7 @@ class AccountPage extends StatefulWidget {
   final ThemeMode themeMode;
   final ValueChanged<ThemeMode>? onThemeModeChanged;
   final VoidCallback? openMessages;
+  final VoidCallback? onWelcomeExit;
 
   @override
   State<AccountPage> createState() => _AccountPageState();
@@ -75,7 +81,7 @@ class _AccountPageState extends State<AccountPage> {
       return Scaffold(
         appBar: showDashboard || widget.standalone
             ? null
-            : AppBar(title: const Text('个人中心')),
+            : AppBar(title: const UiText('个人中心')),
         body: SafeArea(
           top: showDashboard || widget.standalone,
           child: Align(
@@ -97,7 +103,7 @@ class _AccountPageState extends State<AccountPage> {
                         padding: statusPadding,
                         child: Semantics(
                           liveRegion: true,
-                          child: Text(message),
+                          child: UiText(message),
                         ),
                       ),
                     if (_account.deletion case final deletion?
@@ -115,7 +121,7 @@ class _AccountPageState extends State<AccountPage> {
                           alignment: Alignment.centerLeft,
                           child: TextButton(
                             onPressed: _account.initialize,
-                            child: const Text('刷新账号与协议'),
+                            child: const UiText('刷新账号与协议'),
                           ),
                         ),
                       ),
@@ -142,16 +148,16 @@ class _AccountPageState extends State<AccountPage> {
   );
 
   void _openSettings() {
-    Navigator.of(context).push<void>(
-      MaterialPageRoute(
-        builder: (_) => AccountSettingsPage(
-          account: _account,
-          themeMode: widget.themeMode,
-          onThemeModeChanged: widget.onThemeModeChanged,
-          onSignedOut: () {
-            if (mounted) _clearForm();
-          },
-        ),
+    AccountSectionLinks.openPage(
+      context,
+      AccountSection.settings,
+      () => AccountSettingsPage(
+        account: _account,
+        themeMode: widget.themeMode,
+        onThemeModeChanged: widget.onThemeModeChanged,
+        onSignedOut: () {
+          if (mounted) _clearForm();
+        },
       ),
     );
   }
@@ -164,13 +170,13 @@ class _AccountPageState extends State<AccountPage> {
   });
 
   List<Widget> _renewAgreementForm(AccountSession session) => [
-    const Text('请阅读并确认当前的《用户服务协议》和《隐私政策》后继续。'),
+    const UiText('请阅读并确认当前的《用户服务协议》和《隐私政策》后继续。'),
     const SizedBox(height: 12),
     FilledButton(
       onPressed: _account.busy || _account.catalog == null
           ? null
           : () => _reviewRequiredAgreement(session.scope),
-      child: const Text('阅读并确认协议'),
+      child: const UiText('阅读并确认协议'),
     ),
     TextButton(
       onPressed: _account.busy
@@ -179,7 +185,7 @@ class _AccountPageState extends State<AccountPage> {
               await _account.signOut();
               if (mounted && _account.session == null) _clearForm();
             },
-      child: const Text('退出登录'),
+      child: const UiText('退出登录'),
     ),
   ];
 
@@ -215,8 +221,8 @@ class _AccountPageState extends State<AccountPage> {
         Align(
           alignment: Alignment.centerLeft,
           child: TextButton(
-            onPressed: disabled ? null : _clearForm,
-            child: const Text('返回游客资料'),
+            onPressed: disabled ? null : widget.onWelcomeExit ?? _clearForm,
+            child: const UiText('返回游客资料'),
           ),
         ),
       if (!upgrading && !widget.standalone) ...[
@@ -230,7 +236,7 @@ class _AccountPageState extends State<AccountPage> {
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: Text(
+              child: UiText(
                 '登录或注册',
                 style: Theme.of(context).textTheme.titleLarge,
               ),
@@ -249,7 +255,7 @@ class _AccountPageState extends State<AccountPage> {
               (AuthMethod.phoneCode, '短信验证码登录'),
           ])
             ChoiceChip(
-              label: Text(label),
+              label: UiText(label),
               selected: _method == method,
               onSelected: disabled ? null : (_) => _selectMethod(method),
             ),
@@ -270,7 +276,9 @@ class _AccountPageState extends State<AccountPage> {
         keyboardType: phoneCode
             ? TextInputType.phone
             : TextInputType.emailAddress,
-        decoration: InputDecoration(labelText: phoneCode ? '手机号' : '手机号或邮箱'),
+        decoration: InputDecoration(
+          labelText: context.uiLabel(phoneCode ? '手机号' : '手机号或邮箱'),
+        ),
         onChanged: (_) => setState(() {
           _challenge = null;
           _code.clear();
@@ -279,7 +287,7 @@ class _AccountPageState extends State<AccountPage> {
       ),
       const SizedBox(height: 8),
       if (verifyPhone || phoneCode) ...[
-        Text('未注册的手机号验证后会自动创建账号。', style: small),
+        UiText('未注册的手机号验证后会自动创建账号。', style: small),
         const SizedBox(height: 8),
       ],
       if (registering && !verifyPhone) ...[
@@ -289,7 +297,7 @@ class _AccountPageState extends State<AccountPage> {
           autofillHints: const [AutofillHints.nickname],
           textInputAction: TextInputAction.next,
           maxLength: 40,
-          decoration: const InputDecoration(labelText: '昵称'),
+          decoration: InputDecoration(labelText: context.uiLabel('昵称')),
         ),
         const SizedBox(height: 8),
       ],
@@ -310,10 +318,12 @@ class _AccountPageState extends State<AccountPage> {
             registering ? AutofillHints.newPassword : AutofillHints.password,
           ],
           decoration: InputDecoration(
-            labelText: '密码',
-            helperText: registering ? '至少 $minimumPasswordLength 个字符' : null,
+            labelText: context.uiLabel('密码'),
+            helperText: registering
+                ? context.uiLanguage.minimumCharacters(minimumPasswordLength)
+                : null,
             suffixIcon: IconButton(
-              tooltip: _passwordVisible ? '隐藏密码' : '显示密码',
+              tooltip: context.uiLabel(_passwordVisible ? '隐藏密码' : '显示密码'),
               onPressed: disabled
                   ? null
                   : () => setState(() => _passwordVisible = !_passwordVisible),
@@ -338,7 +348,7 @@ class _AccountPageState extends State<AccountPage> {
               ? TextInputAction.next
               : TextInputAction.done,
           onSubmitted: !needsCode && !disabled ? (_) => _submit(_method) : null,
-          decoration: const InputDecoration(labelText: '确认密码'),
+          decoration: InputDecoration(labelText: context.uiLabel('确认密码')),
         ),
       ],
       if (needsCode) ...[
@@ -357,22 +367,22 @@ class _AccountPageState extends State<AccountPage> {
                     : (_) => _submit(_method),
                 maxLength: 6,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                decoration: const InputDecoration(
-                  labelText: '验证码',
+                decoration: InputDecoration(
+                  labelText: context.uiLabel('验证码'),
                   counterText: '',
                 ),
               ),
             ),
             TextButton(
               onPressed: disabled || codeDisabled ? null : _sendCode,
-              child: Text(_challenge == null ? '发送验证码' : '重新发送'),
+              child: UiText(_challenge == null ? '发送验证码' : '重新发送'),
             ),
           ],
         ),
         if (_challenge case final challenge?)
           Semantics(
             liveRegion: true,
-            child: Text(
+            child: UiText(
               challenge.issued.localInbox
                   ? '请在本机 virtual-auth-provider/inbox 查找最新 TXT。'
                   : '验证码已发送，请查收。',
@@ -385,13 +395,13 @@ class _AccountPageState extends State<AccountPage> {
           !phoneCode &&
           _recoveredPhone == parsed?.value &&
           _recoveredPhone != null) ...[
-        Semantics(liveRegion: true, child: const Text('密码已重置，请使用新密码登录。')),
+        Semantics(liveRegion: true, child: const UiText('密码已重置，请使用新密码登录。')),
         const SizedBox(height: 8),
       ],
       if (_validation case final message?) ...[
         Semantics(
           liveRegion: true,
-          child: Text(
+          child: UiText(
             message,
             style: TextStyle(color: Theme.of(context).colorScheme.error),
           ),
@@ -400,7 +410,7 @@ class _AccountPageState extends State<AccountPage> {
       ],
       FilledButton(
         onPressed: disabled || codeDisabled ? null : () => _submit(_method),
-        child: Text(
+        child: UiText(
           verifyPhone
               ? '继续验证手机号'
               : registering
@@ -409,7 +419,7 @@ class _AccountPageState extends State<AccountPage> {
         ),
       ),
       if (capabilities != null)
-        Text(
+        UiText(
           capabilities.localSocialProviders.isEmpty
               ? '微信和 QQ 登录暂不可用。'
               : '第三方登录使用本机模拟身份。',
@@ -422,21 +432,21 @@ class _AccountPageState extends State<AccountPage> {
         children: [
           TextButton(
             onPressed: disabled ? null : () => _submit(AuthMethod.wechat),
-            child: const Text('微信登录'),
+            child: const UiText('微信登录'),
           ),
           TextButton(
             onPressed: disabled ? null : () => _submit(AuthMethod.qq),
-            child: const Text('QQ 登录'),
+            child: const UiText('QQ 登录'),
           ),
           if (!registering && capabilities?.phoneCodesAvailable == true)
             TextButton(
               onPressed: disabled ? null : _openRecovery,
-              child: const Text('找回账号'),
+              child: const UiText('找回账号'),
             ),
           if (!upgrading)
             TextButton(
               onPressed: disabled ? null : () => _submit(AuthMethod.guest),
-              child: const Text('游客体验'),
+              child: const UiText('游客体验'),
             ),
         ],
       ),
@@ -446,7 +456,7 @@ class _AccountPageState extends State<AccountPage> {
             container: true,
             child: Checkbox(
               shape: const CircleBorder(),
-              semanticLabel: '同意登录协议',
+              semanticLabel: context.uiLabel('同意登录协议'),
               value: catalog != null && identical(_accepted, catalog),
               onChanged: disabled || catalog == null
                   ? null
@@ -459,12 +469,12 @@ class _AccountPageState extends State<AccountPage> {
             child: Wrap(
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                Text('我已阅读并同意', style: small),
+                UiText('我已阅读并同意', style: small),
                 if (catalog != null) ...[
                   AgreementLink(document: catalog.terms, compact: true),
                   AgreementLink(document: catalog.privacy, compact: true),
                 ] else
-                  Text('《用户服务协议》和《隐私政策》', style: small),
+                  UiText('《用户服务协议》和《隐私政策》', style: small),
               ],
             ),
           ),
@@ -477,7 +487,7 @@ class _AccountPageState extends State<AccountPage> {
               container: true,
               child: Checkbox(
                 shape: const CircleBorder(),
-                semanticLabel: '同意全部 AI 授权',
+                semanticLabel: context.uiLabel('同意全部 AI 授权'),
                 value: identical(_aiAccepted, catalog.ai),
                 onChanged: disabled
                     ? null
@@ -490,7 +500,7 @@ class _AccountPageState extends State<AccountPage> {
               child: Wrap(
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
-                  Text('同时开启全部 AI 在线解读（可选）', style: small),
+                  UiText('同时开启全部 AI 在线解读（可选）', style: small),
                   AgreementLink(document: catalog.ai, compact: true),
                 ],
               ),
@@ -646,6 +656,7 @@ class _AccountPageState extends State<AccountPage> {
         ) &&
         mounted) {
       _clearForm();
+      widget.onWelcomeExit?.call();
     }
   }
 
@@ -731,9 +742,9 @@ class _WelcomeBrand extends StatelessWidget {
           ),
           Semantics(
             header: true,
-            child: Text('木星环', style: theme.textTheme.headlineMedium),
+            child: UiText('木星环', style: theme.textTheme.headlineMedium),
           ),
-          Text('在这里，慢慢认识自己', style: theme.textTheme.bodyMedium),
+          UiText('在这里，慢慢认识自己', style: theme.textTheme.bodyMedium),
         ],
       ),
     );

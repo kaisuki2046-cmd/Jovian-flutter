@@ -6,6 +6,7 @@ import 'package:jovian_fortune/jovian_fortune.dart';
 import '../../../shared/http/json_client.dart';
 import '../../account/account.dart';
 import '../model/online_fortune.dart';
+import 'fortune_local.dart';
 import 'fortune_online.dart';
 
 typedef FortuneDisplay = ({String zone, int Function(int) clock});
@@ -17,6 +18,7 @@ class FortunePageController extends ChangeNotifier {
     required this.account,
     required this.ownerId,
     required this.archiveId,
+    this.local = const FortuneLocal(),
     this.online,
     this.now = DateTime.now,
   });
@@ -26,6 +28,7 @@ class FortunePageController extends ChangeNotifier {
   final AccountController? account;
   final String? ownerId;
   final String? archiveId;
+  final FortuneLocal local;
   final FortuneOnline? online;
   final DateTime Function() now;
 
@@ -37,10 +40,12 @@ class FortunePageController extends ChangeNotifier {
   ArchivedDestinyCharts? archive;
   ArchivedReport? savedReport;
   bool syncingTime = true;
+  bool loadingPreview = false;
   bool usingFallbackTime = false;
   bool loadingArchive = false;
   bool loadingReport = false;
   String? clockError;
+  String? previewError;
   String? archiveError;
   bool selectedArchiveMissing = false;
   String? reportError;
@@ -60,6 +65,7 @@ class FortunePageController extends ChangeNotifier {
   String? _archivedZone;
   bool _resumed = false;
   var _work = Completer<void>();
+  Completer<void>? _previewWork;
   bool _closed = false;
   int _timeRevision = 0;
   int _archiveRevision = 0;
@@ -100,8 +106,7 @@ class FortunePageController extends ChangeNotifier {
       display = displayClock;
       referenceTime = instant;
       usingFallbackTime = fallback;
-      _buildPreview();
-      unawaited(readReport());
+      await _refreshPreview();
     } catch (_) {
       if (_closed || revision != _timeRevision) return;
       clockError = '暂时无法计算当前运势日期。';
@@ -116,8 +121,8 @@ class FortunePageController extends ChangeNotifier {
   void selectPeriod(FortunePeriod next) {
     if (next == period && archivedWindow == null) return;
     period = next;
-    _buildPreview();
-    unawaited(readReport(retry: archivedWindow != null));
+    _clearReport();
+    unawaited(_refreshPreview());
     _emit();
   }
 
@@ -130,7 +135,9 @@ class FortunePageController extends ChangeNotifier {
     archiveError = null;
     selectedArchiveMissing = false;
     archive = null;
-    _buildPreview();
+    _cancelPreview();
+    preview = null;
+    almanac = null;
     _clearReport();
     _emit();
     try {
@@ -155,8 +162,6 @@ class FortunePageController extends ChangeNotifier {
       } else if (online != null && saved.snapshot == null) {
         archiveError = '这份档案缺少解读所需的盘面。可以在命理页重新测算。';
       }
-      _buildPreview();
-      unawaited(readReport());
     } catch (error) {
       if (_closed || revision != _archiveRevision) return;
       if (archiveId != null &&
@@ -171,6 +176,7 @@ class FortunePageController extends ChangeNotifier {
       if (!_closed && revision == _archiveRevision) {
         loadingArchive = false;
         _emit();
+        unawaited(_refreshPreview());
       }
     }
   }
@@ -507,10 +513,10 @@ class FortunePageController extends ChangeNotifier {
     if (error is JsonRequestError &&
         (error.status == 401 || error.status == 403)) {
       archive = null;
-      _buildPreview();
       _clearReport();
       archiveError = '账号会话已失效，请重新连接。';
       _emit();
+      unawaited(_refreshPreview());
       unawaited(account?.initialize());
     }
   }
@@ -539,25 +545,45 @@ class FortunePageController extends ChangeNotifier {
     _calculation = null;
   }
 
-  void _buildPreview() {
+  Future<void> _refreshPreview() async {
     final instant = referenceTime?.millisecondsSinceEpoch;
-    final wall = display?.clock;
-    if (instant == null || wall == null) return;
-    final active = archive;
-    final snapshot = active?.natalDays;
-    final natal = active == null
-        ? null
-        : readNatalDay(
-            timeKnown: active.timeKnown,
-            dayRows: active.charts[ArchivedChartMethod.bazi]!.rows
-                .where((row) => row.label == '日柱')
-                .map((row) => row.value)
-                .toList(),
-            snapshotPillars: snapshot?.candidates,
-            snapshotTimeKnown: snapshot?.timeKnown,
-          );
-    preview = buildFortunePreview(instant, period, wall, natal: natal);
-    almanac = period == FortunePeriod.day ? buildAlmanacDay(instant) : null;
+    final zone = display?.zone;
+    if (instant == null || zone == null) return;
+    _cancelPreview();
+    final work = _previewWork = Completer<void>();
+    preview = null;
+    almanac = null;
+    previewError = null;
+    loadingPreview = true;
+    _emit();
+    try {
+      final result = await local.preview(
+        instant,
+        period,
+        zone,
+        archive,
+        work.future,
+      );
+      if (_previewWork != work) return;
+      preview = result.preview;
+      almanac = result.almanac;
+      unawaited(readReport());
+    } catch (_) {
+      if (_previewWork != work) return;
+      previewError = '暂时无法计算当前运势日期，请重试。';
+    } finally {
+      if (_previewWork == work) {
+        _previewWork = null;
+        loadingPreview = false;
+        _emit();
+      }
+    }
+  }
+
+  void _cancelPreview() {
+    _previewWork?.complete();
+    _previewWork = null;
+    loadingPreview = false;
   }
 
   void _emit() {
@@ -567,6 +593,7 @@ class FortunePageController extends ChangeNotifier {
   @override
   void dispose() {
     _closed = true;
+    _cancelPreview();
     _work.complete();
     online?.api.close();
     super.dispose();

@@ -1,6 +1,8 @@
 import 'package:jovian_divination/jovian_divination.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../ui/interface_language.dart';
+
 import 'composer_attachment.dart';
 import 'composer_attachment_view.dart';
 import 'guide_composer.dart';
@@ -183,7 +185,7 @@ class _GuideConversationHistoryState extends State<GuideConversationHistory> {
                   Expanded(
                     child: Semantics(
                       header: true,
-                      child: Text('会话历史', style: theme.textTheme.titleMedium),
+                      child: UiText('会话历史', style: theme.textTheme.titleMedium),
                     ),
                   ),
                   IconButton(

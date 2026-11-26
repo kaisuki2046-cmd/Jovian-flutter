@@ -532,7 +532,7 @@ void main() {
         'bio': '测试个人简介',
         'visibility': {'displayName': true, 'bio': false},
       });
-      await tester.pageBack();
+      await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
       await tester.tap(find.text('账户与安全'));
       await tester.pumpAndSettle();
@@ -553,11 +553,11 @@ void main() {
       expect(find.text('实名认证服务暂未接入。'), findsOneWidget);
       expect(tester.widget<TextField>(name).controller!.text, isEmpty);
       expect(tester.widget<TextField>(number).controller!.text, isEmpty);
-      await tester.pageBack();
+      await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
-      await tester.pageBack();
+      await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
-      await tester.pageBack();
+      await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
       expect(find.text('改名后的测试会员'), findsOneWidget);
       expect(tester.takeException(), isNull);

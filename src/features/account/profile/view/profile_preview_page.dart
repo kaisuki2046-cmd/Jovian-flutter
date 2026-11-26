@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/interface_language.dart';
+
 import '../../../../ui/theme.dart';
 import '../../auth/control/account_controller.dart';
 import '../../reading-profile/model/account_reading_profile.dart';
@@ -36,7 +38,7 @@ class _ProfilePreviewPageState extends State<ProfilePreviewPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('他人视角预览')),
+    appBar: AppBar(title: const UiText('他人视角预览')),
     body: SafeArea(
       top: false,
       child: ListenableBuilder(
@@ -45,7 +47,7 @@ class _ProfilePreviewPageState extends State<ProfilePreviewPage> {
           if (widget.account.memberId != widget.owner) {
             return const Padding(
               padding: jovianPagePadding,
-              child: Text('请登录后预览个人资料。'),
+              child: UiText('请登录后预览个人资料。'),
             );
           }
           return FutureBuilder<ProfilePreview>(
@@ -61,7 +63,7 @@ class _ProfilePreviewPageState extends State<ProfilePreviewPage> {
                     const Text('暂时无法加载资料预览。'),
                     TextButton(
                       onPressed: () => setState(() => _preview = _read()),
-                      child: const Text('重新加载预览'),
+                      child: const UiText('重新加载预览'),
                     ),
                   ],
                 );
@@ -111,7 +113,7 @@ class _IdentityPreview extends StatelessWidget {
           if (!profile.hasData)
             const Padding(
               padding: EdgeInsets.only(top: 6),
-              child: Text('暂无公开资料'),
+              child: UiText('暂无公开资料'),
             ),
         ],
       ),
@@ -137,7 +139,7 @@ class _VisibilityDetails extends StatelessWidget {
         children: [
           Semantics(
             header: true,
-            child: Text(
+            child: UiText(
               '可见性明细',
               style: Theme.of(context).textTheme.titleMedium,
             ),

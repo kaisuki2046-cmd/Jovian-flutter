@@ -1,6 +1,8 @@
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../ui/interface_language.dart';
+
 import '../../../ui/theme.dart';
 import '../control/social_controller.dart';
 import '../model/social.dart';
@@ -40,7 +42,7 @@ class _SocialPrivacyPageState extends State<SocialPrivacyPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('社交隐私')),
+    appBar: AppBar(title: const UiText('社交隐私')),
     body: SafeArea(
       top: false,
       child: ListenableBuilder(
@@ -49,7 +51,7 @@ class _SocialPrivacyPageState extends State<SocialPrivacyPage> {
           if (!widget.controller.isCurrentMember)
             return const Padding(
               padding: jovianPagePadding,
-              child: Text('当前会话已变更。'),
+              child: UiText('当前会话已变更。'),
             );
           return FutureBuilder<_Privacy>(
             future: _privacy,
@@ -66,7 +68,7 @@ class _SocialPrivacyPageState extends State<SocialPrivacyPage> {
                       onPressed: () => setState(
                         () => _privacy = widget.controller.privacy(),
                       ),
-                      child: const Text('重新加载'),
+                      child: const UiText('重新加载'),
                     ),
                   ],
                 );
@@ -75,7 +77,7 @@ class _SocialPrivacyPageState extends State<SocialPrivacyPage> {
                 children: [
                   Card(
                     child: SwitchListTile(
-                      title: const Text('允许其他用户找到我'),
+                      title: const UiText('允许其他用户找到我'),
                       subtitle: const Text(
                         '开启后，其他登录用户可按 UID 找到你。昵称设为公开时，也可按昵称搜索。',
                       ),
@@ -99,7 +101,7 @@ class _SocialPrivacyPageState extends State<SocialPrivacyPage> {
                         children: [
                           Semantics(
                             header: true,
-                            child: Text(
+                            child: UiText(
                               '已拉黑用户',
                               style: Theme.of(context).textTheme.titleMedium,
                             ),
@@ -107,7 +109,7 @@ class _SocialPrivacyPageState extends State<SocialPrivacyPage> {
                           if (state.blocks.isEmpty)
                             const Padding(
                               padding: EdgeInsets.only(top: 8),
-                              child: Text('暂无拉黑用户。'),
+                              child: UiText('暂无拉黑用户。'),
                             ),
                           for (final item in state.blocks)
                             ListTile(
@@ -150,7 +152,7 @@ class _SocialPrivacyPageState extends State<SocialPrivacyPage> {
                                               .toList(),
                                         );
                                       }),
-                                child: const Text('解除拉黑'),
+                                child: const UiText('解除拉黑'),
                               ),
                             ),
                         ],

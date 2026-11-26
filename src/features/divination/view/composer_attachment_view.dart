@@ -3,6 +3,8 @@ import 'dart:typed_data';
 
 import 'package:material_ui/material_ui.dart';
 
+import '../../../ui/interface_language.dart';
+
 import 'composer_attachment.dart';
 
 class ComposerAttachmentTray extends StatelessWidget {
@@ -23,7 +25,7 @@ class ComposerAttachmentTray extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(4, 4, 4, 6),
-          child: Text(
+          child: UiText(
             '附件留在本机，AI 仅读取文字。',
             style: theme.textTheme.labelSmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
@@ -216,7 +218,7 @@ Widget _attachmentDialog(
               future: picture,
               builder: (context, snapshot) {
                 if (snapshot.hasError)
-                  return const Center(child: Text('此设备暂时无法预览这张图片。'));
+                  return const Center(child: UiText('此设备暂时无法预览这张图片。'));
                 if (snapshot.data case final bytes?)
                   return InteractiveViewer(
                     child: Image.memory(
@@ -224,7 +226,7 @@ Widget _attachmentDialog(
                       semanticLabel: attachment.name,
                       fit: BoxFit.contain,
                       errorBuilder: (context, error, stack) =>
-                          const Center(child: Text('此设备暂时无法预览这张图片。')),
+                          const Center(child: UiText('此设备暂时无法预览这张图片。')),
                     ),
                   );
                 return const Center(child: CircularProgressIndicator());
@@ -238,15 +240,18 @@ Widget _attachmentDialog(
               if (size != null) Text(formatComposerFileSize(size)),
               if (attachment.mimeType case final mime?) Text(mime),
               const SizedBox(height: 12),
-              const Text('此附件仅保留在本机。'),
+              const UiText('此附件仅保留在本机。'),
             ],
           ),
     actions: [
       if (attachment.canDownload)
-        TextButton(onPressed: attachment.download, child: const Text('保存到本机')),
+        TextButton(
+          onPressed: attachment.download,
+          child: const UiText('保存到本机'),
+        ),
       TextButton(
         onPressed: () => Navigator.pop(context),
-        child: const Text('关闭'),
+        child: const UiText('关闭'),
       ),
     ],
   );

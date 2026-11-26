@@ -1,6 +1,8 @@
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/interface_language.dart';
+
 import '../../../../ui/theme.dart';
 import '../../auth/control/account_controller.dart';
 import '../../auth/model/session.dart';
@@ -63,7 +65,7 @@ class _ProfileEditorPageState extends State<ProfileEditorPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('基础个人资料')),
+    appBar: AppBar(title: const UiText('基础个人资料')),
     body: SafeArea(
       top: false,
       child: ListenableBuilder(
@@ -72,7 +74,7 @@ class _ProfileEditorPageState extends State<ProfileEditorPage> {
           if (widget.account.socialMemberId != widget.member.id) {
             return const Padding(
               padding: jovianPagePadding,
-              child: Text('当前会话已变更。'),
+              child: UiText('当前会话已变更。'),
             );
           }
           return ListView(

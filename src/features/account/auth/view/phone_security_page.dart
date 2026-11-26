@@ -1,6 +1,8 @@
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/interface_language.dart';
+
 import '../../../../ui/theme.dart';
 import '../control/account_controller.dart';
 import '../control/phone_binding_controller.dart';
@@ -19,7 +21,7 @@ class PhoneSecurityPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('手机号')),
+    appBar: AppBar(title: const UiText('手机号')),
     body: SafeArea(
       top: false,
       child: ListenableBuilder(
@@ -215,7 +217,7 @@ class _PhoneBindingPanelState extends State<_PhoneBindingPanel> {
         const SizedBox(height: 12),
         FilledButton(
           onPressed: busy || next == null ? null : _confirm,
-          child: const Text('确认绑定手机号'),
+          child: const UiText('确认绑定手机号'),
         ),
       ],
     ]);
@@ -236,7 +238,7 @@ class _PhoneBindingPanelState extends State<_PhoneBindingPanel> {
         children: [
           if (_controller.loaded)
             _panel([
-              Text('当前绑定手机号', style: theme.textTheme.titleSmall),
+              UiText('当前绑定手机号', style: theme.textTheme.titleSmall),
               const SizedBox(height: 6),
               Text(phone == null ? '尚未绑定手机号' : maskAccountPhone(phone)),
               const SizedBox(height: 12),
@@ -257,7 +259,7 @@ class _PhoneBindingPanelState extends State<_PhoneBindingPanel> {
           else if (!busy)
             OutlinedButton(
               onPressed: _controller.load,
-              child: const Text('重新加载手机号'),
+              child: const UiText('重新加载手机号'),
             ),
           if (_editing && available && _controller.canBind) _editor(busy),
           if (busy) const LinearProgressIndicator(),

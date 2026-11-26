@@ -1,11 +1,15 @@
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/interface_language.dart';
+
 import '../../../social/social.dart';
 import '../../auth/control/account_controller.dart';
 import '../../auth/model/session.dart';
 import '../../history/view/archived_charts_page.dart';
 import '../../history/view/reports_page.dart';
+import '../../model/account_section.dart';
+import '../../view/account_section_links.dart';
 import '../model/profile_details.dart';
 import 'profile_avatar.dart';
 import 'profile_editor_page.dart';
@@ -44,12 +48,14 @@ class ProfileDashboard extends StatelessWidget {
       final memberId = account.socialMemberId;
       final member = memberId == null ? null : owner;
       final colors = Theme.of(context).colorScheme;
-      void open(Widget page) => Navigator.of(
-        context,
-      ).push<void>(MaterialPageRoute(builder: (_) => page));
+      void open(AccountSection section, Widget Function() page) =>
+          AccountSectionLinks.openPage(context, section, page);
       final editProfile = member == null
           ? null
-          : () => open(ProfileEditorPage(account: account, member: member));
+          : () => open(
+              AccountSection.profile,
+              () => ProfileEditorPage(account: account, member: member),
+            );
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -144,7 +150,10 @@ class ProfileDashboard extends StatelessWidget {
                           child: _Shortcut(
                             icon: Icons.description_outlined,
                             label: '我的报告',
-                            onTap: () => open(ReportsPage(account: account)),
+                            onTap: () => open(
+                              AccountSection.reports,
+                              () => ReportsPage(account: account),
+                            ),
                           ),
                         ),
                         if (openMessages != null)
@@ -160,7 +169,7 @@ class ProfileDashboard extends StatelessWidget {
                   if (needsAgreement)
                     FilledButton.tonal(
                       onPressed: openSettings,
-                      child: const Text('前往设置确认协议'),
+                      child: const UiText('前往设置确认协议'),
                     ),
                 ],
               ),
@@ -174,7 +183,7 @@ class ProfileDashboard extends StatelessWidget {
                 children: [
                   Semantics(
                     header: true,
-                    child: Text(
+                    child: UiText(
                       '账户与资料',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: colors.onSurfaceVariant,
@@ -189,7 +198,7 @@ class ProfileDashboard extends StatelessWidget {
                         if (editProfile != null) ...[
                           ListTile(
                             leading: const Icon(Icons.person_outline),
-                            title: const Text('基础个人资料'),
+                            title: const UiText('基础个人资料'),
                             trailing: const Icon(Icons.chevron_right),
                             onTap: editProfile,
                           ),
@@ -197,11 +206,13 @@ class ProfileDashboard extends StatelessWidget {
                         ],
                         ListTile(
                           leading: const Icon(Icons.auto_awesome_outlined),
-                          title: const Text('命理档案'),
-                          subtitle: const Text('查看已保存的命盘数据'),
+                          title: const UiText('命理档案'),
+                          subtitle: const UiText('查看已保存的命盘数据'),
                           trailing: const Icon(Icons.chevron_right),
-                          onTap: () =>
-                              open(ArchivedChartsPage(account: account)),
+                          onTap: () => open(
+                            AccountSection.charts,
+                            () => ArchivedChartsPage(account: account),
+                          ),
                         ),
                       ],
                     ),
@@ -307,7 +318,7 @@ class _Identity extends StatelessWidget {
                   backgroundColor: colors.primaryContainer,
                   foregroundColor: colors.onSurface,
                 ),
-                child: const Text('登录'),
+                child: const UiText('登录'),
               ),
             ),
         ],
@@ -348,7 +359,7 @@ class _ProfileTags extends StatelessWidget {
             onPressed: onEdit,
             style: style,
             icon: const Icon(Icons.add, size: 14),
-            label: const Text('添加标签'),
+            label: const UiText('添加标签'),
           ),
         for (final tag in tags)
           Tooltip(
@@ -550,13 +561,13 @@ class _RelationshipsState extends State<_Relationships> {
   }
 
   Future<void> _open(SocialList direction) async {
-    await Navigator.of(context).push<void>(
-      MaterialPageRoute(
-        builder: (_) => SocialConnectionsPage(
-          account: widget.account,
-          direction: direction,
-        ),
-      ),
+    await AccountSectionLinks.openPage(
+      context,
+      direction == SocialList.following
+          ? AccountSection.following
+          : AccountSection.followers,
+      () =>
+          SocialConnectionsPage(account: widget.account, direction: direction),
     );
     if (mounted && widget.account.socialMemberId == widget.memberId) _refresh();
   }
@@ -574,8 +585,8 @@ class _RelationshipsState extends State<_Relationships> {
             Wrap(
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                const Text('暂时无法读取关注与粉丝数量。'),
-                TextButton(onPressed: _refresh, child: const Text('重试')),
+                const UiText('暂时无法读取关注与粉丝数量。'),
+                TextButton(onPressed: _refresh, child: const UiText('重试')),
               ],
             ),
         ],

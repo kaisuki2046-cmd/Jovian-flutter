@@ -4,7 +4,9 @@ Flutter 版沿用项目的[目录分工](../FRAMEWORK.md)、[协作协议](../CO
 
 ## 启动 Flutter Web 前端
 
-先在仓库根目录运行 `node app-flutter/tool/legacy_compute/build.mjs`，由原 TypeScript 生成 Web 和原生端共用的计算资源。然后在 `app-flutter/` 运行以下命令，将服务地址和 Web 来源设为已有服务允许的值。
+在本机的 `4546` 工作目录下，`app/` 是原 RN 应用与现有 Node 服务，`app-flutter/` 是独立的 Flutter 项目根目录。此工作树在 Git 内通过 `app/app-flutter` 跟踪同一份源码，Windows 目录联接保留原路径。其他检出可以继续使用仓库内的 `app-flutter/`。文档中的跨模块相对链接以 Git 目录为准。
+
+在 Flutter 项目根目录运行 `node tool/legacy_compute/build.mjs`，由原 TypeScript 生成 Web 和原生端共用的计算资源。脚本支持仓库内和同级两种布局。然后运行以下命令，将服务地址和 Web 来源设为已有服务允许的值。使用本机工作树内的 SDK 时，从同级目录运行 `& '..\app\.local\flutter-toolchain\flutter\bin\flutter.bat' run -d chrome --release --target src/app/main.dart`，按需追加服务参数。
 
 ```sh
 flutter pub get
@@ -13,7 +15,7 @@ flutter run -d chrome --web-port 8081 --target src/app/main.dart --dart-define=A
 
 手机与桌面浏览器共用页面主题、卡片、表单及底栏。内容区按可用宽度居中，最多 720 逻辑像素。底栏顺序为命理、合盘、算事、消息、个人中心，周期运势仍从命理进入。个人中心设置可以切换外观，并在本设备保存选择。
 
-Web 底栏同步当前页面路径，支持刷新和浏览器前进、后退。使用 `/#/synastry`、`/#/divination`、`/#/messages`、`/#/account` 可直达对应入口，`/#/fortune` 与 `/#/modules/fortune` 继续打开周期运势。账户服务启用后，完成会话与协议确认即可继续访问原目标。外观设置可选浅色、深色或跟随系统，Web 会在首次使用时读取同源 RN 保存的外观。
+Web 底栏同步当前页面路径，支持刷新和浏览器前进、后退。使用 `/#/synastry`、`/#/divination`、`/#/messages`、`/#/account` 可直达对应入口，`/#/fortune` 与 `/#/modules/fortune` 继续打开周期运势。个人中心的设置、报告、资料和社交等子页也可通过原账户路径打开。账户服务启用后，完成会话与协议确认即可继续访问原目标。设置可切换浅色、深色或跟随系统，也可选择简体中文或英语。Web 会在首次使用时读取同源 RN 保存的语言和外观。生成的报告和用户填写内容保留原文。
 
 底栏沿用原界面的悬浮胶囊、图标和蓝色选中态。拖动水滴时，玻璃比底栏更亮，边缘会折射下方图标并模糊背景。松开后切到相应标签。个人中心沿用大头像、独立设置入口、关注和粉丝按钮及并排的报告与消息入口。
 

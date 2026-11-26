@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -14,6 +15,7 @@ import '../src/features/fortune/requests/fortune_report_api.dart';
 import '../src/features/fortune/view/fortune_calendar_page.dart';
 import '../src/features/fortune/view/fortune_page.dart';
 import '../src/shared/http/json_client.dart';
+import 'support/fortune_local_fixture.dart';
 
 const _owner = 'fortune-history-member';
 final _dayId = 'a' * 64;
@@ -167,6 +169,7 @@ void main() {
         MaterialApp(
           home: FortunePage(
             account: account,
+            local: const FortuneLocalFixture(),
             readServerTime: now,
             loadDisplay: () async => (
               zone: 'Asia/Shanghai',
@@ -220,6 +223,7 @@ void main() {
         const MaterialApp(
           home: FortuneCalendarPage(
             reference: FortuneReference('2026-11-10', '23:40'),
+            local: FortuneLocalFixture(),
           ),
         ),
       );
@@ -255,4 +259,55 @@ void main() {
       expect(find.text('截止时刻 2026-11-11 01:00'), findsOneWidget);
     },
   );
+
+  testWidgets('editing the query discards its pending calendar result', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(420, 1400);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final calendar = _DelayedCalendar();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: FortuneCalendarPage(
+          reference: const FortuneReference('2026-11-10', '23:40'),
+          local: calendar,
+        ),
+      ),
+    );
+    await tester.tap(find.text('查询历法'));
+    await tester.pump();
+    expect(find.byType(LinearProgressIndicator), findsOneWidget);
+    await tester.enterText(
+      find.widgetWithText(TextField, '北京日期'),
+      '2026-11-12',
+    );
+    await tester.pump();
+    expect(calendar.cancelled, isTrue);
+    expect(find.byType(LinearProgressIndicator), findsNothing);
+    calendar.first.completeError(StateError('Superseded query failed.'));
+    await tester.pumpAndSettle();
+    expect(find.text('历法查询暂不可用，请重试。'), findsNothing);
+    await tester.tap(find.text('查询历法'));
+    await tester.pumpAndSettle();
+    expect(find.text('查询起点 2026-11-13 00:00'), findsOneWidget);
+  });
+}
+
+class _DelayedCalendar extends FortuneLocalFixture {
+  final first = Completer<FortuneCalendar?>();
+  bool cancelled = false;
+  bool _started = false;
+
+  @override
+  Future<FortuneCalendar?> queryCalendar(
+    FortuneReference reference,
+    Future<void> cancel,
+  ) {
+    if (_started) return super.queryCalendar(reference, cancel);
+    _started = true;
+    unawaited(cancel.then<void>((_) => cancelled = true));
+    return first.future;
+  }
 }

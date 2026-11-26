@@ -4,12 +4,19 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:material_ui/material_ui.dart';
 
+import '../src/features/account/auth/control/account_controller.dart';
 import '../src/features/account/auth/requests/account_api.dart';
 import '../src/features/account/history/control/report_history_controller.dart';
 import '../src/features/account/history/model/report_history.dart';
 import '../src/features/account/history/requests/report_history_api.dart';
+import '../src/features/account/history/view/archived_charts_page.dart';
+import '../src/features/account/history/view/reports_page.dart';
+import '../src/features/account/settings/model/agreements.dart';
+import '../src/features/account/settings/requests/agreements_api.dart';
 import '../src/shared/http/json_client.dart';
+import '../src/ui/theme.dart';
 
 void main() {
   test(
@@ -77,11 +84,223 @@ void main() {
       expect(controller.locked, isTrue);
     },
   );
+
+  testWidgets(
+    'the narrow report reader preserves pagination and hides data on identity change',
+    (tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(320, 640);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPhysicalSize);
+      final first = 'a' * 64;
+      final second = 'b' * 64;
+      final requests = <String>[];
+      var mode = 'member';
+      final account = _account((request) {
+        final path = request.url.path;
+        if (path == '/account/session') {
+          return mode == 'guest'
+              ? _json({}, 401)
+              : _member(nicknameRequired: mode == 'nickname');
+        }
+        if (path == '/account/auth/guest') {
+          return _json({'id': 'guest-owner', 'expiresAt': 1795564800000});
+        }
+        final owner = request.url.queryParameters['expectedOwnerId'];
+        final before = request.url.queryParameters['before'];
+        expect(request.url.queryParameters['kind'], 'fortune');
+        requests.add('$owner:${before ?? path.split('/').last}');
+        if (owner == 'guest-owner') {
+          return _json({'entries': [], 'nextCursor': null});
+        }
+        expect(owner, 'member-owner');
+        if (path.endsWith(second)) {
+          return _json({
+            ..._entry(second, '第二份报告'),
+            'report': {
+              'version': 1,
+              'kind': 'fortune',
+              'sections': [
+                {'title': '小结', 'body': '仅本人可见的报告内容'},
+              ],
+            },
+          });
+        }
+        return _json({
+          'entries': [
+            if (before == null)
+              _entry(first, '第一份报告')
+            else
+              _entry(second, '第二份报告'),
+          ],
+          'nextCursor': before == null ? first : null,
+        });
+      });
+      addTearDown(account.dispose);
+      await account.initialize();
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: jovianTheme(Brightness.dark),
+          home: ReportsPage(account: account, initialKind: ReportKind.fortune),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('加载更多'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('第二份报告'));
+      await tester.pumpAndSettle();
+      final body = find.text('仅本人可见的报告内容');
+      expect(find.text('报告详情'), findsOneWidget);
+      expect(find.text('小结'), findsOneWidget);
+      expect(body, findsOneWidget);
+      expect(find.text('第一份报告'), findsNothing);
+      await tester.pageBack();
+      await tester.pumpAndSettle();
+      expect(find.text('第二份报告'), findsOneWidget);
+      expect(requests, [
+        'member-owner:reading-history',
+        'member-owner:$first',
+        'member-owner:$second',
+      ]);
+
+      await tester.tap(find.text('第二份报告'));
+      await tester.pumpAndSettle();
+      mode = 'nickname';
+      await account.initialize();
+      await tester.pumpAndSettle();
+      expect(body, findsNothing);
+      expect(find.text('会话已变化，请返回后重新读取。'), findsOneWidget);
+
+      mode = 'guest';
+      await account.initialize();
+      await tester.pumpAndSettle();
+      expect(body, findsNothing);
+      await tester.pageBack();
+      await tester.pumpAndSettle();
+      expect(find.text('暂无已保存的报告。'), findsOneWidget);
+      expect(find.text('第二份报告'), findsNothing);
+      expect(requests.last, 'guest-owner:reading-history');
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets('archived four pillars wrap and keep their saved details', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(320, 640);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPhysicalSize);
+    final account = _account((request) {
+      if (request.url.path == '/account/session') return _member();
+      expect(request.url.path, '/account/destiny-history/latest');
+      expect(request.url.queryParameters['expectedOwnerId'], 'member-owner');
+      return _json({
+        ..._entry('c' * 64),
+        'report': {
+          'version': 1,
+          'timeKnown': false,
+          'charts': [
+            {
+              'method': 'bazi',
+              'rows': [
+                {'label': '年柱', 'value': '甲子\n天干十神 比肩'},
+                {'label': '月柱', 'value': '乙丑'},
+                {'label': '日柱', 'value': '丙寅'},
+                {'label': '时柱', 'value': '未知'},
+              ],
+            },
+            {'method': 'ziwei', 'rows': [], 'note': '需要确定出生时刻。'},
+            {
+              'method': 'western',
+              'rows': [
+                {'label': '太阳', 'value': '摩羯座'},
+              ],
+            },
+          ],
+        },
+      });
+    });
+    addTearDown(account.dispose);
+    await account.initialize();
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: jovianTheme(Brightness.dark),
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: TextScaler.linear(1.4)),
+          child: child!,
+        ),
+        home: ArchivedChartsPage(account: account),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('三套盘面'), findsOneWidget);
+    expect(find.textContaining('出生时刻未完全确定'), findsOneWidget);
+    final first = tester.getTopLeft(find.text('甲子'));
+    final second = tester.getTopLeft(find.text('乙丑'));
+    final third = tester.getTopLeft(find.text('丙寅'));
+    expect(first.dy, second.dy);
+    expect(first.dx, third.dx);
+    expect(third.dy, greaterThan(first.dy));
+    expect(find.text('天干十神 比肩'), findsOneWidget);
+    await tester.tap(find.text('紫微斗数'));
+    await tester.pumpAndSettle();
+    expect(find.text('需要确定出生时刻。'), findsOneWidget);
+    expect(find.text('甲子'), findsNothing);
+    await tester.tap(find.text('西方星盘'));
+    await tester.pumpAndSettle();
+    expect(find.text('摩羯座'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 }
 
-Map<String, Object?> _entry(String id) => {
+AccountController _account(http.Response Function(http.Request) onRequest) {
+  final api = AccountApi(
+    JsonHttpClient(
+      base: Uri.parse('https://account.example.test'),
+      client: MockClient((request) async {
+        return switch (request.url.path) {
+          '/account/auth/capabilities' => _json({}),
+          '/account/agreements/catalog' => _json({
+            'documents': [
+              for (final id in ['privacy', 'terms', 'ai'])
+                {
+                  'id': id,
+                  'title': id,
+                  'version': 'v1',
+                  'hash': 'hash',
+                  'state': 'preview',
+                  'sections': [],
+                },
+            ],
+          }),
+          '/account/agreements' => _json({
+            'requiredAccepted': true,
+            'permissions': {
+              for (final purpose in aiPurposes.keys) purpose: false,
+            },
+          }),
+          _ => onRequest(request),
+        };
+      }),
+    ),
+  );
+  return AccountController(api, AgreementsApi(api));
+}
+
+http.Response _member({bool nicknameRequired = false}) => _json({
+  'user': {
+    'id': 'member-owner',
+    'displayName': '会员',
+    'nicknameRequired': nicknameRequired,
+  },
+});
+
+Map<String, Object?> _entry(String id, [String title = '归档报告']) => {
   'id': id,
-  'title': '归档报告',
+  'title': title,
   'calculatedAt': '2026-11-25T00:00:00.000Z',
   'savedAt': 1795564800000,
   'kind': 'fortune',

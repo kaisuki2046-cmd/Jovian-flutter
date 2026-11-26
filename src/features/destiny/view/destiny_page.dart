@@ -138,7 +138,9 @@ class _DestinyPageState extends State<DestinyPage> {
               if (widget.requestReport != null)
                 FilledButton(
                   onPressed: _controller.generateReport,
-                  child: const Text('获取命理解读'),
+                  child: Text(
+                    _controller.reportError == null ? '获取命理解读' : '重试命理解读',
+                  ),
                 )
               else
                 const Text('解读服务暂未配置。'),
@@ -157,6 +159,12 @@ class _DestinyPageState extends State<DestinyPage> {
               )
             else
               _entry(context),
+            if (_birth.isCurrent &&
+                !_editing &&
+                !_controller.busy &&
+                _controller.reading == null)
+              if (_birth.localProfile case final profile?)
+                _localProfileSummary(context, profile),
             if (_birth.loading)
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 8),
@@ -171,6 +179,14 @@ class _DestinyPageState extends State<DestinyPage> {
             ],
             if (_controller.calculationError case final error?)
               _status(context, error),
+            if (_controller.calculationError != null &&
+                !_editing &&
+                !_controller.busy)
+              if (_draft case final draft?)
+                FilledButton.tonal(
+                  onPressed: () => _controller.submit(draft),
+                  child: const Text('重试测算'),
+                ),
             if (_controller.chart case final chart?) ...[
               const SizedBox(height: 16),
               _BaZiResult(chart: chart),
@@ -182,6 +198,8 @@ class _DestinyPageState extends State<DestinyPage> {
                 onPressed: _controller.saving ? null : _controller.saveReport,
                 child: Text(_controller.saving ? '正在存档…' : '重试存档'),
               ),
+            if (_birth.localNotice case final notice?)
+              Semantics(liveRegion: true, child: Text(notice)),
           ],
         ),
       ),
@@ -203,7 +221,12 @@ class _DestinyPageState extends State<DestinyPage> {
         const SizedBox(height: 16),
         FilledButton(
           onPressed: _canEdit ? _openEditor : null,
-          child: Text(_birth.current?.fields.hasData == true ? '核对资料' : '开始解读'),
+          child: Text(
+            _birth.current?.fields.hasData == true ||
+                    _birth.localProfile != null
+                ? '核对资料'
+                : '开始解读',
+          ),
         ),
       ],
     ),
@@ -243,17 +266,81 @@ class _DestinyPageState extends State<DestinyPage> {
 
   bool get _canEdit =>
       !_controller.busy &&
+      !_birth.localReading &&
       (!_birth.member || (_birth.current != null && !_birth.loading));
 
   void _openEditor({bool useCurrentDraft = false}) {
     final current = _birth.current;
+    final fallback = _birth.localProfile;
     setState(() {
       _baseline = current?.fields;
       _prefill = useCurrentDraft && _draft != null
           ? BirthProfileDraft.fromProfile(_draft!)
-          : current?.draft ?? const BirthProfileDraft();
+          : current?.fields.hasData == true
+          ? current!.draft
+          : fallback == null
+          ? const BirthProfileDraft()
+          : BirthProfileDraft.fromProfile(fallback);
       _editing = true;
     });
+  }
+
+  Widget _localProfileSummary(BuildContext context, BirthProfile profile) {
+    final fields = accountFieldsFor(profile);
+    final time = fields.birthTime.isEmpty ? '出生时间未知' : fields.birthTime;
+    final gender = switch (profile.gender) {
+      BirthGender.female => '女',
+      BirthGender.male => '男',
+      BirthGender.other => '其他',
+    };
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('本机出生资料', style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 8),
+            Text('${fields.birthDate} · $time'),
+            Text('${fields.birthPlace} · $gender'),
+            const SizedBox(height: 4),
+            Wrap(
+              children: [
+                TextButton(
+                  onPressed: _canEdit ? _openEditor : null,
+                  child: const Text('编辑出生资料'),
+                ),
+                TextButton(
+                  onPressed: _birth.localWriting ? null : _confirmLocalDeletion,
+                  child: const Text('删除本机档案'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _confirmLocalDeletion() async {
+    final accepted = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('删除本机出生资料？'),
+        content: const Text('这里只删除此设备上的副本。账户出生资料和已归档报告仍可使用。'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('取消'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('删除'),
+          ),
+        ],
+      ),
+    );
+    if (mounted && accepted == true) await _birth.storeLocal(null);
   }
 
   Future<void> _confirm(BuildContext context, BirthProfile profile) async {
@@ -330,7 +417,10 @@ class _DestinyPageState extends State<DestinyPage> {
             }),
           ),
           TextButton(
-            onPressed: _controller.cancelTask,
+            onPressed: () {
+              _controller.cancelTask();
+              unawaited(_controller.returnToArchive());
+            },
             child: const Text('取消测算'),
           ),
         ],
@@ -340,10 +430,22 @@ class _DestinyPageState extends State<DestinyPage> {
 
   List<Widget> _report(BuildContext context, String body) {
     final charts = _controller.reading?.charts ?? _controller.archivedCharts;
+    final entry = _controller.archiveEntry;
+    final fresh = _controller.reading != null;
     return [
-      _reportCard(context, body, saved: _controller.reading == null),
-      if (_controller.saving) const LinearProgressIndicator(),
-      if (_controller.summarySaved) const Text('已保存解读和基础盘面。'),
+      _reportCard(
+        context,
+        body,
+        fresh: fresh,
+        calculatedAt: entry?.calculatedAt,
+      ),
+      if (_controller.saving) ...[
+        const LinearProgressIndicator(),
+        Semantics(liveRegion: true, child: const Text('正在保存本次解读…')),
+      ] else if (_controller.summarySaved)
+        const Text('已保存解读和基础盘面，完整盘面暂未归档。')
+      else if (fresh && entry != null)
+        Semantics(liveRegion: true, child: const Text('已保存，下次进入命理页可直接查看。')),
       if (charts != null)
         FilledButton.tonal(
           onPressed: () => showDestinyCharts(context, charts),
@@ -361,21 +463,18 @@ class _DestinyPageState extends State<DestinyPage> {
             onTap: () => open(id),
           ),
         ),
-      if (widget.account case final account?
-          when _controller.fortuneArchiveId != null ||
-              _controller.summarySaved ||
-              _controller.archivedCharts != null)
+      if (widget.account case final account? when entry != null)
         TextButton(
           onPressed: () => Navigator.push(
             context,
             MaterialPageRoute<void>(
-              builder: (_) => ReportsPage(account: account),
+              builder: (_) => ArchivedChartsPage(account: account),
             ),
           ),
           child: const Text('查看命盘记录'),
         ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      Wrap(
+        alignment: WrapAlignment.center,
         children: [
           TextButton(
             onPressed: _canEdit
@@ -383,7 +482,7 @@ class _DestinyPageState extends State<DestinyPage> {
                 : null,
             child: Text(_draft == null ? '重新测算' : '编辑出生资料'),
           ),
-          if (_controller.reading != null)
+          if (fresh)
             TextButton(
               onPressed: _controller.saving
                   ? null
@@ -392,6 +491,13 @@ class _DestinyPageState extends State<DestinyPage> {
             ),
         ],
       ),
+      if (fresh && _birth.canStoreLocally && _draft != null)
+        TextButton(
+          onPressed: _birth.localReading || _birth.localWriting
+              ? null
+              : () => _birth.storeLocal(_draft),
+          child: Text(_birth.localWriting ? '正在保存出生资料…' : '保存出生资料到本机'),
+        ),
     ];
   }
 
@@ -409,7 +515,8 @@ class _DestinyPageState extends State<DestinyPage> {
   Widget _reportCard(
     BuildContext context,
     String body, {
-    required bool saved,
+    required bool fresh,
+    DateTime? calculatedAt,
   }) => Card(
     child: Padding(
       padding: const EdgeInsets.all(16),
@@ -417,14 +524,29 @@ class _DestinyPageState extends State<DestinyPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            saved ? '上次解读' : '人生解读',
+            fresh ? '人生解读' : '上次解读',
             style: Theme.of(context).textTheme.titleMedium,
           ),
+          if (!fresh && calculatedAt != null) ...[
+            Text(_archiveTimeLabel(context, calculatedAt)),
+            const SizedBox(height: 8),
+          ],
           DestinyReportText(body),
         ],
       ),
     ),
   );
+
+  String _archiveTimeLabel(BuildContext context, DateTime instant) {
+    final local = instant.toLocal();
+    final format = MaterialLocalizations.of(context);
+    final date = format.formatCompactDate(local);
+    final time = format.formatTimeOfDay(
+      TimeOfDay.fromDateTime(local),
+      alwaysUse24HourFormat: true,
+    );
+    return '$date · $time';
+  }
 }
 
 class _BaZiResult extends StatelessWidget {

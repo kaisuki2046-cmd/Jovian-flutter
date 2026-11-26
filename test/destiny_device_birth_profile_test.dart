@@ -1,0 +1,239 @@
+import 'dart:convert';
+
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
+import 'package:jovian_destiny/jovian_destiny.dart';
+import 'package:material_ui/material_ui.dart';
+
+import '../src/features/account/account.dart';
+import '../src/features/account/settings/model/agreements.dart';
+import '../src/features/destiny/destiny.dart';
+import '../src/features/destiny/frontend/control/destiny_device_birth_profile.dart';
+import '../src/shared/http/json_client.dart';
+
+const _member = 'device-fixture-member';
+const _other = 'another-member';
+const _tokenKey = 'fixture-session';
+const _archiveId =
+    'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+const _place = BirthPlace(
+  id: 'shanghai',
+  name: '上海',
+  countryCode: 'CN',
+  country: '中国',
+  region: '上海',
+  city: '上海',
+  latitude: 31.2,
+  longitude: 121.47,
+  timeZone: 'Asia/Shanghai',
+);
+const _birth = BirthProfile(
+  date: BirthDate(1998, 8, 9),
+  time: BirthTime(hour: 12),
+  place: _place,
+  gender: BirthGender.female,
+);
+Future<List<BirthPlace>> _places() async => [_place];
+http.Response _json(Object? value) =>
+    http.Response.bytes(utf8.encode(jsonEncode(value)), 200);
+
+Map<String, Object?> _birthFields([String? date = '1998-08-09']) => {
+  'birthDate': date ?? '',
+  'birthTime': date == null ? '' : '12:30',
+  'birthPlace': date == null ? '' : '上海',
+  'gender': date == null ? '' : 'female',
+};
+
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  test(
+    'serializes a write and deletion, keeping each member profile separate',
+    () async {
+      FlutterSecureStorage.setMockInitialValues({});
+      await Future.wait([
+        saveLocalDestinyBirthProfile(_member, _birth, () => true),
+        saveLocalDestinyBirthProfile(_other, _birth, () => true),
+        clearLocalDestinyBirthProfile(_member),
+      ]);
+      expect(await readLocalDestinyBirthProfile(_member, _places), isNull);
+      final kept = await readLocalDestinyBirthProfile(_other, _places);
+      expect(kept?.place.id, _place.id);
+      expect(kept?.time.hour, 12);
+      expect(kept?.time.minute, isNull);
+      await clearLocalDestinyBirthProfile(_member);
+      await saveLocalDestinyBirthProfile(_member, _birth, () => false);
+      expect(await readLocalDestinyBirthProfile(_member, _places), isNull);
+    },
+  );
+
+  testWidgets(
+    'member can save, reuse, and delete the local copy after an archived report',
+    (tester) async {
+      FlutterSecureStorage.setMockInitialValues({_tokenKey: 'test-token'});
+      tester.view.physicalSize = const Size(430, 1150);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      const entry = {
+        'id': _archiveId,
+        'title': '命盘记录',
+        'calculatedAt': '2025-08-09T12:00:00Z',
+        'savedAt': 1754740800000,
+        'chartSnapshotSaved': true,
+      };
+      var remoteBirth = _birthFields();
+      Map<String, Object?>? archive;
+      final api = AccountApi(
+        JsonHttpClient(
+          base: Uri.parse('https://fixture.invalid'),
+          client: MockClient((request) async {
+            switch ('${request.method} ${request.url.path}') {
+              case 'GET /account/session':
+                return _json({
+                  'user': {'id': _member, 'displayName': '测试会员'},
+                });
+              case 'GET /account/auth/capabilities':
+                return _json({});
+              case 'GET /account/agreements/catalog':
+                return _json({
+                  'documents': [
+                    for (final id in ['terms', 'privacy', 'ai'])
+                      {
+                        'id': id,
+                        'title': id,
+                        'version': 'v1',
+                        'hash': id,
+                        'state': 'published',
+                        'sections': [],
+                      },
+                  ],
+                });
+              case 'GET /account/agreements':
+                return _json({
+                  'requiredAccepted': true,
+                  'permissions': {
+                    for (final purpose in aiPurposes.keys) purpose: true,
+                  },
+                });
+              case 'GET /account/reading-profile/birth-profile':
+                expect(request.url.queryParameters['expectedOwnerId'], _member);
+                return _json(remoteBirth);
+              case 'PATCH /account/reading-profile/birth-profile':
+                final body = jsonDecode(request.body) as Map<String, Object?>;
+                expect(body['expectedOwnerId'], _member);
+                expect(body['expected'], remoteBirth);
+                remoteBirth = body['profile'] as Map<String, Object?>;
+                return _json(remoteBirth);
+              case 'GET /account/destiny-history/latest':
+              case 'GET /account/destiny-history/$_archiveId':
+                expect(request.url.queryParameters['expectedOwnerId'], _member);
+                return _json(archive);
+              case 'GET /account/destiny-history':
+                return _json({
+                  'entries': [entry],
+                });
+              case 'POST /account/destiny-history':
+                final body = jsonDecode(request.body) as Map<String, Object?>;
+                expect(body['expectedOwnerId'], _member);
+                archive = {...entry, 'report': body['report']};
+                return _json(entry);
+              default:
+                fail(
+                  'Unexpected request ${request.method} ${request.url.path}',
+                );
+            }
+          }),
+        ),
+        nativeSession: const SecureNativeSession(_tokenKey),
+      );
+      final account = AccountController(api, AgreementsApi(api));
+      addTearDown(account.dispose);
+      await account.initialize();
+
+      Future<void> mount(String key) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: DestinyPage(
+              key: ValueKey(key),
+              account: account,
+              loadPlaces: _places,
+              calculate: (_) async =>
+                  fail('Legacy reading should supply the local charts.'),
+              calculateReading: (profile, _, _) async =>
+                  DestinyReading.fromLegacy({
+                    'archive': {
+                      'version': 1,
+                      'calculatedAt': entry['calculatedAt'],
+                      'timeKnown': profile.time.timeKnown,
+                      'chartSnapshot': {},
+                      'charts': [
+                        for (final method in ['bazi', 'ziwei', 'western'])
+                          {'method': method, 'rows': []},
+                      ],
+                    },
+                    'reportRequest': {'checked': true},
+                  }),
+              requestReport: (payload, _) async {
+                expect(payload, {'checked': true});
+                return '测试解读。';
+              },
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+      }
+
+      await mount('new-reading');
+      await tester.tap(find.text('核对资料'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('核对出生资料'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('确认并同步测算'));
+      await tester.pumpAndSettle();
+      expect(find.text('已保存，下次进入命理页可直接查看。'), findsOneWidget);
+      expect(await readLocalDestinyBirthProfile(_member, _places), isNull);
+      await tester.tap(find.text('保存出生资料到本机'));
+      await tester.pumpAndSettle();
+      expect(find.text('出生资料已保存到本机。'), findsOneWidget);
+
+      remoteBirth = _birthFields(null);
+      await mount('restore-device-and-report');
+      expect(find.text('上次解读'), findsOneWidget);
+      expect(find.text('本机出生资料'), findsOneWidget);
+      await tester.tap(find.text('重新测算'));
+      await tester.pumpAndSettle();
+      final dateField = find.widgetWithText(TextField, '出生日期');
+      expect(
+        tester.widget<TextField>(dateField).controller!.text,
+        '1998-08-09',
+      );
+
+      remoteBirth = _birthFields('2000-01-02');
+      await mount('restore-remote-precedence');
+      await tester.tap(find.text('重新测算'));
+      await tester.pumpAndSettle();
+      expect(
+        tester.widget<TextField>(dateField).controller!.text,
+        '2000-01-02',
+      );
+      await tester.tap(find.text('返回入口'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('删除本机档案'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('删除'));
+      await tester.pumpAndSettle();
+      expect(find.text('已删除本机出生档案。'), findsOneWidget);
+      expect(find.text('本机出生资料'), findsNothing);
+      expect(find.text('上次解读'), findsOneWidget);
+      expect(await readLocalDestinyBirthProfile(_member, _places), isNull);
+      expect(archive, isNotNull);
+      await tester.tap(find.text('查看命盘记录'));
+      await tester.pumpAndSettle();
+      expect(find.byType(ArchivedChartsPage), findsOneWidget);
+    },
+  );
+}

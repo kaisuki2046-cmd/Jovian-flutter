@@ -43,6 +43,7 @@ class DestinyPageController extends ChangeNotifier {
   DestinyCharts? archivedCharts;
   String? fortuneArchiveId;
   bool summarySaved = false;
+  ReportEntry? archiveEntry;
   ({String owner, String scope, Map<String, Object?> report})? _pendingSave;
 
   bool get busy => calculating || generating || saving;
@@ -78,6 +79,7 @@ class DestinyPageController extends ChangeNotifier {
     report = null;
     archivedCharts = null;
     fortuneArchiveId = null;
+    archiveEntry = null;
     summarySaved = false;
     reportError = null;
     archiveError = false;
@@ -132,6 +134,7 @@ class DestinyPageController extends ChangeNotifier {
     report = null;
     archivedCharts = null;
     fortuneArchiveId = null;
+    archiveEntry = null;
     summarySaved = false;
     reportError = null;
     calculationError = null;
@@ -155,6 +158,7 @@ class DestinyPageController extends ChangeNotifier {
       );
       if (_current(session.scope) && revision == _revision) {
         report = result?.body;
+        archiveEntry = result?.entry;
         archivedCharts = result == null
             ? null
             : DestinyCharts.tryArchive(result.destiny);
@@ -236,6 +240,7 @@ class DestinyPageController extends ChangeNotifier {
       );
       if (_current(pending.scope)) {
         _pendingSave = null;
+        archiveEntry = entry;
         fortuneArchiveId = entry.chartSnapshotSaved ? entry.id : null;
         summarySaved = !entry.chartSnapshotSaved;
       }

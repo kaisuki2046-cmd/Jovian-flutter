@@ -6,6 +6,7 @@ import 'package:jovian_destiny/jovian_destiny.dart';
 import '../../../../shared/http/json_client.dart';
 import '../../../account/account.dart';
 import '../../model/birth_profile_draft.dart';
+import 'destiny_device_birth_profile.dart';
 
 typedef SavedBirthDraft = ({
   AccountBirthFields fields,
@@ -21,16 +22,22 @@ class DestinyBirthController extends ChangeNotifier {
   final String? owner;
   SavedBirthDraft? current;
   SavedBirthDraft? conflict;
+  BirthProfile? localProfile;
   Completer<void>? _read;
   Completer<void>? _save;
   bool _disposed = false;
   String? readError;
   String? saveError;
+  String? localNotice;
+  bool localReading = false;
+  bool localWriting = false;
+  bool _localReady = false;
 
   bool get member => owner != null;
   bool get isCurrent => !_disposed && _account?.memberId == owner;
   bool get loading => _read != null;
   bool get saving => _save != null;
+  bool get canStoreLocally => member && !kIsWeb;
 
   Future<SavedBirthDraft> _draft(AccountBirthFields fields) async => (
     fields: fields,
@@ -42,6 +49,9 @@ class DestinyBirthController extends ChangeNotifier {
   Future<void> refresh() async {
     final id = owner;
     if (id == null || !isCurrent || loading || saving) return;
+    if (canStoreLocally && !_localReady && !localReading && !localWriting) {
+      unawaited(_restoreLocal(id));
+    }
     final request = _read = Completer<void>();
     readError = null;
     notifyListeners();
@@ -59,6 +69,49 @@ class DestinyBirthController extends ChangeNotifier {
         _read = null;
         if (isCurrent) notifyListeners();
       }
+    }
+  }
+
+  Future<void> _restoreLocal(String id) async {
+    localReading = true;
+    try {
+      final profile = await readLocalDestinyBirthProfile(id, _loadPlaces);
+      if (isCurrent) localProfile = profile;
+    } catch (_) {
+      if (isCurrent) localNotice = '暂时无法读取本机出生资料。';
+    } finally {
+      localReading = false;
+      _localReady = true;
+      if (isCurrent) notifyListeners();
+    }
+  }
+
+  Future<void> storeLocal(BirthProfile? profile) async {
+    final id = owner;
+    if (id == null ||
+        !canStoreLocally ||
+        !isCurrent ||
+        localReading ||
+        localWriting)
+      return;
+    localWriting = true;
+    localNotice = null;
+    notifyListeners();
+    try {
+      if (profile == null) {
+        await clearLocalDestinyBirthProfile(id);
+      } else {
+        await saveLocalDestinyBirthProfile(id, profile, () => isCurrent);
+      }
+      if (!isCurrent) return;
+      localProfile = profile;
+      localNotice = profile == null ? '已删除本机出生档案。' : '出生资料已保存到本机。';
+    } catch (_) {
+      if (isCurrent)
+        localNotice = profile == null ? '删除本机出生资料失败，请重试。' : '保存出生资料到本机失败，请重试。';
+    } finally {
+      localWriting = false;
+      if (isCurrent) notifyListeners();
     }
   }
 

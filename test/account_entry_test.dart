@@ -36,6 +36,103 @@ class _DeletionStorage implements DeletionReceiptStorage {
 }
 
 void main() {
+  testWidgets(
+    'a server-required nickname gates the signed-in app until saved',
+    (tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(320, 640);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPhysicalSize);
+      var pending = true;
+      var displayName = '临时昵称';
+      var protectedReads = 0;
+      final writes = <Map<String, Object?>>[];
+      Map<String, Object?> member() => {
+        'user': {
+          'id': 'nickname-owner',
+          'displayName': displayName,
+          'bio': '原个人简介',
+          if (pending) 'nicknameRequired': true,
+        },
+      };
+      final api = AccountApi(
+        JsonHttpClient(
+          base: Uri.parse('https://account.example.test'),
+          client: MockClient((request) async {
+            switch ('${request.method} ${request.url.path}') {
+              case 'GET /account/session':
+                return _json(member());
+              case 'GET /account/auth/capabilities':
+                return _json({'phoneCodesAvailable': true});
+              case 'GET /account/agreements/catalog':
+                return _json({
+                  'documents': [
+                    _document('terms', '用户服务协议'),
+                    _document('privacy', '隐私政策'),
+                    _document('ai', 'AI 数据共享告知'),
+                  ],
+                });
+              case 'GET /account/agreements':
+                return _json({
+                  'requiredAccepted': true,
+                  'permissions': {
+                    for (final key in aiPurposes.keys) key: false,
+                  },
+                });
+              case 'GET /social/me':
+                protectedReads++;
+                return _json({'followingCount': 0, 'followerCount': 0});
+              case 'PATCH /account/profile':
+                final body = jsonDecode(request.body) as Map<String, Object?>;
+                writes.add(body);
+                if (body['displayName'] == '已经占用') return _json({}, 409);
+                displayName = body['displayName'] as String;
+                pending = false;
+                return _json(member());
+              default:
+                return _json({}, 404);
+            }
+          }),
+        ),
+      );
+      final account = AccountController(api, AgreementsApi(api));
+      await tester.pumpWidget(
+        JovianApp(account: account, initialTab: JovianTab.account),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('设置昵称'), findsOneWidget);
+      expect(find.byType(NavigationBar), findsNothing);
+      expect(account.authorizedSession, isNull);
+      expect(protectedReads, 0);
+      final submit = find.widgetWithText(FilledButton, '保存昵称并继续');
+      final field = find.widgetWithText(TextField, '昵称');
+      await tester.enterText(field, '   ');
+      await tester.pumpAndSettle();
+      expect(tester.widget<FilledButton>(submit).onPressed, isNull);
+      await tester.enterText(field, '已经占用');
+      await tester.pumpAndSettle();
+      await tester.tap(submit);
+      await tester.pumpAndSettle();
+      expect(find.text('这个昵称已被使用，请换一个。'), findsOneWidget);
+      expect(find.byType(NavigationBar), findsNothing);
+      await tester.enterText(field, '  新的唯一昵称  ');
+      await tester.pumpAndSettle();
+      expect(find.text('这个昵称已被使用，请换一个。'), findsNothing);
+      await tester.tap(submit);
+      await tester.pumpAndSettle();
+      expect(writes.last, {
+        'expectedOwnerId': 'nickname-owner',
+        'displayName': '新的唯一昵称',
+        'bio': '原个人简介',
+      });
+      expect(find.text('设置昵称'), findsNothing);
+      expect(find.byType(NavigationBar), findsOneWidget);
+      expect(find.text('新的唯一昵称'), findsOneWidget);
+      expect(account.authorizedSession?.id, 'nickname-owner');
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets('confirmed account deletion can recover from a lost response', (
     tester,
   ) async {

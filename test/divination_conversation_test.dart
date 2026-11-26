@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -14,6 +16,8 @@ import '../src/features/divination/requests/reading_gateway.dart';
 import '../src/features/divination/requests/reading_history_codec.dart';
 import '../src/features/divination/requests/reading_recovery.dart';
 import '../src/features/divination/view/divination_page.dart';
+import '../src/features/divination/view/composer_attachment.dart';
+import '../src/features/divination/view/guide_form.dart';
 import '../src/shared/http/json_client.dart';
 
 const _question = '这件事如何推进？';
@@ -23,6 +27,136 @@ const _concern = '梳理这次面试的后续安排。';
 const _followUp = '我接下来该准备什么？';
 
 void main() {
+  testWidgets('composer keeps selected files local and sends only the caption', (
+    tester,
+  ) async {
+    final service = _ReadingService();
+    final online = service.connect(_Recovery());
+    addTearDown(online.dispose);
+    final picked = <ComposerAttachmentKind>[];
+    final image = ComposerAttachment(
+      file: XFile.fromData(
+        base64Decode(
+          'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+j/rkAAAAASUVORK5CYII=',
+        ),
+        mimeType: 'image/png',
+        path: 'local-image.png',
+        name: 'local-image.png',
+      ),
+      kind: ComposerAttachmentKind.image,
+    );
+    final file = ComposerAttachment(
+      file: XFile.fromData(
+        Uint8List.fromList(utf8.encode('contents must stay local')),
+        mimeType: 'text/plain',
+        path: 'local-document.txt',
+        name: 'local-document.txt',
+      ),
+      kind: ComposerAttachmentKind.file,
+      size: 24,
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        home: GuideForm(
+          online: online,
+          attachmentPicker: (kind) async {
+            picked.add(kind);
+            return kind == ComposerAttachmentKind.image
+                ? [image, file]
+                : [file];
+          },
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await _openAttachmentMenu(tester, '添加图片');
+    expect(picked, [ComposerAttachmentKind.image]);
+    expect(find.text('附件留在本机，AI 仅读取文字。'), findsOneWidget);
+    await tester.tap(find.bySemanticsLabel('预览图片 local-image.png'));
+    await tester.pumpAndSettle();
+    expect(find.byType(InteractiveViewer), findsOneWidget);
+    await _tap(tester, '关闭');
+    await tester.tap(find.byTooltip('移除附件 local-document.txt'));
+    await tester.pumpAndSettle();
+    expect(find.text('local-document.txt'), findsNothing);
+    await _send(tester);
+    expect(service.calls, isEmpty);
+    expect(find.text('local-image.png'), findsOneWidget);
+    expect(find.byTooltip('发送消息'), findsNothing);
+
+    await tester.enterText(find.byType(TextFormField), _question);
+    await _openAttachmentMenu(tester, '快捷提问');
+    await _tap(tester, '算一件事');
+    expect(
+      tester.widget<TextFormField>(find.byType(TextFormField)).controller?.text,
+      _question,
+    );
+    await _openAttachmentMenu(tester, '添加文件');
+    await _send(tester);
+    expect(picked, [ComposerAttachmentKind.image, ComposerAttachmentKind.file]);
+    expect(service.calls, ['POST /reading/understand']);
+    expect(service.understood, [_question]);
+    expect(service.transmitted, [
+      {'question': _question, 'requireModel': true},
+    ]);
+    expect(find.text('local-image.png'), findsOneWidget);
+    expect(find.text('local-document.txt'), findsOneWidget);
+    expect(find.text(_explained), findsOneWidget);
+    await tester.tap(find.byTooltip('新对话'));
+    await tester.pumpAndSettle();
+    expect(find.text('local-image.png'), findsNothing);
+    expect(find.text('local-document.txt'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('follow-up keeps the attachment out of the reading request', (
+    tester,
+  ) async {
+    final service = _ReadingService()..failReport = false;
+    final recovery = _Recovery();
+    final initial = service.connect(recovery);
+    await initial.start(_details, automatic: true);
+    initial.dispose();
+    service.calls.clear();
+    service.transmitted.clear();
+    final online = service.connect(recovery);
+    addTearDown(online.dispose);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: GuideForm(
+          online: online,
+          attachmentPicker: (_) async => [
+            ComposerAttachment(
+              file: XFile.fromData(
+                Uint8List(1),
+                path: 'follow-up-only.txt',
+                name: 'follow-up-only.txt',
+              ),
+              kind: ComposerAttachmentKind.file,
+            ),
+          ],
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(service.calls, ['GET /reading']);
+    await _openAttachmentMenu(tester, '添加文件');
+    await _send(tester);
+    expect(service.calls, ['GET /reading']);
+    expect(find.text('follow-up-only.txt'), findsOneWidget);
+    await _openAttachmentMenu(tester, '添加文件');
+    await tester.enterText(find.byType(TextFormField), _followUp);
+    await _send(tester);
+    expect(service.calls, ['GET /reading', 'POST /reading/follow-up']);
+    expect(service.transmitted, [
+      {},
+      {'step': 0, 'question': _followUp},
+    ]);
+    expect(find.text('follow-up-only.txt'), findsNWidgets(2));
+    expect(find.text('先确认后续时间。'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   test('only clears the deleted member’s native reading storage', () async {
     const prefix = 'jovian.divination.flutter.v1.https://fixture.invalid.';
     final token = 't' * 43;
@@ -288,6 +422,12 @@ Future<void> _send(WidgetTester tester) async {
   await tester.pumpAndSettle();
 }
 
+Future<void> _openAttachmentMenu(WidgetTester tester, String label) async {
+  await tester.tap(find.byTooltip('添加附件或快捷提问'));
+  await tester.pumpAndSettle();
+  await _tap(tester, label);
+}
+
 class _Recovery implements GuideHistoryStore {
   GuideRecovery? state;
   final _reads = <String, String>{};
@@ -324,6 +464,7 @@ class _ReadingService {
   Future<void>? understanding;
   final understood = <String>[];
   final calls = <String>[];
+  final transmitted = <Map<Object?, Object?>>[];
   final automatic = <bool>[];
   GuideRitual? _ritual;
   bool _hasReport = false;
@@ -346,6 +487,7 @@ class _ReadingService {
         ? const {}
         : jsonDecode(request.body) as Map;
     calls.add(call);
+    transmitted.add(body);
     if (call != 'POST /reading/understand' && call != 'POST /reading') {
       expectSync(request.headers['Authorization'], 'Bearer $_token');
     }

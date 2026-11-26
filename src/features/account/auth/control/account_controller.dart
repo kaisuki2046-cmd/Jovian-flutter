@@ -49,8 +49,12 @@ class AccountController extends ChangeNotifier {
   String? _notice;
 
   AccountSession? get session => _session;
+  AccountSession? get nicknameSetupMember =>
+      _session?.nicknameRequired == true ? _session : null;
   AccountSession? get authorizedSession =>
-      _agreementState?.requiredAccepted == true ? _session : null;
+      _agreementState?.requiredAccepted == true && nicknameSetupMember == null
+      ? _session
+      : null;
   AgreementCatalog? get catalog => _catalog;
   AgreementState? get agreementState => _agreementState;
   AuthCapabilities? get capabilities => _capabilities;
@@ -176,6 +180,40 @@ class AccountController extends ChangeNotifier {
     return saved;
   }
 
+  Future<void> completeNickname(String owner, String draft) async {
+    final member = nicknameSetupMember;
+    final name = draft.trim();
+    if (member == null ||
+        member.id != owner ||
+        name.isEmpty ||
+        name.runes.length > 40)
+      return;
+    await _run(() async {
+      bool isCurrent() => !_closed && nicknameSetupMember?.id == owner;
+      try {
+        final updated = await _account.updateProfile(owner, {
+          'displayName': name,
+          'bio': member.bio,
+        }, isCurrent: isCurrent);
+        if (!isCurrent()) return;
+        if (updated.id != owner || updated.nicknameRequired) {
+          _notice = '暂时无法保存昵称，请刷新后重试。';
+          return;
+        }
+        _session = updated;
+      } on JsonRequestError catch (error) {
+        if (error.status == 409) {
+          _notice = '这个昵称已被使用，请换一个。';
+        } else if (error.status == 401 || error.status == 403) {
+          await _restore();
+          if (isCurrent()) _notice = '登录状态已变更，请刷新后重试。';
+        } else {
+          rethrow;
+        }
+      }
+    }, failure: '暂时无法保存昵称，请重试。');
+  }
+
   String? get memberId {
     final session = authorizedSession;
     return !_closed && !_sessionChanging && session?.kind == AccountKind.member
@@ -257,7 +295,9 @@ class AccountController extends ChangeNotifier {
     query: query,
   );
 
-  Future<void> initialize() => _run(() async {
+  Future<void> initialize() => _run(_restore);
+
+  Future<void> _restore() async {
     final previousScope = _session?.scope;
     _session = await _account.restore();
     _restored = true;
@@ -268,7 +308,7 @@ class AccountController extends ChangeNotifier {
       if (_session != null)
         _agreements.state().then((value) => _agreementState = value),
     ]);
-  });
+  }
 
   Future<String?> sendCode(AccountIdentifier identifier) async {
     String? challenge;

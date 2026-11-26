@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../features/account/account.dart';
+import '../features/destiny/destiny.dart' show clearLocalDestinyBirthProfile;
 import '../features/divination/divination.dart'
     show clearMemberReadingData, memberReadingTokens;
 import '../shared/http/credentialed_client.dart'
@@ -31,7 +32,12 @@ AccountController? configureAccount({
         'jovian.account.deletion.v1.$base',
       ),
       legacyReadingTokens: memberReadingTokens,
-      clearMemberData: clearMemberReadingData,
+      clearMemberData: (owner) async {
+        await Future.wait([
+          clearMemberReadingData(owner),
+          clearLocalDestinyBirthProfile(owner),
+        ]);
+      },
     ),
   );
 }

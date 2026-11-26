@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:jovian_divination/jovian_divination.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'composer_attachment.dart';
 import 'guide_composer.dart';
 import 'guide_conversation.dart';
 import 'liuyao_form.dart';
@@ -17,11 +18,13 @@ class GuideForm extends StatefulWidget {
     this.online,
     this.openSynastry,
     this.active = true,
+    this.attachmentPicker = pickComposerAttachments,
   });
 
   final OnlineGuideController? online;
   final VoidCallback? openSynastry;
   final bool active;
+  final ComposerAttachmentPicker attachmentPicker;
 
   @override
   State<GuideForm> createState() => _GuideFormState();
@@ -35,6 +38,7 @@ class _GuideFormState extends State<GuideForm>
   final _question = TextEditingController();
   final _questionFocus = FocusNode();
   final _followUp = TextEditingController();
+  final _followUpFocus = FocusNode();
   final _reportScroll = ScrollController();
   final _clock = Stopwatch();
   final _ritualChanges = ValueNotifier(0);
@@ -43,9 +47,23 @@ class _GuideFormState extends State<GuideForm>
   GuideRitual? _ritual;
   DialogRoute<void>? _ritualRoute;
   GuideRitualPresentation? _presentation;
-  final _clarifications = <({String question, String reply})>[];
+  final _clarifications =
+      <
+        ({String question, String reply, List<ComposerAttachment> attachments})
+      >[];
   String? _pendingQuestion;
   bool _showCharts = false;
+  final _ownedAttachments = <ComposerAttachment>{};
+  final _draftAttachments = <ComposerAttachment>[];
+  final _localQuestionTurns = <ComposerAttachmentTurn>[];
+  final _localFollowUpTurns = <ComposerAttachmentTurn>[];
+  final _sentFollowUpAttachments = <int, List<ComposerAttachment>>{};
+  List<ComposerAttachment> _pendingQuestionAttachments = const [];
+  List<ComposerAttachment> _readingAttachments = const [];
+  ({int index, String question, List<ComposerAttachment> attachments})?
+  _sendingFollowUp;
+  Object? _attachmentSelection;
+  String? _attachmentError;
 
   @override
   bool get wantKeepAlive => true;
@@ -80,10 +98,18 @@ class _GuideFormState extends State<GuideForm>
     if (online == null) return;
     _onlineChanges = online.changes.listen((_) {
       if (!mounted) return;
-      final previous = online.reading?.followUps.lastOrNull?.question;
-      if (previous != null && previous == _followUp.text.trim())
-        _followUp.clear();
-      setState(() {});
+      setState(() {
+        final sent = _sendingFollowUp;
+        final followUps = online.reading?.followUps ?? const [];
+        if (sent != null && followUps.length > sent.index) {
+          if (followUps[sent.index].question == sent.question) {
+            _sentFollowUpAttachments[sent.index] = sent.attachments;
+            _draftAttachments.removeWhere(sent.attachments.contains);
+            if (_followUp.text.trim() == sent.question) _followUp.clear();
+          }
+          _sendingFollowUp = null;
+        }
+      });
       _ritualChanges.value++;
     });
     unawaited(online.restore());
@@ -97,18 +123,26 @@ class _GuideFormState extends State<GuideForm>
     _question.dispose();
     _questionFocus.dispose();
     _followUp.dispose();
+    _followUpFocus.dispose();
     _reportScroll.dispose();
+    _releaseAttachments();
     super.dispose();
   }
 
   void _sendQuestion() {
+    if (_attachmentSelection != null || widget.online?.busy == true) return;
+    final question = _question.text.trim();
+    if (question.isEmpty && _draftAttachments.isNotEmpty) {
+      _sendLocalAttachments(_localQuestionTurns, _clarifications.length);
+      return;
+    }
     if (_form.currentState?.validate() != true) return;
     FocusScope.of(context).unfocus();
     _presentation = null;
-    final question = _question.text.trim();
     if (widget.online case final online?) {
       setState(() {
         _pendingQuestion = question;
+        _pendingQuestionAttachments = _takeDraftAttachments();
         _question.clear();
       });
       unawaited(_startOnline(online, question));
@@ -124,6 +158,7 @@ class _GuideFormState extends State<GuideForm>
         focus: question,
         automatic: false,
       );
+      _readingAttachments = _takeDraftAttachments();
       _question.clear();
     });
     _openRitual();
@@ -141,19 +176,100 @@ class _GuideFormState extends State<GuideForm>
     if (!mounted || widget.online != online || _pendingQuestion == null) return;
     if (online.reading != null) {
       setState(() {
+        _readingAttachments = _finishQuestionAttachments();
         _pendingQuestion = null;
         _question.clear();
       });
       if (_snapshot?.stage == GuideStage.cast) _openRitual();
     } else if (online.message case final reply? when !online.canRetry) {
       setState(() {
-        _clarifications.add((question: _pendingQuestion!, reply: reply));
+        _clarifications.add((
+          question: _pendingQuestion!,
+          reply: reply,
+          attachments: _finishQuestionAttachments(),
+        ));
         _pendingQuestion = null;
         _question.clear();
       });
-    } else if (online.canRetry && _question.text.isEmpty) {
-      _question.text = _pendingQuestion!;
+    } else if (online.canRetry) {
+      setState(() {
+        if (_question.text.isEmpty) _question.text = _pendingQuestion!;
+        for (final attachment in _pendingQuestionAttachments)
+          if (!_draftAttachments.contains(attachment))
+            _draftAttachments.add(attachment);
+      });
     }
+  }
+
+  List<ComposerAttachment> _takeDraftAttachments() {
+    final attachments = List.of(_draftAttachments);
+    _draftAttachments.clear();
+    _attachmentError = null;
+    return attachments;
+  }
+
+  List<ComposerAttachment> _finishQuestionAttachments() {
+    final attachments = _pendingQuestionAttachments;
+    _draftAttachments.removeWhere(attachments.contains);
+    _pendingQuestionAttachments = const [];
+    return attachments;
+  }
+
+  void _sendLocalAttachments(List<ComposerAttachmentTurn> turns, int after) {
+    FocusScope.of(context).unfocus();
+    setState(() {
+      turns.add((after: after, attachments: _takeDraftAttachments()));
+    });
+  }
+
+  Future<void> _addAttachment(ComposerAttachmentKind kind) async {
+    if (_attachmentSelection != null || widget.online?.busy == true) return;
+    final attempt = Object();
+    setState(() {
+      _attachmentSelection = attempt;
+      _attachmentError = null;
+    });
+    try {
+      final files = await widget.attachmentPicker(kind);
+      if (!mounted || _attachmentSelection != attempt) {
+        for (final file in files) {
+          file.release();
+        }
+        return;
+      }
+      setState(() {
+        _ownedAttachments.addAll(files);
+        _draftAttachments.addAll(files);
+      });
+    } catch (_) {
+      if (mounted && _attachmentSelection == attempt) {
+        setState(() => _attachmentError = '未能读取所选附件，请重新选择。');
+      }
+    } finally {
+      if (mounted && _attachmentSelection == attempt) {
+        setState(() => _attachmentSelection = null);
+      }
+    }
+  }
+
+  void _removeAttachment(ComposerAttachment attachment) {
+    setState(() {
+      _draftAttachments.remove(attachment);
+      _attachmentError = null;
+      if (!_pendingQuestionAttachments.contains(attachment) &&
+          _sendingFollowUp?.attachments.contains(attachment) != true) {
+        _ownedAttachments.remove(attachment);
+        attachment.release();
+      }
+    });
+  }
+
+  void _releaseAttachments() {
+    for (final attachment in _ownedAttachments) {
+      attachment.release();
+    }
+    _ownedAttachments.clear();
+    _attachmentSelection = null;
   }
 
   void _toss() {
@@ -280,16 +396,37 @@ class _GuideFormState extends State<GuideForm>
     _followUp.clear();
     _pendingQuestion = null;
     _clarifications.clear();
+    _releaseAttachments();
+    _draftAttachments.clear();
+    _localQuestionTurns.clear();
+    _localFollowUpTurns.clear();
+    _sentFollowUpAttachments.clear();
+    _pendingQuestionAttachments = const [];
+    _readingAttachments = const [];
+    _sendingFollowUp = null;
+    _attachmentError = null;
     _ritual = null;
     _showCharts = false;
   }
 
   void _setSuggestedQuestion(String question) {
-    _question.value = TextEditingValue(
+    _fillQuestion(_question, _questionFocus, question);
+  }
+
+  void _setSuggestedFollowUp(String question) {
+    _fillQuestion(_followUp, _followUpFocus, question);
+  }
+
+  void _fillQuestion(
+    TextEditingController text,
+    FocusNode focus,
+    String question,
+  ) {
+    text.value = TextEditingValue(
       text: question,
       selection: TextSelection.collapsed(offset: question.length),
     );
-    _questionFocus.requestFocus();
+    focus.requestFocus();
   }
 
   @override
@@ -351,14 +488,20 @@ class _GuideFormState extends State<GuideForm>
     final ritual = _snapshot;
     if (ritual == null) {
       final welcome =
-          !busy && _pendingQuestion == null && _clarifications.isEmpty;
+          !busy &&
+          _pendingQuestion == null &&
+          _clarifications.isEmpty &&
+          _localQuestionTurns.isEmpty;
       return GuideThread(
         key: const ValueKey('guide-question'),
         welcome: welcome ? GuideWelcome(offline: online == null) : null,
         messages: [
           ..._conversation(),
           if (_pendingQuestion case final submitted?) ...[
-            GuideQuestionBubble(submitted),
+            GuideQuestionBubble(
+              submitted,
+              attachments: _pendingQuestionAttachments,
+            ),
             const SizedBox(height: 12),
           ],
           ..._feedback(),
@@ -371,11 +514,16 @@ class _GuideFormState extends State<GuideForm>
           focus: _questionFocus,
           hint: '输入你想测算的问题…',
           sendLabel: '发送消息',
-          busy: busy,
+          busy: busy || _attachmentSelection != null,
           send: _sendQuestion,
           suggest: _setSuggestedQuestion,
+          startQuestion: _questionFocus.requestFocus,
           openSynastry: widget.openSynastry,
           showAssistant: !welcome,
+          attachments: _draftAttachments,
+          addAttachment: _addAttachment,
+          removeAttachment: _removeAttachment,
+          attachmentError: _attachmentError,
         ),
       );
     }
@@ -411,16 +559,27 @@ class _GuideFormState extends State<GuideForm>
   );
 
   List<Widget> _conversation() => [
-    for (final turn in _clarifications) ...[
-      GuideQuestionBubble(turn.question),
-      const SizedBox(height: 8),
-      GuideConversationReply(body: turn.reply),
-      const SizedBox(height: 12),
+    for (var index = 0; index <= _clarifications.length; index++) ...[
+      for (final turn in _localQuestionTurns.where(
+        (turn) => turn.after == index,
+      )) ...[
+        GuideQuestionBubble('', attachments: turn.attachments),
+        const SizedBox(height: 12),
+      ],
+      if (index < _clarifications.length) ...[
+        GuideQuestionBubble(
+          _clarifications[index].question,
+          attachments: _clarifications[index].attachments,
+        ),
+        const SizedBox(height: 8),
+        GuideConversationReply(body: _clarifications[index].reply),
+        const SizedBox(height: 12),
+      ],
     ],
   ];
 
   List<Widget> _questionContext(GuideRitualSnapshot ritual) => [
-    GuideQuestionBubble(ritual.question),
+    GuideQuestionBubble(ritual.question, attachments: _readingAttachments),
     if (ritual.focus.trim().isNotEmpty && ritual.focus != ritual.question) ...[
       const SizedBox(height: 8),
       GuideConversationReply(heading: '确认的关注点', body: ritual.focus),
@@ -494,7 +653,11 @@ class _GuideFormState extends State<GuideForm>
         ],
         if (hasReport) ...[
           const SizedBox(height: 20),
-          GuideFollowUpList(followUps: reading!.followUps),
+          GuideFollowUpList(
+            followUps: reading!.followUps,
+            attachments: _sentFollowUpAttachments,
+            localTurns: _localFollowUpTurns,
+          ),
           if (live && !canFollowUp) const Text('这次算事的追问已达上限，可以另问一件事。'),
         ],
       ],
@@ -502,11 +665,19 @@ class _GuideFormState extends State<GuideForm>
           ? GuideComposer(
               form: _followUpForm,
               text: _followUp,
+              focus: _followUpFocus,
               hint: '接着上一题问',
               sendLabel: '发送消息',
               send: _sendFollowUp,
-              busy: busy,
+              busy: busy || _attachmentSelection != null,
               showAssistant: true,
+              suggest: _setSuggestedFollowUp,
+              startQuestion: _restart,
+              openSynastry: widget.openSynastry,
+              attachments: _draftAttachments,
+              addAttachment: _addAttachment,
+              removeAttachment: _removeAttachment,
+              attachmentError: _attachmentError,
               actions: [
                 guideComposerAction(
                   label: '另问一件事',
@@ -547,21 +718,46 @@ class _GuideFormState extends State<GuideForm>
         ),
       if (online.canRetry && !online.busy)
         OutlinedButton(
-          onPressed: () async {
-            await online.retry();
-            _finishQuestion(online);
-          },
+          onPressed: _attachmentSelection != null
+              ? null
+              : () async {
+                  await online.retry();
+                  _finishQuestion(online);
+                  _scrollReportToEnd();
+                },
           child: const Text('重试'),
         ),
     ];
   }
 
   Future<void> _sendFollowUp() async {
+    final online = widget.online;
+    final reading = online?.reading;
+    if (_attachmentSelection != null ||
+        online == null ||
+        online.busy ||
+        reading == null)
+      return;
+    final question = _followUp.text.trim();
+    final index = reading.followUps.length;
+    if (question.isEmpty && _draftAttachments.isNotEmpty) {
+      _sendLocalAttachments(_localFollowUpTurns, index);
+      _scrollReportToEnd();
+      return;
+    }
     if (_followUpForm.currentState?.validate() != true) return;
     FocusScope.of(context).unfocus();
-    final online = widget.online;
-    await online?.followUp(_followUp.text.trim());
+    _sendingFollowUp = (
+      index: index,
+      question: question,
+      attachments: List.of(_draftAttachments),
+    );
+    await online.followUp(question);
     if (!mounted || widget.online != online) return;
+    _scrollReportToEnd();
+  }
+
+  void _scrollReportToEnd() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || !_reportScroll.hasClients) return;
       final end = _reportScroll.position.maxScrollExtent;

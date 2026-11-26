@@ -103,7 +103,12 @@ class _JovianAppState extends State<JovianApp> {
     theme: jovianTheme(Brightness.light),
     darkTheme: jovianTheme(Brightness.dark),
     themeMode: _themeMode,
-    builder: (context, child) => JovianViewport(child: child!),
+    builder: (context, child) => JovianViewport(
+      child: switch (widget.account) {
+        final account? => NicknameSetupGate(account: account, child: child!),
+        null => child!,
+      },
+    ),
     routes: {
       '/destiny': (context) {
         final account = widget.account;
@@ -193,7 +198,9 @@ class _AppHomeState extends State<_AppHome> {
     super.initState();
     if (widget.account case final account?) {
       account.addListener(_updateGuideOwner);
-      unawaited(account.initialize());
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) unawaited(account.initialize());
+      });
     }
   }
 

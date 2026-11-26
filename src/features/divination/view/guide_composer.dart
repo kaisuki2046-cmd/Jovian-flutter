@@ -3,6 +3,9 @@ import 'dart:math' as math;
 import 'package:jovian_divination/jovian_divination.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'composer_attachment.dart';
+import 'composer_attachment_view.dart';
+
 const _assistantPortrait =
     'src/features/divination/assets/assistant/portrait.png';
 const guideSuggestedQuestions = ['这次面试会顺利吗？', '这段感情接下来会怎么发展？', '最近什么时候适合搬家？'];
@@ -159,9 +162,14 @@ class GuideComposer extends StatelessWidget {
     required this.sendLabel,
     required this.send,
     required this.busy,
+    required this.attachments,
+    required this.addAttachment,
+    required this.removeAttachment,
+    required this.suggest,
+    required this.startQuestion,
     this.focus,
-    this.suggest,
     this.openSynastry,
+    this.attachmentError,
     this.actions = const [],
     this.showAssistant = false,
   });
@@ -174,8 +182,13 @@ class GuideComposer extends StatelessWidget {
   final VoidCallback send;
   final bool busy;
   final bool showAssistant;
-  final ValueChanged<String>? suggest;
+  final ValueChanged<String> suggest;
+  final VoidCallback startQuestion;
   final VoidCallback? openSynastry;
+  final List<ComposerAttachment> attachments;
+  final ValueChanged<ComposerAttachmentKind> addAttachment;
+  final ValueChanged<ComposerAttachment> removeAttachment;
+  final String? attachmentError;
   final List<Widget> actions;
 
   @override
@@ -192,49 +205,30 @@ class GuideComposer extends StatelessWidget {
               alignment: AlignmentDirectional.centerStart,
               child: Wrap(spacing: 6, runSpacing: 4, children: actions),
             ),
+          if (attachmentError case final message?)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Semantics(
+                liveRegion: true,
+                child: Text(message, style: TextStyle(color: colors.error)),
+              ),
+            ),
+          if (attachments.isNotEmpty)
+            ComposerAttachmentTray(
+              attachments: attachments,
+              remove: busy ? null : removeAttachment,
+            ),
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              if (suggest case final pick?)
-                PopupMenuButton<VoidCallback>(
-                  tooltip: '快捷提问',
-                  enabled: !busy,
-                  onSelected: (action) => action(),
-                  icon: showAssistant ? null : const Icon(Icons.add_rounded),
-                  child: showAssistant
-                      ? const SizedBox.square(
-                          dimension: 52,
-                          child: GuideAssistantPortrait(),
-                        )
-                      : null,
-                  iconSize: 24,
-                  itemBuilder: (_) => [
-                    PopupMenuItem(
-                      value: () => pick(''),
-                      child: const Text('算一件事'),
-                    ),
-                    if (openSynastry case final open?)
-                      PopupMenuItem(value: open, child: const Text('看合盘')),
-                    PopupMenuItem(
-                      value: () => pick('帮我看看最近的整体运势'),
-                      child: const Text('帮我看看最近的整体运势'),
-                    ),
-                  ],
-                  style: IconButton.styleFrom(
-                    minimumSize: const Size.square(44),
-                    backgroundColor: colors.surfaceContainerLow,
-                    foregroundColor: colors.onSurface,
-                  ),
-                )
-              else if (showAssistant)
-                const SizedBox(
-                  width: 48,
-                  height: 56,
-                  child: Padding(
-                    padding: EdgeInsets.all(2),
-                    child: GuideAssistantPortrait(),
-                  ),
-                ),
+              _GuideComposerMenu(
+                busy: busy,
+                showAssistant: showAssistant,
+                addAttachment: addAttachment,
+                startQuestion: startQuestion,
+                openSynastry: openSynastry,
+                suggest: suggest,
+              ),
               const SizedBox(width: 6),
               Expanded(
                 child: DecoratedBox(
@@ -282,7 +276,11 @@ class GuideComposer extends StatelessWidget {
                                 validator: (input) =>
                                     validateGuideQuestion(input ?? ''),
                                 onFieldSubmitted: (value) {
-                                  if (!busy && value.trim().isNotEmpty) send();
+                                  if (!busy &&
+                                      (value.trim().isNotEmpty ||
+                                          attachments.isNotEmpty)) {
+                                    send();
+                                  }
                                 },
                               ),
                             ),
@@ -291,7 +289,8 @@ class GuideComposer extends StatelessWidget {
                         ValueListenableBuilder<TextEditingValue>(
                           valueListenable: text,
                           builder: (context, draft, _) {
-                            if (draft.text.trim().isEmpty)
+                            if (draft.text.trim().isEmpty &&
+                                attachments.isEmpty)
                               return const SizedBox(width: 8);
                             return IconButton.filled(
                               tooltip: sendLabel,
@@ -312,6 +311,106 @@ class GuideComposer extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _GuideComposerMenu extends StatefulWidget {
+  const _GuideComposerMenu({
+    required this.busy,
+    required this.showAssistant,
+    required this.addAttachment,
+    required this.startQuestion,
+    required this.openSynastry,
+    required this.suggest,
+  });
+
+  final bool busy;
+  final bool showAssistant;
+  final ValueChanged<ComposerAttachmentKind> addAttachment;
+  final VoidCallback startQuestion;
+  final VoidCallback? openSynastry;
+  final ValueChanged<String> suggest;
+
+  @override
+  State<_GuideComposerMenu> createState() => _GuideComposerMenuState();
+}
+
+class _GuideComposerMenuState extends State<_GuideComposerMenu> {
+  bool _shortcuts = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return MenuAnchor(
+      onClose: () {
+        if (_shortcuts) setState(() => _shortcuts = false);
+      },
+      menuChildren: _shortcuts
+          ? [
+              MenuItemButton(
+                closeOnActivate: false,
+                leadingIcon: const Icon(Icons.arrow_back),
+                onPressed: () => setState(() => _shortcuts = false),
+                child: const Text('返回'),
+              ),
+              MenuItemButton(
+                onPressed: widget.startQuestion,
+                child: const Text('算一件事'),
+              ),
+              if (widget.openSynastry case final open?)
+                MenuItemButton(onPressed: open, child: const Text('看合盘')),
+              MenuItemButton(
+                onPressed: () => widget.suggest('帮我看看最近的整体运势'),
+                child: const Text('帮我看看最近的整体运势'),
+              ),
+            ]
+          : [
+              MenuItemButton(
+                leadingIcon: const Icon(Icons.photo_outlined),
+                onPressed: () =>
+                    widget.addAttachment(ComposerAttachmentKind.image),
+                child: const Text('添加图片'),
+              ),
+              MenuItemButton(
+                leadingIcon: const Icon(Icons.insert_drive_file_outlined),
+                onPressed: () =>
+                    widget.addAttachment(ComposerAttachmentKind.file),
+                child: const Text('添加文件'),
+              ),
+              MenuItemButton(
+                closeOnActivate: false,
+                leadingIcon: const Icon(Icons.bolt_outlined),
+                onPressed: () => setState(() => _shortcuts = true),
+                child: const Text('快捷提问'),
+              ),
+            ],
+      builder: (context, menu, _) => IconButton(
+        tooltip: '添加附件或快捷提问',
+        onPressed: widget.busy
+            ? null
+            : () {
+                if (menu.isOpen) {
+                  menu.close();
+                } else {
+                  FocusScope.of(context).unfocus();
+                  menu.open();
+                }
+              },
+        style: IconButton.styleFrom(
+          minimumSize: const Size.square(44),
+          backgroundColor: widget.showAssistant
+              ? null
+              : colors.surfaceContainerLow,
+          foregroundColor: colors.onSurface,
+        ),
+        icon: widget.showAssistant
+            ? const SizedBox.square(
+                dimension: 48,
+                child: GuideAssistantPortrait(),
+              )
+            : const Icon(Icons.add_rounded),
       ),
     );
   }

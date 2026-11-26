@@ -1,12 +1,19 @@
 import 'package:jovian_divination/jovian_divination.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'composer_attachment.dart';
+import 'composer_attachment_view.dart';
 import 'guide_composer.dart';
 
 class GuideQuestionBubble extends StatelessWidget {
-  const GuideQuestionBubble(this.question, {super.key});
+  const GuideQuestionBubble(
+    this.question, {
+    super.key,
+    this.attachments = const [],
+  });
 
   final String question;
+  final List<ComposerAttachment> attachments;
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
@@ -26,12 +33,29 @@ class GuideQuestionBubble extends StatelessWidget {
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            child: Text(
-              question,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Colors.white,
-                height: 1.45,
-              ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                if (question.isNotEmpty)
+                  Text(
+                    question,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: Colors.white,
+                      height: 1.45,
+                    ),
+                  ),
+                for (final attachment in attachments)
+                  Padding(
+                    padding: EdgeInsets.only(
+                      top:
+                          question.isNotEmpty || attachment != attachments.first
+                          ? 7
+                          : 0,
+                    ),
+                    child: ComposerAttachmentTile(attachment: attachment),
+                  ),
+              ],
             ),
           ),
         ),
@@ -76,26 +100,40 @@ class GuideConversationReply extends StatelessWidget {
 }
 
 class GuideFollowUpList extends StatelessWidget {
-  const GuideFollowUpList({super.key, required this.followUps});
+  const GuideFollowUpList({
+    super.key,
+    required this.followUps,
+    this.attachments = const {},
+    this.localTurns = const [],
+  });
 
   final List<ReadingFollowUp> followUps;
+  final Map<int, List<ComposerAttachment>> attachments;
+  final List<ComposerAttachmentTurn> localTurns;
 
   @override
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      for (final item in followUps)
-        Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              GuideQuestionBubble(item.question),
-              const SizedBox(height: 8),
-              GuideConversationReply(body: item.answer, steps: item.nextSteps),
-            ],
+      for (var index = 0; index <= followUps.length; index++) ...[
+        for (final turn in localTurns.where((turn) => turn.after == index))
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: GuideQuestionBubble('', attachments: turn.attachments),
           ),
-        ),
+        if (index < followUps.length) ...[
+          GuideQuestionBubble(
+            followUps[index].question,
+            attachments: attachments[index] ?? const [],
+          ),
+          const SizedBox(height: 8),
+          GuideConversationReply(
+            body: followUps[index].answer,
+            steps: followUps[index].nextSteps,
+          ),
+          const SizedBox(height: 12),
+        ],
+      ],
     ],
   );
 }

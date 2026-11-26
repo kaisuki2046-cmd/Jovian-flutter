@@ -31,6 +31,8 @@ class ReportHistoryController extends ChangeNotifier {
   int _pageRevision = 0;
   int _detailRevision = 0;
 
+  bool get disposed => _closed;
+
   Future<void> refresh() async {
     _detailRevision++;
     selected = null;
@@ -88,6 +90,14 @@ class ReportHistoryController extends ChangeNotifier {
     } finally {
       if (!_closed && revision == _detailRevision) notifyListeners();
     }
+  }
+
+  void closeDetail() {
+    _detailRevision++;
+    selected = null;
+    report = null;
+    detailError = null;
+    notifyListeners();
   }
 
   void _checkIdentity(Object error) {

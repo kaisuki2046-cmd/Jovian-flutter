@@ -10,6 +10,7 @@ class AccountSession {
     this.namePublic = false,
     this.bioPublic = false,
     this.hasPassword = false,
+    this.nicknameRequired = false,
     this.socialProvider,
   }) : kind = AccountKind.member;
 
@@ -22,6 +23,7 @@ class AccountSession {
       namePublic = false,
       bioPublic = false,
       hasPassword = false,
+      nicknameRequired = false,
       socialProvider = null;
 
   final AccountKind kind;
@@ -33,6 +35,7 @@ class AccountSession {
   final bool namePublic;
   final bool bioPublic;
   final bool hasPassword;
+  final bool nicknameRequired;
   final String? socialProvider;
 
   String get scope => '${kind.name}:$id';
@@ -58,6 +61,7 @@ class AccountSession {
         namePublic: visibility is Map && visibility['displayName'] == true,
         bioPublic: visibility is Map && visibility['bio'] == true,
         hasPassword: password is bool ? password : user['email'] is String,
+        nicknameRequired: user['nicknameRequired'] == true,
         socialProvider:
             provider is String && ['wechat', 'qq'].contains(provider)
             ? provider

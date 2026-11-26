@@ -33,10 +33,50 @@ class AccountApi {
     bool authenticated = false,
     String? method,
     Map<String, String>? query,
+  }) => _requestAt(
+    ['account', ...path],
+    body: body,
+    authenticated: authenticated,
+    method: method,
+    query: query,
+  );
+
+  Future<Map<String, Object?>> requestSocial(
+    List<String> path, {
+    required bool Function() isCurrent,
+    Map<String, Object?>? body,
+    Map<String, String>? query,
+  }) async =>
+      await _requestAt(
+        ['social', ...path],
+        body: body,
+        authenticated: true,
+        query: query,
+        isCurrent: isCurrent,
+      ) ??
+      (throw const JsonRequestError('invalid_response'));
+
+  Future<Map<String, Object?>?> _requestAt(
+    List<String> path, {
+    Map<String, Object?>? body,
+    bool authenticated = false,
+    String? method,
+    Map<String, String>? query,
+    bool Function()? isCurrent,
   }) async {
-    final session = authenticated ? await readNativeSession() : null;
-    return _http.requestNullable(
-      ['account', ...path],
+    if (isCurrent?.call() == false) {
+      throw const JsonRequestError('account_changed', status: 401);
+    }
+    final storage = _nativeSession;
+    final session = authenticated && storage != null
+        ? await storage.read()
+        : null;
+    if (isCurrent != null &&
+        (!isCurrent() || (storage != null && session == null))) {
+      throw const JsonRequestError('account_changed', status: 401);
+    }
+    final result = await _http.requestNullable(
+      path,
       body: body,
       method: method,
       query: query,
@@ -45,6 +85,10 @@ class AccountApi {
         if (session != null) 'Authorization': 'Bearer $session',
       },
     );
+    if (isCurrent?.call() == false) {
+      throw const JsonRequestError('account_changed', status: 401);
+    }
+    return result;
   }
 
   Future<AuthCapabilities> capabilities() async =>

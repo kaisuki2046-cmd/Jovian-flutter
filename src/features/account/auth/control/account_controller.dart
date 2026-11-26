@@ -37,6 +37,25 @@ class AccountController extends ChangeNotifier {
 
   Future<String?> readNativeSession() => _account.readNativeSession();
 
+  String? get socialMemberId {
+    final session = authorizedSession;
+    return !_closed && !_sessionChanging && session?.kind == AccountKind.member
+        ? session!.id
+        : null;
+  }
+
+  Future<Map<String, Object?>> requestSocial(
+    String memberId,
+    List<String> path, {
+    Map<String, Object?>? body,
+    Map<String, String>? query,
+  }) => _account.requestSocial(
+    path,
+    isCurrent: () => socialMemberId == memberId,
+    body: body,
+    query: query,
+  );
+
   Future<void> initialize() => _run(() async {
     final previousScope = _session?.scope;
     _session = await _account.restore();

@@ -65,6 +65,7 @@ class _JovianAppState extends State<JovianApp> {
   static const _appearanceKey = 'jovian.ui.theme.v1';
   static const _languageKey = 'jovian.ui.language.v1';
   static const _appearance = FlutterSecureStorage();
+  late final _legacyPreferences = readLegacyDevicePreferences();
   late final _navigation = JovianRouter(
     shell: _shellPage,
     fortune: _fortunePage,
@@ -131,7 +132,9 @@ class _JovianAppState extends State<JovianApp> {
       final savedMode = ThemeMode.values
           .where((item) => item.name == stored)
           .firstOrNull;
-      final legacy = savedMode == null ? readLegacyWebAppearance() : null;
+      final legacy = savedMode == null
+          ? (await _legacyPreferences)?.appearance
+          : null;
       final mode =
           savedMode ??
           ThemeMode.values.where((item) => item.name == legacy).firstOrNull;
@@ -164,7 +167,7 @@ class _JovianAppState extends State<JovianApp> {
           .onError((_, _) => null);
       final language =
           InterfaceLanguage.parse(stored) ??
-          InterfaceLanguage.parse(readLegacyWebLanguage());
+          InterfaceLanguage.parse((await _legacyPreferences)?.language);
       if (mounted && !_languageChanged && language != null) {
         setState(() => _language = language);
       }

@@ -801,4 +801,5 @@ const englishInterfaceStrings = <String, String>{
   "正在打开…": "Opening…",
   "此设备暂时无法打开这个文件，请重试。": "This device could not open the file. Try again.",
   '查看此前解读': 'View earlier readings',
+  "模拟结果": "Simulated result",
 };

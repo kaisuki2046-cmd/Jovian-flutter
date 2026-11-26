@@ -68,8 +68,13 @@ class _SynastryPageState extends State<SynastryPage> {
   }
 
   Future<void> _generateSummary() async {
+    FocusManager.instance.primaryFocus?.unfocus();
     await _synastry.generateSummary();
-    if (_synastry.report != null) _scrollAfterLayout(bottom: false);
+    if (!mounted || _synastry.report == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _scroll.hasClients) _scroll.jumpTo(0);
+    });
+    WidgetsBinding.instance.ensureVisualUpdate();
   }
 
   Future<void> _restoreComparedReport() async {
@@ -107,6 +112,7 @@ class _SynastryPageState extends State<SynastryPage> {
         );
       }
     });
+    WidgetsBinding.instance.ensureVisualUpdate();
   }
 
   Future<void> _edit(SynastrySide side) async {
@@ -190,109 +196,114 @@ class _SynastryPageState extends State<SynastryPage> {
       ),
       body: SafeArea(
         top: false,
-        child: ListView(
+        child: SingleChildScrollView(
           controller: _scroll,
           padding: jovianPagePadding,
-          children: [
-            const UiText('从亲情、友情、爱情和合作四个角度看两人的相处。'),
-            if (_synastry.hasSession && !_synastry.member)
-              const Padding(
-                padding: EdgeInsets.only(top: 8),
-                child: UiText('访客可手动填写双方资料，报告保留在当前游客会话。'),
-              ),
-            if (_synastry.busy) ...[
-              const SizedBox(height: 10),
-              const LinearProgressIndicator(semanticsLabel: '正在处理合盘'),
-            ],
-            if (_synastry.report case final report?) ...[
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const UiText('从亲情、友情、爱情和合作四个角度看两人的相处。'),
+              if (_synastry.hasSession && !_synastry.member)
+                const Padding(
+                  padding: EdgeInsets.only(top: 8),
+                  child: UiText('访客可手动填写双方资料，报告保留在当前游客会话。'),
+                ),
+              if (_synastry.busy) ...[
+                const SizedBox(height: 10),
+                const LinearProgressIndicator(semanticsLabel: '正在处理合盘'),
+              ],
+              if (_synastry.report case final report?) ...[
+                const SizedBox(height: 12),
+                _report(context, report),
+              ],
+              if (_synastry.hasSession) ...[
+                const SizedBox(height: 12),
+                _savedReports(),
+              ],
+              if (!_synastry.canCalculate) ...[
+                const SizedBox(height: 12),
+                const Text('当前运行环境暂不支持本机合盘。可使用浏览器完成排盘。'),
+              ],
               const SizedBox(height: 12),
-              _report(context, report),
-            ],
-            if (_synastry.hasSession) ...[
-              const SizedBox(height: 12),
-              _savedReports(),
-            ],
-            if (!_synastry.canCalculate) ...[
-              const SizedBox(height: 12),
-              const Text('当前运行环境暂不支持本机合盘。可使用浏览器完成排盘。'),
-            ],
-            const SizedBox(height: 12),
-            _section(context, 'A 方 · 本人盘面', [
-              if (_synastry.member) _ownChartStatus(context),
-              if (_synastry.manualProfile(SynastrySide.a) case final profile?)
-                _ManualProfileSummary(profile),
-              if (_synastry.a case final chart?) _ChartSummary(chart),
-              Wrap(
-                spacing: 8,
-                runSpacing: 6,
-                children: [
-                  if (_synastry.member)
+              _section(context, 'A 方 · 本人盘面', [
+                if (_synastry.member) _ownChartStatus(context),
+                if (_synastry.manualProfile(SynastrySide.a) case final profile?)
+                  _ManualProfileSummary(profile),
+                if (_synastry.a case final chart?) _ChartSummary(chart),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 6,
+                  children: [
+                    if (_synastry.member)
+                      OutlinedButton(
+                        onPressed: _synastry.busy
+                            ? null
+                            : _synastry.readOwnChart,
+                        child: Text(
+                          _synastry.aFromArchive ? '重新读取本人盘面' : '读取本人盘面',
+                        ),
+                      ),
                     OutlinedButton(
-                      onPressed: _synastry.busy ? null : _synastry.readOwnChart,
+                      onPressed: !_synastry.canCalculate || _synastry.busy
+                          ? null
+                          : () => _edit(SynastrySide.a),
                       child: Text(
-                        _synastry.aFromArchive ? '重新读取本人盘面' : '读取本人盘面',
+                        _synastry.a == null ? '手动填写 A 方资料' : '修改 A 方资料',
                       ),
                     ),
-                  OutlinedButton(
-                    onPressed: !_synastry.canCalculate || _synastry.busy
-                        ? null
-                        : () => _edit(SynastrySide.a),
-                    child: Text(
-                      _synastry.a == null ? '手动填写 A 方资料' : '修改 A 方资料',
-                    ),
-                  ),
-                  if (_synastry.member &&
-                      _offersDestiny &&
-                      widget.openDestiny != null)
-                    TextButton(
-                      onPressed: widget.openDestiny,
-                      child: const UiText('前往命理'),
-                    ),
+                    if (_synastry.member &&
+                        _offersDestiny &&
+                        widget.openDestiny != null)
+                      TextButton(
+                        onPressed: widget.openDestiny,
+                        child: const UiText('前往命理'),
+                      ),
+                  ],
+                ),
+              ]),
+              const SizedBox(height: 10),
+              _section(context, 'B 方 · 对方盘面', [
+                if (_synastry.manualProfile(SynastrySide.b) case final profile?)
+                  _ManualProfileSummary(profile),
+                if (_synastry.b case final chart?) _ChartSummary(chart),
+                const UiText('盘面在本机计算。生成在线解读时，会发送双方的盘面对照结果。'),
+                CheckboxListTile(
+                  value: _synastry.allowed,
+                  contentPadding: EdgeInsets.zero,
+                  controlAffinity: ListTileControlAffinity.leading,
+                  title: const UiText('我已获准使用 B 方资料进行本次合盘'),
+                  onChanged: (value) => _synastry.confirmConsent(value == true),
+                ),
+                OutlinedButton(
+                  onPressed:
+                      !_synastry.allowed ||
+                          !_synastry.canCalculate ||
+                          _synastry.busy
+                      ? null
+                      : () => _edit(SynastrySide.b),
+                  child: Text(_synastry.b == null ? '手动填写 B 方资料' : '修改 B 方资料'),
+                ),
+              ]),
+              const SizedBox(height: 14),
+              FilledButton(
+                onPressed: _synastry.canCompare ? _compare : null,
+                child: const UiText('比较盘面'),
+              ),
+              if (_synastry.result case final result?) ...[
+                const SizedBox(height: 12),
+                _comparison(context, result),
+                if (_synastry.report == null) ...[
+                  const SizedBox(height: 10),
+                  _interpretAction(context),
                 ],
-              ),
-            ]),
-            const SizedBox(height: 10),
-            _section(context, 'B 方 · 对方盘面', [
-              if (_synastry.manualProfile(SynastrySide.b) case final profile?)
-                _ManualProfileSummary(profile),
-              if (_synastry.b case final chart?) _ChartSummary(chart),
-              const UiText('盘面在本机计算。生成在线解读时，会发送双方的盘面对照结果。'),
-              CheckboxListTile(
-                value: _synastry.allowed,
-                contentPadding: EdgeInsets.zero,
-                controlAffinity: ListTileControlAffinity.leading,
-                title: const UiText('我已获准使用 B 方资料进行本次合盘'),
-                onChanged: (value) => _synastry.confirmConsent(value == true),
-              ),
-              OutlinedButton(
-                onPressed:
-                    !_synastry.allowed ||
-                        !_synastry.canCalculate ||
-                        _synastry.busy
-                    ? null
-                    : () => _edit(SynastrySide.b),
-                child: Text(_synastry.b == null ? '手动填写 B 方资料' : '修改 B 方资料'),
-              ),
-            ]),
-            const SizedBox(height: 14),
-            FilledButton(
-              onPressed: _synastry.canCompare ? _compare : null,
-              child: const UiText('比较盘面'),
-            ),
-            if (_synastry.result case final result?) ...[
-              const SizedBox(height: 12),
-              _comparison(context, result),
-              if (_synastry.report == null) ...[
-                const SizedBox(height: 10),
-                _interpretAction(context),
               ],
+              if (_synastry.message case final message?)
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Semantics(liveRegion: true, child: Text(message)),
+                ),
             ],
-            if (_synastry.message case final message?)
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Semantics(liveRegion: true, child: Text(message)),
-              ),
-          ],
+          ),
         ),
       ),
     ),

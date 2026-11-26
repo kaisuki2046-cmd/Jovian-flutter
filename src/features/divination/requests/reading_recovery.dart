@@ -199,16 +199,15 @@ class _NativeReadingHistory
     } catch (_) {
       // Older reports may still be available in the legacy file.
     }
-    for (final entry in decodeLegacyGuideHistory(await _readLegacyHistory())) {
-      history.putIfAbsent(entry.id, () => entry);
-    }
     return history.values.toList();
   });
 
   @override
-  Future<List<LegacyGuideArchive>> readLegacyArchives() => _withStorage(
-    () async => decodeLegacyGuideArchives(await _readLegacyHistory()).toList(),
-  );
+  Future<List<LegacyGuideConversation>> readLegacyConversations() =>
+      _withStorage(
+        () async =>
+            decodeLegacyGuideConversations(await _readLegacyHistory()).toList(),
+      );
 
   @override
   Future<void> writeHistory(GuideHistoryEntry entry) => _write(

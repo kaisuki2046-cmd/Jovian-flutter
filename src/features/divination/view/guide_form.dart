@@ -46,7 +46,7 @@ class _GuideFormState extends State<GuideForm>
   StreamSubscription<void>? _onlineChanges;
   DialogRoute<void>? _ritualRoute;
   GuideRitualPresentation? _presentation;
-  LegacyGuideArchive? _openArchive;
+  LegacyGuideConversation? _openLegacyConversation;
   final _clarificationAttachments = <String, List<ComposerAttachment>>{};
   ({String text, TextEditingValue draft, List<ComposerAttachment> attachments})?
   _pendingQuestion;
@@ -332,7 +332,8 @@ class _GuideFormState extends State<GuideForm>
     if (online == null || online.busy) return;
     _closeHistory();
     if (online.activeHistoryId == id) {
-      if (_openArchive != null) setState(() => _openArchive = null);
+      if (_openLegacyConversation != null)
+        setState(() => _openLegacyConversation = null);
       return;
     }
     setState(_clearDraft);
@@ -344,16 +345,17 @@ class _GuideFormState extends State<GuideForm>
     if (online == null || online.busy) return;
     _closeHistory();
     if (online.activeConversationId == id) {
-      if (_openArchive != null) setState(() => _openArchive = null);
+      if (_openLegacyConversation != null)
+        setState(() => _openLegacyConversation = null);
       return;
     }
     setState(_clearDraft);
     unawaited(online.openConversation(id));
   }
 
-  void _selectArchive(LegacyGuideArchive archive) {
+  void _selectLegacyConversation(LegacyGuideConversation conversation) {
     _closeHistory();
-    setState(() => _openArchive = archive);
+    setState(() => _openLegacyConversation = conversation);
   }
 
   void _closeHistory() {
@@ -367,7 +369,7 @@ class _GuideFormState extends State<GuideForm>
     _question.clear();
     _followUp.clear();
     _pendingQuestion = null;
-    _openArchive = null;
+    _openLegacyConversation = null;
     _clarificationAttachments.clear();
     _releaseAttachments();
     _draftAttachments.clear();
@@ -421,14 +423,16 @@ class _GuideFormState extends State<GuideForm>
       drawer: GuideConversationHistory(
         entries: online?.history ?? const [],
         transcripts: online?.transcripts ?? const [],
-        archives: online?.legacyArchives ?? const [],
+        legacyConversations: online?.legacyConversations ?? const [],
         activeId:
-            _openArchive?.id ??
+            _openLegacyConversation?.id ??
             online?.activeConversationId ??
             online?.activeHistoryId,
         open: online?.busy == true ? null : _selectHistory,
         openConversation: online?.busy == true ? null : _selectConversation,
-        openArchive: online?.busy == true ? null : _selectArchive,
+        openLegacyConversation: online?.busy == true
+            ? null
+            : _selectLegacyConversation,
         back: _closeHistory,
       ),
       appBar: AppBar(
@@ -472,11 +476,11 @@ class _GuideFormState extends State<GuideForm>
   }
 
   Widget _conversationBody(BuildContext context) {
-    if (_openArchive case final archive?) {
-      return LegacyReadingArchiveView(
-        key: ValueKey(archive.id),
-        archive: archive,
-        close: () => setState(() => _openArchive = null),
+    if (_openLegacyConversation case final conversation?) {
+      return LegacyGuideConversationView(
+        key: ValueKey(conversation.id),
+        conversation: conversation,
+        close: () => setState(() => _openLegacyConversation = null),
       );
     }
     final online = widget.online;

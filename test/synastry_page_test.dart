@@ -28,6 +28,69 @@ const _place = BirthPlace(
 );
 
 void main() {
+  testWidgets('a long generated report opens at the outline on a narrow page', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(360, 700);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPhysicalSize);
+    final result = Completer<Map<String, String>>();
+    final account = await _fixtureAccount(
+      (request) {
+        if (request.method == 'POST' &&
+            request.url.path == '/account/reading-history') {
+          return _json(_entry('a' * 64, '四类关系归档'));
+        }
+        return _json(null);
+      },
+      share: true,
+      member: true,
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        home: SynastryPage(
+          loadPlaces: () async => [_place],
+          account: account,
+          calculate: (profile, _) async =>
+              _chart(profile.date.utcMidnight.toIso8601String()),
+          compare: (_, __, ___) async => _comparison,
+          summarize: (_, __, ___) => result.future,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await _tap(tester, '手动填写 A 方资料');
+    await _fillProfile(tester, '1990-06-01');
+    await _tap(tester, '确认A 方资料');
+    await _tap(tester, '我已获准使用 B 方资料进行本次合盘');
+    await _tap(tester, '手动填写 B 方资料');
+    await _fillProfile(tester, '1992-07-02');
+    await _tap(tester, '确认B 方资料');
+    await _tap(tester, '比较盘面');
+    final generate = find.text('生成合盘解读');
+    await tester.ensureVisible(generate);
+    await tester.pumpAndSettle();
+    await tester.tap(generate);
+    await tester.pump();
+    result.complete({
+      for (final key in ['family', 'friendship', 'romance', 'collaboration'])
+        key: List.filled(30, '保存在同一份合盘报告中的段落。').join('\n\n'),
+    });
+    await tester.pumpAndSettle();
+
+    expect(find.text('合盘解读').hitTestable(), findsOneWidget);
+    final collaboration = find.widgetWithText(OutlinedButton, '合作');
+    expect(collaboration.hitTestable(), findsOneWidget);
+    await tester.tap(collaboration);
+    await tester.pumpAndSettle();
+    final heading = find
+        .descendant(of: find.byType(Semantics), matching: find.text('合作'))
+        .hitTestable();
+    expect(heading, findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets(
     'guest edits both profiles, retries the draft and compares locally',
     (tester) async {

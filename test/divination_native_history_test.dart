@@ -130,7 +130,10 @@ void main() {
           {
             'id': 'existing-chat',
             'updatedAt': 1700000000000,
+            'title': '原生混合记录',
             'messages': [
+              {'id': 7, 'kind': 'user', 'text': '原生旧问题'},
+              {'id': 8, 'kind': 'guidance', 'text': '原生旧助手回复'},
               {'id': 1, 'kind': 'readingSession', 'snapshot': reading.toJson()},
               {
                 'id': 2,
@@ -150,11 +153,33 @@ void main() {
               },
             ],
           },
+          {
+            'id': 'plain-thread',
+            'title': '仅文字澄清',
+            'updatedAt': 1700000000001,
+            'messages': [
+              {'id': 1, 'kind': 'user', 'text': '普通文字也保留'},
+              {'id': 2, 'kind': 'guidance', 'text': '请进一步说明'},
+            ],
+          },
         ],
       });
       await legacy.writeAsString(contents);
       await pending.writeAsString('{');
-      await theirFile.writeAsString('{}');
+      final theirs = jsonEncode({
+        'activeId': 'their-thread',
+        'threads': [
+          {
+            'id': 'their-thread',
+            'title': '其他会员的旧记录',
+            'updatedAt': 1700000000002,
+            'messages': [
+              {'id': 1, 'kind': 'user', 'text': '隔离文字'},
+            ],
+          },
+        ],
+      });
+      await theirFile.writeAsString(theirs);
       await guestFile.writeAsString(contents);
 
       final store = createReadingRecovery(
@@ -170,23 +195,26 @@ void main() {
                 ownerScope: 'member:other',
                 legacyDirectory: legacyDirectory,
               )
-              as GuideHistoryStore;
+              as LegacyGuideArchiveStore;
       final anonymous = createReadingRecovery(
         _base,
         legacyDirectory: legacyDirectory,
       );
-      expect((await history.readHistory()).single.id, 'rn-existing-chat-1');
-      expect(
-        (await history.readHistory()).single.reading.toJson(),
-        reading.toJson(),
-      );
-      expect(
-        (await archives.readLegacyArchives()).single.report?.answer,
-        '保留旧报告正文',
-      );
+      expect(await history.readHistory(), isEmpty);
+      final legacyConversations = await archives.readLegacyConversations();
+      expect(legacyConversations.map((item) => item.title), [
+        '原生混合记录',
+        '仅文字澄清',
+      ]);
+      final messages = legacyConversations.first.messages;
+      expect(messages.map((entry) => entry.id), [7, 8, 1, 2]);
+      expect(messages[2].reading?.id, 'rn-existing-chat-1');
+      expect(messages[2].reading?.reading.toJson(), reading.toJson());
+      expect(messages[3].archive?.report?.answer, '保留旧报告正文');
+      expect(legacyConversations.last.messages.last.text, '请进一步说明');
       expect(await history.read(), isNull);
       expect(await history.readThread('rn-existing-chat-1'), isNull);
-      expect(await other.readHistory(), isEmpty);
+      expect((await other.readLegacyConversations()).single.title, '其他会员的旧记录');
       expect(anonymous, isNot(isA<LegacyGuideArchiveStore>()));
 
       await history.writeHistory(_entry('rn-existing-chat-1', reading));
@@ -194,6 +222,15 @@ void main() {
         (await history.readHistory()).single.updatedAt.toUtc(),
         DateTime.utc(2026, 11, 27),
       );
+      await history.write(GuideRecovery('t' * 43, null, 'rn-existing-chat-1'));
+      final service = DivinationServiceFixture();
+      final guide = service.connect(history);
+      addTearDown(guide.dispose);
+      await guide.restore();
+      expect(guide.history, isEmpty);
+      expect(guide.legacyConversations, hasLength(2));
+      expect(guide.reading, isNull);
+      expect(service.calls, isEmpty);
       expect(await legacy.readAsString(), contents);
       expect(await pending.readAsString(), '{');
 
@@ -201,10 +238,11 @@ void main() {
       await clearMemberReadingData(owner, legacyDirectory: legacyDirectory);
       expect(await legacy.exists(), isFalse);
       expect(await pending.exists(), isFalse);
-      expect(await theirFile.readAsString(), '{}');
+      expect(await theirFile.readAsString(), theirs);
       expect(await guestFile.readAsString(), contents);
       expect(await history.readHistory(), isEmpty);
-      expect(await archives.readLegacyArchives(), isEmpty);
+      expect(await archives.readLegacyConversations(), isEmpty);
+      expect((await other.readLegacyConversations()).single.title, '其他会员的旧记录');
     },
   );
 

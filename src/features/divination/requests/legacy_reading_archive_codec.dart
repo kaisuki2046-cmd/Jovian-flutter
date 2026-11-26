@@ -23,62 +23,155 @@ const _legacyMethods = {
   'three-number-v1': LegacyGuideMethod.meihua,
 };
 
-Iterable<GuideHistoryEntry> decodeLegacyGuideHistory(String? saved) sync* {
-  for (final reading in _readingSessions(saved)) {
-    if (reading.snapshot['ruleVersion'] != guideVersion) continue;
-    final entry = decodeGuideHistory(
-      jsonEncode({
-        'id': reading.id,
-        'reading': reading.snapshot,
-        'updatedAt': reading.updatedAt,
-      }),
-    );
-    if (entry != null) yield entry;
-  }
-}
+// RN limits each saved conversation to the newest 40 messages.
+const _legacyMessageLimit = 40;
+const _largestSafeInteger = 9007199254740991;
 
-Iterable<LegacyGuideArchive> decodeLegacyGuideArchives(String? saved) sync* {
-  for (final reading in _readingSessions(saved)) {
-    final archive = _archive(reading.id, reading.snapshot, reading.updatedAt);
-    if (archive != null) yield archive;
-  }
-}
-
-Iterable<({String id, Map<String, Object?> snapshot, int updatedAt})>
-_readingSessions(String? saved) sync* {
+Iterable<LegacyGuideConversation> decodeLegacyGuideConversations(
+  String? saved,
+) sync* {
   if (saved == null) return;
-  final Object? data;
-  try {
-    data = jsonDecode(saved);
-  } on FormatException {
-    return;
-  }
+  final data = _read(() => jsonDecode(saved));
   if (data case {'threads': final List threads}) {
+    final threadIds = <String>{};
     for (final thread in threads) {
       if (thread case {
         'id': final String chatId,
-        'updatedAt': final int updatedAt,
-        'messages': final List messages,
-      } when isGuideThreadId(chatId)) {
-        for (final message in messages) {
-          if (message case {
-            'id': final int messageId,
-            'kind': 'readingSession',
-            'snapshot': final Map<String, Object?> snapshot,
-          }) {
-            yield (
-              id: 'rn-$chatId-$messageId',
-              snapshot: snapshot,
-              updatedAt: message['sentAt'] is int
-                  ? message['sentAt'] as int
-                  : updatedAt,
-            );
+        'updatedAt': final num updatedAt,
+        'messages': final List rawMessages,
+      } when isGuideThreadId(chatId) && threadIds.add(chatId)) {
+        final time = _milliseconds(updatedAt);
+        if (time == null) continue;
+        final messages = <LegacyGuideMessage>[];
+        final messageIds = <int>{};
+        final start = rawMessages.length > _legacyMessageLimit
+            ? rawMessages.length - _legacyMessageLimit
+            : 0;
+        for (final raw in rawMessages.skip(start)) {
+          if (raw is! Map<String, Object?>) continue;
+          if (raw case {
+            'id': final int id,
+          } when id.abs() <= _largestSafeInteger && messageIds.add(id)) {
+            if (_message(chatId, id, raw, time) case final entry?) {
+              messages.add(entry);
+            }
           }
+        }
+        if (messages.isNotEmpty) {
+          yield (
+            id: 'rn-$chatId',
+            title: _title(thread['title'], messages),
+            updatedAt: time,
+            messages: List.unmodifiable(messages),
+          );
         }
       }
     }
   }
 }
+
+LegacyGuideMessage? _message(
+  String chatId,
+  int id,
+  Map<String, Object?> raw,
+  DateTime threadTime,
+) {
+  final kind = switch (raw['kind']) {
+    'user' => LegacyGuideMessageKind.user,
+    'guidance' || 'prompt' => LegacyGuideMessageKind.assistant,
+    'preview' => LegacyGuideMessageKind.preview,
+    'readingQuestion' => LegacyGuideMessageKind.question,
+    'readingSession' => LegacyGuideMessageKind.reading,
+    _ => null,
+  };
+  if (kind == null) return null;
+
+  String? focus;
+  String? error;
+  final names = <String>[];
+  GuideHistoryEntry? reading;
+  LegacyGuideArchive? archive;
+  final String? text;
+
+  switch (kind) {
+    case LegacyGuideMessageKind.user:
+      text = raw['text'] is String ? raw['text'] as String : null;
+      for (final item in _list(raw['attachments'])) {
+        if (item case {
+          'kind': 'file' || 'image',
+          'name': final String name,
+        } when name.trim().isNotEmpty) {
+          names.add(name);
+        }
+      }
+    case LegacyGuideMessageKind.assistant || LegacyGuideMessageKind.preview:
+      text = _nonEmpty(raw['text']);
+    case LegacyGuideMessageKind.question:
+      text = _nonEmpty(raw['question']);
+      focus = switch (raw['understanding']) {
+        {'focus': final String value} => _nonEmpty(value),
+        _ => null,
+      };
+      error = _nonEmpty(raw['error']);
+    case LegacyGuideMessageKind.reading:
+      final snapshot = raw['snapshot'];
+      if (snapshot is! Map<String, Object?>) return null;
+      text = _nonEmpty(snapshot['question']);
+      final version = snapshot['ruleVersion'];
+      final snapshotId = 'rn-$chatId-$id';
+      final time = _milliseconds(raw['sentAt']) ?? threadTime;
+      if (version == guideVersion && snapshot['method'] == 'combined') {
+        reading = decodeGuideHistory(
+          jsonEncode({
+            'id': snapshotId,
+            'reading': snapshot,
+            'updatedAt': time.millisecondsSinceEpoch,
+          }),
+        );
+      } else {
+        final method = _legacyMethods[version];
+        if (method == null || snapshot['method'] != method.name) return null;
+        archive = _archive(snapshotId, snapshot, time.millisecondsSinceEpoch);
+      }
+  }
+
+  if (text == null || (text.trim().isEmpty && names.isEmpty)) return null;
+  return (
+    id: id,
+    kind: kind,
+    text: text,
+    focus: focus,
+    error: error,
+    attachmentNames: List.unmodifiable(names),
+    reading: reading,
+    archive: archive,
+  );
+}
+
+String _title(Object? saved, List<LegacyGuideMessage> messages) {
+  if (_nonEmpty(saved) case final title?) return title;
+  for (final message in messages) {
+    if (message.kind != LegacyGuideMessageKind.user &&
+        message.kind != LegacyGuideMessageKind.reading) {
+      continue;
+    }
+    final candidate =
+        _nonEmpty(message.text) ?? message.attachmentNames.firstOrNull;
+    if (candidate != null) {
+      return String.fromCharCodes(
+        candidate.trim().replaceAll(RegExp(r'\s+'), ' ').runes.take(60),
+      );
+    }
+  }
+  return '';
+}
+
+String? _nonEmpty(Object? value) =>
+    value is String && value.trim().isNotEmpty ? value : null;
+
+DateTime? _milliseconds(Object? value) => value is num && value.isFinite
+    ? _read(() => DateTime.fromMillisecondsSinceEpoch(value.toInt()))
+    : null;
 
 LegacyGuideArchive? _archive(
   String id,

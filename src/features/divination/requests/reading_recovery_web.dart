@@ -144,13 +144,6 @@ class _BrowserReadingRecovery
             entries[entry.id] = entry;
         }
       }
-      if (_legacyOwner case final owner?) {
-        for (final entry in decodeLegacyGuideHistory(
-          storage.getItem('$legacyGuideHistoryPrefix$owner'),
-        )) {
-          entries.putIfAbsent(entry.id, () => entry);
-        }
-      }
     } catch (_) {
       // The current controller still has the conversations it has seen.
     }
@@ -158,14 +151,14 @@ class _BrowserReadingRecovery
   }
 
   @override
-  Future<List<LegacyGuideArchive>> readLegacyArchives() async {
+  Future<List<LegacyGuideConversation>> readLegacyConversations() async {
     final owner = _legacyOwner;
     if (owner == null) return const [];
     try {
       final stored = web.window.localStorage.getItem(
         '$legacyGuideHistoryPrefix$owner',
       );
-      return decodeLegacyGuideArchives(stored).toList();
+      return decodeLegacyGuideConversations(stored).toList();
     } catch (_) {
       // Archived records are optional when browser storage is unavailable.
       return const [];

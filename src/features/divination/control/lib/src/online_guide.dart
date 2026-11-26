@@ -55,8 +55,28 @@ typedef LegacyGuideArchive = ({
   MeihuaReading? meihua,
 });
 
+enum LegacyGuideMessageKind { user, assistant, preview, question, reading }
+
+typedef LegacyGuideMessage = ({
+  int id,
+  LegacyGuideMessageKind kind,
+  String text,
+  String? focus,
+  String? error,
+  List<String> attachmentNames,
+  GuideHistoryEntry? reading,
+  LegacyGuideArchive? archive,
+});
+
+typedef LegacyGuideConversation = ({
+  String id,
+  String title,
+  DateTime updatedAt,
+  List<LegacyGuideMessage> messages,
+});
+
 abstract interface class LegacyGuideArchiveStore {
-  Future<List<LegacyGuideArchive>> readLegacyArchives();
+  Future<List<LegacyGuideConversation>> readLegacyConversations();
 }
 
 class OnlineReading {
@@ -268,7 +288,8 @@ class OnlineGuideController {
   final _history = <String, GuideHistoryEntry>{};
   final _transcriptTurns = <String, GuideTranscriptTurn>{};
   String? _conversationId;
-  List<LegacyGuideArchive> _legacyArchives = const [];
+  List<LegacyGuideConversation> _legacyConversations = const [];
+  Set<String> _legacyReadingIds = const {};
   final _clockSession = guideEventId();
   String? _token;
   String? _threadId;
@@ -302,9 +323,11 @@ class OnlineGuideController {
 
   OnlineReading? archivedReading(String id) => _history[id]?.reading;
   bool get canContinue => _token != null;
-  List<LegacyGuideArchive> get legacyArchives => _legacyArchives;
+  List<LegacyGuideConversation> get legacyConversations => _legacyConversations;
   List<GuideHistoryEntry> get history =>
-      _history.values.toList()
+      _history.values
+          .where((entry) => !_legacyReadingIds.contains(entry.id))
+          .toList()
         ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
   bool get busy => _busy;
   String? get message => _message;
@@ -327,7 +350,14 @@ class OnlineGuideController {
     if (history != null)
       _history.addEntries(history.map((entry) => MapEntry(entry.id, entry)));
     if (_recovery case final LegacyGuideArchiveStore store) {
-      _legacyArchives = List.unmodifiable(await store.readLegacyArchives());
+      _legacyConversations = List.unmodifiable(
+        await store.readLegacyConversations(),
+      );
+      _legacyReadingIds = {
+        for (final conversation in _legacyConversations)
+          for (final message in conversation.messages)
+            if (message.reading case final reading?) reading.id,
+      };
     }
     final composing = await _restoreTranscript();
     final recovered = await _recovery.read();
@@ -339,6 +369,7 @@ class OnlineGuideController {
       }
       return;
     }
+    if (recovered.threadId?.startsWith('rn-') == true) return;
     _threadId = recovered.threadId ?? guideEventId();
     _conversationId = _conversationForReading(_threadId!) ?? _conversationId;
     _reading = _history[_threadId]?.reading;
@@ -396,7 +427,9 @@ class OnlineGuideController {
     _emit();
     await _saveTranscriptPosition();
     final cache = _historyStore;
-    final recovered = cache == null
+    final recovered = id.startsWith('rn-')
+        ? null
+        : cache == null
         ? _memoryRecovery[id]
         : await cache.readThread(id);
     if (recovered == null) {

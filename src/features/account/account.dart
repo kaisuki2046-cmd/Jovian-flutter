@@ -28,7 +28,7 @@ export 'settings/control/app_update_controller.dart' show AppUpdateController;
 export 'settings/model/android_release.dart'
     show AndroidAppVersion, AndroidRelease;
 export 'settings/model/legacy_web_appearance.dart'
-    show readLegacyWebAppearance, readLegacyWebLanguage;
+    show readLegacyDevicePreferences;
 export 'settings/view/app_update_host.dart' show AppUpdateHost;
 export 'view/account_section_links.dart' show AccountSectionLinks;
 export 'view/account_section_page.dart' show AccountSectionPage;

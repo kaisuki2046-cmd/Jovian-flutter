@@ -13,9 +13,11 @@ class GuideQuestionBubble extends StatelessWidget {
     this.question, {
     super.key,
     this.attachments = const [],
+    this.attachmentNames = const [],
   });
 
   final String question;
+  final List<String> attachmentNames;
   final List<ComposerAttachment> attachments;
 
   @override
@@ -46,6 +48,14 @@ class GuideQuestionBubble extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: Colors.white,
                       height: 1.45,
+                    ),
+                  ),
+                for (final name in attachmentNames)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Text(
+                      name,
+                      style: const TextStyle(color: Colors.white),
                     ),
                   ),
                 for (final attachment in attachments)
@@ -138,21 +148,21 @@ class GuideConversationHistory extends StatefulWidget {
     super.key,
     required this.entries,
     required this.transcripts,
-    required this.archives,
+    required this.legacyConversations,
     required this.activeId,
     required this.open,
     required this.openConversation,
-    required this.openArchive,
+    required this.openLegacyConversation,
     required this.back,
   });
 
   final List<GuideHistoryEntry> entries;
   final List<GuideTranscript> transcripts;
-  final List<LegacyGuideArchive> archives;
+  final List<LegacyGuideConversation> legacyConversations;
   final String? activeId;
   final ValueChanged<String>? open;
   final ValueChanged<String>? openConversation;
-  final ValueChanged<LegacyGuideArchive>? openArchive;
+  final ValueChanged<LegacyGuideConversation>? openLegacyConversation;
   final VoidCallback back;
 
   @override
@@ -207,15 +217,17 @@ class _GuideConversationHistoryState extends State<GuideConversationHistory> {
             updatedAt: entry.updatedAt,
             open: widget.open == null ? null : () => widget.open!(entry.id),
           ),
-      for (final archive in widget.archives)
-        if (_matches(archive.question, archive.focus, archive.followUps))
+      for (final conversation in widget.legacyConversations)
+        if (_matchesLegacyConversation(conversation))
           (
-            id: archive.id,
-            question: archive.question,
-            updatedAt: archive.updatedAt,
-            open: widget.openArchive == null
+            id: conversation.id,
+            question: conversation.title.isEmpty
+                ? context.uiLabel('新对话')
+                : conversation.title,
+            updatedAt: conversation.updatedAt,
+            open: widget.openLegacyConversation == null
                 ? null
-                : () => widget.openArchive!(archive),
+                : () => widget.openLegacyConversation!(conversation),
           ),
     ]..sort((left, right) => right.updatedAt.compareTo(left.updatedAt));
     final groups = <String, List<_GuideHistoryRow>>{};
@@ -307,6 +319,26 @@ class _GuideConversationHistoryState extends State<GuideConversationHistory> {
       ),
     );
   }
+
+  bool _matchesLegacyConversation(LegacyGuideConversation conversation) =>
+      conversation.title.toLowerCase().contains(_query) ||
+      conversation.messages.any(
+        (message) =>
+            _matches(
+              message.text,
+              message.focus ??
+                  message.reading?.reading.snapshot.focus ??
+                  message.archive?.focus ??
+                  '',
+              message.reading?.reading.followUps ??
+                  message.archive?.followUps ??
+                  const [],
+            ) ||
+            (message.error?.toLowerCase().contains(_query) ?? false) ||
+            message.attachmentNames.any(
+              (name) => name.toLowerCase().contains(_query),
+            ),
+      );
 
   bool _matchesTranscript(
     GuideTranscript transcript,

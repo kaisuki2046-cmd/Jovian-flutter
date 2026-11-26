@@ -17,6 +17,7 @@ public final class MainActivity extends FlutterActivity {
     private MethodChannel coinAudioChannel;
     private MethodChannel readingReferenceChannel;
     private MethodChannel attachmentPreviewChannel;
+    private MethodChannel legacyPreferencesChannel;
 
     @Override
     public void configureFlutterEngine(FlutterEngine flutterEngine) {
@@ -46,6 +47,15 @@ public final class MainActivity extends FlutterActivity {
                 } else {
                     result.success(false);
                 }
+            } else {
+                result.notImplemented();
+            }
+        });
+        legacyPreferencesChannel = new MethodChannel(
+            flutterEngine.getDartExecutor().getBinaryMessenger(), "jovian/legacy_preferences");
+        legacyPreferencesChannel.setMethodCallHandler((call, result) -> {
+            if ("read".equals(call.method)) {
+                result.success(LegacyPreferences.read(this));
             } else {
                 result.notImplemented();
             }
@@ -87,6 +97,7 @@ public final class MainActivity extends FlutterActivity {
         if (coinAudioChannel != null) coinAudioChannel.setMethodCallHandler(null);
         if (readingReferenceChannel != null) readingReferenceChannel.setMethodCallHandler(null);
         if (attachmentPreviewChannel != null) attachmentPreviewChannel.setMethodCallHandler(null);
+        if (legacyPreferencesChannel != null) legacyPreferencesChannel.setMethodCallHandler(null);
         if (coinAudio != null) coinAudio.release();
         super.cleanUpFlutterEngine(flutterEngine);
     }

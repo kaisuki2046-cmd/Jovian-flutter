@@ -30,143 +30,166 @@ class FortuneReportHistory extends StatefulWidget {
 }
 
 class _FortuneReportHistoryState extends State<FortuneReportHistory> {
-  late final _history = ReportHistoryController(
-    widget.account.reports,
-    widget.owner,
-    ReportKind.fortune,
-    widget.account.initialize,
-  );
+  ReportHistoryController? _history;
+  bool _expanded = false;
+  bool _readerOpen = false;
 
-  bool get _isCurrent =>
-      _ownsScope(widget.account, widget.scope) && !_history.locked;
+  bool get _hasScope => _ownsScope(widget.account, widget.scope);
 
-  Future<void> _open(ReportEntry entry) async {
-    if (!_isCurrent || _history.selected != null) return;
-    unawaited(_history.select(entry.id));
-    await Navigator.of(
-      context,
-    ).push<void>(MaterialPageRoute(builder: (_) => _reader(entry)));
-    if (mounted) _history.closeDetail();
+  void _toggleHistory() => setState(() {
+    _expanded = !_expanded;
+    if (_expanded) {
+      _history ??= ReportHistoryController(
+        widget.account.reports,
+        widget.owner,
+        ReportKind.fortune,
+        widget.account.initialize,
+      );
+    }
+  });
+
+  Future<void> _open(ReportEntry entry, ReportHistoryController history) async {
+    if (!_hasScope || history.locked || _readerOpen) return;
+    _readerOpen = true;
+    unawaited(history.select(entry.id));
+    final route = MaterialPageRoute<void>(
+      builder: (_) => _reader(entry, history),
+    );
+    await Navigator.of(context).push(route);
+    await route.completed;
+    _readerOpen = false;
+    if (mounted) {
+      history.closeDetail();
+    } else {
+      history.dispose();
+    }
   }
 
-  Widget _reader(ReportEntry entry) => Scaffold(
-    appBar: AppBar(title: const UiText('运势解读')),
-    body: SafeArea(
-      top: false,
-      child: ListenableBuilder(
-        listenable: Listenable.merge([widget.account, _history]),
-        builder: (context, _) {
-          if (!_isCurrent) return _unavailable;
-          if (_history.detailError case final error?) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(error),
-                  TextButton(
-                    onPressed: () => _history.select(entry.id),
-                    child: const UiText('重试读取'),
+  Widget _reader(ReportEntry entry, ReportHistoryController history) =>
+      Scaffold(
+        appBar: AppBar(title: const UiText('运势解读')),
+        body: SafeArea(
+          top: false,
+          child: ListenableBuilder(
+            listenable: Listenable.merge([widget.account, history]),
+            builder: (context, _) {
+              if (!_hasScope || history.locked) return _unavailable;
+              if (history.detailError case final error?) {
+                return Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(error),
+                      TextButton(
+                        onPressed: () => history.select(entry.id),
+                        child: const UiText('重试读取'),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            );
-          }
-          if (_history.report case final report?) {
-            return _SavedFortuneReport(
-              key: ValueKey(report.entry.id),
-              report: report,
-              fortune: widget.fortune,
-            );
-          }
-          return const Center(
-            child: CircularProgressIndicator(semanticsLabel: '正在读取运势报告'),
-          );
-        },
-      ),
-    ),
-  );
+                );
+              }
+              if (history.report case final report?) {
+                return _SavedFortuneReport(
+                  key: ValueKey(report.entry.id),
+                  report: report,
+                  fortune: widget.fortune,
+                );
+              }
+              return const Center(
+                child: CircularProgressIndicator(semanticsLabel: '正在读取运势报告'),
+              );
+            },
+          ),
+        ),
+      );
 
   @override
   void dispose() {
-    _history.dispose();
+    // The reader still listens until its route finishes closing.
+    if (!_readerOpen) _history?.dispose();
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) => ListenableBuilder(
-    listenable: Listenable.merge([widget.account, _history]),
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Semantics(
+        expanded: _expanded,
+        child: TextButton.icon(
+          onPressed: _hasScope ? _toggleHistory : null,
+          icon: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
+          label: UiText(_expanded ? '收起已存解读' : '查看已存解读'),
+        ),
+      ),
+      if (_expanded) _entries(_history!),
+    ],
+  );
+
+  Widget _entries(ReportHistoryController history) => ListenableBuilder(
+    listenable: history,
     builder: (context, _) {
-      final page = _history.page;
+      if (!_hasScope) return _unavailable;
+      if (history.locked) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const UiText('暂时无法读取存档。'),
+            TextButton(onPressed: history.refresh, child: const UiText('重试')),
+          ],
+        );
+      }
+      final page = history.page;
       final format = MaterialLocalizations.of(context);
-      return Scaffold(
-        appBar: AppBar(
-          title: const UiText('运势报告历史'),
-          actions: [
-            IconButton(
-              tooltip: '刷新运势报告',
-              onPressed:
-                  !_ownsScope(widget.account, widget.scope) || _history.loading
-                  ? null
-                  : _history.refresh,
-              icon: const Icon(Icons.refresh),
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (history.loading)
+            const LinearProgressIndicator(semanticsLabel: '正在读取运势报告历史'),
+          if (history.listError case final error?)
+            ListTile(
+              title: UiText(error),
+              trailing: TextButton(
+                onPressed: history.refresh,
+                child: const UiText('重试'),
+              ),
+            ),
+          if (page != null) ...[
+            if (!history.loading && page.entries.isEmpty)
+              const UiText('暂无已保存的运势报告。'),
+            for (final entry in page.entries)
+              Card(
+                child: ListTile(
+                  leading: const Icon(Icons.article_outlined),
+                  title: Text(entry.title),
+                  subtitle: Text(
+                    format.formatCompactDate(entry.savedAt.toLocal()) +
+                        ' · ' +
+                        format.formatTimeOfDay(
+                          TimeOfDay.fromDateTime(entry.savedAt.toLocal()),
+                          alwaysUse24HourFormat: true,
+                        ),
+                  ),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => _open(entry, history),
+                ),
+              ),
+            Wrap(
+              children: [
+                if (page.nextCursor != null)
+                  TextButton(
+                    onPressed: history.loading ? null : history.more,
+                    child: const UiText('加载更多'),
+                  ),
+                if (history.listError == null)
+                  TextButton(
+                    onPressed: history.loading ? null : history.refresh,
+                    child: const UiText('刷新运势报告'),
+                  ),
+              ],
             ),
           ],
-        ),
-        body: SafeArea(
-          top: false,
-          child: !_isCurrent
-              ? _unavailable
-              : RefreshIndicator(
-                  onRefresh: _history.refresh,
-                  child: ListView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: jovianPagePadding,
-                    children: [
-                      if (_history.loading)
-                        const LinearProgressIndicator(
-                          semanticsLabel: '正在读取运势报告历史',
-                        ),
-                      if (_history.listError case final error?)
-                        ListTile(
-                          title: Text(error),
-                          trailing: TextButton(
-                            onPressed: _history.refresh,
-                            child: const UiText('重试'),
-                          ),
-                        ),
-                      if (page != null) ...[
-                        if (page.entries.isEmpty) const Text('暂无已保存的运势报告。'),
-                        for (final entry in page.entries)
-                          Card(
-                            child: ListTile(
-                              leading: const Icon(Icons.article_outlined),
-                              title: Text(entry.title),
-                              subtitle: Text(
-                                format.formatCompactDate(
-                                      entry.savedAt.toLocal(),
-                                    ) +
-                                    ' · ' +
-                                    format.formatTimeOfDay(
-                                      TimeOfDay.fromDateTime(
-                                        entry.savedAt.toLocal(),
-                                      ),
-                                      alwaysUse24HourFormat: true,
-                                    ),
-                              ),
-                              trailing: const Icon(Icons.chevron_right),
-                              onTap: () => _open(entry),
-                            ),
-                          ),
-                        if (page.nextCursor != null)
-                          TextButton(
-                            onPressed: _history.loading ? null : _history.more,
-                            child: const UiText('加载更多'),
-                          ),
-                      ],
-                    ],
-                  ),
-                ),
-        ),
+        ],
       );
     },
   );
@@ -175,7 +198,7 @@ class _FortuneReportHistoryState extends State<FortuneReportHistory> {
 bool _ownsScope(AccountController account, String scope) =>
     !account.sessionChanging && account.authorizedSession?.scope == scope;
 
-const _unavailable = Center(child: Text('当前账号会话已变化，请返回周期运势。'));
+const _unavailable = Center(child: UiText('当前账号会话已变化，请返回周期运势。'));
 
 class _SavedFortuneReport extends StatefulWidget {
   const _SavedFortuneReport({

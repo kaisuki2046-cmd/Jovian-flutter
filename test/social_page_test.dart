@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -48,6 +49,7 @@ AccountController _account(
   _Storage storage,
   Future<http.Response> Function(http.Request) social, {
   Future<http.Response> Function(http.Request)? visibleProfile,
+  bool guest = false,
 }) {
   final api = AccountApi(
     JsonHttpClient(
@@ -69,9 +71,16 @@ AccountController _account(
         }
         switch (request.url.path) {
           case '/account/session':
-            return _json({
-              'user': {'id': _memberId, 'displayName': '当前会员'},
-            });
+            return guest
+                ? _json({
+                    'guest': {
+                      'id': 'guest-fixture',
+                      'expiresAt': 1800000000000,
+                    },
+                  })
+                : _json({
+                    'user': {'id': _memberId, 'displayName': '当前会员'},
+                  });
           case '/account/auth/capabilities':
             return _json({});
           case '/account/agreements/catalog':
@@ -185,8 +194,12 @@ void main() {
   });
 
   testWidgets(
-    'preserves UID and nickname search semantics and hides data on logout',
+    'opens logged-in search through the narrow message actions menu',
     (tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(320, 700);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
       final requests = <Map<String, String>>[];
       final account = _account(_Storage(), (request) async {
         if (request.url.path == '/social/notifications/summary') {
@@ -204,8 +217,26 @@ void main() {
       await account.initialize();
       await tester.pumpWidget(MaterialApp(home: SocialPage(account: account)));
       await tester.pumpAndSettle();
-      await tester.tap(find.byTooltip('找用户'));
+      final more = find.byTooltip('更多操作');
+      final findUser = find.widgetWithText(PopupMenuItem<VoidCallback>, '找用户');
+      await tester.tap(more);
       await tester.pumpAndSettle();
+      expect(findUser, findsOneWidget);
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(findUser, findsNothing);
+      await tester.tap(more);
+      await tester.pumpAndSettle();
+      await tester.tapAt(const Offset(12, 400));
+      await tester.pumpAndSettle();
+      expect(findUser, findsNothing);
+      await tester.tap(more);
+      await tester.pumpAndSettle();
+      await tester.tap(findUser);
+      await tester.pumpAndSettle();
+      expect(findUser, findsNothing);
+      expect(find.text('找用户'), findsOneWidget);
+      expect(tester.takeException(), isNull);
       await tester.enterText(find.byType(TextField), '1234');
       await tester.pump();
       await tester.tap(find.text('搜索'));
@@ -236,6 +267,48 @@ void main() {
       account.dispose();
     },
   );
+
+  testWidgets('guest menu opens the sign-in gate without searching', (
+    tester,
+  ) async {
+    final account = _account(
+      _Storage(),
+      (request) async => fail('A guest must not request ${request.url}.'),
+      guest: true,
+    );
+    await account.initialize();
+    var openedAccount = false;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: SocialPage(
+          account: account,
+          openAccount: () => openedAccount = true,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('更多操作'));
+    await tester.pumpAndSettle();
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.text('消息'), findsOneWidget);
+    expect(find.text('找用户'), findsNothing);
+
+    await tester.tap(find.byTooltip('更多操作'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(PopupMenuItem<VoidCallback>, '找用户'));
+    await tester.pumpAndSettle();
+    expect(find.text('找用户'), findsOneWidget);
+    expect(find.byType(TextField), findsNothing);
+    await tester.tap(find.text('前往登录'));
+    expect(openedAccount, isTrue);
+    await tester.tap(find.byType(BackButton));
+    await tester.pumpAndSettle();
+    expect(find.text('消息'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+    account.dispose();
+  });
 
   test(
     'drops old-owner requests and responses when the session changes',

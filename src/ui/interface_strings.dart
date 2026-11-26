@@ -688,4 +688,10 @@ const englishInterfaceStrings = <String, String>{
   "此平台暂不支持本机排盘。": "Local chart calculation is unavailable on this platform.",
   "查看此组合已存解读": "View saved reading for this pair",
   "前往 AI 授权": "Open AI permissions",
+  "关闭动效": "Pause animation",
+  "开启动效": "Play animation",
+  "系统已减少动态效果": "Reduced motion is enabled on your device",
+  "收起已存解读": "Collapse saved readings",
+  "刷新运势报告": "Refresh forecast history",
+  "暂时无法读取存档。": "Could not load saved readings.",
 };

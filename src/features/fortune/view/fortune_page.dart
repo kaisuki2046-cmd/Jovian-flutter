@@ -52,6 +52,7 @@ class FortunePage extends StatelessWidget {
     readServerTime: readServerTime,
     account: account,
     ownerId: owner,
+    scope: scope,
     archiveId: archiveId,
     connectOnline: connectOnline,
     local: local,
@@ -65,6 +66,7 @@ class _FortuneSession extends StatefulWidget {
     required this.readServerTime,
     required this.account,
     required this.ownerId,
+    required this.scope,
     required this.archiveId,
     required this.connectOnline,
     required this.local,
@@ -74,6 +76,7 @@ class _FortuneSession extends StatefulWidget {
   final Future<DateTime> Function()? readServerTime;
   final AccountController? account;
   final String? ownerId;
+  final String? scope;
   final String? archiveId;
   final FortuneOnline? Function()? connectOnline;
   final FortuneLocal local;
@@ -154,7 +157,7 @@ class _FortuneSessionState extends State<_FortuneSession> {
               if (_fortune.syncingTime || _fortune.loadingPreview)
                 const LinearProgressIndicator(),
               _dateControls(context),
-              if (_fortune.ownerId != null) ...[
+              if (widget.scope case final scope?) ...[
                 _archives(context),
                 if (_fortune.hasChart)
                   FortuneInterpretation(
@@ -183,12 +186,11 @@ class _FortuneSessionState extends State<_FortuneSession> {
                     loading: _fortune.loadingAdvice,
                     error: _fortune.adviceError,
                   ),
-                Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: TextButton(
-                    onPressed: _openHistory,
-                    child: const UiText('运势报告历史'),
-                  ),
+                FortuneReportHistory(
+                  account: widget.account!,
+                  owner: widget.ownerId!,
+                  scope: scope,
+                  fortune: _fortune,
                 ),
               ] else
                 const UiText('登录或进入游客体验后，可以保存并查看运势解读。'),
@@ -206,25 +208,6 @@ class _FortuneSessionState extends State<_FortuneSession> {
       ),
     ),
   );
-
-  void _openHistory() {
-    final account = widget.account!;
-    final session = account.authorizedSession;
-    if (account.sessionChanging ||
-        session == null ||
-        session.id != widget.ownerId)
-      return;
-    Navigator.of(context).push<void>(
-      MaterialPageRoute(
-        builder: (_) => FortuneReportHistory(
-          account: account,
-          owner: session.id,
-          scope: session.scope,
-          fortune: _fortune,
-        ),
-      ),
-    );
-  }
 
   Widget _dateControls(BuildContext context) {
     final window = _fortune.preview?.window;

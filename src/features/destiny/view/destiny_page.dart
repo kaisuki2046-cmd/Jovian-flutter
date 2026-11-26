@@ -15,6 +15,7 @@ import 'birth_profile_confirmation.dart';
 import 'birth_profile_editor.dart';
 import 'destiny_chart_dialog.dart';
 import 'destiny_report_text.dart';
+import 'destiny_star_visual.dart';
 
 class DestinyPage extends StatefulWidget {
   const DestinyPage({
@@ -52,6 +53,7 @@ class _DestinyPageState extends State<DestinyPage> {
   AccountBirthFields? _baseline;
   DialogRoute<BirthProfile>? _confirmation;
   bool _editing = false;
+  bool _motionEnabled = true;
 
   @override
   void initState() {
@@ -86,7 +88,27 @@ class _DestinyPageState extends State<DestinyPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const UiText('命理')),
+    appBar: AppBar(
+      title: const UiText('命理'),
+      actions: [
+        IconButton(
+          isSelected:
+              _motionEnabled && !MediaQuery.disableAnimationsOf(context),
+          tooltip: context.uiLabel(
+            MediaQuery.disableAnimationsOf(context)
+                ? '系统已减少动态效果'
+                : _motionEnabled
+                ? '关闭动效'
+                : '开启动效',
+          ),
+          onPressed: MediaQuery.disableAnimationsOf(context)
+              ? null
+              : () => setState(() => _motionEnabled = !_motionEnabled),
+          icon: const Icon(Icons.play_circle_outline),
+          selectedIcon: const Icon(Icons.pause_circle_outline),
+        ),
+      ],
+    ),
     body: SafeArea(
       top: false,
       child: ListenableBuilder(
@@ -188,11 +210,21 @@ class _DestinyPageState extends State<DestinyPage> {
     padding: const EdgeInsets.symmetric(vertical: 8),
     child: Column(
       children: [
-        Image.asset(
-          'src/features/destiny/assets/celestial-orb.png',
-          width: 154,
-          height: 154,
-          excludeFromSemantics: true,
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            SizedBox(
+              width: double.infinity,
+              height: 170,
+              child: DestinyStarVisual(motion: _motionEnabled && widget.active),
+            ),
+            Image.asset(
+              'src/features/destiny/assets/celestial-orb.png',
+              width: 154,
+              height: 154,
+              excludeFromSemantics: true,
+            ),
+          ],
         ),
         UiText('星象手记', style: Theme.of(context).textTheme.headlineMedium),
         const UiText('从出生资料展开你的命盘'),
@@ -361,40 +393,58 @@ class _DestinyPageState extends State<DestinyPage> {
     await _controller.submit(confirmed);
   }
 
-  Widget _progress(BuildContext context, String stage) => Card(
-    child: Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        children: [
-          Text(
-            stage == 'expressing' ? '报告正在成稿' : '星图正在展开',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          const SizedBox(height: 12),
-          const LinearProgressIndicator(),
-          const SizedBox(height: 12),
-          Semantics(
-            liveRegion: true,
-            child: Text(switch (stage) {
-              'validating' => '核对出生资料',
-              'normalizing' => '定位出生地的当地时间',
-              'bazi' => '计算八字四柱',
-              'ziwei' => '计算紫微斗数',
-              'western' => '计算西方星盘',
-              _ => '检索解读素材并整理报告',
-            }),
-          ),
-          TextButton(
-            onPressed: () {
-              _controller.cancelTask();
-              unawaited(_controller.returnToArchive());
-            },
-            child: const UiText('取消测算'),
-          ),
-        ],
+  Widget _progress(BuildContext context, String stage) {
+    final step = switch (stage) {
+      'validating' => 1,
+      'normalizing' => 2,
+      'bazi' => 3,
+      'ziwei' => 4,
+      'western' => 5,
+      _ => 6,
+    };
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            UiText(
+              stage == 'expressing' ? '报告正在成稿' : '星图正在展开',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              height: 150,
+              child: DestinyStarVisual(
+                motion: _motionEnabled && widget.active,
+                step: step,
+              ),
+            ),
+            LinearProgressIndicator(value: (step - 1) / 6),
+            const SizedBox(height: 12),
+            Semantics(
+              liveRegion: true,
+              child: UiText(switch (stage) {
+                'validating' => '核对出生资料',
+                'normalizing' => '定位出生地的当地时间',
+                'bazi' => '计算八字四柱',
+                'ziwei' => '计算紫微斗数',
+                'western' => '计算西方星盘',
+                _ => '检索解读素材并整理报告',
+              }),
+            ),
+            TextButton(
+              onPressed: () {
+                _controller.cancelTask();
+                unawaited(_controller.returnToArchive());
+              },
+              child: const UiText('取消测算'),
+            ),
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 
   List<Widget> _report(BuildContext context, String body) {
     final charts = _controller.reading?.charts ?? _controller.archivedCharts;

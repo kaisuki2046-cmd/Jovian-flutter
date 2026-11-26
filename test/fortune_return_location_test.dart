@@ -86,7 +86,7 @@ void main() {
 
     expect(find.text('解读服务暂未配置。'), findsOneWidget);
     expect(find.text('参考干支'), findsOneWidget);
-    expect(find.text('运势报告历史'), findsOneWidget);
+    expect(find.text('查看已存解读'), findsOneWidget);
     expect(find.widgetWithText(OutlinedButton, '解读'), findsNothing);
     expect(tester.takeException(), isNull);
   });

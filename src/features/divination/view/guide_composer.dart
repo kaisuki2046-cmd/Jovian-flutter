@@ -8,9 +8,8 @@ import '../../../ui/interface_language.dart';
 
 import 'composer_attachment.dart';
 import 'composer_attachment_view.dart';
+import 'guide_assistant.dart';
 
-const _assistantPortrait =
-    'src/features/divination/assets/assistant/portrait.png';
 const guideSuggestedQuestions = ['这次面试会顺利吗？', '这段感情接下来会怎么发展？', '最近什么时候适合搬家？'];
 
 class GuideWelcome extends StatelessWidget {
@@ -70,29 +69,12 @@ class GuideWelcome extends StatelessWidget {
           ),
           SizedBox(
             width: portraitSize,
-            child: const GuideAssistantPortrait(accessible: true),
+            child: const GuideAssistantWelcomePortrait(),
           ),
         ],
       ),
     );
   }
-}
-
-class GuideAssistantPortrait extends StatelessWidget {
-  const GuideAssistantPortrait({super.key, this.accessible = false});
-
-  final bool accessible;
-
-  @override
-  Widget build(BuildContext context) => AspectRatio(
-    aspectRatio: 1,
-    child: Image.asset(
-      _assistantPortrait,
-      fit: BoxFit.contain,
-      semanticLabel: accessible ? '戴着蓝色耳机的果冻章鱼助手' : null,
-      excludeFromSemantics: !accessible,
-    ),
-  );
 }
 
 class GuideSuggestions extends StatelessWidget {
@@ -121,7 +103,9 @@ class GuideSuggestions extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(bottom: 5),
             child: OutlinedButton(
-              onPressed: select == null ? null : () => select!(question),
+              onPressed: select == null
+                  ? null
+                  : () => select!(context.uiLabel(question)),
               style: OutlinedButton.styleFrom(
                 foregroundColor: colors.onSurface,
                 backgroundColor: colors.surfaceContainerLow.withValues(
@@ -135,7 +119,7 @@ class GuideSuggestions extends StatelessWidget {
                 side: BorderSide(color: colors.outlineVariant),
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
-              child: Text(question, textAlign: TextAlign.start),
+              child: UiText(question, textAlign: TextAlign.start),
             ),
           ),
       ],
@@ -243,14 +227,14 @@ class GuideComposer extends StatelessWidget {
                           child: Form(
                             key: form,
                             child: Semantics(
-                              label: '你的问题',
+                              label: context.uiLabel('你的问题'),
                               child: TextFormField(
                                 controller: text,
                                 focusNode: focus,
                                 enabled: !busy,
                                 style: inputText,
                                 decoration: InputDecoration(
-                                  hintText: hint,
+                                  hintText: context.uiLabel(hint),
                                   hintStyle: TextStyle(
                                     color: colors.onSurfaceVariant,
                                   ),
@@ -289,7 +273,9 @@ class GuideComposer extends StatelessWidget {
                               return const SizedBox(width: 8);
                             }
                             return IconButton.filled(
-                              tooltip: stop == null ? sendLabel : '停止',
+                              tooltip: context.uiLabel(
+                                stop == null ? sendLabel : '停止',
+                              ),
                               onPressed:
                                   stop ?? (_canSend(draft.text) ? send : null),
                               style: IconButton.styleFrom(
@@ -363,7 +349,7 @@ class _GuideComposerMenuState extends State<_GuideComposerMenu> {
               if (widget.openSynastry case final open?)
                 MenuItemButton(onPressed: open, child: const UiText('看合盘')),
               MenuItemButton(
-                onPressed: () => widget.suggest('帮我看看最近的整体运势'),
+                onPressed: () => widget.suggest(context.uiLabel('帮我看看最近的整体运势')),
                 child: const UiText('帮我看看最近的整体运势'),
               ),
             ]
@@ -388,7 +374,7 @@ class _GuideComposerMenuState extends State<_GuideComposerMenu> {
               ),
             ],
       builder: (context, menu, _) => IconButton(
-        tooltip: '添加附件或快捷提问',
+        tooltip: context.uiLabel('添加附件或快捷提问'),
         onPressed: widget.busy
             ? null
             : () {
@@ -407,10 +393,7 @@ class _GuideComposerMenuState extends State<_GuideComposerMenu> {
           foregroundColor: colors.onSurface,
         ),
         icon: widget.showAssistant
-            ? const SizedBox.square(
-                dimension: 48,
-                child: GuideAssistantPortrait(),
-              )
+            ? const GuideAssistantComposerPortrait()
             : const Icon(Icons.add_rounded),
       ),
     );
@@ -490,67 +473,71 @@ class _GuideThreadState extends State<GuideThread> {
   }
 
   @override
-  Widget build(BuildContext context) => Center(
-    child: ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 520),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  child: NotificationListener<ScrollMetricsNotification>(
-                    onNotification: (_) {
-                      _updateLatestButton();
-                      return false;
-                    },
-                    child: LayoutBuilder(
-                      builder: (context, viewport) => SingleChildScrollView(
-                        controller: _scroll,
-                        padding: const EdgeInsets.fromLTRB(18, 8, 18, 8),
-                        keyboardDismissBehavior:
-                            ScrollViewKeyboardDismissBehavior.onDrag,
-                        child: ConstrainedBox(
-                          constraints: BoxConstraints(
-                            minHeight: (viewport.maxHeight - 16).clamp(
-                              0,
-                              double.infinity,
-                            ),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: widget.welcome == null
-                                ? MainAxisAlignment.start
-                                : MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              if (widget.welcome case final stage?) stage,
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: widget.messages,
+  Widget build(BuildContext context) => GuideAssistantFlight(
+    welcoming: widget.welcome != null,
+    child: Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 520),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: NotificationListener<ScrollMetricsNotification>(
+                      onNotification: (_) {
+                        _updateLatestButton();
+                        return false;
+                      },
+                      child: LayoutBuilder(
+                        builder: (context, viewport) => SingleChildScrollView(
+                          controller: _scroll,
+                          padding: const EdgeInsets.fromLTRB(18, 8, 18, 8),
+                          keyboardDismissBehavior:
+                              ScrollViewKeyboardDismissBehavior.onDrag,
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              minHeight: (viewport.maxHeight - 16).clamp(
+                                0,
+                                double.infinity,
                               ),
-                            ],
+                            ),
+                            child: Column(
+                              mainAxisAlignment: widget.welcome == null
+                                  ? MainAxisAlignment.start
+                                  : MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                if (widget.welcome case final stage?) stage,
+                                Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: widget.messages,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                if (_showLatest && widget.welcome == null)
-                  PositionedDirectional(
-                    end: 16,
-                    bottom: 8,
-                    child: IconButton.filledTonal(
-                      tooltip: '返回最新消息',
-                      onPressed: _goToLatest,
-                      icon: const Icon(Icons.arrow_downward_rounded),
+                  if (_showLatest && widget.welcome == null)
+                    PositionedDirectional(
+                      end: 16,
+                      bottom: 8,
+                      child: IconButton.filledTonal(
+                        tooltip: '返回最新消息',
+                        onPressed: _goToLatest,
+                        icon: const Icon(Icons.arrow_downward_rounded),
+                      ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
-          ),
-          if (widget.composer case final footer?) footer,
-        ],
+            if (widget.composer case final footer?) footer,
+          ],
+        ),
       ),
     ),
   );

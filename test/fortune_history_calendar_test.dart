@@ -41,14 +41,16 @@ void main() {
       FlutterSecureStorage.setMockInitialValues({
         'fixture-fortune-session': 'fixture',
       });
-      tester.view.physicalSize = const Size(390, 1030);
+      tester.view.physicalSize = const Size(320, 1030);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
       final day = _entry(_dayId, '旧日运势');
       final week = _entry(_weekId, '已保存周运势');
       final detailRequests = <String>[];
+      final listRequests = <String?>[];
       final onlineRequests = <String>[];
+      final adviceRefresh = Completer<http.Response>();
       final api = AccountApi(
         JsonHttpClient(
           base: Uri.parse('https://account.example.test'),
@@ -57,10 +59,20 @@ void main() {
             if (path.startsWith('/account/reading-history')) {
               expect(request.url.queryParameters['expectedOwnerId'], _owner);
               expect(request.url.queryParameters['kind'], 'fortune');
-              if (path.endsWith('/reading-history'))
-                return _json({
-                  'entries': [week, day],
-                });
+              if (path.endsWith('/reading-history')) {
+                final before = request.url.queryParameters['before'];
+                listRequests.add(before);
+                return _json(
+                  before == null
+                      ? {
+                          'entries': [week],
+                          'nextCursor': _weekId,
+                        }
+                      : {
+                          'entries': [day],
+                        },
+                );
+              }
               final id = request.url.pathSegments.last;
               expect(id, anyOf(_dayId, _weekId));
               detailRequests.add(id);
@@ -138,6 +150,7 @@ void main() {
             expect(request.url.path, '/fortune/advice/$_run');
             expect(request.url.queryParameters['expectedOwnerId'], _owner);
             expect(request.headers['authorization'], 'Bearer fixture');
+            if (onlineRequests.length == 2) return adviceRefresh.future;
             return _json({
               'version': 1,
               'calculationRunId': _run,
@@ -152,7 +165,7 @@ void main() {
                       'options': ['3'],
                       'reason': '原盘建议依据。',
                       'source': '资料校验测试',
-                      'limitations': [],
+                      'limitations': ['原盘适用限制。'],
                     },
                   ],
                 },
@@ -180,8 +193,13 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await tester.tap(find.text('运势报告历史'));
+      expect(listRequests, isEmpty);
+      expect(find.text('已保存周运势'), findsNothing);
+      await tester.tap(find.text('查看已存解读'));
       await tester.pumpAndSettle();
+      expect(find.text('周期运势'), findsOneWidget);
+      expect(find.text('收起已存解读'), findsOneWidget);
+      expect(listRequests, [null]);
       await tester.tap(find.text('已保存周运势'));
       await tester.pumpAndSettle();
       expect(find.text('已保存本周正文。'), findsOneWidget);
@@ -192,6 +210,17 @@ void main() {
       expect(find.text('提运建议'), findsNothing);
       await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
+      expect(find.text('收起已存解读'), findsOneWidget);
+      await tester.tap(find.text('收起已存解读'));
+      await tester.pumpAndSettle();
+      expect(find.text('已保存周运势'), findsNothing);
+      await tester.tap(find.text('查看已存解读'));
+      await tester.pumpAndSettle();
+      expect(find.text('已保存周运势'), findsOneWidget);
+      expect(listRequests, [null]);
+      await tester.tap(find.text('加载更多'));
+      await tester.pumpAndSettle();
+      expect(listRequests, [null, _weekId]);
       await tester.tap(find.text('旧日运势'));
       await tester.pumpAndSettle();
       expect(find.text('已保存的旧日正文。'), findsOneWidget);
@@ -202,13 +231,47 @@ void main() {
       expect(find.text('3'), findsOneWidget);
       await tester.tap(find.text('查看建议依据'));
       await tester.pumpAndSettle();
-      expect(find.text('原盘建议依据。'), findsOneWidget);
+      final reason = find.text('原盘建议依据。');
+      final source = find.text('来源：资料校验测试');
+      final limitation = find.text('原盘适用限制。');
+      expect(reason, findsOneWidget);
+      expect(source, findsOneWidget);
+      expect(limitation, findsOneWidget);
+      await tester.ensureVisible(find.text('收起依据'));
+      await tester.tap(find.text('收起依据'));
+      await tester.pumpAndSettle();
+      expect(reason, findsNothing);
+      expect(source, findsNothing);
+      expect(limitation, findsNothing);
+      await tester.tap(find.text('查看建议依据'));
+      await tester.pumpAndSettle();
+      expect(reason, findsOneWidget);
+      await tester.ensureVisible(find.text('按盘面获取建议'));
+      await tester.tap(find.text('按盘面获取建议'));
+      await tester.pump();
+      expect(reason, findsNothing);
+      expect(source, findsNothing);
+      expect(limitation, findsNothing);
+      adviceRefresh.complete(http.Response('', 500));
+      await tester.pumpAndSettle();
+      expect(find.text('重试获取建议'), findsOneWidget);
+      expect(reason, findsNothing);
+      await tester.tap(find.text('重试获取建议'));
+      await tester.pumpAndSettle();
+      expect(reason, findsOneWidget);
+      expect(source, findsOneWidget);
+      expect(limitation, findsOneWidget);
       expect(detailRequests, [_weekId, _dayId]);
-      expect(onlineRequests, ['/fortune/advice/$_run']);
+      expect(onlineRequests, List.filled(3, '/fortune/advice/$_run'));
       await account.signOut();
       await tester.pumpAndSettle();
       expect(find.text('已保存的旧日正文。'), findsNothing);
       expect(find.text('当前账号会话已变化，请返回周期运势。'), findsOneWidget);
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      expect(find.text('周期运势'), findsOneWidget);
+      expect(find.text('查看已存解读'), findsNothing);
+      expect(tester.takeException(), isNull);
     },
   );
 

@@ -255,17 +255,29 @@ class _FortuneAdviceState extends State<FortuneAdvice> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).textTheme;
+    final groups = widget.loading || widget.error != null
+        ? null
+        : widget.groups;
+    final hasEvidence = groups?.any((group) => group.items.isNotEmpty) == true;
     return _FortuneCard(
       title: '提运建议',
       children: [
         const Text('数字、饰品和颜色供日常象征搭配参考。'),
         OutlinedButton(
           onPressed: widget.loading ? null : widget.onRequest,
-          child: Text(widget.error == null ? '按盘面获取建议' : '重试获取建议'),
+          child: UiText(widget.error == null ? '按盘面获取建议' : '重试获取建议'),
         ),
         if (widget.loading) const _FortuneStatus('正在读取提运建议…'),
         if (widget.error case final error?) _FortuneStatus(error),
-        if (widget.groups case final groups?) ...[
+        if (groups != null) ...[
+          if (hasEvidence)
+            Semantics(
+              expanded: _details,
+              child: TextButton(
+                onPressed: () => setState(() => _details = !_details),
+                child: UiText(_details ? '收起依据' : '查看建议依据'),
+              ),
+            ),
           for (final group in groups) ...[
             Semantics(
               header: true,
@@ -285,10 +297,6 @@ class _FortuneAdviceState extends State<FortuneAdvice> {
               ],
             ],
           ],
-          TextButton(
-            onPressed: () => setState(() => _details = !_details),
-            child: Text(_details ? '收起依据' : '查看建议依据'),
-          ),
         ],
       ],
     );

@@ -1,7 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../../../ui/interface_language.dart';
-
 import '../../account/account.dart';
 import '../control/social_controller.dart';
 import '../model/social.dart';
@@ -53,6 +52,18 @@ class SocialPage extends StatelessWidget {
               : '登录后可按 UID 或昵称找用户，并查看新增粉丝提醒。',
           openAccount: awaitingAccount || changingAccount ? null : openAccount,
           action: needsAgreement ? '前往个人中心' : '前往登录',
+          onFindUser: awaitingAccount || changingAccount || needsAgreement
+              ? null
+              : () => AccountSectionLinks.openPage(
+                  context,
+                  AccountSection.findUser,
+                  () => _UnavailableMessages(
+                    '登录后可按 UID 或昵称找用户。',
+                    title: '找用户',
+                    openAccount: openAccount,
+                    action: '前往登录',
+                  ),
+                ),
         );
       },
     );
@@ -60,15 +71,26 @@ class SocialPage extends StatelessWidget {
 }
 
 class _UnavailableMessages extends StatelessWidget {
-  const _UnavailableMessages(this.message, {this.openAccount, this.action});
+  const _UnavailableMessages(
+    this.message, {
+    this.title = '消息',
+    this.openAccount,
+    this.action,
+    this.onFindUser,
+  });
 
   final String message;
+  final String title;
   final VoidCallback? openAccount;
   final String? action;
+  final VoidCallback? onFindUser;
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const UiText('消息')),
+    appBar: AppBar(
+      title: UiText(title),
+      actions: _messageHeaderActions(context, onFindUser),
+    ),
     body: ListView(
       padding: const EdgeInsets.all(20),
       children: [
@@ -83,12 +105,12 @@ class _UnavailableMessages extends StatelessWidget {
                   size: 32,
                 ),
                 const SizedBox(height: 12),
-                Text(message, textAlign: TextAlign.center),
+                UiText(message, textAlign: TextAlign.center),
                 if (openAccount != null) ...[
                   const SizedBox(height: 12),
                   FilledButton.tonal(
                     onPressed: openAccount,
-                    child: Text(action!),
+                    child: UiText(action!),
                   ),
                 ],
               ],
@@ -98,6 +120,39 @@ class _UnavailableMessages extends StatelessWidget {
       ],
     ),
   );
+}
+
+List<Widget> _messageHeaderActions(
+  BuildContext context,
+  VoidCallback? findUser,
+) {
+  if (findUser == null) return const [];
+  return [
+    IconButton(
+      tooltip: context.uiLabel('找用户'),
+      onPressed: findUser,
+      icon: const Icon(Icons.person_search_outlined),
+    ),
+    PopupMenuButton<VoidCallback>(
+      tooltip: context.uiLabel('更多操作'),
+      icon: const Icon(Icons.add_circle_outline),
+      position: PopupMenuPosition.under,
+      constraints: const BoxConstraints(minWidth: 164, maxWidth: 210),
+      onSelected: (action) => action(),
+      itemBuilder: (_) => [
+        PopupMenuItem(
+          value: findUser,
+          child: const Row(
+            children: [
+              Icon(Icons.search),
+              SizedBox(width: 12),
+              Flexible(child: UiText('找用户')),
+            ],
+          ),
+        ),
+      ],
+    ),
+  ];
 }
 
 class SocialConnectionsPage extends StatelessWidget {
@@ -195,16 +250,13 @@ class _MessagesHomeState extends State<_MessagesHome> {
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
       title: const UiText('消息'),
-      actions: [
-        IconButton(
-          tooltip: '找用户',
-          onPressed: () => _open(
-            () => SocialSearchPage(controller: widget.controller),
-            section: AccountSection.findUser,
-          ),
-          icon: const Icon(Icons.person_search_outlined),
+      actions: _messageHeaderActions(
+        context,
+        () => _open(
+          () => SocialSearchPage(controller: widget.controller),
+          section: AccountSection.findUser,
         ),
-      ],
+      ),
     ),
     body: FutureBuilder<SocialInboxSummary>(
       future: _summary,

@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:jovian_divination/jovian_divination.dart';
+import 'package:path_provider/path_provider.dart';
 
+import 'legacy_reading_archive_codec.dart';
 import 'reading_history_codec.dart';
 
 const _historyPrefix = 'jovian.divination.flutter.v1.';
@@ -38,7 +41,17 @@ Future<List<String>> memberReadingTokens(String owner) =>
       return tokens.toList();
     });
 
-Future<void> clearMemberReadingData(String owner) => _withStorage(() async {
+Future<void> clearMemberReadingData(
+  String owner, {
+  Future<Directory?> Function() legacyDirectory = _nativeLegacyDirectory,
+}) => _withStorage(() async {
+  await Future.wait([
+    _clearFlutterMemberData(owner),
+    _clearLegacyMemberData(owner, legacyDirectory),
+  ]);
+});
+
+Future<void> _clearFlutterMemberData(String owner) async {
   final items = await _storage.readAll();
   final owned = items.keys.where((key) {
     final suffix = memberReadingKeySuffix(key, _historyPrefix, owner);
@@ -48,17 +61,52 @@ Future<void> clearMemberReadingData(String owner) => _withStorage(() async {
         _isReadingKey(suffix, 'history.');
   }).toList();
   await Future.wait(owned.map((key) => _storage.delete(key: key)));
-});
+}
+
+Future<void> _clearLegacyMemberData(
+  String owner,
+  Future<Directory?> Function() legacyDirectory,
+) async {
+  final legacyOwner = legacyGuideOwner('member:$owner');
+  if (legacyOwner == null) return;
+  final directory = await legacyDirectory();
+  if (directory == null) return;
+  for (final extension in ['json', 'tmp']) {
+    try {
+      await _legacyFile(directory, legacyOwner, extension).delete();
+    } on PathNotFoundException {
+      // Already deleted, or this device never ran the React Native app.
+    }
+  }
+}
+
+Future<Directory?> _nativeLegacyDirectory() async {
+  // Expo used Context.filesDir on Android and Documents on iOS.
+  if (Platform.isAndroid) return getApplicationSupportDirectory();
+  if (Platform.isIOS) return getApplicationDocumentsDirectory();
+  return null;
+}
+
+File _legacyFile(Directory directory, String owner, String extension) => File(
+  '${directory.path}${Platform.pathSeparator}$legacyGuideHistoryPrefix$owner.$extension',
+);
 
 bool _isReadingKey(String? suffix, String kind) =>
     suffix != null &&
     suffix.startsWith(kind) &&
     isGuideThreadId(suffix.substring(kind.length));
 
-GuideRecoveryStore createReadingRecovery(Uri base, {String? ownerScope}) =>
-    ownerScope == null
+GuideRecoveryStore createReadingRecovery(
+  Uri base, {
+  String? ownerScope,
+  Future<Directory?> Function() legacyDirectory = _nativeLegacyDirectory,
+}) => ownerScope == null
     ? MemoryGuideRecovery()
-    : _NativeReadingHistory('$base.$ownerScope');
+    : _NativeReadingHistory(
+        '$base.$ownerScope',
+        legacyGuideOwner(ownerScope),
+        legacyDirectory,
+      );
 
 class MemoryGuideRecovery implements GuideRecoveryStore {
   GuideRecovery? _value;
@@ -70,11 +118,32 @@ class MemoryGuideRecovery implements GuideRecoveryStore {
   Future<void> write(GuideRecovery? recovery) async => _value = recovery;
 }
 
-class _NativeReadingHistory implements GuideHistoryStore {
-  _NativeReadingHistory(String namespace)
-    : _prefix = '$_historyPrefix$namespace.';
+class _NativeReadingHistory
+    implements GuideHistoryStore, LegacyGuideArchiveStore {
+  _NativeReadingHistory(
+    String namespace,
+    this._legacyOwner,
+    this._legacyDirectory,
+  ) : _prefix = '$_historyPrefix$namespace.';
 
   final String _prefix;
+  final String? _legacyOwner;
+  final Future<Directory?> Function() _legacyDirectory;
+
+  Future<String?> _readLegacyHistory() async {
+    final owner = _legacyOwner;
+    if (owner == null) return null;
+    try {
+      final directory = await _legacyDirectory();
+      return directory == null
+          ? null
+          : await _legacyFile(directory, owner, 'json').readAsString();
+    } catch (_) {
+      // Missing or unreadable legacy files leave Flutter history available.
+      return null;
+    }
+  }
+
   final _memory = <String, String?>{};
 
   Future<String?> _read(String suffix) => _withStorage(() async {
@@ -112,23 +181,28 @@ class _NativeReadingHistory implements GuideHistoryStore {
   @override
   Future<List<GuideHistoryEntry>> readHistory() => _withStorage(() async {
     final prefix = '${_prefix}history.';
-    final Map<String, String> stored;
+    final history = <String, GuideHistoryEntry>{};
     try {
-      stored = await _storage.readAll();
-    } catch (_) {
-      // The current controller can still show its in-memory conversations.
-      return [];
-    }
-    final history = <GuideHistoryEntry>[];
-    for (final item in stored.entries) {
-      if (!item.key.startsWith(prefix)) continue;
-      final entry = decodeGuideHistory(item.value);
-      if (entry != null && item.key == '$prefix${entry.id}') {
-        history.add(entry);
+      for (final item in (await _storage.readAll()).entries) {
+        if (!item.key.startsWith(prefix)) continue;
+        final entry = decodeGuideHistory(item.value);
+        if (entry != null && item.key == '$prefix${entry.id}') {
+          history[entry.id] = entry;
+        }
       }
+    } catch (_) {
+      // Older reports may still be available in the legacy file.
     }
-    return history;
+    for (final entry in decodeLegacyGuideHistory(await _readLegacyHistory())) {
+      history.putIfAbsent(entry.id, () => entry);
+    }
+    return history.values.toList();
   });
+
+  @override
+  Future<List<LegacyGuideArchive>> readLegacyArchives() => _withStorage(
+    () async => decodeLegacyGuideArchives(await _readLegacyHistory()).toList(),
+  );
 
   @override
   Future<void> writeHistory(GuideHistoryEntry entry) => _write(

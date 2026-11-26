@@ -16,6 +16,12 @@ class ComposerAttachment {
   String get name => file.name;
   String? get mimeType => file.mimeType;
 
+  bool get canOpenWithSystem =>
+      kind == ComposerAttachmentKind.file &&
+      platform.canOpenWithSystem(file.path);
+  Future<bool> openWithSystem() =>
+      platform.openWithSystem(file.path, name, mimeType);
+
   void release() => platform.release(file.path);
   bool get canDownload => platform.canDownload(file.path);
   void download() => platform.download(file.path, name);

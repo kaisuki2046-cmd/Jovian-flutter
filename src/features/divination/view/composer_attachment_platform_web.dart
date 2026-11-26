@@ -1,5 +1,10 @@
 import 'package:web/web.dart' as web;
 
+bool canOpenWithSystem(String path) => false;
+
+Future<bool> openWithSystem(String path, String name, String? mimeType) async =>
+    false;
+
 bool canDownload(String path) => path.startsWith('blob:');
 
 void download(String path, String name) {

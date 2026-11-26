@@ -103,10 +103,9 @@ class _ComposerAttachmentTileState extends State<ComposerAttachmentTile> {
     Future<Uint8List>? picture;
     final route = DialogRoute<void>(
       context: context,
-      builder: (context) => _attachmentDialog(
-        context,
-        attachment,
-        image ? picture ??= attachment.file.readAsBytes() : null,
+      builder: (_) => _AttachmentDialog(
+        attachment: attachment,
+        picture: image ? picture ??= attachment.file.readAsBytes() : null,
       ),
     );
     _preview = route;
@@ -202,57 +201,108 @@ class _ComposerAttachmentTileState extends State<ComposerAttachmentTile> {
   }
 }
 
-Widget _attachmentDialog(
-  BuildContext context,
-  ComposerAttachment attachment,
-  Future<Uint8List>? picture,
-) {
-  final size = attachment.size;
-  return AlertDialog(
-    title: Text(attachment.name, maxLines: 2, overflow: TextOverflow.ellipsis),
-    content: picture != null
-        ? SizedBox(
-            width: 480,
-            height: MediaQuery.sizeOf(context).height * .45,
-            child: FutureBuilder<Uint8List>(
-              future: picture,
-              builder: (context, snapshot) {
-                if (snapshot.hasError)
-                  return const Center(child: UiText('此设备暂时无法预览这张图片。'));
-                if (snapshot.data case final bytes?)
-                  return InteractiveViewer(
-                    child: Image.memory(
-                      bytes,
-                      semanticLabel: attachment.name,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stack) =>
-                          const Center(child: UiText('此设备暂时无法预览这张图片。')),
-                    ),
-                  );
-                return const Center(child: CircularProgressIndicator());
-              },
-            ),
-          )
-        : Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (size != null) Text(formatComposerFileSize(size)),
-              if (attachment.mimeType case final mime?) Text(mime),
-              const SizedBox(height: 12),
-              const UiText('此附件仅保留在本机。'),
-            ],
-          ),
-    actions: [
-      if (attachment.canDownload)
-        TextButton(
-          onPressed: attachment.download,
-          child: const UiText('保存到本机'),
-        ),
-      TextButton(
-        onPressed: () => Navigator.pop(context),
-        child: const UiText('关闭'),
+class _AttachmentDialog extends StatefulWidget {
+  const _AttachmentDialog({required this.attachment, this.picture});
+
+  final ComposerAttachment attachment;
+  final Future<Uint8List>? picture;
+
+  @override
+  State<_AttachmentDialog> createState() => _AttachmentDialogState();
+}
+
+class _AttachmentDialogState extends State<_AttachmentDialog> {
+  bool _opening = false;
+  bool _openFailed = false;
+
+  Future<void> _openWithSystem() async {
+    if (_opening) return;
+    setState(() {
+      _opening = true;
+      _openFailed = false;
+    });
+    final opened = await widget.attachment.openWithSystem();
+    if (!mounted) return;
+    setState(() {
+      _opening = false;
+      _openFailed = !opened;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final attachment = widget.attachment;
+    final size = attachment.size;
+    final picture = widget.picture;
+    return AlertDialog(
+      title: Text(
+        attachment.name,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
       ),
-    ],
-  );
+      content: picture != null
+          ? SizedBox(
+              width: 480,
+              height: MediaQuery.sizeOf(context).height * .45,
+              child: FutureBuilder<Uint8List>(
+                future: picture,
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return const Center(child: UiText('此设备暂时无法预览这张图片。'));
+                  }
+                  if (snapshot.data case final bytes?) {
+                    return InteractiveViewer(
+                      child: Image.memory(
+                        bytes,
+                        semanticLabel: attachment.name,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stack) =>
+                            const Center(child: UiText('此设备暂时无法预览这张图片。')),
+                      ),
+                    );
+                  }
+                  return const Center(child: CircularProgressIndicator());
+                },
+              ),
+            )
+          : Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (size != null) Text(formatComposerFileSize(size)),
+                if (attachment.mimeType case final mime?) Text(mime),
+                const SizedBox(height: 12),
+                const UiText('此附件仅保留在本机。'),
+                if (_openFailed) ...[
+                  const SizedBox(height: 8),
+                  Semantics(
+                    liveRegion: true,
+                    child: UiText(
+                      '此设备暂时无法打开这个文件，请重试。',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+      actions: [
+        if (attachment.canDownload)
+          TextButton(
+            onPressed: attachment.download,
+            child: const UiText('保存到本机'),
+          ),
+        if (attachment.canOpenWithSystem)
+          TextButton(
+            onPressed: _opening ? null : _openWithSystem,
+            child: UiText(_opening ? '正在打开…' : '用系统应用打开'),
+          ),
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const UiText('关闭'),
+        ),
+      ],
+    );
+  }
 }

@@ -2,6 +2,20 @@ import 'dart:convert';
 
 import 'package:jovian_divination/jovian_divination.dart';
 
+import 'reading_history_codec.dart';
+
+const legacyGuideHistoryPrefix = 'jovian.divination.history.v2.';
+
+String? legacyGuideOwner(String? scope) {
+  if (scope == null) return null;
+  final separator = scope.indexOf(':');
+  if (separator <= 0 || separator == scope.length - 1) return null;
+  final kind = scope.substring(0, separator);
+  if (kind != 'member' && kind != 'guest') return null;
+  final id = scope.substring(separator + 1);
+  return '$kind.${id.runes.map((rune) => rune.toRadixString(16)).join('_')}';
+}
+
 const _legacyMethods = {
   'tarot-liuyao-meihua-v1': LegacyGuideMethod.combined,
   'rws-three-card-v1': LegacyGuideMethod.tarot,
@@ -9,7 +23,29 @@ const _legacyMethods = {
   'three-number-v1': LegacyGuideMethod.meihua,
 };
 
+Iterable<GuideHistoryEntry> decodeLegacyGuideHistory(String? saved) sync* {
+  for (final reading in _readingSessions(saved)) {
+    if (reading.snapshot['ruleVersion'] != guideVersion) continue;
+    final entry = decodeGuideHistory(
+      jsonEncode({
+        'id': reading.id,
+        'reading': reading.snapshot,
+        'updatedAt': reading.updatedAt,
+      }),
+    );
+    if (entry != null) yield entry;
+  }
+}
+
 Iterable<LegacyGuideArchive> decodeLegacyGuideArchives(String? saved) sync* {
+  for (final reading in _readingSessions(saved)) {
+    final archive = _archive(reading.id, reading.snapshot, reading.updatedAt);
+    if (archive != null) yield archive;
+  }
+}
+
+Iterable<({String id, Map<String, Object?> snapshot, int updatedAt})>
+_readingSessions(String? saved) sync* {
   if (saved == null) return;
   final Object? data;
   try {
@@ -30,12 +66,13 @@ Iterable<LegacyGuideArchive> decodeLegacyGuideArchives(String? saved) sync* {
             'kind': 'readingSession',
             'snapshot': final Map<String, Object?> snapshot,
           }) {
-            final archive = _archive(
-              'rn-$chatId-$messageId',
-              snapshot,
-              message['sentAt'] is int ? message['sentAt'] as int : updatedAt,
+            yield (
+              id: 'rn-$chatId-$messageId',
+              snapshot: snapshot,
+              updatedAt: message['sentAt'] is int
+                  ? message['sentAt'] as int
+                  : updatedAt,
             );
-            if (archive != null) yield archive;
           }
         }
       }

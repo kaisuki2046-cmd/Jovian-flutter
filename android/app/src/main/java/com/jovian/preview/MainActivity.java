@@ -16,6 +16,7 @@ public final class MainActivity extends FlutterActivity {
     private CoinAudio coinAudio;
     private MethodChannel coinAudioChannel;
     private MethodChannel readingReferenceChannel;
+    private MethodChannel attachmentPreviewChannel;
 
     @Override
     public void configureFlutterEngine(FlutterEngine flutterEngine) {
@@ -29,6 +30,22 @@ public final class MainActivity extends FlutterActivity {
         readingReferenceChannel.setMethodCallHandler((call, result) -> {
             if ("open".equals(call.method)) {
                 result.success(call.arguments instanceof String && openHttpsLink((String) call.arguments));
+            } else {
+                result.notImplemented();
+            }
+        });
+        attachmentPreviewChannel = new MethodChannel(
+            flutterEngine.getDartExecutor().getBinaryMessenger(), "jovian/attachment_preview");
+        attachmentPreviewChannel.setMethodCallHandler((call, result) -> {
+            if ("open".equals(call.method)) {
+                if (call.arguments instanceof Map<?, ?> arguments
+                        && arguments.get("path") instanceof String path) {
+                    Object type = arguments.get("mimeType");
+                    result.success(AttachmentPreviewProvider.open(
+                        this, path, type instanceof String mime ? mime : null));
+                } else {
+                    result.success(false);
+                }
             } else {
                 result.notImplemented();
             }
@@ -69,6 +86,7 @@ public final class MainActivity extends FlutterActivity {
     public void cleanUpFlutterEngine(FlutterEngine flutterEngine) {
         if (coinAudioChannel != null) coinAudioChannel.setMethodCallHandler(null);
         if (readingReferenceChannel != null) readingReferenceChannel.setMethodCallHandler(null);
+        if (attachmentPreviewChannel != null) attachmentPreviewChannel.setMethodCallHandler(null);
         if (coinAudio != null) coinAudio.release();
         super.cleanUpFlutterEngine(flutterEngine);
     }

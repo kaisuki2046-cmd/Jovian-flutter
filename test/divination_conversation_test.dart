@@ -4,7 +4,8 @@ import 'dart:typed_data';
 
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart' show MethodChannel, SystemChannels;
+import 'package:flutter/services.dart'
+    show MethodCall, MethodChannel, SystemChannels;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jovian_divination/jovian_divination.dart';
@@ -15,6 +16,7 @@ import '../src/features/divination/requests/reading_history_codec.dart';
 import '../src/features/divination/requests/reading_recovery.dart';
 import '../src/features/divination/view/divination_page.dart';
 import '../src/features/divination/view/composer_attachment.dart';
+import '../src/features/divination/view/composer_attachment_view.dart';
 import '../src/features/divination/view/guide_composer.dart';
 import '../src/features/divination/view/guide_form.dart';
 import '../src/features/divination/view/reading_report.dart';
@@ -159,6 +161,108 @@ void main() {
     expect(find.text('local-document.txt'), findsNothing);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets(
+    'mobile files open through the platform once, then allow a retry',
+    (tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(320, 560);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPhysicalSize);
+      const channel = MethodChannel('jovian/attachment_preview');
+      final messenger = tester.binding.defaultBinaryMessenger;
+      final requests = <MethodCall>[];
+      final firstAttempt = Completer<bool>();
+      final lastAttempt = Completer<bool>();
+      messenger.setMockMethodCallHandler(channel, (call) async {
+        requests.add(call);
+        if (requests.length == 1) return firstAttempt.future;
+        if (requests.length == 3) return lastAttempt.future;
+        return true;
+      });
+      addTearDown(() => messenger.setMockMethodCallHandler(channel, null));
+
+      final selectedPath = Uri.parse(
+        'file:///C:/system-picker/example.pdf',
+      ).toFilePath();
+      final attachment = ComposerAttachment(
+        file: XFile.fromData(
+          Uint8List(16),
+          path: selectedPath,
+          name: 'example.pdf',
+          mimeType: 'application/pdf',
+        ),
+        kind: ComposerAttachmentKind.file,
+        size: 16,
+      );
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(body: ComposerAttachmentTile(attachment: attachment)),
+        ),
+      );
+      await tester.tap(find.byType(InkWell));
+      await tester.pumpAndSettle();
+      expect(find.text('保存到本机'), findsNothing);
+
+      final open = find.widgetWithText(TextButton, '用系统应用打开');
+      final opening = find.widgetWithText(TextButton, '正在打开…');
+      final error = find.text('此设备暂时无法打开这个文件，请重试。');
+      await tester.tap(open);
+      await tester.tap(open);
+      await tester.pump();
+      expect(requests, hasLength(1));
+      expect(requests.single.method, 'open');
+      expect(requests.single.arguments, {
+        'path': selectedPath,
+        'name': 'example.pdf',
+        'mimeType': 'application/pdf',
+      });
+      expect(tester.widget<TextButton>(opening).onPressed, isNull);
+
+      firstAttempt.complete(false);
+      await tester.pumpAndSettle();
+      expect(error, findsOneWidget);
+      await tester.tap(open);
+      await tester.pumpAndSettle();
+      expect(requests, hasLength(2));
+      expect(error, findsNothing);
+
+      await tester.tap(open);
+      await tester.pump();
+      expect(requests, hasLength(3));
+      await tester.tap(find.widgetWithText(TextButton, '关闭'));
+      await tester.pumpAndSettle();
+      lastAttempt.complete(false);
+      await tester.pumpAndSettle();
+      expect(find.byType(ComposerAttachmentTile), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+    variant: const TargetPlatformVariant({
+      TargetPlatform.android,
+      TargetPlatform.iOS,
+    }),
+  );
+
+  testWidgets('desktop file details do not use the mobile preview channel', (
+    tester,
+  ) async {
+    final attachment = ComposerAttachment(
+      file: XFile.fromData(Uint8List(16), name: 'desktop.bin'),
+      kind: ComposerAttachmentKind.file,
+      size: 16,
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(body: ComposerAttachmentTile(attachment: attachment)),
+      ),
+    );
+    await tester.tap(find.byType(InkWell));
+    await tester.pumpAndSettle();
+    expect(find.text('此附件仅保留在本机。'), findsOneWidget);
+    expect(find.text('用系统应用打开'), findsNothing);
+    expect(find.text('保存到本机'), findsNothing);
+    expect(tester.takeException(), isNull);
+  }, variant: const TargetPlatformVariant({TargetPlatform.windows}));
 
   testWidgets('follow-up keeps the attachment out of the reading request', (
     tester,

@@ -8,19 +8,8 @@ import 'reading_history_codec.dart';
 
 const _activePrefix = 'jovian.divination.active.v2.';
 const _historyPrefix = 'jovian.divination.flutter-history.v1.';
-const _legacyHistoryPrefix = 'jovian.divination.history.v2.';
 const _legacyRecoveryPrefix = 'jovian.divination.recovery.v2.';
 const _legacyPendingPrefix = 'jovian.divination.pending-ritual.v2.';
-
-String? _rnOwner(String? scope) {
-  if (scope == null) return null;
-  final separator = scope.indexOf(':');
-  if (separator <= 0 || separator == scope.length - 1) return null;
-  final kind = scope.substring(0, separator);
-  if (kind != 'member' && kind != 'guest') return null;
-  final id = scope.substring(separator + 1);
-  return '$kind.${id.runes.map((rune) => rune.toRadixString(16)).join('_')}';
-}
 
 List<String> _storageKeys(web.Storage storage) => [
   for (var index = 0; index < storage.length; index++)
@@ -33,7 +22,7 @@ bool _isActiveKey(String key, String owner) {
 }
 
 Future<List<String>> memberReadingTokens(String owner) async {
-  final legacyOwner = _rnOwner('member:$owner');
+  final legacyOwner = legacyGuideOwner('member:$owner');
   final recoveries = web.window.sessionStorage;
   final result = <String>{};
   for (final key in _storageKeys(recoveries)) {
@@ -58,13 +47,14 @@ Future<List<String>> memberReadingTokens(String owner) async {
 }
 
 Future<void> clearMemberReadingData(String owner) async {
-  final legacyOwner = _rnOwner('member:$owner');
+  final legacyOwner = legacyGuideOwner('member:$owner');
   final history = web.window.localStorage;
   final recoveries = web.window.sessionStorage;
   for (final key in _storageKeys(history)) {
     final suffix = memberReadingKeySuffix(key, _historyPrefix, owner);
     if ((suffix != null && isGuideThreadId(suffix)) ||
-        (legacyOwner != null && key == '$_legacyHistoryPrefix$legacyOwner')) {
+        (legacyOwner != null &&
+            key == '$legacyGuideHistoryPrefix$legacyOwner')) {
       history.removeItem(key);
     }
   }
@@ -89,7 +79,7 @@ class _BrowserReadingRecovery
           ? 'jovian.divination.active.v1.$base'
           : '$_activePrefix$base.$ownerScope',
       _historyKey = '$_historyPrefix$base.$ownerScope.',
-      _legacyOwner = _rnOwner(ownerScope);
+      _legacyOwner = legacyGuideOwner(ownerScope);
 
   final String? _ownerScope;
   final String _key;
@@ -145,8 +135,8 @@ class _BrowserReadingRecovery
         }
       }
       if (_legacyOwner case final owner?) {
-        for (final entry in _readRnHistory(
-          storage.getItem('$_legacyHistoryPrefix$owner'),
+        for (final entry in decodeLegacyGuideHistory(
+          storage.getItem('$legacyGuideHistoryPrefix$owner'),
         )) {
           entries.putIfAbsent(entry.id, () => entry);
         }
@@ -163,7 +153,7 @@ class _BrowserReadingRecovery
     if (owner == null) return const [];
     try {
       final stored = web.window.localStorage.getItem(
-        '$_legacyHistoryPrefix$owner',
+        '$legacyGuideHistoryPrefix$owner',
       );
       return decodeLegacyGuideArchives(stored).toList();
     } catch (_) {
@@ -211,39 +201,6 @@ class _BrowserReadingRecovery
       }
     } catch (_) {
       // Never put a bearer token into persistent browser local storage.
-    }
-  }
-}
-
-Iterable<GuideHistoryEntry> _readRnHistory(String? text) sync* {
-  if (text == null) return;
-  final value = jsonDecode(text);
-  if (value case {'threads': final List threads}) {
-    for (final thread in threads) {
-      if (thread case {
-        'id': final String chatId,
-        'updatedAt': final int updatedAt,
-        'messages': final List messages,
-      } when isGuideThreadId(chatId)) {
-        for (final message in messages) {
-          if (message case {
-            'id': final int messageId,
-            'kind': 'readingSession',
-            'snapshot': final Map<String, Object?> snapshot,
-          } when snapshot['ruleVersion'] == guideVersion) {
-            final id = 'rn-$chatId-$messageId';
-            final sentAt = message['sentAt'];
-            final entry = decodeGuideHistory(
-              jsonEncode({
-                'id': id,
-                'reading': snapshot,
-                'updatedAt': sentAt is int ? sentAt : updatedAt,
-              }),
-            );
-            if (entry != null) yield entry;
-          }
-        }
-      }
     }
   }
 }

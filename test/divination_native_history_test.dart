@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -101,6 +102,109 @@ void main() {
       expect(await _ids(_store('owner', base: Uri.https('other.invalid'))), [
         'different-endpoint',
       ]);
+    },
+  );
+
+  test(
+    'native upgrade reads the exact RN owner file and isolates deletion',
+    () async {
+      final directory = await Directory.systemTemp.createTemp(
+        'jovian-rn-history-',
+      );
+      addTearDown(() => directory.delete(recursive: true));
+      Future<Directory> legacyDirectory() async => directory;
+
+      final reading = await _reading();
+      const owner = 'a星🙂';
+      const encoded = '61_661f_1f642';
+      const historyKey = 'jovian.divination.history.v2.';
+      File legacyFile(String name) =>
+          File.fromUri(directory.uri.resolve('$historyKey$name'));
+      final legacy = legacyFile('member.$encoded.json');
+      final pending = legacyFile('member.$encoded.tmp');
+      final theirFile = legacyFile('member.6f_74_68_65_72.json');
+      final guestFile = legacyFile('guest.$encoded.json');
+      final contents = jsonEncode({
+        'activeId': 'existing-chat',
+        'threads': [
+          {
+            'id': 'existing-chat',
+            'updatedAt': 1700000000000,
+            'messages': [
+              {'id': 1, 'kind': 'readingSession', 'snapshot': reading.toJson()},
+              {
+                'id': 2,
+                'kind': 'readingSession',
+                'snapshot': {
+                  'method': 'combined',
+                  'ruleVersion': 'tarot-liuyao-meihua-v1',
+                  'stage': 'reading',
+                  'question': '旧原生问题',
+                  'focus': '原来的关注点',
+                  'report': {
+                    'schemaVersion': 1,
+                    'source': 'model',
+                    'answer': '保留旧报告正文',
+                  },
+                },
+              },
+            ],
+          },
+        ],
+      });
+      await legacy.writeAsString(contents);
+      await pending.writeAsString('{');
+      await theirFile.writeAsString('{}');
+      await guestFile.writeAsString(contents);
+
+      final store = createReadingRecovery(
+        _base,
+        ownerScope: 'member:$owner',
+        legacyDirectory: legacyDirectory,
+      );
+      final history = store as GuideHistoryStore;
+      final archives = store as LegacyGuideArchiveStore;
+      final other =
+          createReadingRecovery(
+                _base,
+                ownerScope: 'member:other',
+                legacyDirectory: legacyDirectory,
+              )
+              as GuideHistoryStore;
+      final anonymous = createReadingRecovery(
+        _base,
+        legacyDirectory: legacyDirectory,
+      );
+      expect((await history.readHistory()).single.id, 'rn-existing-chat-1');
+      expect(
+        (await history.readHistory()).single.reading.toJson(),
+        reading.toJson(),
+      );
+      expect(
+        (await archives.readLegacyArchives()).single.report?.answer,
+        '保留旧报告正文',
+      );
+      expect(await history.read(), isNull);
+      expect(await history.readThread('rn-existing-chat-1'), isNull);
+      expect(await other.readHistory(), isEmpty);
+      expect(anonymous, isNot(isA<LegacyGuideArchiveStore>()));
+
+      await history.writeHistory(_entry('rn-existing-chat-1', reading));
+      expect(
+        (await history.readHistory()).single.updatedAt.toUtc(),
+        DateTime.utc(2026, 11, 27),
+      );
+      expect(await legacy.readAsString(), contents);
+      expect(await pending.readAsString(), '{');
+
+      await clearMemberReadingData(owner, legacyDirectory: legacyDirectory);
+      await clearMemberReadingData(owner, legacyDirectory: legacyDirectory);
+      expect(await legacy.exists(), isFalse);
+      expect(await pending.exists(), isFalse);
+      expect(await theirFile.readAsString(), '{}');
+      expect(await guestFile.readAsString(), contents);
+      expect(await history.readHistory(), isEmpty);
+      expect(await archives.readLegacyArchives(), isEmpty);
     },
   );
 

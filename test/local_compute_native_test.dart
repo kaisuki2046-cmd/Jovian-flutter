@@ -56,17 +56,55 @@ void main() {
         ),
       );
       await view.closed.future;
+      expect(view.workerClosed, isTrue);
+    },
+  );
+
+  test(
+    'native cancellation waits for pending channel registration before removing it',
+    () async {
+      final allowRegistration = Completer<void>();
+      final platform = _ComputePlatform(allowRegistration.future);
+      WebViewPlatform.instance = platform;
+      final cancel = Completer<void>();
+      final reading = compute.calculateDestiny({}, cancel: cancel.future);
+      final view = platform.view;
+
+      await view.registrationStarted.future;
+      final cancelled = expectLater(
+        reading,
+        throwsA(
+          isA<LocalComputeException>().having(
+            (error) => error.code,
+            'code',
+            'cancelled',
+          ),
+        ),
+      );
+      cancel.complete();
+      await cancelled;
+      await Future<void>.delayed(Duration.zero);
+
+      allowRegistration.complete();
+      await view.registrationFinished.future;
+      await view.closed.future;
+      expect(view.hasChannel, isFalse);
+      expect(view.assetLoaded, isFalse);
+      expect(view.workerClosed, isFalse);
     },
   );
 }
 
 class _ComputePlatform extends WebViewPlatform {
+  _ComputePlatform([this.allowRegistration]);
+
+  final Future<void>? allowRegistration;
   late _ComputeView view;
 
   @override
   PlatformWebViewController createPlatformWebViewController(
     PlatformWebViewControllerCreationParams params,
-  ) => view = _ComputeView(params);
+  ) => view = _ComputeView(params, allowRegistration);
 
   @override
   PlatformNavigationDelegate createPlatformNavigationDelegate(
@@ -89,16 +127,25 @@ class _Navigation extends PlatformNavigationDelegate {
 }
 
 class _ComputeView extends PlatformWebViewController {
-  _ComputeView(PlatformWebViewControllerCreationParams params)
-    : super.implementation(params);
+  _ComputeView(
+    PlatformWebViewControllerCreationParams params,
+    this.allowRegistration,
+  ) : super.implementation(params);
+  final Future<void>? allowRegistration;
   final fragments = <String>[];
+  final registrationStarted = Completer<void>();
+  final registrationFinished = Completer<void>();
   final started = Completer<void>();
   final closed = Completer<void>();
-  late JavaScriptChannelParams _channel;
+  JavaScriptChannelParams? _channel;
   late _Navigation _navigation;
+  bool assetLoaded = false;
+  bool workerClosed = false;
+
+  bool get hasChannel => _channel != null;
 
   void post(String value) =>
-      _channel.onMessageReceived(JavaScriptMessage(message: value));
+      _channel!.onMessageReceived(JavaScriptMessage(message: value));
 
   @override
   Future<void> setJavaScriptMode(JavaScriptMode mode) async =>
@@ -112,12 +159,16 @@ class _ComputeView extends PlatformWebViewController {
   @override
   Future<void> addJavaScriptChannel(JavaScriptChannelParams params) async {
     expect(params.name, 'JovianCompute');
+    registrationStarted.complete();
+    await allowRegistration;
     _channel = params;
+    registrationFinished.complete();
   }
 
   @override
   Future<void> loadFlutterAsset(String key) async {
     expect(key, 'tool/legacy_compute/native_assets/legacy-compute.html');
+    assetLoaded = true;
     final local = NavigationRequest(
       url: 'file:///android_asset/flutter_assets/$key',
       isMainFrame: true,
@@ -142,12 +193,14 @@ class _ComputeView extends PlatformWebViewController {
       started.complete();
     } else {
       expect(script, 'window.jovianNativeCompute?.close()');
+      workerClosed = true;
     }
   }
 
   @override
   Future<void> removeJavaScriptChannel(String name) async {
     expect(name, 'JovianCompute');
+    _channel = null;
     closed.complete();
   }
 }

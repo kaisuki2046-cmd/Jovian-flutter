@@ -18,6 +18,7 @@ import '../features/social/social.dart';
 import '../features/synastry/synastry.dart';
 import '../ui/tab_glyph.dart';
 import '../ui/theme.dart';
+import 'app_navigation.dart';
 import 'app_shell.dart';
 
 export 'app_shell.dart' show JovianTab;
@@ -62,7 +63,19 @@ class JovianApp extends StatefulWidget {
 class _JovianAppState extends State<JovianApp> {
   static const _appearanceKey = 'jovian.ui.theme.v1';
   static const _appearance = FlutterSecureStorage();
-  final _navigator = GlobalKey<NavigatorState>();
+  late final _navigation = JovianRouter(
+    shell: _shellPage,
+    fortune: _fortunePage,
+  );
+  late final _routeInformation = PlatformRouteInformationProvider(
+    initialRouteInformation: initialJovianRoute(widget.initialTab),
+  );
+  late final _router = RouterConfig<JovianLocation>(
+    routeInformationProvider: _routeInformation,
+    routeInformationParser: const JovianRouteParser(),
+    routerDelegate: _navigation,
+    backButtonDispatcher: RootBackButtonDispatcher(),
+  );
   late ThemeMode _themeMode = widget.themeMode;
   bool _appearanceChanged = false;
   Future<void> _appearanceWrites = Future<void>.value();
@@ -95,16 +108,24 @@ class _JovianAppState extends State<JovianApp> {
 
   @override
   void dispose() {
+    _routeInformation.dispose();
+    _navigation.dispose();
     widget.account?.dispose();
     super.dispose();
   }
 
   Future<void> _readAppearance() async {
     try {
-      final stored = await _appearance.read(key: _appearanceKey);
-      final mode = ThemeMode.values
+      final stored = await _appearance
+          .read(key: _appearanceKey)
+          .onError((_, _) => null);
+      final savedMode = ThemeMode.values
           .where((item) => item.name == stored)
           .firstOrNull;
+      final legacy = savedMode == null ? readLegacyWebAppearance() : null;
+      final mode =
+          savedMode ??
+          ThemeMode.values.where((item) => item.name == legacy).firstOrNull;
       if (mounted && !_appearanceChanged && mode != null) {
         setState(() => _themeMode = mode);
       }
@@ -128,13 +149,13 @@ class _JovianAppState extends State<JovianApp> {
   }
 
   @override
-  Widget build(BuildContext context) => MaterialApp(
+  Widget build(BuildContext context) => MaterialApp.router(
     title: '木星环',
     debugShowCheckedModeBanner: false,
     theme: jovianTheme(Brightness.light),
     darkTheme: jovianTheme(Brightness.dark),
     themeMode: _themeMode,
-    navigatorKey: _navigator,
+    routerConfig: _router,
     builder: (context, child) {
       final nav = switch (widget.account) {
         final account? => NicknameSetupGate(account: account, child: child!),
@@ -145,40 +166,25 @@ class _JovianAppState extends State<JovianApp> {
         final updates? => AppUpdateHost(
           key: ValueKey(updates),
           updates: updates,
-          navigator: _navigator,
+          navigator: _navigation.navigatorKey,
           account: widget.account,
           child: viewport,
         ),
         null => viewport,
       };
     },
-    routes: {
-      '/destiny': (context) {
-        final account = widget.account;
-        if (account == null) return _destinyPage(context);
-        return _accountEntry(
-          ListenableBuilder(
-            listenable: account,
-            builder: (context, _) => _destinyPage(
-              context,
-              key: ValueKey((account, account.authorizedSession?.scope)),
-              account: account,
-            ),
-          ),
-        );
-      },
-      '/fortune': _fortunePage,
-      '/modules/fortune': _fortunePage,
-    },
-    home: _accountEntry(
-      _AppHome(
-        key: ObjectKey(widget.account),
-        account: widget.account,
-        onlineGuide: widget.onlineGuide,
-        initialTab: widget.initialTab,
-        themeMode: _themeMode,
-        onThemeModeChanged: _changeAppearance,
-      ),
+  );
+
+  Widget _shellPage(JovianTab tab) => _accountEntry(
+    _AppHome(
+      key: ObjectKey(widget.account),
+      account: widget.account,
+      onlineGuide: widget.onlineGuide,
+      tab: tab,
+      onTabSelected: _navigation.selectTab,
+      openFortune: _navigation.openFortune,
+      themeMode: _themeMode,
+      onThemeModeChanged: _changeAppearance,
     ),
   );
 
@@ -208,55 +214,37 @@ class _JovianAppState extends State<JovianApp> {
     );
   }
 
-  Widget _fortunePage(BuildContext context) {
-    final args = ModalRoute.of(context)?.settings.arguments;
-    return _accountEntry(
-      FortunePage(
-        account: widget.account,
-        loadDisplay: loadFortuneDisplay,
-        readServerTime: widget.readFortuneTime,
-        connectOnline: () => configureFortuneOnline(
-          widget.readFortuneTime,
-          readNativeSession: widget.account?.readNativeSession,
-        ),
-        archiveId: args is String ? args : null,
+  Widget _fortunePage(String? archiveId) => _accountEntry(
+    FortunePage(
+      account: widget.account,
+      loadDisplay: loadFortuneDisplay,
+      readServerTime: widget.readFortuneTime,
+      connectOnline: () => configureFortuneOnline(
+        widget.readFortuneTime,
+        readNativeSession: widget.account?.readNativeSession,
       ),
-    );
-  }
+      archiveId: archiveId,
+    ),
+  );
 }
-
-Widget _destinyPage(
-  BuildContext context, {
-  Key? key,
-  AccountController? account,
-  bool active = true,
-}) => DestinyPage(
-  key: key,
-  loadPlaces: loadBirthPlaces,
-  calculate: calculateDestinyBaZi,
-  calculateReading: legacyDestinyCalculation(),
-  requestReport: configureDestinyReport(
-    readNativeSession: account?.readNativeSession,
-  ),
-  account: account,
-  active: active,
-  openFortune: (archiveId) =>
-      Navigator.pushNamed(context, '/fortune', arguments: archiveId),
-);
 
 class _AppHome extends StatefulWidget {
   const _AppHome({
     super.key,
     required this.account,
     required this.onlineGuide,
-    required this.initialTab,
+    required this.tab,
+    required this.onTabSelected,
+    required this.openFortune,
     required this.themeMode,
     required this.onThemeModeChanged,
   });
 
   final AccountController? account;
   final OnlineGuideController? onlineGuide;
-  final JovianTab initialTab;
+  final JovianTab tab;
+  final ValueChanged<JovianTab> onTabSelected;
+  final ValueChanged<String?> openFortune;
   final ThemeMode themeMode;
   final ValueChanged<ThemeMode> onThemeModeChanged;
 
@@ -304,13 +292,20 @@ class _AppHomeState extends State<_AppHome> {
 
   @override
   Widget build(BuildContext context) => JovianShell(
-    initialTab: widget.initialTab,
+    initialTab: widget.tab,
+    onTabSelected: widget.onTabSelected,
     buildPage: (context, tab, active, selectTab) => switch (tab) {
-      JovianTab.destiny => _destinyPage(
-        context,
+      JovianTab.destiny => DestinyPage(
         key: ValueKey(_scope),
+        loadPlaces: loadBirthPlaces,
+        calculate: calculateDestinyBaZi,
+        calculateReading: legacyDestinyCalculation(),
+        requestReport: configureDestinyReport(
+          readNativeSession: widget.account?.readNativeSession,
+        ),
         account: widget.account,
         active: active,
+        openFortune: widget.openFortune,
       ),
       JovianTab.synastry => SynastryPage(
         key: ValueKey(_scope),

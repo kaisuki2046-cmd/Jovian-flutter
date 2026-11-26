@@ -23,25 +23,66 @@ class _SocialSearchPageState extends State<SocialSearchPage> {
   List<SocialProfile>? _results;
   String? _error;
   bool _loading = false;
+  bool _openingProfile = false;
+  int _revision = 0;
+  ({SocialSearchMode mode, String input})? _submitted;
 
-  Future<void> _search() async {
-    if (_loading) return;
-    final input = _input.text;
+  bool _isCurrent(int revision) =>
+      mounted && revision == _revision && widget.controller.isCurrentMember;
+
+  void _clearResults() {
+    _revision++;
+    _submitted = null;
+    _results = null;
+    _error = null;
+    _loading = false;
+  }
+
+  Future<void> _search({bool refresh = false}) async {
+    if (_loading || !widget.controller.isCurrentMember) return;
+    final query = refresh
+        ? _submitted
+        : (mode: _mode, input: _input.text.trim());
+    if (query == null || query.input.isEmpty) return;
+    if (!refresh) FocusScope.of(context).unfocus();
+    final revision = ++_revision;
     setState(() {
+      _submitted = query;
       _loading = true;
       _error = null;
-      _results = null;
+      if (!refresh) _results = null;
     });
     try {
-      final results = await widget.controller.search(_mode, input);
-      if (mounted) setState(() => _results = results);
+      final results = await widget.controller.search(query.mode, query.input);
+      if (_isCurrent(revision)) setState(() => _results = results);
     } catch (failure) {
-      if (mounted) {
-        setState(() => _error = describeSocialError(failure, '搜索暂时不可用，请重试。'));
+      if (_isCurrent(revision)) {
+        setState(() {
+          _results = null;
+          _error = describeSocialError(failure, '搜索暂时不可用，请重试。');
+        });
       }
     } finally {
-      if (mounted) setState(() => _loading = false);
+      if (_isCurrent(revision)) setState(() => _loading = false);
     }
+  }
+
+  Future<void> _open(SocialProfile profile) async {
+    if (_loading || _openingProfile || !widget.controller.isCurrentMember)
+      return;
+    _openingProfile = true;
+    FocusScope.of(context).unfocus();
+    try {
+      await Navigator.of(context).push<void>(
+        MaterialPageRoute(
+          builder: (_) =>
+              SocialProfilePage(controller: widget.controller, id: profile.id),
+        ),
+      );
+    } finally {
+      _openingProfile = false;
+    }
+    if (mounted) await _search(refresh: true);
   }
 
   @override
@@ -67,13 +108,12 @@ class _SocialSearchPageState extends State<SocialSearchPage> {
               ChoiceChip(
                 label: Text(title),
                 selected: _mode == mode,
-                onSelected: _loading || _mode == mode
+                onSelected: _mode == mode
                     ? null
                     : (_) => setState(() {
                         _mode = mode;
                         _input.clear();
-                        _results = null;
-                        _error = null;
+                        _clearResults();
                       }),
               ),
           ],
@@ -81,7 +121,6 @@ class _SocialSearchPageState extends State<SocialSearchPage> {
         const SizedBox(height: 12),
         TextField(
           controller: _input,
-          enabled: !_loading,
           autocorrect: false,
           textInputAction: TextInputAction.search,
           keyboardType: _mode == SocialSearchMode.uid
@@ -94,19 +133,19 @@ class _SocialSearchPageState extends State<SocialSearchPage> {
                 : '仅显示公开昵称',
             errorText: _error,
           ),
-          onChanged: (_) => setState(() {
-            _results = null;
-            _error = null;
-          }),
-          onSubmitted: (_) {
-            if (_input.text.trim().isNotEmpty) _search();
-          },
+          onChanged: (_) => setState(_clearResults),
+          onSubmitted: (_) => _search(),
         ),
         const SizedBox(height: 12),
         FilledButton(
           onPressed: _loading || _input.text.trim().isEmpty ? null : _search,
-          child: Text(_loading ? '正在搜索…' : '搜索'),
+          child: Text(_loading && _results == null ? '正在搜索…' : '搜索'),
         ),
+        if (_loading && _results != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: Semantics(liveRegion: true, child: const Text('正在核对搜索结果…')),
+          ),
         if (_results?.isEmpty == true)
           const Padding(
             padding: EdgeInsets.only(top: 16),
@@ -117,17 +156,7 @@ class _SocialSearchPageState extends State<SocialSearchPage> {
             padding: const EdgeInsets.only(top: 8),
             child: SocialProfileTile(
               profile: profile,
-              onTap: () async {
-                await Navigator.of(context).push<void>(
-                  MaterialPageRoute(
-                    builder: (_) => SocialProfilePage(
-                      controller: widget.controller,
-                      id: profile.id,
-                    ),
-                  ),
-                );
-                if (mounted) await _search();
-              },
+              onTap: _loading ? null : () => _open(profile),
             ),
           ),
       ],
@@ -143,7 +172,7 @@ class SocialProfileTile extends StatelessWidget {
   });
 
   final SocialProfile profile;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) => Card(
@@ -451,7 +480,12 @@ class _PublicBirthPreviewState extends State<_PublicBirthPreview> {
               ),
             ),
             TextButton(
-              onPressed: () => setState(() => _result = _read()),
+              onPressed: () {
+                final request = _read();
+                setState(() {
+                  _result = request;
+                });
+              },
               child: const Text('重试读取公开资料'),
             ),
           ],

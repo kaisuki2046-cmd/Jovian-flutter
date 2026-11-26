@@ -43,6 +43,7 @@ class _NativeComputeRunner {
   final LocalComputeExchange _job;
   final Map<String, Object?> _operation;
   final _message = StringBuffer();
+  Future<void>? _channelRegistration;
   bool _started = false;
 
   Future<void> load() async {
@@ -67,10 +68,12 @@ class _NativeComputeRunner {
         ),
       );
       if (_job.done) return;
-      await _controller.addJavaScriptChannel(
+      final registration = _controller.addJavaScriptChannel(
         _channel,
         onMessageReceived: _receive,
       );
+      _channelRegistration = registration;
+      await registration;
       if (_job.done) return;
       await _controller.loadFlutterAsset(_asset);
     } catch (_) {
@@ -123,10 +126,17 @@ class _NativeComputeRunner {
   }
 
   Future<void> close() async {
+    final registration = _channelRegistration;
+    if (registration == null) return;
     try {
-      await _controller.runJavaScript('window.jovianNativeCompute?.close()');
+      // Cancel the job immediately, then let native registration finish before
+      // removing its callback. A cancelled load never starts the worker.
+      await registration;
+      if (_started) {
+        await _controller.runJavaScript('window.jovianNativeCompute?.close()');
+      }
     } catch (_) {
-      // The view may have been cancelled before its asset loaded.
+      // The view may have registered its callback before setup failed.
     }
     try {
       await _controller.removeJavaScriptChannel(_channel);

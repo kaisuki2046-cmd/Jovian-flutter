@@ -25,4 +25,5 @@ export 'settings/requests/agreements_api.dart' show AgreementsApi;
 export 'settings/control/app_update_controller.dart' show AppUpdateController;
 export 'settings/model/android_release.dart'
     show AndroidAppVersion, AndroidRelease;
+export 'settings/model/legacy_web_appearance.dart' show readLegacyWebAppearance;
 export 'settings/view/app_update_host.dart' show AppUpdateHost;

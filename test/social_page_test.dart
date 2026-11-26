@@ -46,8 +46,9 @@ http.Response _json(Object value, [int status = 200]) =>
 
 AccountController _account(
   _Storage storage,
-  Future<http.Response> Function(http.Request) social,
-) {
+  Future<http.Response> Function(http.Request) social, {
+  Future<http.Response> Function(http.Request)? visibleProfile,
+}) {
   final api = AccountApi(
     JsonHttpClient(
       base: Uri.parse('https://account.example.test'),
@@ -56,6 +57,15 @@ AccountController _account(
           expect(request.headers['x-app-client'], 'native');
           expect(request.headers['authorization'], 'Bearer fixture-token');
           return social(request);
+        }
+        if (request.url.path == '/account/profile/visible/$_actorId') {
+          expect(request.headers['x-app-client'], 'native');
+          expect(request.headers['authorization'], 'Bearer fixture-token');
+          return visibleProfile == null
+              ? _json({
+                  'profile': {'reading': {}},
+                })
+              : visibleProfile(request);
         }
         switch (request.url.path) {
           case '/account/session':
@@ -265,6 +275,114 @@ void main() {
       pendingCredentials.complete('fixture-token');
       await Future.wait([responseCheck, credentialsCheck]);
       expect(count, 1);
+    },
+  );
+
+  testWidgets(
+    'returns to the same search while rechecking access and retries public birth details',
+    (tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(320, 700);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final rechecking = Completer<http.Response>();
+      final stale = Completer<http.Response>();
+      final queries = <Map<String, String>>[];
+      var birthReads = 0;
+      final account = _account(
+        _Storage(),
+        (request) async {
+          switch (request.url.path) {
+            case '/social/notifications/summary':
+              return _json({'unread': 0, 'canModerate': false});
+            case '/social/profiles/$_actorId':
+              return _json(_profile);
+            case '/social/search':
+              final query = request.url.queryParameters;
+              queries.add(query);
+              if (query['nickname'] == '晚到的昵称') return stale.future;
+              if (queries.length == 2) return rechecking.future;
+              if (query.containsKey('uid')) return _json(_profile);
+              return _json({
+                'items': [_profile],
+              });
+            default:
+              fail('Unexpected social request ${request.url}');
+          }
+        },
+        visibleProfile: (_) async {
+          birthReads++;
+          if (birthReads == 1) return _json({'error': 'temporary'}, 503);
+          return _json({
+            'profile': {
+              'reading': {'birthPlace': '测试公开出生地'},
+            },
+          });
+        },
+      );
+      await account.initialize();
+      await tester.pumpWidget(MaterialApp(home: SocialPage(account: account)));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('找用户'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('按昵称搜索'));
+      await tester.pumpAndSettle();
+      final field = find.byType(TextField);
+      await tester.enterText(field, ' 明月 ');
+      await tester.testTextInput.receiveAction(TextInputAction.search);
+      await tester.pumpAndSettle();
+      expect(tester.testTextInput.isVisible, isFalse);
+      expect(find.text('明月'), findsOneWidget);
+      await tester.tap(find.text('明月'));
+      await tester.pumpAndSettle();
+      expect(find.text('用户主页'), findsOneWidget);
+      expect(find.text('重试读取公开资料'), findsOneWidget);
+      await tester.tap(find.text('重试读取公开资料'));
+      await tester.pumpAndSettle();
+      expect(birthReads, 2);
+      expect(find.text('测试公开出生地'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      expect(find.text('找用户'), findsOneWidget);
+      expect(tester.widget<TextField>(field).controller!.text, ' 明月 ');
+      expect(find.text('正在核对搜索结果…'), findsOneWidget);
+      expect(find.text('明月'), findsOneWidget);
+      expect(
+        tester.widget<ListTile>(find.widgetWithText(ListTile, '明月')).onTap,
+        isNull,
+      );
+      rechecking.complete(_json({'items': []}));
+      await tester.pumpAndSettle();
+      expect(find.text('明月'), findsNothing);
+      expect(find.text('未找到该用户。'), findsOneWidget);
+
+      await tester.enterText(field, '晚到的昵称');
+      await tester.pump();
+      await tester.tap(find.text('搜索'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('按 UID 搜索'));
+      await tester.pumpAndSettle();
+      await tester.enterText(field, '12345678');
+      await tester.pump();
+      await tester.tap(find.text('搜索'));
+      await tester.pumpAndSettle();
+      stale.complete(_json({'items': []}));
+      await tester.pumpAndSettle();
+      expect(find.text('明月'), findsOneWidget);
+      expect(queries, [
+        {'nickname': '明月'},
+        {'nickname': '明月'},
+        {'nickname': '晚到的昵称'},
+        {'uid': '12345678'},
+      ]);
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      expect(find.text('消息'), findsOneWidget);
+      expect(find.text('明月'), findsNothing);
+      await tester.pumpWidget(const SizedBox.shrink());
+      account.dispose();
     },
   );
 }

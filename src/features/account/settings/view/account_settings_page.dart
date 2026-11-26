@@ -10,6 +10,7 @@ import '../../reading-profile/view/reading_profile_panel.dart';
 import '../control/app_update_controller.dart';
 import 'account_permissions.dart';
 import 'agreements_page.dart';
+import 'appearance_page.dart';
 import 'app_update_host.dart';
 import 'privacy_rights_page.dart';
 
@@ -42,33 +43,16 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
     if (oldWidget.themeMode != widget.themeMode) _themeMode = widget.themeMode;
   }
 
-  Future<void> _chooseAppearance() async {
-    final selected = await showDialog<ThemeMode>(
-      context: context,
-      builder: (context) => SimpleDialog(
-        title: const Text('外观模式'),
-        children: [
-          for (final mode in ThemeMode.values)
-            SimpleDialogOption(
-              onPressed: () => Navigator.pop(context, mode),
-              child: Row(
-                children: [
-                  Expanded(child: Text(_modeLabel(mode))),
-                  if (mode == _themeMode)
-                    const Icon(Icons.check_rounded, semanticLabel: '当前选中'),
-                ],
-              ),
-            ),
-        ],
-      ),
-    );
-    if (!mounted || selected == null || selected == _themeMode) return;
-    widget.onThemeModeChanged?.call(selected);
-    if (mounted)
-      setState(() {
-        _themeMode = selected;
-      });
-  }
+  void _openAppearance() => _open(
+    AppearancePage(
+      initialMode: _themeMode,
+      onChanged: (mode) {
+        if (!mounted) return;
+        setState(() => _themeMode = mode);
+        widget.onThemeModeChanged?.call(mode);
+      },
+    ),
+  );
 
   Future<void> _exit() async {
     final account = widget.account;
@@ -173,7 +157,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                     title: '外观模式',
                     subtitle: _modeLabel(_themeMode),
                     icon: Icons.tonality_outlined,
-                    onTap: _chooseAppearance,
+                    onTap: _openAppearance,
                   ),
                 ],
                 const SizedBox(height: 12),

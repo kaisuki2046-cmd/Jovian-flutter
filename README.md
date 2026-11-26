@@ -1,6 +1,6 @@
 # 木星环 Flutter 版
 
-Flutter 版沿用项目的[目录分工](../FRAMEWORK.md)和[协作协议](../COLLABORATION.md)。前端对照本地 `YA` 的 `b47e061a` 和算事仪式更新 `d12e3f0c`，通过现有 API 接入原 Node 服务。客户端本机计算复用原 TypeScript 资源。
+Flutter 版沿用项目的[目录分工](../FRAMEWORK.md)、[协作协议](../COLLABORATION.md)和 [Flutter 前端开工规范](AGENTS.md)。前端对照本地 `YA` 的 `b47e061a` 和算事仪式更新 `d12e3f0c`，通过现有 API 接入原 Node 服务。客户端本机计算复用原 TypeScript 资源。
 
 ## 启动 Flutter Web 前端
 
@@ -12,6 +12,8 @@ flutter run -d chrome --web-port 8081 --target src/app/main.dart --dart-define=A
 ```
 
 手机与桌面浏览器共用页面主题、卡片、表单及底栏。内容区按可用宽度居中，最多 720 逻辑像素。底栏顺序为命理、合盘、算事、消息、个人中心，周期运势仍从命理进入。个人中心设置可以切换外观，并在本设备保存选择。
+
+Web 底栏同步当前页面路径，支持刷新和浏览器前进、后退。使用 `/#/synastry`、`/#/divination`、`/#/messages`、`/#/account` 可直达对应入口，`/#/fortune` 与 `/#/modules/fortune` 继续打开周期运势。账户服务启用后，完成会话与协议确认即可继续访问原目标。外观设置可选浅色、深色或跟随系统，Web 会在首次使用时读取同源 RN 保存的外观。
 
 底栏沿用原界面的悬浮胶囊、图标和蓝色选中态。拖动水滴时，玻璃比底栏更亮，边缘会折射下方图标并模糊背景。松开后切到相应标签。个人中心沿用大头像、独立设置入口、关注和粉丝按钮及并排的报告与消息入口。
 

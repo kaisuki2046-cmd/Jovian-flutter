@@ -49,6 +49,7 @@ class _JovianTabDockState extends State<JovianTabDock>
   late List<GlobalKey> _anchors = _makeAnchors();
   final _contact = ValueNotifier<_LensContact?>(null);
   final _trayBackdrop = BackdropKey();
+  final _rimBackdrop = BackdropKey();
   late final _confirmation = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 270),
@@ -137,8 +138,9 @@ class _JovianTabDockState extends State<JovianTabDock>
       _heldCollapse = null;
       if (held != widget.collapse) setState(() {});
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_pointers.isEmpty) _suppressTap = false;
+        if (mounted && _pointers.isEmpty) _suppressTap = false;
       });
+      SchedulerBinding.instance.ensureVisualUpdate();
     }
   }
 
@@ -331,6 +333,7 @@ class _JovianTabDockState extends State<JovianTabDock>
                               dark: dark,
                               raised: raised,
                               outline: outline,
+                              rimBackdrop: _rimBackdrop,
                             ),
                           );
                           return Stack(
@@ -345,10 +348,9 @@ class _JovianTabDockState extends State<JovianTabDock>
                                 ),
                               ),
                               lens,
-                              TooltipVisibility(
-                                visible: contact == null,
-                                child: navigation!,
-                              ),
+                              // Changing tooltip visibility here would remount
+                              // the destination while it owns a pending tap.
+                              navigation!,
                               Positioned.fill(
                                 child: ExcludeSemantics(
                                   child: IgnorePointer(
@@ -472,27 +474,26 @@ class _DockArtwork extends CustomPainter {
 
       final filled = icon.artwork(brightness, filled: true);
       final relative = center - lens.bounds.center;
+      canvas.save();
+      canvas.clipPath(face!);
+      _drawGlyph(canvas, filled, center, scale: 1);
+      canvas.restore();
+
       final nx = relative.dx / lens.bounds.width;
       final ny = relative.dy / lens.bounds.height;
       final distance = math.sqrt(nx * nx + ny * ny);
       final influence = math.max(0.0, 1 - 1.7 * distance);
-      final magnified =
+      final rimCenter =
           center + relative * (.22 * influence * influence * lift);
-      final inGlassScale = 1 + .24 * lift;
-      canvas.save();
-      canvas.clipPath(face!);
-      _drawGlyph(canvas, filled, magnified, scale: inGlassScale);
-      canvas.restore();
-
       final angle = math.atan2(ny, nx);
       final drift = distance > 0 ? 2.8 * lift / distance : 0.0;
       canvas.save();
       canvas.clipPath(rim!);
-      canvas.translate(magnified.dx - nx * drift, magnified.dy - ny * drift);
+      canvas.translate(rimCenter.dx - nx * drift, rimCenter.dy - ny * drift);
       canvas.rotate(angle);
       canvas.scale(1 + .52 * lift, 1 - .17 * lift);
       canvas.rotate(-angle);
-      _drawGlyph(canvas, filled, Offset.zero, scale: inGlassScale);
+      _drawGlyph(canvas, filled, Offset.zero, scale: 1 + .24 * lift);
       canvas.restore();
     }
   }
@@ -597,13 +598,7 @@ class _Tray extends StatelessWidget {
                       ? const Color(0x29ffffff)
                       : const Color(0x9effffff),
                 ),
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: dark
-                      ? const [Color(0xa02f2f2f), Color(0x99272727)]
-                      : const [Color(0xb9f1efeb), Color(0xa9ebe8e2)],
-                ),
+                color: dark ? const Color(0x94272727) : const Color(0x38ffffff),
               ),
             ),
           ),
@@ -639,11 +634,13 @@ class _Lens extends StatelessWidget {
     required this.dark,
     required this.raised,
     required this.outline,
+    required this.rimBackdrop,
   });
 
   final bool dark;
   final bool raised;
   final TabLensOutline outline;
+  final BackdropKey rimBackdrop;
 
   @override
   Widget build(BuildContext context) => IgnorePointer(
@@ -665,7 +662,11 @@ class _Lens extends StatelessWidget {
         child: ClipPath(
           clipper: _LensBand(outline: outline),
           child: raised
-              ? _RaisedGlass(outline: outline, dark: dark)
+              ? _RaisedGlass(
+                  outline: outline,
+                  dark: dark,
+                  rimBackdrop: rimBackdrop,
+                )
               : BackdropFilter(
                   filter: _restingBlur,
                   child: DecoratedBox(
@@ -676,13 +677,9 @@ class _Lens extends StatelessWidget {
                             ? const Color(0x1affffff)
                             : const Color(0x47ffffff),
                       ),
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: dark
-                            ? const [Color(0xfb191919), Color(0xe60c0c0c)]
-                            : const [Color(0xffeeeeee), Color(0xd9e8e8e8)],
-                      ),
+                      color: dark
+                          ? const Color(0xe60c0c0c)
+                          : const Color(0xd9e8e8e8),
                     ),
                   ),
                 ),
@@ -695,31 +692,61 @@ class _Lens extends StatelessWidget {
 }
 
 class _RaisedGlass extends StatelessWidget {
-  const _RaisedGlass({required this.outline, required this.dark});
+  const _RaisedGlass({
+    required this.outline,
+    required this.dark,
+    required this.rimBackdrop,
+  });
 
   final TabLensOutline outline;
   final bool dark;
+  final BackdropKey rimBackdrop;
+  static final _faceBlur = ui.ImageFilter.blur(sigmaX: .65, sigmaY: .65);
+  static final _lightFace = ui.ImageFilter.compose(
+    inner: _faceBlur,
+    outer: _glassTone(1.04, 0),
+  );
+  static final _darkFace = ui.ImageFilter.compose(
+    inner: _faceBlur,
+    outer: _glassTone(1.13, 0),
+  );
 
   @override
   Widget build(BuildContext context) {
     final size = outline.bounds.size;
     final rimWidth = (size.shortestSide * 0.12).clamp(3.0, 6.0);
+    final rim = _LensBand(outline: outline, inset: rimWidth, rim: true);
+    final rimFilter = _rimRefraction(size, dark);
+    final opening = (Offset.zero & size).deflate(
+      rimWidth + size.shortestSide * .13,
+    );
+    final rimRegions = [
+      Rect.fromLTRB(0, 0, opening.left, size.height),
+      Rect.fromLTRB(opening.right, 0, size.width, size.height),
+      Rect.fromLTRB(opening.left, 0, opening.right, opening.top),
+      Rect.fromLTRB(opening.left, opening.bottom, opening.right, size.height),
+    ];
     return Stack(
       fit: StackFit.expand,
       children: [
-        // The edge of the glass bends its live sample in much more than the
-        // face. Both clip paths follow the same moving capsule.
-        ClipPath(
-          clipper: _LensBand(outline: outline, inset: rimWidth, rim: true),
-          child: BackdropFilter(
-            filter: _refraction(size, dark, scale: 1.34, blur: 2),
-            child: const SizedBox.expand(),
+        // The curved clip shapes the rim. Rectangular sample bounds keep web
+        // renderers from feeding the rim's refraction into the face filter.
+        for (final region in rimRegions)
+          ClipRect(
+            clipper: _LensSampleRect(region),
+            child: ClipPath(
+              clipper: rim,
+              child: BackdropFilter(
+                filter: rimFilter,
+                backdropGroupKey: rimBackdrop,
+                child: const SizedBox.expand(),
+              ),
+            ),
           ),
-        ),
         ClipPath(
           clipper: _LensBand(outline: outline, inset: rimWidth),
           child: BackdropFilter(
-            filter: _refraction(size, dark, scale: 1.07, blur: 0.75),
+            filter: dark ? _darkFace : _lightFace,
             child: const SizedBox.expand(),
           ),
         ),
@@ -729,20 +756,36 @@ class _RaisedGlass extends StatelessWidget {
   }
 }
 
+class _LensSampleRect extends CustomClipper<Rect> {
+  const _LensSampleRect(this.rect);
+
+  final Rect rect;
+
+  @override
+  Rect getClip(Size size) => rect;
+
+  @override
+  bool shouldReclip(_LensSampleRect oldClipper) => rect != oldClipper.rect;
+}
+
 class _LensBand extends CustomClipper<Path> {
-  const _LensBand({required this.outline, this.inset = 0, this.rim = false});
+  _LensBand({required this.outline, this.inset = 0, this.rim = false});
 
   final TabLensOutline outline;
   final double inset;
   final bool rim;
 
-  @override
-  Path getClip(Size size) {
+  late final Path _clip = _buildClip();
+
+  Path _buildClip() {
     final face = outline.path(inset: inset);
     return rim
         ? Path.combine(PathOperation.difference, outline.path(), face)
         : face;
   }
+
+  @override
+  Path getClip(Size size) => _clip;
 
   @override
   bool shouldReclip(_LensBand oldClipper) =>
@@ -796,49 +839,45 @@ class _GlassShadow extends CustomPainter {
       outline != oldDelegate.outline;
 }
 
-ui.ImageFilter _refraction(
-  Size size,
-  bool dark, {
-  required double scale,
-  required double blur,
-}) {
+ui.ImageFilter _rimRefraction(Size size, bool dark) {
+  const scale = 1.34;
   final center = size.center(Offset.zero);
   final magnify = Matrix4.diagonal3Values(scale, scale, 1)
     ..setTranslationRaw(center.dx * (1 - scale), center.dy * (1 - scale), 0);
-  final brightness = dark ? 1.13 : 1.025;
-  final lift = dark ? 5.0 : 1.0;
   return ui.ImageFilter.compose(
     inner: ui.ImageFilter.matrix(
       magnify.storage,
       filterQuality: FilterQuality.low,
     ),
     outer: ui.ImageFilter.compose(
-      inner: ui.ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-      outer: ColorFilter.matrix([
-        brightness * 1.094,
-        brightness * -0.086,
-        brightness * -0.008,
-        0,
-        lift,
-        brightness * -0.026,
-        brightness * 1.034,
-        brightness * -0.008,
-        0,
-        lift,
-        brightness * -0.026,
-        brightness * -0.086,
-        brightness * 1.112,
-        0,
-        lift,
-        0,
-        0,
-        0,
-        1,
-        0,
-      ]),
+      inner: ui.ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+      outer: _glassTone(dark ? 1.13 : 1.025, dark ? 5.0 : 1.0),
     ),
   );
 }
+
+ColorFilter _glassTone(double brightness, double lift) => ColorFilter.matrix([
+  brightness * 1.094,
+  brightness * -0.086,
+  brightness * -0.008,
+  0,
+  lift,
+  brightness * -0.026,
+  brightness * 1.034,
+  brightness * -0.008,
+  0,
+  lift,
+  brightness * -0.026,
+  brightness * -0.086,
+  brightness * 1.112,
+  0,
+  lift,
+  0,
+  0,
+  0,
+  1,
+  0,
+]);
 
 class _RaisedRim extends CustomPainter {
   const _RaisedRim(this.dark, this.outline);
@@ -851,14 +890,7 @@ class _RaisedRim extends CustomPainter {
     final rect = Offset.zero & size;
     canvas.drawPath(
       outline.path(),
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: dark
-              ? const [Color(0x26ffffff), Color(0x12ffffff)]
-              : const [Color(0x4dffffff), Color(0x1fffffff)],
-        ).createShader(rect),
+      Paint()..color = dark ? const Color(0x1affffff) : const Color(0x14ffffff),
     );
     canvas.drawPath(
       outline.path(inset: 1.7),

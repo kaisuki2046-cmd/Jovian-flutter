@@ -168,7 +168,7 @@ void main() {
     final gesture = await tester.startGesture(start);
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 120));
-    expect(lensFilters, findsNWidgets(2));
+    expect(lensFilters, findsNWidgets(5));
     final pressed = tester.getRect(lens);
     expect(pressed.height, closeTo(resting.height + 20, .01));
     await gesture.moveTo(start.translate(0, -55));
@@ -177,8 +177,15 @@ void main() {
     await gesture.moveTo(target.translate(0, -50));
     await tester.pump();
     final optics = tester.widgetList<BackdropFilter>(lensFilters).toList();
-    expect(optics, hasLength(2));
-    expect(optics[0].filter, isNot(equals(optics[1].filter)));
+    expect(optics, hasLength(5));
+    final rims = optics.take(4);
+    final face = optics.last.filter?.debugShortDescription;
+    for (final rim in rims) {
+      expect(rim.filter?.debugShortDescription, contains('matrix([1.34,'));
+      expect(rim.filter?.debugShortDescription, contains('blur(2.0, 2.0'));
+      expect(rim.backdropGroupKey, same(optics.first.backdropGroupKey));
+    }
+    expect(face, startsWith('blur(0.65, 0.65'));
     expect(tester.getCenter(lens).dx, closeTo(target.dx, 1));
     expect(tester.getCenter(lens).dy, pressed.center.dy);
     expect(tester.getSize(lens).height, closeTo(pressed.height, .01));
@@ -227,5 +234,29 @@ void main() {
       tester.widget<NavigationBar>(find.byType(NavigationBar)).selectedIndex,
       JovianTab.synastry.index,
     );
+  });
+
+  testWidgets('a touch still activates a destination after the pressed frame', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const JovianApp(initialTab: JovianTab.synastry));
+    await tester.pumpAndSettle();
+    final navigation = find.byType(NavigationBar);
+    final press = await tester.startGesture(
+      tester.getCenter(_tab(JovianTab.messages)),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 75));
+    expect(
+      tester.widget<NavigationBar>(navigation).selectedIndex,
+      JovianTab.synastry.index,
+    );
+    await press.up();
+    await tester.pumpAndSettle();
+    expect(
+      tester.widget<NavigationBar>(navigation).selectedIndex,
+      JovianTab.messages.index,
+    );
+    expect(tester.takeException(), isNull);
   });
 }

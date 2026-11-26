@@ -360,9 +360,12 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('外观模式'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('深色'));
+      await tester.tap(find.text('深色模式'));
       await tester.pumpAndSettle();
       expect(choice, ThemeMode.dark);
+      expect(find.text('选择喜欢的阅读方式'), findsOneWidget);
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
       expect(find.text('深色'), findsOneWidget);
       await tester.tap(find.text('关于木星环'));
       await tester.pumpAndSettle();

@@ -7,16 +7,17 @@ import '../ui/tab_dock.dart';
 import '../ui/tab_glyph.dart';
 
 enum JovianTab {
-  destiny('命理', TabGlyphShape.chart),
-  synastry('合盘', TabGlyphShape.match),
-  divination('算事', TabGlyphShape.oracle),
-  messages('消息', TabGlyphShape.message),
-  account('个人中心', TabGlyphShape.profile);
+  destiny('命理', TabGlyphShape.chart, '/'),
+  synastry('合盘', TabGlyphShape.match, '/synastry'),
+  divination('算事', TabGlyphShape.oracle, '/divination'),
+  messages('消息', TabGlyphShape.message, '/messages'),
+  account('个人中心', TabGlyphShape.profile, '/account');
 
-  const JovianTab(this.label, this.glyph);
+  const JovianTab(this.label, this.glyph, this.path);
 
   final String label;
   final TabGlyphShape glyph;
+  final String path;
 }
 
 class JovianShell extends StatefulWidget {
@@ -24,9 +25,11 @@ class JovianShell extends StatefulWidget {
     super.key,
     required this.initialTab,
     required this.buildPage,
+    this.onTabSelected,
   });
 
   final JovianTab initialTab;
+  final ValueChanged<JovianTab>? onTabSelected;
   final Widget Function(
     BuildContext context,
     JovianTab tab,
@@ -47,15 +50,31 @@ class _JovianShellState extends State<JovianShell> {
   double _scrollDelta = 0;
   int? _dockFrame;
 
+  @override
+  void didUpdateWidget(covariant JovianShell oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialTab != widget.initialTab &&
+        _active != widget.initialTab) {
+      _activate(widget.initialTab);
+    }
+  }
+
   void _select(JovianTab next) {
     if (next == _active) return;
-    FocusScope.of(context).unfocus();
+    final onTabSelected = widget.onTabSelected;
+    if (onTabSelected != null) {
+      onTabSelected(next);
+    } else {
+      setState(() => _activate(next));
+    }
+  }
+
+  void _activate(JovianTab next) {
+    FocusManager.instance.primaryFocus?.unfocus();
     _scrollDelta = 0;
     _queueDockCollapse(0);
-    setState(() {
-      _active = next;
-      _visited.add(next);
-    });
+    _active = next;
+    _visited.add(next);
   }
 
   bool _trackDockScroll(ScrollUpdateNotification notification) {

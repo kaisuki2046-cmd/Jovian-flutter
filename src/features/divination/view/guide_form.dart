@@ -22,12 +22,14 @@ class GuideForm extends StatefulWidget {
     super.key,
     this.online,
     this.openSynastry,
+    this.openAiPermissions,
     this.active = true,
     this.attachmentPicker = pickComposerAttachments,
   });
 
   final OnlineGuideController? online;
   final VoidCallback? openSynastry;
+  final VoidCallback? openAiPermissions;
   final bool active;
   final ComposerAttachmentPicker attachmentPicker;
 
@@ -288,6 +290,17 @@ class _GuideFormState extends State<GuideForm>
         snapshot: () => mounted ? _snapshot : null,
         busy: () => mounted && (widget.online?.busy ?? false),
         error: () => mounted ? widget.online?.message : null,
+        openAiPermissions: () {
+          final open = widget.openAiPermissions;
+          if (!mounted || !online.needsAiPermission || open == null) {
+            return null;
+          }
+          return () {
+            if (!route.isCurrent) return;
+            navigator.pop();
+            open();
+          };
+        },
         retry: () {
           final online = mounted ? widget.online : null;
           return online?.canRetry == true ? online!.retry : null;
@@ -796,6 +809,12 @@ class _GuideFormState extends State<GuideForm>
     _finishQuestion(online);
   }
 
+  Widget? _permissionAction(OnlineGuideController online) {
+    final open = widget.openAiPermissions;
+    if (!online.needsAiPermission || open == null || online.busy) return null;
+    return OutlinedButton(onPressed: open, child: const UiText('前往 AI 授权'));
+  }
+
   Widget _failedStartCard(OnlineGuideController online, String focus) =>
       GuideAssistantMessage(
         content: Column(
@@ -814,6 +833,7 @@ class _GuideFormState extends State<GuideForm>
               spacing: 8,
               runSpacing: 4,
               children: [
+                ?_permissionAction(online),
                 OutlinedButton(
                   onPressed: _attachmentSelection != null
                       ? null
@@ -861,13 +881,15 @@ class _GuideFormState extends State<GuideForm>
             child: GuideConversationReply(body: message),
           ),
         ),
-      if (online.canRetry && !online.busy)
+      if (online.canRetry && !online.busy) ...[
+        ?_permissionAction(online),
         OutlinedButton(
           onPressed: _attachmentSelection != null
               ? null
               : () => _retryOnline(online),
           child: const UiText('重试'),
         ),
+      ],
     ];
   }
 

@@ -311,6 +311,7 @@ class OnlineGuideController {
   OnlineReading? _reading;
   bool _busy = false;
   bool _questionStopped = false;
+  bool _needsAiPermission = false;
   String? _message;
 
   Stream<void> get changes => _changes.stream;
@@ -381,6 +382,7 @@ class OnlineGuideController {
   bool get busy => _busy;
   String? get message => _message;
   bool get canRetry => _retry != null;
+  bool get needsAiPermission => _needsAiPermission;
   String? get failedStartFocus =>
       !_busy && _retry != null && _reading == null ? _confirmedFocus : null;
   bool get canStopUnderstanding => _understanding != null;
@@ -580,6 +582,7 @@ class OnlineGuideController {
     _confirmedFocus = null;
     _retry = null;
     _message = null;
+    _needsAiPermission = false;
     _emit();
   }
 
@@ -863,6 +866,7 @@ class OnlineGuideController {
     final previous = _reading;
     _busy = true;
     _questionStopped = false;
+    _needsAiPermission = false;
     _message = null;
     _confirmedFocus = null;
     _retry = action;
@@ -871,6 +875,7 @@ class OnlineGuideController {
       await action();
       _retry = null;
     } on ReadingConnectionError catch (error) {
+      _needsAiPermission = error.status == 428;
       if (error.status == 404 && _token != null) {
         _token = null;
         _pending = null;

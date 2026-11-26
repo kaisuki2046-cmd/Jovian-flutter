@@ -375,6 +375,17 @@ class _AppHomeState extends State<_AppHome> {
     });
   }
 
+  Future<void> _openGuidePermissions() async {
+    final account = widget.account;
+    final scope = _scope;
+    if (account == null || scope == null) return;
+    await account.initialize();
+    if (!mounted || !identical(widget.account, account) || _scope != scope)
+      return;
+    final links = context.getInheritedWidgetOfExactType<AccountSectionLinks>();
+    await links?.open(accountDestination(AccountSection.aiPermissions));
+  }
+
   @override
   void dispose() {
     widget.account?.removeListener(_updateGuideOwner);
@@ -416,6 +427,9 @@ class _AppHomeState extends State<_AppHome> {
         key: ValueKey(_scope),
         onlineGuide: widget.account == null ? widget.onlineGuide : _guide,
         openSynastry: () => selectTab(JovianTab.synastry),
+        openAiPermissions: widget.account == null
+            ? null
+            : _openGuidePermissions,
         active: active,
       ),
       JovianTab.messages => _sectionNavigator(

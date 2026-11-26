@@ -68,6 +68,7 @@ class DivinationRecoveryFixture
 class DivinationServiceFixture {
   String get _token => 'a' * 43;
   bool failReport = true;
+  bool denyUnderstandingPermission = false;
   bool expired = false;
   bool extendedFollowUp = false;
   bool longReport = false;
@@ -109,6 +110,9 @@ class DivinationServiceFixture {
         await understanding;
         final question = body['question'] as String;
         understood.add(question);
+        if (denyUnderstandingPermission) {
+          return _json({'error': 'ai_permission_required'}, status: 428);
+        }
         return _json({
           'source': 'model',
           'focus': divinationFixtureFocus,

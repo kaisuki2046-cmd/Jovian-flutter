@@ -8,11 +8,13 @@ class DivinationPage extends StatelessWidget {
     super.key,
     this.onlineGuide,
     this.openSynastry,
+    this.openAiPermissions,
     this.active = true,
   });
 
   final OnlineGuideController? onlineGuide;
   final VoidCallback? openSynastry;
+  final VoidCallback? openAiPermissions;
   final bool active;
 
   @override
@@ -20,6 +22,7 @@ class DivinationPage extends StatelessWidget {
     key: ObjectKey(onlineGuide),
     online: onlineGuide,
     openSynastry: openSynastry,
+    openAiPermissions: openAiPermissions,
     active: active,
   );
 }

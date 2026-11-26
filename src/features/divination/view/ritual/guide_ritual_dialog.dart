@@ -28,6 +28,7 @@ class GuideRitualDialog extends StatefulWidget {
     required this.choose,
     required this.pause,
     this.onRevealChanged,
+    this.openAiPermissions,
   });
 
   final GuideRitualPresentation presentation;
@@ -36,6 +37,7 @@ class GuideRitualDialog extends StatefulWidget {
   final bool Function() busy;
   final String? Function() error;
   final VoidCallback? Function() retry;
+  final VoidCallback? Function()? openAiPermissions;
   final VoidCallback toss;
   final ValueChanged<int> choose;
   final VoidCallback pause;
@@ -118,6 +120,7 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
     final busy = widget.busy();
     final error = widget.error();
     final retry = widget.retry();
+    final permission = widget.openAiPermissions?.call();
     return Dialog(
       key: const ValueKey('guide-ritual-dialog'),
       insetPadding: const EdgeInsets.all(12),
@@ -176,6 +179,11 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
                         error,
                         style: TextStyle(color: theme.colorScheme.error),
                       ),
+                    ),
+                  if (!busy && permission != null && !flipping)
+                    OutlinedButton(
+                      onPressed: permission,
+                      child: const UiText('前往 AI 授权'),
                     ),
                   if (!busy && retry != null && !flipping)
                     TextButton(onPressed: retry, child: const UiText('重试仪式同步')),

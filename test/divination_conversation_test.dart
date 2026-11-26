@@ -81,6 +81,62 @@ void main() {
     },
   );
 
+  testWidgets(
+    'permission recovery retries the same question without duplication',
+    (tester) async {
+      final service = DivinationServiceFixture()
+        ..denyUnderstandingPermission = true;
+      final online = service.connect(DivinationRecoveryFixture());
+      addTearDown(online.dispose);
+      var opened = 0;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: DivinationPage(
+            onlineGuide: online,
+            openAiPermissions: () {
+              opened++;
+              service.denyUnderstandingPermission = false;
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.enterText(
+        find.byType(TextFormField),
+        divinationFixtureQuestion,
+      );
+      await _send(tester);
+      expect(online.needsAiPermission, isTrue);
+      expect(
+        online.activeTranscript.single.question,
+        divinationFixtureQuestion,
+      );
+      expect(online.activeTranscript.single.reply, isNull);
+      final conversation = online.activeConversationId;
+      await _tap(tester, '前往 AI 授权');
+      expect(opened, 1);
+      expect(service.understood, [divinationFixtureQuestion]);
+
+      await _tap(tester, '重试');
+      expect(online.needsAiPermission, isFalse);
+      expect(online.activeConversationId, conversation);
+      expect(
+        online.activeTranscript.single.question,
+        divinationFixtureQuestion,
+      );
+      expect(
+        online.activeTranscript.single.reply,
+        divinationFixtureClarification,
+      );
+      expect(service.understood, [
+        divinationFixtureQuestion,
+        divinationFixtureQuestion,
+      ]);
+      expect(find.text('前往 AI 授权'), findsNothing);
+    },
+  );
+
   testWidgets('composer keeps selected files local and sends only the caption', (
     tester,
   ) async {

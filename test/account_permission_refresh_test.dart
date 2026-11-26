@@ -7,7 +7,6 @@ import 'package:material_ui/material_ui.dart';
 
 import '../src/features/account/account.dart';
 import '../src/features/account/settings/model/agreements.dart';
-import '../src/features/account/settings/view/account_settings_page.dart';
 import '../src/shared/http/json_client.dart';
 
 const _destiny = 'destiny.cloud_interpretation';

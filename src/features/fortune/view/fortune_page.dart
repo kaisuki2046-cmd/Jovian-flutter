@@ -166,6 +166,14 @@ class _FortuneSessionState extends State<_FortuneSession> {
                       _fortune.displayedWindow?.contextKey,
                     )),
                     fortune: _fortune,
+                    openAiPermissions: () => Navigator.of(context).push<void>(
+                      MaterialPageRoute(
+                        builder: (_) => AccountPrivacyPage(
+                          account: widget.account!,
+                          onlyAiPermissions: true,
+                        ),
+                      ),
+                    ),
                   ),
                 if (_fortune.online != null &&
                     _fortune.hasChart &&

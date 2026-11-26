@@ -24,6 +24,7 @@ export 'profile/view/public_birth_details.dart' show PublicBirthDetails;
 export 'reading-profile/model/account_birth_fields.dart'
     show AccountBirthFields;
 export 'settings/requests/agreements_api.dart' show AgreementsApi;
+export 'settings/view/account_settings_page.dart' show AccountPrivacyPage;
 export 'settings/control/app_update_controller.dart' show AppUpdateController;
 export 'settings/model/android_release.dart'
     show AndroidAppVersion, AndroidRelease;

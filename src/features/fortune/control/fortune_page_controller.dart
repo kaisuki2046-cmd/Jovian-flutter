@@ -50,6 +50,7 @@ class FortunePageController extends ChangeNotifier {
   bool selectedArchiveMissing = false;
   String? reportError;
   String? generationError;
+  bool _authorizationRequired = false;
   bool returnLocationRejected = false;
   String? adviceError;
   PublishedFortune? published;
@@ -82,6 +83,10 @@ class FortunePageController extends ChangeNotifier {
       prepared != null &&
       hasChart &&
       !busy;
+  bool get needsAiAuthorization => _authorizationRequired && !_canUseAi;
+  bool get _canUseAi =>
+      account?.agreementState?.permissions['fortune.cloud_interpretation'] ==
+      true;
   bool get hasChart => archive?.snapshot != null;
   bool get busy => loadingReport || generating || loadingAdvice || saving;
   bool get needsSave => _draft != null && !reportSaved;
@@ -311,36 +316,70 @@ class FortunePageController extends ChangeNotifier {
 
   Future<void> generate({Map<String, Object?>? returnLocation}) async {
     final service = online;
-    if (service == null || !canGenerate || !_sessionMatches) return;
+    final accounts = account;
+    if (service == null ||
+        accounts == null ||
+        !canGenerate ||
+        !_sessionMatches ||
+        needsAiAuthorization) {
+      return;
+    }
     final job = _work;
     final at = referenceTime!.millisecondsSinceEpoch;
     final snapshot = archive!.entry.id;
     final input = _periodInput(period, display!.zone, prepared!.target);
     generating = true;
     generationError = null;
+    _authorizationRequired = false;
     returnLocationRejected = false;
+
+    // The service can return a cached or no-match report without using AI.
+    var hadPermission = _canUseAi;
+    final stopped = Completer<void>();
+    bool isCurrent() =>
+        _current(job) && _sessionMatches && !stopped.isCompleted;
+    void stopIfStale() {
+      if (stopped.isCompleted) return;
+      if (!_current(job) || !_sessionMatches) {
+        stopped.complete();
+      } else if (hadPermission && !_canUseAi) {
+        _authorizationRequired = true;
+        stopped.complete();
+      }
+      hadPermission = hadPermission || _canUseAi;
+    }
+
+    final cancel = Future.any([job.future, stopped.future]);
     _emit();
     try {
-      final run = returnLocation == null && _calculation != null
-          ? _calculation!
-          : await service.calculate(
-              input,
-              ownerId!,
-              snapshot,
-              archive!.snapshot!,
-              job.future,
-              returnLocation: returnLocation,
-            );
-      if (!_current(job) || !_sessionMatches) return;
-      if (returnLocation == null) _calculation = run;
-      final report = await service.api.interpret(
-        ownerId!,
-        snapshot,
-        period,
-        run,
-        job.future,
-      );
-      if (!_current(job) || !_sessionMatches) return;
+      accounts.addListener(stopIfStale);
+      final PublishedFortune report;
+      try {
+        stopIfStale();
+        if (!isCurrent()) return;
+        final run = returnLocation == null && _calculation != null
+            ? _calculation!
+            : await service.calculate(
+                input,
+                ownerId!,
+                snapshot,
+                archive!.snapshot!,
+                cancel,
+                returnLocation: returnLocation,
+              );
+        if (!isCurrent()) return;
+        if (returnLocation == null) _calculation = run;
+        report = await service.api.interpret(
+          ownerId!,
+          snapshot,
+          period,
+          run,
+          cancel,
+        );
+      } finally {
+        accounts.removeListener(stopIfStale);
+      }
+      if (!isCurrent()) return;
       published = report;
       archivedWindow = null;
       _archivedZone = null;
@@ -349,15 +388,20 @@ class FortunePageController extends ChangeNotifier {
       reportSaved = false;
       await _mirrorReport(service, report, input, at, job);
     } catch (error) {
-      if (_current(job)) {
-        returnLocationRejected = error is FortuneReturnLocationUnavailable;
-        generationError = switch (error) {
-          FortuneReturnLocationUnavailable() =>
-            '这个地点无法确定可靠的回归上升。可以调整经纬度，或清空后生成常规解读。',
-          JsonRequestError(status: 428) => '请在个人中心开启运势在线解读授权。',
-          _ => '暂时无法生成运势解读，请重试。',
-        };
-        _recoverIdentity(error);
+      if (isCurrent()) {
+        if (error is JsonRequestError && error.status == 428) {
+          _authorizationRequired = true;
+          await accounts.initialize();
+          if (isCurrent() && !needsAiAuthorization) {
+            generationError = '暂时无法确认运势在线解读授权，请重试。';
+          }
+        } else {
+          returnLocationRejected = error is FortuneReturnLocationUnavailable;
+          generationError = returnLocationRejected
+              ? '这个地点无法确定可靠的回归上升。可以调整经纬度，或清空后生成常规解读。'
+              : '暂时无法生成运势解读，请重试。';
+          _recoverIdentity(error);
+        }
       }
     } finally {
       if (_current(job)) {
@@ -544,6 +588,7 @@ class FortunePageController extends ChangeNotifier {
     archivedWindow = null;
     _archivedZone = null;
     generationError = null;
+    _authorizationRequired = false;
     returnLocationRejected = false;
     adviceError = null;
     advice = null;

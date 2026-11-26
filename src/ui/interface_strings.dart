@@ -760,6 +760,9 @@ const englishInterfaceStrings = <String, String>{
   "此平台暂不支持本机排盘。": "Local chart calculation is unavailable on this platform.",
   "查看此组合已存解读": "View saved reading for this pair",
   "前往 AI 授权": "Open AI permissions",
+  "请先开启运势在线解读授权。": "Enable online forecast readings to continue.",
+  "暂时无法确认运势在线解读授权，请重试。":
+      "Unable to verify permission for online forecasts. Try again.",
   "关闭动效": "Pause animation",
   "开启动效": "Play animation",
   "系统已减少动态效果": "Reduced motion is enabled on your device",

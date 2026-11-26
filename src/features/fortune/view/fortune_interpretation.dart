@@ -7,9 +7,14 @@ import '../model/online_fortune.dart';
 import 'fortune_display_labels.dart';
 
 class FortuneInterpretation extends StatefulWidget {
-  const FortuneInterpretation({super.key, required this.fortune});
+  const FortuneInterpretation({
+    super.key,
+    required this.fortune,
+    required this.openAiPermissions,
+  });
 
   final FortunePageController fortune;
+  final VoidCallback openAiPermissions;
 
   @override
   State<FortuneInterpretation> createState() => _FortuneInterpretationState();
@@ -37,6 +42,7 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
       );
     }
     final report = fortune.published;
+    final needsAuthorization = fortune.needsAiAuthorization;
     final target = fortune.archivedWindow == null
         ? fortune.prepared?.returnAt
         : null;
@@ -91,7 +97,16 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
           ),
         ],
         if (fortune.generationError case final error?) _FortuneStatus(error),
-        if (fortune.returnLocationRejected && fortune.canGenerate)
+        if (needsAuthorization && !fortune.generating) ...[
+          const _FortuneStatus('请先开启运势在线解读授权。'),
+          OutlinedButton(
+            onPressed: widget.openAiPermissions,
+            child: const UiText('前往 AI 授权'),
+          ),
+        ],
+        if (!needsAuthorization &&
+            fortune.returnLocationRejected &&
+            fortune.canGenerate)
           Align(
             alignment: AlignmentDirectional.centerStart,
             child: TextButton(
@@ -107,7 +122,8 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
               child: const UiText('清空地点，生成常规解读'),
             ),
           ),
-        if (!fortune.loadingReport &&
+        if (!needsAuthorization &&
+            !fortune.loadingReport &&
             !fortune.generating &&
             (report == null || hasLocation || fortune.generationError != null))
           Align(

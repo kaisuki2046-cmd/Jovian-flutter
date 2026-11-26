@@ -258,6 +258,138 @@ void main() {
     },
   );
 
+  testWidgets('recovers AI consent while preserving the selected forecast', (
+    tester,
+  ) async {
+    _viewport(tester, const Size(360, 800));
+    const purpose = 'fortune.cloud_interpretation';
+    var allowAi = false;
+    var archived = 0;
+    var interpretations = 0;
+    var cancelled = false;
+    var period = 'day';
+    final lateReport = Completer<http.StreamedResponse>();
+    final account = _account((request) {
+      switch (request.url.path) {
+        case '/account/destiny-history/latest':
+          return _json(_chart());
+        case '/account/reading-history/latest':
+          return http.Response('', 204);
+        case '/account/reading-history' when request.method == 'POST':
+          archived++;
+          return _json({..._entry(_reportId, '运势报告'), 'kind': 'fortune'});
+        case '/account/agreements/permission':
+          final body = jsonDecode(request.body) as Map<String, Object?>;
+          expect(body['purpose'], purpose);
+          allowAi = body['agreed'] as bool;
+          return _json({
+            'requiredAccepted': true,
+            'permissions': {
+              for (final key in aiPurposes.keys) key: key != purpose || allowAi,
+            },
+          });
+        default:
+          fail('Unexpected account path ${request.url.path}');
+      }
+    }, allowsFortuneAi: () => allowAi);
+    addTearDown(account.dispose);
+    await account.initialize();
+
+    http.StreamedResponse reply(int status, [Object? body]) =>
+        http.StreamedResponse(
+          Stream.value(utf8.encode(jsonEncode(body))),
+          status,
+        );
+
+    http.StreamedResponse report(String forPeriod) => reply(200, {
+      'reportId': _reportId,
+      'calculationRunId': _runId,
+      'natalChartSnapshotId': _snapshotId,
+      'periodType': forPeriod,
+      'sections': [
+        for (final section in ['overall', 'wealth', 'romance'])
+          {'sectionId': section, 'summary': '$forPeriod $section'},
+      ],
+    });
+
+    final service = _SolarReturnService(
+      FortuneReportApi(
+        JsonHttpClient(
+          base: Uri.https('fortune.example.test'),
+          client: MockClient.streaming((request, _) async {
+            if (request.method == 'GET') return reply(204);
+            expect(request.url.path, '/fortune/interpret');
+            interpretations++;
+            if (period == 'year' && !allowAi) {
+              return reply(428, {'error': 'ai_permission_required'});
+            }
+            if (interpretations == 3) {
+              final trigger = (request as http.AbortableRequest).abortTrigger!;
+              unawaited(trigger.then((_) => cancelled = true));
+              return lateReport.future;
+            }
+            return report(period);
+          }),
+        ),
+      ),
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        home: FortunePage(
+          loadDisplay: _utc,
+          local: const FortuneLocalFixture(),
+          readServerTime: () async => _today,
+          account: account,
+          connectOnline: () => service,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await _tap(tester, '解读');
+    expect(find.text('day overall'), findsOneWidget);
+    expect(archived, 1);
+    expect(allowAi, isFalse);
+
+    period = 'year';
+    await _tap(tester, '本年');
+    await _tap(tester, '解读');
+    expect(interpretations, 2);
+    expect(find.text('前往 AI 授权'), findsOneWidget);
+    expect(find.text('解读'), findsNothing);
+
+    Future<void> authorize() async {
+      await _tap(tester, '前往 AI 授权');
+      expect(find.text('AI 数据共享授权'), findsOneWidget);
+      await _tap(tester, '运势在线解读');
+      await _tap(tester, '同意授权');
+      await tester.pageBack();
+      await tester.pumpAndSettle();
+      final year = find.widgetWithText(ChoiceChip, '本年');
+      expect(tester.widget<ChoiceChip>(year).selected, isTrue);
+    }
+
+    await authorize();
+    await tester.tap(find.widgetWithText(OutlinedButton, '解读'));
+    await tester.pump();
+    expect(interpretations, 3);
+    await account.choose(account.catalog!.ai, purpose, false);
+    await tester.pump();
+    expect(cancelled, isTrue);
+    lateReport.complete(report('year'));
+    await tester.pumpAndSettle();
+    expect(find.text('year overall'), findsNothing);
+    expect(archived, 1);
+    expect(find.text('前往 AI 授权'), findsOneWidget);
+
+    await authorize();
+    await _tap(tester, '解读');
+    expect(interpretations, 4);
+    expect(archived, 2);
+    expect(service.locations, [null, null]);
+    expect(find.text('year overall'), findsOneWidget);
+  });
+
   for (final status in [403, 404]) {
     testWidgets(
       'unavailable selected archive $status returns to Destiny with the session intact',
@@ -366,7 +498,7 @@ class _SolarReturnService extends FortuneOnline {
     Future<void> cancel, {
     Map<String, Object?>? returnLocation,
   }) async {
-    expect(input['periodType'], 'year');
+    expect(input['periodType'], anyOf('day', 'year'));
     expect(owner, _owner);
     expect(snapshot, _snapshotId);
     locations.add(returnLocation);
@@ -394,6 +526,7 @@ AccountController _accountWithChart() => _account(
 AccountController _account(
   http.Response Function(http.Request) respond, {
   VoidCallback? onRestore,
+  bool Function()? allowsFortuneAi,
 }) {
   final api = AccountApi(
     JsonHttpClient(
@@ -420,7 +553,12 @@ AccountController _account(
           }),
           '/account/agreements' => _json({
             'requiredAccepted': true,
-            'permissions': {for (final key in aiPurposes.keys) key: true},
+            'permissions': {
+              for (final key in aiPurposes.keys)
+                key:
+                    key != 'fortune.cloud_interpretation' ||
+                    (allowsFortuneAi?.call() ?? true),
+            },
           }),
           _ => respond(request),
         };

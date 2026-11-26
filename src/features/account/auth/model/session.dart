@@ -87,6 +87,8 @@ abstract interface class NativeSessionStorage {
 
 enum AuthMethod { password, register, phoneCode, guest, wechat, qq }
 
+typedef SignInCodeChallenge = ({String id, bool localInbox});
+
 class AccountIdentifier {
   const AccountIdentifier._(this.field, this.value);
 

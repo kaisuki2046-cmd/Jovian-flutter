@@ -312,7 +312,7 @@ class AccountApi {
     }
   }
 
-  Future<String> sendCode(AccountIdentifier identifier) async {
+  Future<SignInCodeChallenge> sendCode(AccountIdentifier identifier) async {
     final result = await request(
       identifier.isPhone
           ? ['auth', 'phone', 'login', 'code']
@@ -323,7 +323,7 @@ class AccountApi {
     if (challenge is! String || challenge.isEmpty) {
       throw const FormatException('Invalid account challenge.');
     }
-    return challenge;
+    return (id: challenge, localInbox: result['delivery'] == 'local-inbox');
   }
 
   Future<AccountSession> signIn(

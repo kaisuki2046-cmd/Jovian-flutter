@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -9,6 +10,8 @@ import 'package:material_ui/material_ui.dart';
 import '../src/features/account/account.dart';
 import '../src/features/account/auth/model/session.dart';
 import '../src/features/account/profile/view/profile_dashboard.dart';
+import '../src/features/account/profile/model/profile_details_store.dart';
+import '../src/features/account/profile/model/profile_device_scope.dart';
 import '../src/features/account/settings/model/agreements.dart';
 import '../src/features/account/settings/view/account_settings_page.dart';
 import '../src/shared/http/json_client.dart';
@@ -45,7 +48,12 @@ AccountController _fixture(
           case 'GET /account/session':
             if (guest) return _json({'error': 'unauthorized'}, 401);
             return _json({
-              'user': {'id': _memberId, 'uid': '12345678', 'displayName': '若水'},
+              'user': {
+                'id': _memberId,
+                'uid': '12345678',
+                'displayName': '若水',
+                'bio': '账户公开简介',
+              },
             });
           case 'GET /account/auth/guest':
             return _json({'id': _guestId, 'expiresAt': 1900000000000});
@@ -156,6 +164,8 @@ Widget _app(
 );
 
 void main() {
+  setUp(() => FlutterSecureStorage.setMockInitialValues({}));
+
   testWidgets(
     'preserves the original narrow layout, real counts, UID copying, and shortcuts',
     (tester) async {
@@ -224,9 +234,100 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('添加个性签名'));
       await tester.pumpAndSettle();
-      expect(find.widgetWithText(TextField, '个人简介'), findsOneWidget);
+      expect(find.widgetWithText(TextField, '个性签名'), findsOneWidget);
+      expect(find.widgetWithText(TextField, '个人简介'), findsNothing);
       await tester.pumpWidget(const SizedBox.shrink());
       account.dispose();
+    },
+  );
+
+  testWidgets(
+    'local signature and tags stay with their identity on a narrow dashboard',
+    (tester) async {
+      final key = profileDeviceKey('member:$_memberId', 'profile-details');
+      FlutterSecureStorage.setMockInitialValues({
+        key: jsonEncode({
+          'signature': '旧本机签名',
+          'tags': {'zodiac': '双鱼座'},
+        }),
+      });
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(320, 720);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final paths = <String>[];
+      final member = _fixture(paths);
+      final guest = _fixture(<String>[], guest: true);
+      addTearDown(member.dispose);
+      addTearDown(guest.dispose);
+      await member.initialize();
+      await tester.pumpWidget(_app(member));
+      await tester.pumpAndSettle();
+      expect(find.text('旧本机签名'), findsOneWidget);
+      expect(find.text('账户公开简介'), findsNothing);
+      expect(find.text('双鱼座'), findsOneWidget);
+      await tester.tap(find.text('旧本机签名'));
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.widgetWithText(TextField, '个性签名'),
+        '  新的本机签名  ',
+      );
+      await tester.tap(find.text('保存'));
+      await tester.pumpAndSettle();
+      expect(find.text('新的本机签名'), findsOneWidget);
+
+      await tester.tap(find.text('双鱼座'));
+      await tester.pumpAndSettle();
+      for (final (label, value) in [
+        ('星座', '双鱼座'),
+        ('性格', '慢热'),
+        ('兴趣', '书与山'),
+      ]) {
+        final input = find.widgetWithText(TextField, label);
+        await tester.ensureVisible(input);
+        await tester.enterText(input, value);
+      }
+      await tester.tap(find.text('保存'));
+      await tester.pumpAndSettle();
+      expect(find.text('慢热'), findsOneWidget);
+      expect(find.text('书与山'), findsOneWidget);
+      expect(paths.where((route) => route.startsWith('PATCH ')), isEmpty);
+      expect(tester.takeException(), isNull);
+
+      await tester.tap(find.text('基础个人资料'));
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<TextField>(find.widgetWithText(TextField, '个人简介'))
+            .controller!
+            .text,
+        '账户公开简介',
+      );
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('新的本机签名'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.widgetWithText(TextField, '个性签名'), '未保存草稿');
+      await member.signOut();
+      await tester.pumpAndSettle();
+      expect(find.text('当前会话已变更'), findsOneWidget);
+      expect(find.text('新的本机签名'), findsNothing);
+      expect(find.text('未保存草稿'), findsNothing);
+      await tester.tap(find.text('关闭'));
+      await tester.pumpAndSettle();
+      await guest.initialize();
+      await tester.pumpWidget(_app(guest));
+      await tester.pumpAndSettle();
+      expect(find.text('添加个性签名'), findsOneWidget);
+      expect(find.text('添加标签'), findsOneWidget);
+      expect(find.text('书与山'), findsNothing);
+      expect(
+        (await const LocalProfileDetailsStore().read(
+          'member:$_memberId',
+        )).signature,
+        '新的本机签名',
+      );
+      await tester.pumpWidget(const SizedBox.shrink());
     },
   );
 

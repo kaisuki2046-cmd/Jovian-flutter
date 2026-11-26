@@ -60,15 +60,11 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
           ),
         if (locationVisible) ...[
           Text('填写 ${_returnDate(context, target, fortune)} 太阳回归时的地点。可留空。'),
-          Row(
-            spacing: 8,
-            children: [
-              Expanded(child: _coordinate(_latitude, '纬度', '如 39.90')),
-              Expanded(child: _coordinate(_longitude, '经度', '如 116.40')),
-            ],
-          ),
+          _coordinates(),
           if (invalidLocation)
-            const Text('请填写两项十进制度。纬度须大于 -90 且小于 90，经度可在 -180 到 180 之间。'),
+            const _FortuneStatus(
+              '请填写两项十进制度。纬度须大于 -90 且小于 90，经度可在 -180 到 180 之间。',
+            ),
         ],
         if (fortune.loadingReport) const _FortuneStatus('正在读取已存解读…'),
         if (fortune.generating) const _FortuneStatus('正在生成解读…'),
@@ -82,6 +78,22 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
           ),
         ],
         if (fortune.generationError case final error?) _FortuneStatus(error),
+        if (fortune.returnLocationRejected && fortune.canGenerate)
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: TextButton(
+              onPressed: () {
+                FocusManager.instance.primaryFocus?.unfocus();
+                setState(() {
+                  _latitude.clear();
+                  _longitude.clear();
+                  _showLocation = false;
+                });
+                fortune.generate();
+              },
+              child: const Text('清空地点，生成常规解读'),
+            ),
+          ),
         if (!fortune.loadingReport &&
             !fortune.generating &&
             (report == null || hasLocation || fortune.generationError != null))
@@ -89,7 +101,10 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
             alignment: AlignmentDirectional.centerStart,
             child: OutlinedButton(
               onPressed: canGenerate
-                  ? () => fortune.generate(returnLocation: location)
+                  ? () {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      fortune.generate(returnLocation: location);
+                    }
                   : null,
               child: Text(fortune.generationError == null ? '解读' : '重试生成'),
             ),
@@ -124,20 +139,61 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
     );
   }
 
+  Widget _coordinates() => LayoutBuilder(
+    builder: (context, bounds) {
+      final fields = [
+        _coordinate(_latitude, '纬度', '如 39.90', '北纬', '南纬'),
+        _coordinate(_longitude, '经度', '如 116.40', '东经', '西经'),
+      ];
+      return bounds.maxWidth < MediaQuery.textScalerOf(context).scale(300)
+          ? Column(spacing: 8, children: fields)
+          : Row(
+              spacing: 8,
+              children: [for (final field in fields) Expanded(child: field)],
+            );
+    },
+  );
+
   Widget _coordinate(
     TextEditingController controller,
     String label,
     String hint,
-  ) => TextField(
-    controller: controller,
-    enabled: !widget.fortune.busy,
-    keyboardType: const TextInputType.numberWithOptions(
-      decimal: true,
-      signed: true,
-    ),
-    decoration: InputDecoration(labelText: label, hintText: hint),
-    onChanged: (_) => setState(() {}),
-  );
+    String positive,
+    String negative,
+  ) {
+    final isNegative = controller.text.trim().startsWith('-');
+    return TextField(
+      controller: controller,
+      enabled: !widget.fortune.busy,
+      keyboardType: const TextInputType.numberWithOptions(
+        decimal: true,
+        signed: true,
+      ),
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: hint,
+        suffixIcon: IconButton(
+          tooltip: '切换为${isNegative ? positive : negative}',
+          onPressed: widget.fortune.busy
+              ? null
+              : () {
+                  final current = controller.text.trim();
+                  final next = isNegative
+                      ? current.substring(1)
+                      : '-${current.startsWith('+') ? current.substring(1) : current}';
+                  setState(() {
+                    controller.value = TextEditingValue(
+                      text: next,
+                      selection: TextSelection.collapsed(offset: next.length),
+                    );
+                  });
+                },
+          icon: Text(isNegative ? negative : positive),
+        ),
+      ),
+      onChanged: (_) => setState(() {}),
+    );
+  }
 }
 
 final _decimal = RegExp(r'^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$');
@@ -160,7 +216,11 @@ String _returnDate(
     isUtc: true,
   );
   final format = MaterialLocalizations.of(context);
-  return '${wall.year}年${wall.month}月${wall.day}日 ${format.formatTimeOfDay(TimeOfDay.fromDateTime(wall))}';
+  final hour = format.formatTimeOfDay(
+    TimeOfDay.fromDateTime(wall),
+    alwaysUse24HourFormat: true,
+  );
+  return '${wall.year}年${wall.month}月${wall.day}日 $hour';
 }
 
 class FortuneAdvice extends StatefulWidget {

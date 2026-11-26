@@ -167,7 +167,7 @@ void main() {
                 ],
               }),
               '/account/agreements' => _json({
-                'requiredAccepted': false,
+                'requiredAccepted': true,
                 'permissions': {
                   for (final purpose in [
                     'destiny.cloud_interpretation',

@@ -42,8 +42,10 @@ class FortunePageController extends ChangeNotifier {
   bool loadingReport = false;
   String? clockError;
   String? archiveError;
+  bool selectedArchiveMissing = false;
   String? reportError;
   String? generationError;
+  bool returnLocationRejected = false;
   String? adviceError;
   PublishedFortune? published;
   PreparedFortunePeriod? prepared;
@@ -126,6 +128,7 @@ class FortunePageController extends ChangeNotifier {
     final revision = ++_archiveRevision;
     loadingArchive = true;
     archiveError = null;
+    selectedArchiveMissing = false;
     archive = null;
     _buildPreview();
     _clearReport();
@@ -133,7 +136,7 @@ class FortunePageController extends ChangeNotifier {
     try {
       final chosen = archiveId;
       if (chosen != null && !RegExp(r'^[0-9a-f]{64}$').hasMatch(chosen)) {
-        archiveError = '这张命盘不可用。';
+        _missingSelectedArchive();
         return;
       }
       final saved = await accounts.reports.latestDestinyCharts(
@@ -141,23 +144,40 @@ class FortunePageController extends ChangeNotifier {
         archiveId: chosen,
       );
       if (_closed || revision != _archiveRevision) return;
+      if (chosen != null &&
+          (saved == null || (online != null && saved.snapshot == null))) {
+        _missingSelectedArchive();
+        return;
+      }
       archive = saved;
-      if (saved == null) archiveError = '还没有命理档案。';
-      if (online != null && saved != null && saved.snapshot == null) {
+      if (saved == null) {
+        archiveError = '还没有命理档案。';
+      } else if (online != null && saved.snapshot == null) {
         archiveError = '这份档案缺少解读所需的盘面。可以在命理页重新测算。';
       }
       _buildPreview();
       unawaited(readReport());
     } catch (error) {
       if (_closed || revision != _archiveRevision) return;
-      archiveError = '暂时无法读取命理档案。';
-      _recoverIdentity(error);
+      if (archiveId != null &&
+          error is JsonRequestError &&
+          (error.status == 403 || error.status == 404)) {
+        _missingSelectedArchive();
+      } else {
+        archiveError = '暂时无法读取命理档案。';
+        _recoverIdentity(error);
+      }
     } finally {
       if (!_closed && revision == _archiveRevision) {
         loadingArchive = false;
         _emit();
       }
     }
+  }
+
+  void _missingSelectedArchive() {
+    selectedArchiveMissing = true;
+    archiveError = '这张命盘不可用，请返回命理重新打开。';
   }
 
   Future<void> readReport({bool retry = false}) async {
@@ -282,6 +302,7 @@ class FortunePageController extends ChangeNotifier {
     final input = _periodInput(period, display!.zone, prepared!.target);
     generating = true;
     generationError = null;
+    returnLocationRejected = false;
     _emit();
     try {
       final run = returnLocation == null && _calculation != null
@@ -313,6 +334,7 @@ class FortunePageController extends ChangeNotifier {
       await _mirrorReport(service, report, input, at, job);
     } catch (error) {
       if (_current(job)) {
+        returnLocationRejected = error is FortuneReturnLocationUnavailable;
         generationError = switch (error) {
           FortuneReturnLocationUnavailable() =>
             '这个地点无法确定可靠的回归上升。可以调整经纬度，或清空后生成常规解读。',
@@ -506,6 +528,7 @@ class FortunePageController extends ChangeNotifier {
     archivedWindow = null;
     _archivedZone = null;
     generationError = null;
+    returnLocationRejected = false;
     adviceError = null;
     advice = null;
     generating = false;

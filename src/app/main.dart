@@ -71,6 +71,32 @@ class _JovianAppState extends State<JovianApp> {
   void initState() {
     super.initState();
     if (widget.persistTheme) unawaited(_readAppearance());
+    _restoreAccount();
+  }
+
+  @override
+  void didUpdateWidget(covariant JovianApp oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.account != widget.account) {
+      oldWidget.account?.dispose();
+      _restoreAccount();
+    }
+  }
+
+  void _restoreAccount() {
+    final account = widget.account;
+    if (account == null || account.restored) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && identical(widget.account, account)) {
+        unawaited(account.initialize());
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    widget.account?.dispose();
+    super.dispose();
   }
 
   Future<void> _readAppearance() async {
@@ -130,40 +156,71 @@ class _JovianAppState extends State<JovianApp> {
       '/destiny': (context) {
         final account = widget.account;
         if (account == null) return _destinyPage(context);
-        return ListenableBuilder(
-          listenable: account,
-          builder: (context, _) => _destinyPage(
-            context,
-            key: ValueKey(
-              account.sessionChanging ? null : account.authorizedSession?.scope,
+        return _accountEntry(
+          ListenableBuilder(
+            listenable: account,
+            builder: (context, _) => _destinyPage(
+              context,
+              key: ValueKey((account, account.authorizedSession?.scope)),
+              account: account,
             ),
-            account: account,
           ),
         );
       },
       '/fortune': _fortunePage,
       '/modules/fortune': _fortunePage,
     },
-    home: _AppHome(
-      account: widget.account,
-      onlineGuide: widget.onlineGuide,
-      initialTab: widget.initialTab,
-      themeMode: _themeMode,
-      onThemeModeChanged: _changeAppearance,
+    home: _accountEntry(
+      _AppHome(
+        key: ObjectKey(widget.account),
+        account: widget.account,
+        onlineGuide: widget.onlineGuide,
+        initialTab: widget.initialTab,
+        themeMode: _themeMode,
+        onThemeModeChanged: _changeAppearance,
+      ),
     ),
   );
 
+  Widget _accountEntry(Widget child) {
+    final account = widget.account;
+    if (account == null) return child;
+    return ListenableBuilder(
+      key: ObjectKey(account),
+      listenable: account,
+      child: child,
+      builder: (context, admitted) {
+        if (account.authorizedSession != null) return admitted!;
+        if (!account.restored && account.notice == null) {
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(semanticsLabel: '正在检查登录状态'),
+            ),
+          );
+        }
+        return AccountPage(
+          account: account,
+          standalone: true,
+          themeMode: _themeMode,
+          onThemeModeChanged: _changeAppearance,
+        );
+      },
+    );
+  }
+
   Widget _fortunePage(BuildContext context) {
     final args = ModalRoute.of(context)?.settings.arguments;
-    return FortunePage(
-      account: widget.account,
-      loadDisplay: loadFortuneDisplay,
-      readServerTime: widget.readFortuneTime,
-      connectOnline: () => configureFortuneOnline(
-        widget.readFortuneTime,
-        readNativeSession: widget.account?.readNativeSession,
+    return _accountEntry(
+      FortunePage(
+        account: widget.account,
+        loadDisplay: loadFortuneDisplay,
+        readServerTime: widget.readFortuneTime,
+        connectOnline: () => configureFortuneOnline(
+          widget.readFortuneTime,
+          readNativeSession: widget.account?.readNativeSession,
+        ),
+        archiveId: args is String ? args : null,
       ),
-      archiveId: args is String ? args : null,
     );
   }
 }
@@ -189,6 +246,7 @@ Widget _destinyPage(
 
 class _AppHome extends StatefulWidget {
   const _AppHome({
+    super.key,
     required this.account,
     required this.onlineGuide,
     required this.initialTab,
@@ -215,9 +273,7 @@ class _AppHomeState extends State<_AppHome> {
     super.initState();
     if (widget.account case final account?) {
       account.addListener(_updateGuideOwner);
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) unawaited(account.initialize());
-      });
+      _updateGuideOwner();
     }
   }
 
@@ -243,7 +299,6 @@ class _AppHomeState extends State<_AppHome> {
   void dispose() {
     widget.account?.removeListener(_updateGuideOwner);
     _guide?.dispose();
-    widget.account?.dispose();
     super.dispose();
   }
 

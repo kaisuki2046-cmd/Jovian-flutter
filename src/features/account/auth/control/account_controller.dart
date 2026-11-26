@@ -310,11 +310,10 @@ class AccountController extends ChangeNotifier {
     ]);
   }
 
-  Future<String?> sendCode(AccountIdentifier identifier) async {
-    String? challenge;
+  Future<SignInCodeChallenge?> sendCode(AccountIdentifier identifier) async {
+    SignInCodeChallenge? challenge;
     await _run(() async {
       challenge = await _account.sendCode(identifier);
-      _notice = '验证码已发送，请查收。';
     }, failure: '发送验证码失败，请重试。');
     return challenge;
   }
@@ -328,7 +327,14 @@ class AccountController extends ChangeNotifier {
     var signedIn = false;
     await _run(
       () async {
-        final session = await _account.signIn(method, input, accepted);
+        final AccountSession session;
+        try {
+          session = await _account.signIn(method, input, accepted);
+        } on JsonRequestError catch (error) {
+          if (error.status != 412 && error.status != 428) rethrow;
+          await _reloadUpdatedAgreements();
+          return;
+        }
         _session = session;
         _agreementState = null;
         signedIn = true;
@@ -346,8 +352,19 @@ class AccountController extends ChangeNotifier {
   }
 
   Future<void> acceptRequired(AgreementCatalog accepted) => _run(() async {
-    _agreementState = await _agreements.acceptRequired(accepted);
+    try {
+      _agreementState = await _agreements.acceptRequired(accepted);
+    } on JsonRequestError catch (error) {
+      if (error.status != 409) rethrow;
+      await _reloadUpdatedAgreements();
+    }
   }, failure: '保存协议确认失败，请重试。');
+
+  Future<void> _reloadUpdatedAgreements() async {
+    _catalog = null;
+    _catalog = await _agreements.catalog();
+    _notice = '协议已更新，请阅读并重新确认后继续。';
+  }
 
   Future<AgreementDocument> readConfirmedAgreement(
     String scope,

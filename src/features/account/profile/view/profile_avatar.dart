@@ -49,7 +49,9 @@ class _ProfileAvatarState extends State<ProfileAvatar> {
       );
       if (!mounted || saved != true || !_ownsScope(widget.account, scope))
         return;
-      setState(() => _photo = _load());
+      setState(() {
+        _photo = _load();
+      });
     } finally {
       _editing = false;
     }

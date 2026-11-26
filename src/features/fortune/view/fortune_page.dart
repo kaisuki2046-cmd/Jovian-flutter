@@ -147,17 +147,21 @@ class _FortuneSessionState extends State<_FortuneSession> {
                 _archives(context),
                 if (_fortune.online != null && _fortune.hasChart)
                   FortuneInterpretation(
-                    key: ValueKey(_fortune.displayedWindow?.contextKey),
+                    key: ValueKey((
+                      FortuneInterpretation,
+                      _fortune.displayedWindow?.contextKey,
+                    )),
                     fortune: _fortune,
                   ),
                 if (_fortune.online != null &&
                     _fortune.hasChart &&
                     _fortune.displayedPeriod == FortunePeriod.day)
                   FortuneAdvice(
-                    key: ValueKey(
+                    key: ValueKey((
+                      FortuneAdvice,
                       _fortune.published?.runId ??
                           _fortune.displayedWindow?.contextKey,
-                    ),
+                    )),
                     onRequest:
                         _fortune.busy ||
                             (!_fortune.canGenerate &&
@@ -259,11 +263,17 @@ class _FortuneSessionState extends State<_FortuneSession> {
           Wrap(
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              Text(error),
-              TextButton(
-                onPressed: _fortune.readArchive,
-                child: const Text('重新读取'),
-              ),
+              Semantics(liveRegion: true, child: Text(error)),
+              if (_fortune.selectedArchiveMissing && Navigator.canPop(context))
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('返回命理'),
+                ),
+              if (!_fortune.selectedArchiveMissing)
+                TextButton(
+                  onPressed: _fortune.readArchive,
+                  child: const Text('重新读取'),
+                ),
             ],
           ),
         if (_fortune.loadingReport && !_fortune.hasChart)

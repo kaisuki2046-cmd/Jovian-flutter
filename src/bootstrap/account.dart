@@ -37,6 +37,7 @@ AccountController? configureAccount({
           clearMemberReadingData(owner),
           clearLocalDestinyBirthProfile(owner),
           clearMemberProfileAvatar(owner),
+          clearMemberProfileDetails(owner),
         ]);
       },
     ),

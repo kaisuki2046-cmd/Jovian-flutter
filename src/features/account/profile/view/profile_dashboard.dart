@@ -6,8 +6,10 @@ import '../../auth/control/account_controller.dart';
 import '../../auth/model/session.dart';
 import '../../history/view/archived_charts_page.dart';
 import '../../history/view/reports_page.dart';
+import '../model/profile_details.dart';
 import 'profile_avatar.dart';
 import 'profile_editor_page.dart';
+import 'profile_local_details.dart';
 
 class ProfileDashboard extends StatelessWidget {
   const ProfileDashboard({
@@ -30,6 +32,7 @@ class ProfileDashboard extends StatelessWidget {
     listenable: account,
     builder: (context, _) {
       final owner = account.sessionChanging ? null : account.authorizedSession;
+      final scope = owner?.scope;
       final auth = account.session;
       final waiting =
           account.sessionChanging || (!account.restored && account.busy);
@@ -83,42 +86,56 @@ class ProfileDashboard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  _Identity(
-                    avatar: ProfileAvatar(
-                      key: ValueKey((account, owner?.scope)),
-                      account: account,
-                      scope: owner?.scope,
+                  ProfileLocalDetails(
+                    key: ValueKey((account, scope)),
+                    account: account,
+                    scope: scope,
+                    builder: (context, details, edit) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      spacing: 13,
+                      children: [
+                        _Identity(
+                          avatar: ProfileAvatar(account: account, scope: scope),
+                          name:
+                              owner?.displayName ??
+                              (waiting || auth != null ? '账号与隐私' : '个人中心'),
+                          uid: owner?.uid,
+                          status: waiting
+                              ? '正在确认当前账号…'
+                              : needsAgreement
+                              ? '请先确认最新协议。'
+                              : owner == null && auth != null
+                              ? '暂时无法确认账号与协议。'
+                              : owner == null
+                              ? '登录后可查看个人资料。'
+                              : guest
+                              ? 'UID · 登录后显示'
+                              : owner.uid == null
+                              ? 'UID 暂不可用'
+                              : null,
+                          signature: details?.signature,
+                          editSignature: edit == null
+                              ? null
+                              : () => edit(ProfileDetailsTab.signature),
+                          openAccount: guest ? onUpgrade : null,
+                        ),
+                        if (memberId != null)
+                          _Relationships(
+                            key: ValueKey((account, memberId)),
+                            account: account,
+                            memberId: memberId,
+                            active: active,
+                          )
+                        else if (guest)
+                          const _RelationshipRow(),
+                        if (details != null && edit != null)
+                          _ProfileTags(
+                            details: details,
+                            onEdit: () => edit(ProfileDetailsTab.tags),
+                          ),
+                      ],
                     ),
-                    name:
-                        owner?.displayName ??
-                        (waiting || auth != null ? '账号与隐私' : '个人中心'),
-                    uid: owner?.uid,
-                    status: waiting
-                        ? '正在确认当前账号…'
-                        : needsAgreement
-                        ? '请先确认最新协议。'
-                        : owner == null && auth != null
-                        ? '暂时无法确认账号与协议。'
-                        : owner == null
-                        ? '登录后可查看个人资料。'
-                        : guest
-                        ? 'UID · 登录后显示'
-                        : owner.uid == null
-                        ? 'UID 暂不可用'
-                        : null,
-                    bio: member?.bio,
-                    editProfile: editProfile,
-                    openAccount: guest ? onUpgrade : null,
                   ),
-                  if (memberId != null)
-                    _Relationships(
-                      key: ValueKey((account, memberId)),
-                      account: account,
-                      memberId: memberId,
-                      active: active,
-                    )
-                  else if (guest)
-                    const _RelationshipRow(),
                   if (owner != null)
                     Row(
                       spacing: 7,
@@ -204,8 +221,8 @@ class _Identity extends StatelessWidget {
     required this.avatar,
     this.uid,
     this.status,
-    this.bio,
-    this.editProfile,
+    this.signature,
+    this.editSignature,
     this.openAccount,
   });
 
@@ -213,8 +230,8 @@ class _Identity extends StatelessWidget {
   final Widget avatar;
   final String? uid;
   final String? status;
-  final String? bio;
-  final VoidCallback? editProfile;
+  final String? signature;
+  final VoidCallback? editSignature;
   final VoidCallback? openAccount;
 
   @override
@@ -222,7 +239,7 @@ class _Identity extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final publicUid = uid;
-    final signature = bio;
+    final localSignature = signature;
     return ConstrainedBox(
       constraints: const BoxConstraints(minHeight: 112),
       child: Row(
@@ -255,20 +272,23 @@ class _Identity extends StatelessWidget {
                       color: colors.onSurfaceVariant,
                     ),
                   ),
-                if (signature != null && editProfile != null)
-                  InkWell(
-                    onTap: editProfile,
-                    borderRadius: BorderRadius.circular(6),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      child: Text(
-                        signature.isEmpty ? '添加个性签名' : signature,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: signature.isEmpty
-                              ? colors.onSurfaceVariant
-                              : colors.onSurface,
+                if (localSignature != null && editSignature != null)
+                  Tooltip(
+                    message: '编辑个性签名',
+                    child: InkWell(
+                      onTap: editSignature,
+                      borderRadius: BorderRadius.circular(6),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Text(
+                          localSignature.isEmpty ? '添加个性签名' : localSignature,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: localSignature.isEmpty
+                                ? colors.onSurfaceVariant
+                                : colors.onSurface,
+                          ),
                         ),
                       ),
                     ),
@@ -292,6 +312,58 @@ class _Identity extends StatelessWidget {
             ),
         ],
       ),
+    );
+  }
+}
+
+class _ProfileTags extends StatelessWidget {
+  const _ProfileTags({required this.details, required this.onEdit});
+
+  final LocalProfileDetails details;
+  final VoidCallback onEdit;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final ink = theme.brightness == Brightness.dark
+        ? const Color(0xffa6d9bd)
+        : const Color(0xff285d45);
+    final tags = ProfileTag.values.where(
+      (tag) => details.tags[tag]?.isNotEmpty == true,
+    );
+    final style = TextButton.styleFrom(
+      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 4),
+      minimumSize: const Size(44, 32),
+      backgroundColor: theme.colorScheme.primaryContainer,
+      foregroundColor: ink,
+      textStyle: theme.textTheme.bodySmall,
+      shape: const StadiumBorder(),
+    );
+    return Wrap(
+      spacing: 7,
+      runSpacing: 5,
+      children: [
+        if (tags.isEmpty)
+          TextButton.icon(
+            onPressed: onEdit,
+            style: style,
+            icon: const Icon(Icons.add, size: 14),
+            label: const Text('添加标签'),
+          ),
+        for (final tag in tags)
+          Tooltip(
+            message: '编辑${tag.label}标签',
+            child: TextButton(
+              onPressed: onEdit,
+              style: style,
+              child: Text(
+                details.tags[tag]!,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

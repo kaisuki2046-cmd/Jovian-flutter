@@ -16,6 +16,8 @@ export 'history/view/archived_charts_page.dart' show ArchivedChartsPage;
 export 'history/view/reports_page.dart' show ReportsPage;
 export 'profile/model/profile_preview.dart' show VisitorProfile;
 export 'profile/model/avatar_storage.dart' show clearMemberProfileAvatar;
+export 'profile/model/profile_details_store.dart'
+    show clearMemberProfileDetails;
 export 'profile/view/public_birth_details.dart' show PublicBirthDetails;
 export 'reading-profile/model/account_birth_fields.dart'
     show AccountBirthFields;

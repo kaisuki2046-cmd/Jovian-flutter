@@ -7,6 +7,7 @@ import 'package:http/testing.dart';
 import '../src/features/account/auth/model/session.dart';
 import '../src/features/account/auth/requests/account_api.dart';
 import '../src/features/account/reading-profile/model/account_birth_fields.dart';
+import '../src/features/account/reading-profile/model/account_reading_profile.dart';
 import '../src/features/account/reading-profile/requests/account_birth_api.dart';
 import '../src/features/account/settings/model/agreements.dart';
 import '../src/features/account/settings/requests/agreements_api.dart';
@@ -47,6 +48,75 @@ void main() {
     expect(AccountIdentifier.parse('+1 (415) 555-0123')?.field, 'phone');
     expect(AccountIdentifier.parse('123456'), isNull);
   });
+
+  test(
+    'birth settings use owner scope and checked updates for visibility',
+    () async {
+      const fields = AccountBirthFields(
+        birthDate: '1990-07-01',
+        birthTime: '12:??',
+        birthPlace: '上海市',
+        gender: 'female',
+      );
+      final saved = AccountReadingProfile(fields, {
+        for (final field in ReadingField.values) field: false,
+      });
+      final next = saved.withVisibility(ReadingField.birthPlace, true);
+      var user = 'owner';
+      final api = AccountApi(
+        JsonHttpClient(
+          base: Uri.parse('https://account.example.test'),
+          client: MockClient((request) async {
+            switch ('${request.method} ${request.url.path}') {
+              case 'GET /account/session':
+                return _json({
+                  'user': {'id': user},
+                });
+              case 'GET /account/reading-profile':
+                return _json({'reading': saved.toJson()});
+              case 'PATCH /account/reading-profile':
+                expect(jsonDecode(request.body), {
+                  ...next.toJson(),
+                  'expectedOwnerId': 'owner',
+                  'expectedReading': saved.toJson(),
+                });
+                return _json({'reading': next.toJson()});
+              default:
+                fail(
+                  'Unexpected request ${request.method} ${request.url.path}',
+                );
+            }
+          }),
+        ),
+      );
+      addTearDown(api.close);
+      final birth = AccountBirthApi(api);
+      final existing = await birth.readWithVisibility(
+        'owner',
+        isCurrent: () => true,
+      );
+      expect(existing.fields.birthTime, '12:??');
+      final result = await birth.saveWithVisibility(
+        'owner',
+        existing,
+        next,
+        isCurrent: () => true,
+      );
+      expect(result.isVisible(ReadingField.birthPlace), isTrue);
+      expect(result.isVisible(ReadingField.birthDate), isFalse);
+      user = 'other';
+      await expectLater(
+        birth.readWithVisibility('owner', isCurrent: () => true),
+        throwsA(
+          isA<JsonRequestError>().having(
+            (error) => error.code,
+            'code',
+            'account_changed',
+          ),
+        ),
+      );
+    },
+  );
 
   test(
     'stores and revokes native bearer sessions, with signed agreements',

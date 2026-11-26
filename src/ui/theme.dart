@@ -123,7 +123,10 @@ ThemeData jovianTheme(Brightness brightness) {
       style: FilledButton.styleFrom(
         minimumSize: const Size(48, 46),
         shape: shape,
-        textStyle: const TextStyle(fontWeight: FontWeight.w600),
+        textStyle: const TextStyle(
+          fontFamily: _fontFamily,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(

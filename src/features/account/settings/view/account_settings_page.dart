@@ -5,6 +5,7 @@ import '../../auth/model/session.dart';
 import '../../auth/view/identity_preview_page.dart';
 import '../../profile/view/profile_editor_page.dart';
 import 'account_permissions.dart';
+import '../../reading-profile/view/reading_profile_panel.dart';
 import 'agreement_document_page.dart';
 
 class AccountSettingsPage extends StatefulWidget {
@@ -277,6 +278,15 @@ class _PrivacyPage extends StatelessWidget {
                 onPressed: account.initialize,
                 child: const Text('重新加载授权状态'),
               ),
+            if (account.memberId case final memberId?) ...[
+              const SizedBox(height: 12),
+              ReadingProfilePanel(
+                key: ValueKey(memberId),
+                account: account,
+                owner: memberId,
+                privacy: true,
+              ),
+            ],
           ],
         ),
       ),

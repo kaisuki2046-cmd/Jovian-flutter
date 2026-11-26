@@ -36,6 +36,7 @@ flutter:
         - asset: src/features/destiny/assets/NotoSansSymbols-Regular.ttf
   assets:
     - src/ui/assets/NotoSansSC-OFL.txt
+    - src/features/account/reading-profile/assets/
     - src/features/destiny/assets/birth_places.json
     - src/features/destiny/assets/celestial-orb.png
     - src/features/destiny/assets/NotoSansSymbols-OFL.txt

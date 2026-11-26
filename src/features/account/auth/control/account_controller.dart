@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../../../../shared/http/json_client.dart';
 import '../../history/requests/report_history_api.dart';
 import '../../reading-profile/model/account_birth_fields.dart';
+import '../../reading-profile/model/account_reading_profile.dart';
 import '../../reading-profile/requests/account_birth_api.dart';
 import '../../settings/model/agreements.dart';
 import '../../settings/requests/agreements_api.dart';
@@ -80,6 +81,28 @@ class AccountController extends ChangeNotifier {
   }
 
   String? get socialMemberId => memberId;
+
+  Future<AccountReadingProfile> readBirthSettings(
+    String owner, {
+    Future<void>? cancel,
+  }) => _birth.readWithVisibility(
+    owner,
+    isCurrent: () => memberId == owner,
+    cancel: cancel,
+  );
+
+  Future<AccountReadingProfile> saveBirthSettings(
+    String owner,
+    AccountReadingProfile expected,
+    AccountReadingProfile profile, {
+    Future<void>? cancel,
+  }) => _birth.saveWithVisibility(
+    owner,
+    expected,
+    profile,
+    isCurrent: () => memberId == owner,
+    cancel: cancel,
+  );
 
   Future<AccountBirthFields> readBirthFields(
     String owner, {

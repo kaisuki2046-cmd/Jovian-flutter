@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../ui/theme.dart';
 import '../../auth/control/account_controller.dart';
 import '../../auth/model/session.dart';
+import '../../reading-profile/view/reading_profile_panel.dart';
 
 class ProfileEditorPage extends StatefulWidget {
   const ProfileEditorPage({
@@ -122,6 +123,11 @@ class _ProfileEditorPageState extends State<ProfileEditorPage> {
               FilledButton(
                 onPressed: _saving ? null : _save,
                 child: Text(_saving ? '正在保存…' : '保存资料'),
+              ),
+              const SizedBox(height: 12),
+              ReadingProfilePanel(
+                account: widget.account,
+                owner: widget.member.id,
               ),
             ],
           );

@@ -80,6 +80,8 @@ Web 会话使用账户服务的 HttpOnly Cookie，浏览器同一标签页按已
 
 先生成本机计算资源。Flutter 命令加 `--target src/app/main.dart`，并继续用上面的五项 `--dart-define` 指定原服务地址。Android 模拟器访问宿主机时用 `10.0.2.2`，使用 `adb reverse` 的设备可用 `127.0.0.1`。Android 主清单声明网络访问，调试清单为本机地址提供 HTTP 例外。iOS 原生会话保存在应用自己的 Keychain 中。[Flutter 移动端网络配置](https://docs.flutter.dev/release/breaking-changes/network-policy-ios-android)
 
+Android 的「关于木星环」显示安装包版本。配置 `ANDROID_UPDATE_DOWNLOAD_ORIGIN` 为发布下载的 HTTPS 来源后，应用从 `APP_UPDATE_API_URL` 的 `/app-updates/android/latest` 读取现有发布清单。清单和账户共用网关时可沿用 `ACCOUNT_API_URL`。应用启动、回到前台或手动点「检查更新」可看到同包名的较新版本。点击「下载新版」会在系统浏览器打开受信链接。
+
 在 `app-flutter/` 中用 `flutter build bundle --debug --target src/app/main.dart` 检查 Flutter 入口和资源。Android、iOS 的系统启动、WebView 运行和后端连接仍需分别在对应设备验收。签名由发布流程配置。
 
 在 `src/features/divination/control/` 下运行 Dart 计算对照。六爻历法和组合起盘对照使用旧项目的 npm 依赖。
@@ -112,6 +114,8 @@ Flutter 命理页上的「周期运势」沿用 `/fortune` 路由。日、周、
 
 Flutter Web 使用原 TypeScript 计算四周期事实。登录或进入游客会话后，运势可根据命理档案生成解读，调用模型时沿用现有的运势 AI 授权。「按盘面获取建议」为每日运势的独立操作。重新打开页面时，可恢复当前身份和档案下的最近归档，也可通过「运势报告历史」浏览。
 
+从运势历史打开报告会显示保存时的周期、日期和时区。历史日运的提运建议沿用该归档的原计算结果。历法查询按北京时间使用日期和时刻输入。
+
 在 `src/features/fortune/control/calculation/` 下运行 `dart pub get` 和 `dart run test/calendar_parity.dart`，与旧版核对周期、黄历、历法查询、日柱判定与报告归档键。对照使用 Node.js 和原项目的 npm 依赖。
 
 运势原始资料位于本模块的 `model/knowledge/fortune_knowledge.json`。服务校验原文摘要与条件审阅摘要，再按源文件哈希构建 SQLite 索引。索引默认保存在 `storage/knowledge/.local/`，该目录由 Git 忽略。
@@ -143,6 +147,8 @@ Flutter Web 的「命理」沿用原版出生资料核对流程，使用原 Type
 「社交隐私」可设置是否允许按 UID 找到自己，昵称搜索还需要公开昵称。这里也可查看黑名单和解除拉黑。
 
 「个人信息权利」可复制基础资料、申请查阅或复制、申请更正，并查看受理状态与处理结论。审核入口只显示给原 Node 账户服务授权的审核员，申请人可查看自己的申请。
+
+「协议与政策」可阅读现行协议、RN 版已有的辅助草案，以及用户已同意的历史版本。「关于木星环」也可打开协议目录。
 
 「账户与安全」沿用现有服务设置或修改密码。已设置密码的账号用当前密码验证。通过短信登录且尚无密码的账号用绑定手机号收到的验证码设置。新密码长度为 8 至 128 个字符。保存后保留当前登录，其他设备的会话由原服务撤销。
 

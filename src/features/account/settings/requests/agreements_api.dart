@@ -15,6 +15,26 @@ class AgreementsApi {
     await _account.request(['agreements'], authenticated: true),
   );
 
+  Future<AgreementDocument> readVersion(
+    AgreementConfirmation confirmation, {
+    required bool Function() isCurrent,
+    Future<void>? cancel,
+  }) async {
+    final document = AgreementDocument.fromJson(
+      await _account.request(
+        ['agreements', confirmation.id, confirmation.version],
+        authenticated: true,
+        isCurrent: isCurrent,
+        cancel: cancel,
+      ),
+    );
+    if (document.id != confirmation.id ||
+        document.version != confirmation.version) {
+      throw const FormatException('Unexpected agreement version.');
+    }
+    return document;
+  }
+
   Future<AgreementState> acceptRequired(AgreementCatalog catalog) async =>
       AgreementState.fromJson(
         await _account.request(

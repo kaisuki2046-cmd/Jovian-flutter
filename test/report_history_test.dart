@@ -191,10 +191,12 @@ void main() {
     tester.view.physicalSize = const Size(320, 640);
     addTearDown(tester.view.resetDevicePixelRatio);
     addTearDown(tester.view.resetPhysicalSize);
+    var reads = 0;
     final account = _account((request) {
       if (request.url.path == '/account/session') return _member();
       expect(request.url.path, '/account/destiny-history/latest');
       expect(request.url.queryParameters['expectedOwnerId'], 'member-owner');
+      if (++reads == 1) return _json({}, 503);
       return _json({
         ..._entry('c' * 64),
         'report': {
@@ -236,6 +238,9 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
+    await tester.tap(find.text('暂时无法读取命盘，点击重试'));
+    await tester.pumpAndSettle();
+    expect(reads, 2);
     expect(find.text('三套盘面'), findsOneWidget);
     expect(find.textContaining('出生时刻未完全确定'), findsOneWidget);
     final first = tester.getTopLeft(find.text('甲子'));
@@ -251,6 +256,10 @@ void main() {
     expect(find.text('甲子'), findsNothing);
     await tester.tap(find.text('西方星盘'));
     await tester.pumpAndSettle();
+    expect(find.text('摩羯座'), findsOneWidget);
+    await tester.tap(find.text('刷新盘面'));
+    await tester.pumpAndSettle();
+    expect(reads, 3);
     expect(find.text('摩羯座'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });

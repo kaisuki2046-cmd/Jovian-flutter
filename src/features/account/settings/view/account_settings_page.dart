@@ -7,8 +7,10 @@ import '../../auth/view/identity_preview_page.dart';
 import '../../profile/view/profile_editor_page.dart';
 import '../../profile/view/profile_preview_page.dart';
 import '../../reading-profile/view/reading_profile_panel.dart';
+import '../control/app_update_controller.dart';
 import 'account_permissions.dart';
-import 'agreement_document_page.dart';
+import 'agreements_page.dart';
+import 'app_update_host.dart';
 import 'privacy_rights_page.dart';
 
 class AccountSettingsPage extends StatefulWidget {
@@ -110,6 +112,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
   @override
   Widget build(BuildContext context) {
     final account = widget.account;
+    final version =
+        AppUpdateScope.of(context)?.installed?.versionName ?? widget.appVersion;
     return Scaffold(
       appBar: AppBar(title: const Text('设置')),
       body: SafeArea(
@@ -151,7 +155,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                   title: '协议与政策',
                   subtitle: '查看现行版本和确认记录',
                   icon: Icons.description_outlined,
-                  onTap: () => _open(_AgreementsPage(account: account)),
+                  onTap: () => _open(AccountAgreementsPage(account: account)),
                 ),
                 if (widget.onThemeModeChanged != null) ...[
                   const SizedBox(height: 16),
@@ -175,11 +179,14 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                 const SizedBox(height: 12),
                 _SettingsEntry(
                   title: '关于木星环',
-                  subtitle: widget.appVersion.trim().isEmpty
-                      ? '查看版本信息'
-                      : '版本 ${widget.appVersion}',
+                  subtitle: version.trim().isEmpty ? '查看版本信息' : '版本 $version',
                   icon: Icons.info_outline,
-                  onTap: () => _open(_AboutPage(version: widget.appVersion)),
+                  onTap: () => _open(
+                    _AboutPage(
+                      account: account,
+                      fallbackVersion: widget.appVersion,
+                    ),
+                  ),
                 ),
                 if (account.notice case final message?) ...[
                   const SizedBox(height: 12),
@@ -332,121 +339,85 @@ class _PrivacyPage extends StatelessWidget {
   );
 }
 
-class _AgreementsPage extends StatelessWidget {
-  const _AgreementsPage({required this.account});
+class _AboutPage extends StatelessWidget {
+  const _AboutPage({required this.account, required this.fallbackVersion});
 
   final AccountController account;
+  final String fallbackVersion;
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('协议与政策')),
-    body: SafeArea(
-      top: false,
-      child: ListenableBuilder(
-        listenable: account,
-        builder: (context, _) {
-          final catalog = account.catalog;
-          final scoped = account.sessionChanging ? null : account.session;
-          final accepted = scoped == null
-              ? null
-              : account.agreementState?.requiredAccepted;
-          return ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              if (account.busy) const LinearProgressIndicator(),
-              if (account.notice case final message?)
-                Semantics(liveRegion: true, child: Text(message)),
-              if (catalog != null)
-                Card(
-                  margin: EdgeInsets.zero,
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        for (final document in [
-                          catalog.terms,
-                          catalog.privacy,
-                          catalog.ai,
-                        ])
-                          AgreementLink(document: document),
-                        if (accepted != null)
-                          Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: Text(accepted ? '已确认当前登录协议' : '尚未确认当前登录协议'),
-                          ),
-                        if (accepted == false)
-                          TextButton(
-                            onPressed: account.busy
-                                ? null
-                                : () async {
-                                    final confirmed =
-                                        await confirmAccountAgreements(
-                                          context,
-                                          catalog,
-                                        );
-                                    if (confirmed &&
-                                        context.mounted &&
-                                        account.session?.scope ==
-                                            scoped!.scope &&
-                                        !account.sessionChanging) {
-                                      await account.acceptRequired(catalog);
-                                    }
-                                  },
-                            child: const Text('确认新版登录协议'),
-                          ),
-                      ],
+  Widget build(BuildContext context) {
+    final updates = AppUpdateScope.of(context);
+    final version = updates?.installed?.versionName ?? fallbackVersion;
+    final message = switch (updates?.manualStatus) {
+      UpdateStatus.current => '当前已是最新版。',
+      UpdateStatus.unpublished => '暂无适用于当前应用的版本信息。',
+      UpdateStatus.failed => '暂时无法检查更新，请重试。',
+      UpdateStatus.available => '发现新版，可再次检查并查看下载链接。',
+      _ => null,
+    };
+    return Scaffold(
+      appBar: AppBar(title: const Text('关于木星环')),
+      body: SafeArea(
+        top: false,
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            Card(
+              margin: EdgeInsets.zero,
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.auto_awesome_outlined,
+                      size: 42,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
-                  ),
-                )
-              else if (!account.busy)
-                TextButton(
-                  onPressed: account.initialize,
-                  child: const Text('重新加载协议'),
+                    const SizedBox(height: 12),
+                    Text('木星环', style: Theme.of(context).textTheme.titleLarge),
+                    if (version.trim().isNotEmpty) Text('版本 $version'),
+                    if (updates case final checker? when checker.canCheck) ...[
+                      const SizedBox(height: 8),
+                      OutlinedButton(
+                        onPressed: checker.manualStatus == UpdateStatus.checking
+                            ? null
+                            : () => checker.check(manual: true),
+                        child: Text(
+                          checker.manualStatus == UpdateStatus.checking
+                              ? '正在检查…'
+                              : '检查更新',
+                        ),
+                      ),
+                    ],
+                    if (message != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Semantics(
+                          container: true,
+                          liveRegion: true,
+                          child: Text(message, textAlign: TextAlign.center),
+                        ),
+                      ),
+                    const SizedBox(height: 8),
+                    const Text('测算与解读仅供自我探索和参考。', textAlign: TextAlign.center),
+                  ],
                 ),
-            ],
-          );
-        },
-      ),
-    ),
-  );
-}
-
-class _AboutPage extends StatelessWidget {
-  const _AboutPage({required this.version});
-
-  final String version;
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('关于木星环')),
-    body: SafeArea(
-      top: false,
-      child: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          Card(
-            margin: EdgeInsets.zero,
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                children: [
-                  Icon(
-                    Icons.auto_awesome_outlined,
-                    size: 42,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  const SizedBox(height: 12),
-                  Text('木星环', style: Theme.of(context).textTheme.titleLarge),
-                  if (version.trim().isNotEmpty) Text('版本 $version'),
-                  const SizedBox(height: 8),
-                  const Text('测算与解读仅供自我探索和参考。', textAlign: TextAlign.center),
-                ],
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 12),
+            _SettingsEntry(
+              title: '协议与政策',
+              icon: Icons.description_outlined,
+              onTap: () => Navigator.of(context).push<void>(
+                MaterialPageRoute(
+                  builder: (_) => AccountAgreementsPage(account: account),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 }

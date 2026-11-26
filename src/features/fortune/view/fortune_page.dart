@@ -8,6 +8,7 @@ import '../control/fortune_online.dart';
 import '../control/fortune_page_controller.dart';
 import 'fortune_calendar_page.dart';
 import 'fortune_interpretation.dart';
+import 'fortune_report_history.dart';
 
 class FortunePage extends StatelessWidget {
   const FortunePage({
@@ -121,62 +122,94 @@ class _FortuneSessionState extends State<_FortuneSession> {
       ),
       body: SafeArea(
         top: false,
-        child: ListView(
+        child: SingleChildScrollView(
           padding: jovianPagePadding,
-          children: [
-            Row(
-              spacing: 4,
-              children: [
-                for (final (index, period) in FortunePeriod.values.indexed)
-                  Expanded(
-                    child: ChoiceChip(
-                      showCheckmark: false,
-                      label: Text(const ['今日', '本周', '本月', '本年'][index]),
-                      selected: _fortune.displayedPeriod == period,
-                      onSelected: (_) => _fortune.selectPeriod(period),
-                    ),
-                  ),
-              ],
-            ),
-            if (_fortune.syncingTime) const LinearProgressIndicator(),
-            _dateControls(context),
-            if (_fortune.ownerId != null) ...[
-              _archives(context),
-              if (_fortune.online != null && _fortune.hasChart)
-                FortuneInterpretation(
-                  key: ValueKey(_fortune.displayedWindow?.contextKey),
-                  fortune: _fortune,
-                ),
-              if (_fortune.online != null &&
-                  _fortune.hasChart &&
-                  _fortune.displayedPeriod == FortunePeriod.day)
-                FortuneAdvice(fortune: _fortune),
-              Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: TextButton(
-                  onPressed: () => Navigator.of(context).push<void>(
-                    MaterialPageRoute(
-                      builder: (_) => ReportsPage(
-                        account: widget.account!,
-                        initialKind: ReportKind.fortune,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                spacing: 4,
+                children: [
+                  for (final (index, period) in FortunePeriod.values.indexed)
+                    Expanded(
+                      child: ChoiceChip(
+                        showCheckmark: false,
+                        label: Text(const ['今日', '本周', '本月', '本年'][index]),
+                        selected: _fortune.displayedPeriod == period,
+                        onSelected: (_) => _fortune.selectPeriod(period),
                       ),
                     ),
-                  ),
-                  child: const Text('运势报告历史'),
-                ),
+                ],
               ),
-            ] else
-              const Text('登录或进入游客体验后，可以保存并查看运势解读。'),
-            if (_fortune.online == null) ...[
-              if (_fortune.preview case final preview?)
-                _PreviewCard(preview: preview, clock: _fortune.display!.clock),
-              if (_fortune.almanac case final day?) _AlmanacCard(day: day),
+              if (_fortune.syncingTime) const LinearProgressIndicator(),
+              _dateControls(context),
+              if (_fortune.ownerId != null) ...[
+                _archives(context),
+                if (_fortune.online != null && _fortune.hasChart)
+                  FortuneInterpretation(
+                    key: ValueKey(_fortune.displayedWindow?.contextKey),
+                    fortune: _fortune,
+                  ),
+                if (_fortune.online != null &&
+                    _fortune.hasChart &&
+                    _fortune.displayedPeriod == FortunePeriod.day)
+                  FortuneAdvice(
+                    key: ValueKey(
+                      _fortune.published?.runId ??
+                          _fortune.displayedWindow?.contextKey,
+                    ),
+                    onRequest:
+                        _fortune.busy ||
+                            (!_fortune.canGenerate &&
+                                _fortune.published == null)
+                        ? null
+                        : _fortune.getAdvice,
+                    groups: _fortune.advice,
+                    loading: _fortune.loadingAdvice,
+                    error: _fortune.adviceError,
+                  ),
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: TextButton(
+                    onPressed: _openHistory,
+                    child: const Text('运势报告历史'),
+                  ),
+                ),
+              ] else
+                const Text('登录或进入游客体验后，可以保存并查看运势解读。'),
+              if (_fortune.online == null) ...[
+                if (_fortune.preview case final preview?)
+                  _PreviewCard(
+                    preview: preview,
+                    clock: _fortune.display!.clock,
+                  ),
+                if (_fortune.almanac case final day?) _AlmanacCard(day: day),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     ),
   );
+
+  void _openHistory() {
+    final account = widget.account!;
+    final session = account.authorizedSession;
+    if (account.sessionChanging ||
+        session == null ||
+        session.id != widget.ownerId)
+      return;
+    Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) => FortuneReportHistory(
+          account: account,
+          owner: session.id,
+          scope: session.scope,
+          fortune: _fortune,
+        ),
+      ),
+    );
+  }
 
   Widget _dateControls(BuildContext context) {
     final window = _fortune.preview?.window;

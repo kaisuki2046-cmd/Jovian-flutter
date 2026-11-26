@@ -27,6 +27,16 @@ typedef SynastrySummaryReader =
 
 enum SynastrySide { a, b }
 
+enum OwnSynastryChartStatus {
+  idle,
+  loading,
+  available,
+  noArchive,
+  missingSnapshot,
+  unknownTime,
+  failed,
+}
+
 class SynastryPageController extends ChangeNotifier {
   SynastryPageController({
     this.account,
@@ -47,10 +57,17 @@ class SynastryPageController extends ChangeNotifier {
   String? message;
   Map<String, Object?>? a;
   Map<String, Object?>? b;
+  final _manualProfiles = <SynastrySide, BirthProfile>{};
+  BirthProfile? manualProfile(SynastrySide side) => _manualProfiles[side];
+  OwnSynastryChartStatus ownChartStatus = OwnSynastryChartStatus.idle;
   bool aFromArchive = false;
   Map<String, Object?>? result;
   String? report;
   DateTime? savedAt;
+  bool reportFromArchive = false;
+  List<ReportEntry> recentReports = const [];
+  bool historyLoading = false;
+  bool historyFailed = false;
   Map<String, Object?>? _draft;
   bool get needsSave => _draft != null;
 
@@ -69,11 +86,21 @@ class SynastryPageController extends ChangeNotifier {
     _work.complete();
     _work = Completer<void>();
     busy = false;
+    _clearResult();
+    if (ownChartStatus == OwnSynastryChartStatus.loading) {
+      ownChartStatus = aFromArchive
+          ? OwnSynastryChartStatus.available
+          : OwnSynastryChartStatus.idle;
+    }
+    message = null;
+  }
+
+  void _clearResult() {
     result = null;
     report = null;
     savedAt = null;
+    reportFromArchive = false;
     _draft = null;
-    message = null;
   }
 
   void confirmConsent(bool confirmed) {
@@ -81,6 +108,7 @@ class SynastryPageController extends ChangeNotifier {
     if (!confirmed) {
       _invalidate();
       b = null;
+      _manualProfiles.remove(SynastrySide.b);
     }
     notifyListeners();
   }
@@ -97,40 +125,49 @@ class SynastryPageController extends ChangeNotifier {
       account?.sessionChanging == false &&
       account?.authorizedSession?.scope == scope;
 
-  Future<void> setManual(SynastrySide side, BirthProfile profile) async {
+  Future<bool> setManual(SynastrySide side, BirthProfile profile) async {
     final read = calculate;
-    if (read == null || busy || (side == SynastrySide.b && !allowed)) return;
-    _invalidate();
-    if (side == SynastrySide.a) {
-      a = null;
-      aFromArchive = false;
-    } else {
-      b = null;
-    }
+    if (read == null || busy || (side == SynastrySide.b && !allowed))
+      return false;
     final job = _start();
     try {
       final chart = await read(profile, job.future);
-      if (!_current(job)) return;
+      if (!_current(job)) return false;
       if (_unknownTime(chart)) {
         message = '本期合盘需要双方的出生时间，请核对后重新排盘。';
-      } else if (side == SynastrySide.a) {
+        return false;
+      }
+      _clearResult();
+      _manualProfiles[side] = profile;
+      if (side == SynastrySide.a) {
         a = chart;
-      } else if (allowed) {
+        aFromArchive = false;
+        ownChartStatus = OwnSynastryChartStatus.idle;
+      } else {
         b = chart;
       }
+      return true;
     } catch (_) {
       if (_current(job)) message = '排盘失败，请核对出生资料后重试。';
+      return false;
     } finally {
       _finish(job);
     }
   }
 
+  void cancelManualCalculation() {
+    if (_disposed || !busy) return;
+    _work.complete();
+    _work = Completer<void>();
+    busy = false;
+    notifyListeners();
+  }
+
   Future<void> readOwnChart() async {
     final session = account?.authorizedSession;
     if (session == null || !member || busy) return;
-    _invalidate();
-    a = null;
-    aFromArchive = false;
+    final previousStatus = ownChartStatus;
+    ownChartStatus = OwnSynastryChartStatus.loading;
     final job = _start();
     try {
       final value = await account!.reports.latestSynastrySnapshot(session.id);
@@ -141,22 +178,37 @@ class SynastryPageController extends ChangeNotifier {
           'snapshot': final Map<String, Object?> chart,
         }:
           if (_unknownTime(chart)) {
-            message = '最近的命理档案缺少出生时间，请在命理页补齐。';
+            _unavailableOwnChart(OwnSynastryChartStatus.unknownTime);
           } else {
+            _clearResult();
             a = chart;
             aFromArchive = true;
+            _manualProfiles.remove(SynastrySide.a);
+            ownChartStatus = OwnSynastryChartStatus.available;
           }
         case {'status': 'missing_snapshot'}:
-          message = '最近的归档没有结构化盘面，请在命理页重新测算。';
+          _unavailableOwnChart(OwnSynastryChartStatus.missingSnapshot);
         case {'status': 'no_archive'}:
-          message = '还没有命理档案，可以手动填写。';
+          _unavailableOwnChart(OwnSynastryChartStatus.noArchive);
         default:
           throw const FormatException('Invalid chart snapshot.');
       }
     } catch (_) {
-      if (_current(job)) message = '暂时无法读取本人盘面，请重试。';
+      if (_current(job)) ownChartStatus = OwnSynastryChartStatus.failed;
     } finally {
+      if (_current(job) && ownChartStatus == OwnSynastryChartStatus.loading) {
+        ownChartStatus = previousStatus;
+      }
       _finish(job);
+    }
+  }
+
+  void _unavailableOwnChart(OwnSynastryChartStatus status) {
+    ownChartStatus = status;
+    if (aFromArchive) {
+      a = null;
+      aFromArchive = false;
+      _clearResult();
     }
   }
 
@@ -174,6 +226,47 @@ class SynastryPageController extends ChangeNotifier {
       }
     } catch (_) {
       if (_current(job)) message = '暂时无法读取已存合盘。';
+    } finally {
+      _finish(job);
+    }
+  }
+
+  Future<void> loadRecent() async {
+    final session = account?.authorizedSession;
+    if (_disposed || session == null || historyLoading) return;
+    historyLoading = true;
+    historyFailed = false;
+    notifyListeners();
+    try {
+      final page = await account!.reports.list(session.id, ReportKind.synastry);
+      if (!_disposed && _scope(session.scope)) {
+        recentReports = page.entries.take(3).toList(growable: false);
+      }
+    } catch (_) {
+      if (!_disposed && _scope(session.scope)) historyFailed = true;
+    } finally {
+      if (!_disposed) {
+        historyLoading = false;
+        notifyListeners();
+      }
+    }
+  }
+
+  Future<void> openSaved(String id) async {
+    final session = account?.authorizedSession;
+    if (session == null || busy || !_scope(session.scope)) return;
+    final job = _start();
+    try {
+      final archive = await account!.reports.detail(
+        session.id,
+        ReportKind.synastry,
+        id,
+      );
+      if (_current(job) && _scope(session.scope)) _showSaved(archive);
+    } catch (_) {
+      if (_current(job) && _scope(session.scope)) {
+        message = '暂时无法读取这次合盘存档，请重试。';
+      }
     } finally {
       _finish(job);
     }
@@ -242,6 +335,7 @@ class SynastryPageController extends ChangeNotifier {
       report = sections
           .map((row) => "## ${row['title']}\n\n${row['body']}")
           .join('\n\n');
+      reportFromArchive = false;
       if (sections.length != synastrySummarySections.length) {
         message = '在线解读尚未包含全部四种关系，暂时无法存档。';
         return;
@@ -304,6 +398,7 @@ class SynastryPageController extends ChangeNotifier {
       if (current()) {
         _draft = null;
         savedAt = receipt.savedAt;
+        unawaited(loadRecent());
       }
     } catch (_) {
       if (current()) message = '解读已生成，暂时无法存档。';
@@ -313,6 +408,7 @@ class SynastryPageController extends ChangeNotifier {
   void _showSaved(ArchivedReport archive) {
     report = archive.body;
     savedAt = archive.entry.savedAt;
+    reportFromArchive = true;
     _draft = null;
   }
 

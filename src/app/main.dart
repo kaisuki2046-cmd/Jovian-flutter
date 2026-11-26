@@ -5,6 +5,7 @@ import 'package:jovian_divination/jovian_divination.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../bootstrap/account.dart';
+import '../bootstrap/app_updates.dart';
 import '../bootstrap/destiny.dart';
 import '../bootstrap/divination.dart';
 import '../bootstrap/fortune.dart';
@@ -28,6 +29,7 @@ void main() {
       onlineGuide: account == null ? configureOnlineGuide() : null,
       account: account,
       readFortuneTime: configureFortuneTime(),
+      updates: configureAppUpdates(),
       persistTheme: true,
     ),
   );
@@ -39,6 +41,7 @@ class JovianApp extends StatefulWidget {
     this.onlineGuide,
     this.account,
     this.readFortuneTime,
+    this.updates,
     this.initialTab = JovianTab.destiny,
     this.themeMode = ThemeMode.system,
     this.persistTheme = false,
@@ -47,6 +50,7 @@ class JovianApp extends StatefulWidget {
   final OnlineGuideController? onlineGuide;
   final AccountController? account;
   final Future<DateTime> Function()? readFortuneTime;
+  final AppUpdateController? updates;
   final JovianTab initialTab;
   final ThemeMode themeMode;
   final bool persistTheme;
@@ -58,6 +62,7 @@ class JovianApp extends StatefulWidget {
 class _JovianAppState extends State<JovianApp> {
   static const _appearanceKey = 'jovian.ui.theme.v1';
   static const _appearance = FlutterSecureStorage();
+  final _navigator = GlobalKey<NavigatorState>();
   late ThemeMode _themeMode = widget.themeMode;
   bool _appearanceChanged = false;
   Future<void> _appearanceWrites = Future<void>.value();
@@ -103,12 +108,24 @@ class _JovianAppState extends State<JovianApp> {
     theme: jovianTheme(Brightness.light),
     darkTheme: jovianTheme(Brightness.dark),
     themeMode: _themeMode,
-    builder: (context, child) => JovianViewport(
-      child: switch (widget.account) {
+    navigatorKey: _navigator,
+    builder: (context, child) {
+      final nav = switch (widget.account) {
         final account? => NicknameSetupGate(account: account, child: child!),
         null => child!,
-      },
-    ),
+      };
+      final viewport = JovianViewport(child: nav);
+      return switch (widget.updates) {
+        final updates? => AppUpdateHost(
+          key: ValueKey(updates),
+          updates: updates,
+          navigator: _navigator,
+          account: widget.account,
+          child: viewport,
+        ),
+        null => viewport,
+      };
+    },
     routes: {
       '/destiny': (context) {
         final account = widget.account;

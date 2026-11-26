@@ -376,6 +376,60 @@ class FortunePageController extends ChangeNotifier {
     }
   }
 
+  bool canReadArchivedAdvice(ArchivedReport report) =>
+      !_closed &&
+      _sessionMatches &&
+      online != null &&
+      FortuneWindowKey.fromArchive(report.context)?.period ==
+          FortunePeriod.day &&
+      isFortuneRecordId(report.context['calculationRunId']);
+
+  Future<List<FortuneAdviceGroup>> readArchivedAdvice(
+    ArchivedReport report,
+    Future<void> cancel,
+  ) async {
+    if (!canReadArchivedAdvice(report)) {
+      throw StateError('Archived fortune advice is unavailable.');
+    }
+    final key = FortuneWindowKey.fromArchive(report.context)!;
+    try {
+      return await online!.api.advice(
+        ownerId!,
+        key.snapshotId,
+        report.context['calculationRunId'] as String,
+        cancel,
+      );
+    } catch (error) {
+      if (!_closed && _sessionMatches) _recoverIdentity(error);
+      rethrow;
+    }
+  }
+
+  Future<({DateTime first, DateTime last, String zone})?> archivedDates(
+    ArchivedReport report,
+  ) async {
+    final key = FortuneWindowKey.fromArchive(report.context);
+    final end = report.context['windowEnd'];
+    if (key == null || end is! int || end <= key.start) return null;
+    try {
+      final clock = display?.zone == key.zone
+          ? display!.clock
+          : await fortuneDisplayClock(key.zone);
+      return (
+        first: DateTime.fromMillisecondsSinceEpoch(
+          clock(key.start),
+          isUtc: true,
+        ),
+        last: DateTime.fromMillisecondsSinceEpoch(clock(end - 1), isUtc: true),
+        zone: key.zone,
+      );
+    } on FormatException {
+      return null;
+    } on RangeError {
+      return null;
+    }
+  }
+
   Future<void> _mirrorReport(
     FortuneOnline service,
     PublishedFortune report,

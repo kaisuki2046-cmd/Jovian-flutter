@@ -349,6 +349,16 @@ class AccountController extends ChangeNotifier {
     _agreementState = await _agreements.acceptRequired(accepted);
   }, failure: '保存协议确认失败，请重试。');
 
+  Future<AgreementDocument> readConfirmedAgreement(
+    String scope,
+    AgreementConfirmation confirmation, {
+    Future<void>? cancel,
+  }) => _agreements.readVersion(
+    confirmation,
+    isCurrent: () => !_closed && !_sessionChanging && _session?.scope == scope,
+    cancel: cancel,
+  );
+
   Future<void> choose(
     AgreementDocument document,
     String purpose,

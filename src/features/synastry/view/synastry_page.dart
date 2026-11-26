@@ -37,6 +37,7 @@ class SynastryPage extends StatefulWidget {
 
 class _SynastryPageState extends State<SynastryPage> {
   final _scroll = ScrollController();
+  MaterialPageRoute<void>? _editorRoute;
   late final _synastry = SynastryPageController(
     account: widget.account,
     calculate: widget.calculate,
@@ -48,10 +49,17 @@ class _SynastryPageState extends State<SynastryPage> {
   void initState() {
     super.initState();
     unawaited(_synastry.restoreLatest());
+    unawaited(_synastry.loadRecent());
   }
 
   @override
   void dispose() {
+    final editor = _editorRoute;
+    if (editor != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (editor.isActive) editor.navigator?.removeRoute(editor);
+      });
+    }
     _scroll.dispose();
     _synastry.dispose();
     super.dispose();
@@ -59,23 +67,50 @@ class _SynastryPageState extends State<SynastryPage> {
 
   Future<void> _generateSummary() async {
     await _synastry.generateSummary();
-    if (!mounted || !_scroll.hasClients || _synastry.report == null) return;
-    if (MediaQuery.disableAnimationsOf(context)) {
-      _scroll.jumpTo(0);
-    } else {
-      await _scroll.animateTo(
-        0,
-        duration: const Duration(milliseconds: 235),
-        curve: Curves.easeOutCubic,
-      );
-    }
+    if (_synastry.report != null) _scrollAfterLayout(bottom: false);
+  }
+
+  Future<void> _compare() async {
+    await _synastry.compareCharts();
+    if (_synastry.result != null) _scrollAfterLayout(bottom: true);
+  }
+
+  Future<void> _openSaved(String id) async {
+    await _synastry.openSaved(id);
+    if (_synastry.message == null) _scrollAfterLayout(bottom: false);
+  }
+
+  void _scrollAfterLayout({required bool bottom}) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_scroll.hasClients) return;
+      final target = bottom ? _scroll.position.maxScrollExtent : 0.0;
+      if (MediaQuery.disableAnimationsOf(context) ||
+          MediaQuery.accessibleNavigationOf(context)) {
+        _scroll.jumpTo(target);
+      } else {
+        unawaited(
+          _scroll.animateTo(
+            target,
+            duration: const Duration(milliseconds: 235),
+            curve: Curves.easeOutCubic,
+          ),
+        );
+      }
+    });
   }
 
   Future<void> _edit(SynastrySide side) async {
     final name = side == SynastrySide.a ? 'A 方' : 'B 方';
-    final profile = await Navigator.of(context).push<BirthProfile>(
-      MaterialPageRoute(
-        builder: (context) => Scaffold(
+    final current = _synastry.manualProfile(side);
+    final initial = current == null
+        ? const BirthProfileDraft()
+        : BirthProfileDraft.fromProfile(current);
+    var submitted = false;
+    late final MaterialPageRoute<void> route;
+    route = MaterialPageRoute<void>(
+      builder: (context) => ListenableBuilder(
+        listenable: _synastry,
+        builder: (context, _) => Scaffold(
           appBar: AppBar(title: Text('$name出生资料')),
           body: SafeArea(
             top: false,
@@ -83,19 +118,38 @@ class _SynastryPageState extends State<SynastryPage> {
               padding: jovianPagePadding,
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               children: [
+                const Text('资料在本机排盘，用于本次合盘。'),
+                const SizedBox(height: 12),
                 BirthProfileEditor(
                   loadPlaces: widget.loadPlaces,
+                  initialDraft: initial,
                   requireKnownTime: true,
+                  busy: _synastry.busy,
                   submitLabel: '确认$name资料',
-                  onSubmit: (profile) => Navigator.pop(context, profile),
+                  onSubmit: (profile) async {
+                    submitted = true;
+                    final saved = await _synastry.setManual(side, profile);
+                    if (saved && route.isCurrent) route.navigator?.pop();
+                  },
                 ),
+                if (_synastry.busy)
+                  const LinearProgressIndicator(semanticsLabel: '正在计算盘面'),
+                if (_synastry.message case final String error when submitted)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Semantics(liveRegion: true, child: Text(error)),
+                  ),
               ],
             ),
           ),
         ),
       ),
     );
-    if (mounted && profile != null) await _synastry.setManual(side, profile);
+    _editorRoute = route;
+    await Navigator.of(context).push(route);
+    if (!mounted) return;
+    _editorRoute = null;
+    if (submitted) _synastry.cancelManualCalculation();
   }
 
   void _history() {
@@ -131,6 +185,11 @@ class _SynastryPageState extends State<SynastryPage> {
           padding: jovianPagePadding,
           children: [
             const Text('从亲情、友情、爱情和合作四个角度看两人的相处。'),
+            if (_synastry.hasSession && !_synastry.member)
+              const Padding(
+                padding: EdgeInsets.only(top: 8),
+                child: Text('访客可手动填写双方资料，报告保留在当前游客会话。'),
+              ),
             if (_synastry.busy) ...[
               const SizedBox(height: 10),
               const LinearProgressIndicator(semanticsLabel: '正在处理合盘'),
@@ -139,13 +198,19 @@ class _SynastryPageState extends State<SynastryPage> {
               const SizedBox(height: 12),
               _report(context, report),
             ],
+            if (_synastry.hasSession) ...[
+              const SizedBox(height: 12),
+              _recentReports(context),
+            ],
             if (!_synastry.canCalculate) ...[
               const SizedBox(height: 12),
               const Text('当前运行环境暂不支持本机合盘。可使用浏览器完成排盘。'),
             ],
             const SizedBox(height: 12),
             _section(context, 'A 方 · 本人盘面', [
-              if (_synastry.aFromArchive) const Text('来自最近的命理档案'),
+              if (_synastry.member) _ownChartStatus(context),
+              if (_synastry.manualProfile(SynastrySide.a) case final profile?)
+                _ManualProfileSummary(profile),
               if (_synastry.a case final chart?) _ChartSummary(chart),
               Wrap(
                 spacing: 8,
@@ -167,7 +232,7 @@ class _SynastryPageState extends State<SynastryPage> {
                     ),
                   ),
                   if (_synastry.member &&
-                      _synastry.a == null &&
+                      _offersDestiny &&
                       widget.openDestiny != null)
                     TextButton(
                       onPressed: widget.openDestiny,
@@ -178,6 +243,8 @@ class _SynastryPageState extends State<SynastryPage> {
             ]),
             const SizedBox(height: 10),
             _section(context, 'B 方 · 对方盘面', [
+              if (_synastry.manualProfile(SynastrySide.b) case final profile?)
+                _ManualProfileSummary(profile),
               if (_synastry.b case final chart?) _ChartSummary(chart),
               const Text('盘面在本机计算。生成在线解读时，会发送双方的盘面对照结果。'),
               CheckboxListTile(
@@ -199,7 +266,7 @@ class _SynastryPageState extends State<SynastryPage> {
             ]),
             const SizedBox(height: 14),
             FilledButton(
-              onPressed: _synastry.canCompare ? _synastry.compareCharts : null,
+              onPressed: _synastry.canCompare ? _compare : null,
               child: const Text('比较盘面'),
             ),
             if (_synastry.message case final message?)
@@ -218,6 +285,64 @@ class _SynastryPageState extends State<SynastryPage> {
           ],
         ),
       ),
+    ),
+  );
+
+  bool get _offersDestiny => switch (_synastry.ownChartStatus) {
+    OwnSynastryChartStatus.noArchive ||
+    OwnSynastryChartStatus.missingSnapshot ||
+    OwnSynastryChartStatus.unknownTime => true,
+    _ => false,
+  };
+
+  Widget _ownChartStatus(BuildContext context) {
+    final dateText = _formattedDate(context, _synastry.a?['calculatedAt']);
+    final message = switch (_synastry.ownChartStatus) {
+      OwnSynastryChartStatus.idle =>
+        _synastry.a == null ? '可读取本人最近一次命理盘面，或手动填写。' : null,
+      OwnSynastryChartStatus.loading => '正在读取本人盘面…',
+      OwnSynastryChartStatus.available =>
+        dateText == null ? '已读取最近的命理档案。' : '已读取 $dateText 的命理档案。',
+      OwnSynastryChartStatus.noArchive => '还没有个人命理档案，可以先测算或手动填写。',
+      OwnSynastryChartStatus.missingSnapshot => '最近的命理档案没有结构化盘面，请回命理重新测算。',
+      OwnSynastryChartStatus.unknownTime => '最近的命理档案缺少出生时间，请回命理补齐。',
+      OwnSynastryChartStatus.failed => '暂时无法读取本人盘面，请重试。',
+    };
+    return message == null
+        ? const SizedBox.shrink()
+        : Semantics(liveRegion: true, child: Text(message));
+  }
+
+  Widget _recentReports(BuildContext context) => Card(
+    margin: EdgeInsets.zero,
+    child: ExpansionTile(
+      title: const Text('查看已存解读'),
+      childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+      expandedCrossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (_synastry.historyLoading)
+          const LinearProgressIndicator(semanticsLabel: '正在读取合盘报告历史')
+        else if (_synastry.historyFailed) ...[
+          const Text('暂时无法读取合盘报告历史。'),
+          TextButton(
+            onPressed: _synastry.loadRecent,
+            child: const Text('重试读取历史'),
+          ),
+        ] else if (_synastry.recentReports.isEmpty)
+          const Text('暂无合盘报告。')
+        else
+          for (final entry in _synastry.recentReports)
+            ListTile(
+              key: ValueKey(entry.id),
+              contentPadding: EdgeInsets.zero,
+              title: Text(entry.title),
+              subtitle: Text(_formattedDate(context, entry.savedAt)!),
+              trailing: const Icon(Icons.chevron_right),
+              enabled: !_synastry.busy,
+              onTap: () => _openSaved(entry.id),
+            ),
+        TextButton(onPressed: _history, child: const Text('查看全部合盘报告')),
+      ],
     ),
   );
 
@@ -244,7 +369,8 @@ class _SynastryPageState extends State<SynastryPage> {
             ? '本次解读暂未存档'
             : '已存档 · ${format.formatMediumDate(savedAt)}',
       ),
-      ReportBody(report),
+      if (_synastry.reportFromArchive) const Text('从合盘存档读取'),
+      _RelationshipReport(key: ValueKey(report), body: report),
       if (_synastry.needsSave)
         OutlinedButton(
           onPressed: _synastry.busy ? null : _synastry.retrySave,
@@ -317,6 +443,125 @@ Widget _section(BuildContext context, String title, List<Widget> children) =>
         ),
       ),
     );
+
+String? _formattedDate(BuildContext context, Object? value) {
+  final time = switch (value) {
+    final DateTime instant => instant.toLocal(),
+    final String text => DateTime.tryParse(text)?.toLocal(),
+    _ => null,
+  };
+  if (time == null) return null;
+  final format = MaterialLocalizations.of(context);
+  final date = format.formatMediumDate(time);
+  final hour = format.formatTimeOfDay(
+    TimeOfDay.fromDateTime(time),
+    alwaysUse24HourFormat: true,
+  );
+  return '$date $hour';
+}
+
+class _ManualProfileSummary extends StatelessWidget {
+  const _ManualProfileSummary(this.profile);
+
+  final BirthProfile profile;
+
+  @override
+  Widget build(BuildContext context) {
+    final date = profile.date.utcMidnight.toIso8601String().substring(0, 10);
+    final hour = profile.time.hour?.toString().padLeft(2, '0');
+    final minute = profile.time.minute?.toString().padLeft(2, '0');
+    return Text(
+      '$date $hour:$minute · ${profile.place.name}',
+      style: Theme.of(context).textTheme.bodyMedium,
+    );
+  }
+}
+
+class _RelationshipReport extends StatefulWidget {
+  const _RelationshipReport({super.key, required this.body});
+
+  final String body;
+
+  @override
+  State<_RelationshipReport> createState() => _RelationshipReportState();
+}
+
+class _RelationshipReportState extends State<_RelationshipReport> {
+  final _headings = <String, GlobalKey>{};
+
+  static final _sectionHeading = RegExp(
+    r'^## (亲情|友情|爱情|合作)[ \t]*\r?$',
+    multiLine: true,
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    final body = widget.body;
+    final matches = _sectionHeading.allMatches(body).toList(growable: false);
+    final names = matches.map((match) => match[1]!).toList(growable: false);
+    if (names.isEmpty || names.toSet().length != names.length)
+      return ReportBody(body);
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Wrap(
+          spacing: 6,
+          runSpacing: 4,
+          children: [
+            for (final name in names)
+              OutlinedButton(
+                onPressed: () {
+                  final target = _headings[name]?.currentContext;
+                  if (target == null) return;
+                  final reduced =
+                      MediaQuery.disableAnimationsOf(context) ||
+                      MediaQuery.accessibleNavigationOf(context);
+                  unawaited(
+                    Scrollable.ensureVisible(
+                      target,
+                      alignment: .04,
+                      duration: reduced
+                          ? Duration.zero
+                          : const Duration(milliseconds: 220),
+                      curve: Curves.easeOut,
+                    ),
+                  );
+                },
+                child: Text(name),
+              ),
+          ],
+        ),
+        if (matches.first.start > 0)
+          ReportBody(body.substring(0, matches.first.start).trim()),
+        for (var index = 0; index < matches.length; index++)
+          Padding(
+            key: _headings.putIfAbsent(names[index], GlobalKey.new),
+            padding: const EdgeInsets.only(top: 14, bottom: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Semantics(
+                  header: true,
+                  child: Text(names[index], style: theme.textTheme.titleMedium),
+                ),
+                ReportBody(
+                  body
+                      .substring(
+                        matches[index].end,
+                        index + 1 < matches.length
+                            ? matches[index + 1].start
+                            : body.length,
+                      )
+                      .trim(),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+}
 
 String _coverage(Object? status) => switch (status) {
   'complete' => '可用',

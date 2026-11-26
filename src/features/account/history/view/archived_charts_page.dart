@@ -82,6 +82,13 @@ class _ChartContentState extends State<_ChartContent> {
     }
   }
 
+  void _reload() {
+    final archive = _read();
+    setState(() {
+      _archive = archive;
+    });
+  }
+
   @override
   Widget build(BuildContext context) => FutureBuilder<ArchivedDestinyCharts?>(
     future: _archive,
@@ -92,7 +99,7 @@ class _ChartContentState extends State<_ChartContent> {
       if (state.hasError) {
         return Center(
           child: TextButton(
-            onPressed: () => setState(() => _archive = _read()),
+            onPressed: _reload,
             child: const Text('暂时无法读取命盘，点击重试'),
           ),
         );
@@ -113,10 +120,7 @@ class _ChartContentState extends State<_ChartContent> {
                     ),
             ),
           ),
-          TextButton(
-            onPressed: () => setState(() => _archive = _read()),
-            child: const Text('刷新盘面'),
-          ),
+          TextButton(onPressed: _reload, child: const Text('刷新盘面')),
         ],
       );
     },

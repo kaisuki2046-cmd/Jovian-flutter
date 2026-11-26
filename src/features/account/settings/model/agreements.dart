@@ -80,11 +80,22 @@ class AgreementCatalog {
   }
 }
 
+typedef AgreementConfirmation = ({
+  String id,
+  String version,
+  DateTime decidedAt,
+});
+
 class AgreementState {
-  const AgreementState(this.requiredAccepted, this.permissions);
+  const AgreementState(
+    this.requiredAccepted,
+    this.permissions, {
+    this.confirmations = const [],
+  });
 
   final bool requiredAccepted;
   final Map<String, bool> permissions;
+  final List<AgreementConfirmation> confirmations;
   bool get allAiGranted =>
       aiPurposes.keys.every((key) => permissions[key] == true);
 
@@ -93,9 +104,30 @@ class AgreementState {
       'requiredAccepted': final bool accepted,
       'permissions': final Map<String, Object?> permissions,
     } when aiPurposes.keys.every((name) => permissions[name] is bool)) {
-      return AgreementState(accepted, {
-        for (final name in aiPurposes.keys) name: permissions[name] as bool,
-      });
+      final decisions = response['decisions'];
+      return AgreementState(
+        accepted,
+        {for (final name in aiPurposes.keys) name: permissions[name] as bool},
+        confirmations: [
+          if (decisions is List)
+            for (final decision in decisions)
+              if (decision case {
+                'agreementId': final String id,
+                'version': final String version,
+                'purpose': '',
+                'agreed': true,
+                'decidedAt': final int timestamp,
+              } when id == 'terms' || id == 'privacy')
+                (
+                  id: id,
+                  version: version,
+                  decidedAt: DateTime.fromMillisecondsSinceEpoch(
+                    timestamp,
+                    isUtc: true,
+                  ),
+                ),
+        ],
+      );
     }
     throw const FormatException('Invalid agreement state.');
   }

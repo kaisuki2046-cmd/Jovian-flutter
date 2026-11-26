@@ -164,9 +164,18 @@ String _returnDate(
 }
 
 class FortuneAdvice extends StatefulWidget {
-  const FortuneAdvice({super.key, required this.fortune});
+  const FortuneAdvice({
+    super.key,
+    required this.onRequest,
+    this.groups,
+    this.loading = false,
+    this.error,
+  });
 
-  final FortunePageController fortune;
+  final VoidCallback? onRequest;
+  final List<FortuneAdviceGroup>? groups;
+  final bool loading;
+  final String? error;
 
   @override
   State<FortuneAdvice> createState() => _FortuneAdviceState();
@@ -177,23 +186,18 @@ class _FortuneAdviceState extends State<FortuneAdvice> {
 
   @override
   Widget build(BuildContext context) {
-    final fortune = widget.fortune;
     final theme = Theme.of(context).textTheme;
     return _FortuneCard(
       title: '提运建议',
       children: [
         const Text('数字、饰品和颜色供日常象征搭配参考。'),
         OutlinedButton(
-          onPressed:
-              fortune.busy ||
-                  (!fortune.canGenerate && fortune.published == null)
-              ? null
-              : fortune.getAdvice,
-          child: Text(fortune.adviceError == null ? '按盘面获取建议' : '重试获取建议'),
+          onPressed: widget.loading ? null : widget.onRequest,
+          child: Text(widget.error == null ? '按盘面获取建议' : '重试获取建议'),
         ),
-        if (fortune.loadingAdvice) const _FortuneStatus('正在读取提运建议…'),
-        if (fortune.adviceError case final error?) _FortuneStatus(error),
-        if (fortune.advice case final groups?) ...[
+        if (widget.loading) const _FortuneStatus('正在读取提运建议…'),
+        if (widget.error case final error?) _FortuneStatus(error),
+        if (widget.groups case final groups?) ...[
           for (final group in groups) ...[
             Semantics(
               header: true,

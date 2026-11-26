@@ -23,21 +23,66 @@ class AgreementLink extends StatelessWidget {
         : null,
     onPressed: () => Navigator.of(context).push<void>(
       MaterialPageRoute(
-        builder: (_) => Scaffold(
-          appBar: AppBar(title: Text(document.title)),
-          body: SafeArea(
-            top: false,
+        builder: (_) => AgreementDocumentPage.versioned(document),
+      ),
+    ),
+    child: Text('《${document.title}》'),
+  );
+}
+
+class AgreementDocumentPage extends StatelessWidget {
+  const AgreementDocumentPage({
+    super.key,
+    required this.title,
+    required this.sections,
+    required this.preview,
+    this.version,
+  });
+
+  factory AgreementDocumentPage.versioned(AgreementDocument document) =>
+      AgreementDocumentPage(
+        title: document.title,
+        sections: document.sections,
+        version: document.version,
+        preview: document.preview,
+      );
+
+  final String title;
+  final List<({String title, String text})> sections;
+  final bool preview;
+  final String? version;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Scaffold(
+      appBar: AppBar(title: Text(title)),
+      body: SafeArea(
+        top: false,
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 640),
             child: ListView(
               padding: const EdgeInsets.all(20),
               children: [
-                Text(
-                  '${document.preview ? '预览 · ' : ''}版本 ${document.version}',
-                ),
-                for (final section in document.sections) ...[
+                if (version case final current?)
+                  Text('版本 $current', style: theme.textTheme.bodySmall),
+                if (preview)
+                  Text('内测草案，未发布生效。', style: theme.textTheme.bodySmall),
+                if (sections.isEmpty)
+                  const Padding(
+                    padding: EdgeInsets.only(top: 16),
+                    child: Text('暂无正文。'),
+                  ),
+                for (final section in sections) ...[
                   const SizedBox(height: 16),
-                  Text(
-                    section.title,
-                    style: Theme.of(context).textTheme.titleMedium,
+                  Semantics(
+                    header: true,
+                    child: Text(
+                      section.title,
+                      style: theme.textTheme.titleMedium,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   SelectableText(section.text),
@@ -47,9 +92,8 @@ class AgreementLink extends StatelessWidget {
           ),
         ),
       ),
-    ),
-    child: Text('《${document.title}》'),
-  );
+    );
+  }
 }
 
 Future<bool> confirmAccountAgreements(

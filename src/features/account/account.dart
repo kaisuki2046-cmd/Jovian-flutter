@@ -5,6 +5,8 @@ export 'auth/model/secure_session.dart' show SecureNativeSession;
 export 'auth/requests/account_api.dart' show AccountApi;
 export 'auth/view/account_page.dart' show AccountPage;
 export 'auth/view/nickname_setup.dart' show NicknameSetupGate;
+export 'history/control/report_history_controller.dart'
+    show ReportHistoryController;
 export 'history/model/report_history.dart'
     show ArchivedReport, ReportEntry, ReportHistoryPage, ReportKind;
 export 'history/model/archived_charts.dart'
@@ -17,3 +19,7 @@ export 'profile/view/public_birth_details.dart' show PublicBirthDetails;
 export 'reading-profile/model/account_birth_fields.dart'
     show AccountBirthFields;
 export 'settings/requests/agreements_api.dart' show AgreementsApi;
+export 'settings/control/app_update_controller.dart' show AppUpdateController;
+export 'settings/model/android_release.dart'
+    show AndroidAppVersion, AndroidRelease;
+export 'settings/view/app_update_host.dart' show AppUpdateHost;

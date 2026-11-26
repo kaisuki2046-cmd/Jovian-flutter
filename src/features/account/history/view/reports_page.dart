@@ -6,6 +6,7 @@ import '../../../../ui/interface_language.dart';
 
 import '../../../../ui/report_body.dart';
 import '../../../../ui/theme.dart';
+import '../../../destiny/destiny.dart' show DestinyReportText;
 import '../../auth/control/account_controller.dart';
 import '../control/report_history_controller.dart';
 import '../model/report_history.dart';
@@ -335,7 +336,9 @@ class _ReportReader extends StatelessWidget {
                   Text(_date(context, header.calculatedAt)),
                   const SizedBox(height: 12),
                   if (report != null)
-                    ReportBody(report.body)
+                    history.kind == ReportKind.destiny
+                        ? DestinyReportText(report.body)
+                        : ReportBody(report.body)
                   else if (history.detailError case final error?)
                     ListTile(
                       title: Text(error),

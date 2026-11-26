@@ -2,6 +2,7 @@ import 'package:jovian_divination/jovian_divination.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../ui/interface_language.dart';
+import '../../../ui/report_body.dart';
 
 import 'composer_attachment.dart';
 import 'composer_attachment_view.dart';
@@ -94,7 +95,7 @@ class GuideConversationReply extends StatelessWidget {
             Text(label, style: theme.textTheme.titleSmall),
             const SizedBox(height: 6),
           ],
-          Text(body, style: theme.textTheme.bodyMedium),
+          ReportBody(body, chat: true),
         ],
       ),
     );

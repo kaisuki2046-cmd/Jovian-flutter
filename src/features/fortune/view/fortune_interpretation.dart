@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../../../ui/interface_language.dart';
+import '../../../ui/report_body.dart';
 import '../control/fortune_page_controller.dart';
 import '../model/online_fortune.dart';
 import 'fortune_display_labels.dart';
@@ -132,14 +133,8 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
           for (final MapEntry(:key, :value)
               in fortuneSectionTitles.entries) ...[
             const SizedBox(height: 4),
-            Semantics(
-              header: true,
-              child: UiText(
-                value,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-            ),
-            Text(report.sections[key]!),
+            ReportHeading(context.uiLabel(value)),
+            ReportBody(report.sections[key]!),
           ],
           if (fortune.needsSave)
             OutlinedButton(

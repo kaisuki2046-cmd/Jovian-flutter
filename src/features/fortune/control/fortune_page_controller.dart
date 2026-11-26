@@ -63,7 +63,7 @@ class FortunePageController extends ChangeNotifier {
   Map<String, Object?>? _draft;
   String? _calculation;
   String? _archivedZone;
-  bool _resumed = false;
+  bool _resumeLatest = true;
   var _work = Completer<void>();
   Completer<void>? _previewWork;
   bool _closed = false;
@@ -125,7 +125,10 @@ class FortunePageController extends ChangeNotifier {
   }
 
   void selectPeriod(FortunePeriod next) {
-    if (next == period && archivedWindow == null) return;
+    final canResume =
+        _resumeLatest && archiveId == null && ownerId != null && online != null;
+    if (next == period && archivedWindow == null && !canResume) return;
+    _resumeLatest = false;
     period = next;
     _clearReport();
     unawaited(_refreshPreview());
@@ -254,10 +257,9 @@ class FortunePageController extends ChangeNotifier {
     if (!_current(job)) return;
     prepared = plan;
     final key = FortuneWindowKey(active.entry.id, period, zone, plan.start);
-    if (!_resumed && archiveId == null) {
+    if (_resumeLatest && archiveId == null) {
       final last = await accounts.reports.latest(owner, ReportKind.fortune);
       if (!_current(job)) return;
-      _resumed = true;
       final prior = last == null
           ? null
           : FortuneWindowKey.fromArchive(last.context);
@@ -285,9 +287,11 @@ class FortunePageController extends ChangeNotifier {
           archivedWindow = restored;
           _archivedZone = prior.zone;
           reportSaved = true;
+          _resumeLatest = false;
           return;
         }
       }
+      _resumeLatest = false;
     }
     final serverReport = await service.api.latest(owner, key, job.future);
     if (!_current(job) || serverReport == null) return;

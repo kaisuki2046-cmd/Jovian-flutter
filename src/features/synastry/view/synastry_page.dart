@@ -526,6 +526,7 @@ Widget _section(BuildContext context, String title, List<Widget> children) =>
           spacing: 8,
           children: [
             Semantics(
+              container: true,
               header: true,
               child: Text(title, style: Theme.of(context).textTheme.titleLarge),
             ),
@@ -592,7 +593,6 @@ class _RelationshipReportState extends State<_RelationshipReport> {
     final names = matches.map((match) => match[1]!).toList(growable: false);
     if (names.isEmpty || names.toSet().length != names.length)
       return ReportBody(body);
-    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -630,12 +630,10 @@ class _RelationshipReportState extends State<_RelationshipReport> {
             key: _headings.putIfAbsent(names[index], GlobalKey.new),
             padding: const EdgeInsets.only(top: 14, bottom: 10),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              spacing: 8,
               children: [
-                Semantics(
-                  header: true,
-                  child: Text(names[index], style: theme.textTheme.titleMedium),
-                ),
+                ReportHeading(names[index]),
                 ReportBody(
                   body
                       .substring(

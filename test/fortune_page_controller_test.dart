@@ -8,11 +8,175 @@ import 'package:jovian_fortune/jovian_fortune.dart';
 
 import '../src/features/account/account.dart';
 import '../src/features/fortune/control/fortune_local.dart';
+import '../src/features/fortune/control/fortune_online.dart';
 import '../src/features/fortune/control/fortune_page_controller.dart';
+import '../src/features/fortune/model/online_fortune.dart';
+import '../src/features/fortune/requests/fortune_report_api.dart';
 import '../src/shared/http/json_client.dart';
 import 'support/fortune_local_fixture.dart';
 
 void main() {
+  for (final (description, previous, selection) in [
+    (
+      'automatically reopens the previous weekly report',
+      FortunePeriod.week,
+      null,
+    ),
+    (
+      'automatically reopens a report in the current daily window',
+      FortunePeriod.day,
+      null,
+    ),
+    (
+      'keeps the explicit monthly selection during a delayed initial restore',
+      FortunePeriod.week,
+      FortunePeriod.month,
+    ),
+    (
+      'choosing the highlighted current day still cancels an older week restore',
+      FortunePeriod.week,
+      FortunePeriod.day,
+    ),
+  ]) {
+    test(description, () async {
+      const owner = 'fortune-restore-owner';
+      final firstArchiveRequested = Completer<void>();
+      final firstArchive = Completer<http.Response>();
+      final delayVerification = selection == FortunePeriod.day;
+      final verifyingOldWeek = Completer<void>();
+      final oldWeekResponse = Completer<http.Response>();
+      final modelLookups = <(FortunePeriod, int)>[];
+      int generalReads = 0;
+      final accountApi = AccountApi(
+        JsonHttpClient(
+          base: Uri.https('account.example.test'),
+          client: MockClient((request) async {
+            expect(request.method, 'GET');
+            expect(request.url.queryParameters['expectedOwnerId'], owner);
+            if (request.url.path == '/account/destiny-history/latest') {
+              return _response({
+                ..._entry(_snapshot, '命盘记录'),
+                'report': {
+                  'version': 1,
+                  'timeKnown': true,
+                  'chartSnapshot': {'version': 1, 'timeKnown': true},
+                  'charts': [
+                    for (final method in ['bazi', 'ziwei', 'western'])
+                      {'method': method, 'rows': []},
+                  ],
+                },
+              });
+            }
+            expect(request.url.path, '/account/reading-history/latest');
+            if (request.url.queryParameters['contextKey'] case final context?) {
+              final fields = jsonDecode(context) as List;
+              expect(fields[0], _snapshot);
+              final period = FortunePeriod.values.byName(fields[1] as String);
+              expect(fields[2], 'UTC');
+              expect(fields[3], _window(period).start);
+              return _response(_saved(period));
+            }
+            generalReads++;
+            if (!firstArchiveRequested.isCompleted) {
+              firstArchiveRequested.complete();
+              if (selection != null && !delayVerification) {
+                return firstArchive.future;
+              }
+            }
+            return _response(_saved(previous));
+          }),
+        ),
+      );
+      final account = AccountController(accountApi, AgreementsApi(accountApi));
+      final service = _FortuneWindowFixture(
+        FortuneReportApi(
+          JsonHttpClient(
+            base: Uri.https('fortune.example.test'),
+            client: MockClient((request) async {
+              expect(request.method, 'GET');
+              expect(request.url.path, '/fortune/reports/latest');
+              expect(request.url.queryParameters['expectedOwnerId'], owner);
+              expect(request.url.queryParameters['snapshotId'], _snapshot);
+              expect(request.url.queryParameters['displayTimezone'], 'UTC');
+              final period = FortunePeriod.values.byName(
+                request.url.queryParameters['periodType']!,
+              );
+              final start = int.parse(
+                request.url.queryParameters['windowStart']!,
+              );
+              modelLookups.add((period, start));
+              if (delayVerification && period == previous) {
+                verifyingOldWeek.complete();
+                return oldWeekResponse.future;
+              }
+              return _response(_published(period));
+            }),
+          ),
+        ),
+      );
+      final controller = FortunePageController(
+        loadDisplay: () async => (zone: 'UTC', clock: (int time) => time),
+        readServerTime: () async => _today,
+        account: account,
+        ownerId: owner,
+        archiveId: null,
+        local: const FortuneLocalFixture(),
+        online: service,
+      );
+      addTearDown(() {
+        controller.dispose();
+        account.dispose();
+      });
+      final restored = Completer<void>();
+      controller.addListener(() {
+        if (controller.reportSaved &&
+            !controller.loadingReport &&
+            !restored.isCompleted)
+          restored.complete();
+      });
+      controller.initialize();
+      await firstArchiveRequested.future.timeout(const Duration(seconds: 2));
+      if (selection != null) {
+        if (delayVerification) {
+          await verifyingOldWeek.future.timeout(const Duration(seconds: 2));
+        }
+        expect(controller.loadingReport, isTrue);
+        if (delayVerification) expect(controller.displayedPeriod, selection);
+        controller.selectPeriod(selection);
+      }
+      await restored.future.timeout(const Duration(seconds: 2));
+      if (selection != null) {
+        if (delayVerification) {
+          oldWeekResponse.complete(_response(_published(previous)));
+        } else {
+          firstArchive.complete(_response(_saved(previous)));
+        }
+        await Future<void>.delayed(Duration.zero);
+      }
+      final expected = selection ?? previous;
+      expect(controller.displayedPeriod, expected);
+      expect(controller.published?.id, _idFor(expected));
+      expect(controller.displayedWindow?.start, _window(expected).start);
+      final expectedLookups = [
+        if (delayVerification) (previous, _window(previous).start),
+        (expected, _window(expected).start),
+      ];
+      expect(modelLookups, expectedLookups);
+      expect(generalReads, 1);
+      expect(
+        controller.archivedWindow != null,
+        selection == null && previous == FortunePeriod.week,
+      );
+      if (controller.archivedWindow == null) {
+        controller.selectPeriod(expected);
+        expect(controller.loadingPreview, isFalse);
+        await Future<void>.delayed(Duration.zero);
+        expect(modelLookups, expectedLookups);
+        expect(generalReads, 1);
+      }
+    });
+  }
+
   test(
     'scope and period determine the archive and ignore a stale response',
     () async {
@@ -175,6 +339,81 @@ void main() {
       expect(controller.previewError, isNull);
     },
   );
+}
+
+final _today = DateTime.utc(2026, 11, 11, 12);
+final _snapshot = 'a' * 64;
+
+String _idFor(FortunePeriod period) => ['b', 'c', 'd', 'f'][period.index] * 64;
+
+DisplayWindow _window(FortunePeriod period, [int? at]) => buildFortunePreview(
+  at ?? _today.millisecondsSinceEpoch,
+  period,
+  (time) => time,
+).window;
+
+Map<String, Object?> _published(FortunePeriod period) => {
+  'reportId': _idFor(period),
+  'calculationRunId': 'e' * 64,
+  'natalChartSnapshotId': _snapshot,
+  'periodType': period.name,
+  'sections': [
+    for (final section in fortuneSectionTitles.keys)
+      {'sectionId': section, 'summary': '已发布的 $section'},
+  ],
+};
+
+Map<String, Object?> _saved(FortunePeriod period) => {
+  ..._entry('1' * 64, '已归档运势'),
+  'kind': 'fortune',
+  'report': {
+    'version': 1,
+    'kind': 'fortune',
+    'context': {
+      'snapshotId': _snapshot,
+      'displayTimezone': 'UTC',
+      'periodType': period.name,
+      'windowStart': _window(period).start,
+      'windowEnd': _window(period).end,
+      'calculationRunId': 'e' * 64,
+      'reportId': _idFor(period),
+    },
+    'sections': [
+      {'title': '综合运势', 'body': '已经保存的正文。'},
+    ],
+  },
+};
+
+class _FortuneWindowFixture extends FortuneOnline {
+  _FortuneWindowFixture(FortuneReportApi api) : super(api, () async => _today);
+
+  @override
+  Future<PreparedFortunePeriod> prepare(
+    Map<String, Object?> input,
+    int at,
+    Map<String, Object?> archive,
+    Future<void> cancel,
+  ) async {
+    final period = FortunePeriod.values.byName(input['periodType']! as String);
+    final window = _window(period, at);
+    String date(int time) => DateTime.fromMillisecondsSinceEpoch(
+      time,
+      isUtc: true,
+    ).toIso8601String().substring(0, 10);
+    return PreparedFortunePeriod(
+      fortuneArchiveKey(
+        archive['snapshotId']! as String,
+        period,
+        input['displayTimezone']! as String,
+        window,
+      ),
+      window.start,
+      const {},
+      date(window.start),
+      date(window.end - 1),
+      null,
+    );
+  }
 }
 
 class _DelayedPreview extends FortuneLocal {

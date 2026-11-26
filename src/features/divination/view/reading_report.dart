@@ -178,7 +178,7 @@ class _GuideFollowUpReplyState extends State<GuideFollowUpReply> {
               child: Text(turn.answer, style: theme.textTheme.titleMedium),
             ),
             if (turn.explanation case final explanation?)
-              ReportBody(explanation),
+              ReportBody(explanation, chat: true),
             if (turn.nextSteps.isNotEmpty) ...[
               const Divider(height: 1),
               Semantics(

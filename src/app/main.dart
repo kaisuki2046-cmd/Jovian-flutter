@@ -8,11 +8,13 @@ import '../bootstrap/account.dart';
 import '../bootstrap/destiny.dart';
 import '../bootstrap/divination.dart';
 import '../bootstrap/fortune.dart';
+import '../bootstrap/synastry.dart';
 import '../features/account/account.dart';
 import '../features/destiny/destiny.dart';
 import '../features/divination/divination.dart';
 import '../features/fortune/fortune.dart';
 import '../features/social/social.dart';
+import '../features/synastry/synastry.dart';
 import '../ui/tab_glyph.dart';
 import '../ui/theme.dart';
 import 'app_shell.dart';
@@ -210,9 +212,19 @@ class _AppHomeState extends State<_AppHome> {
         key: ValueKey(_scope),
         account: widget.account,
       ),
-      JovianTab.synastry => const _ModuleStatusPage(
-        tab: JovianTab.synastry,
-        message: '合盘计算和报告暂未连接。',
+      JovianTab.synastry => SynastryPage(
+        key: ValueKey(_scope),
+        loadPlaces: loadBirthPlaces,
+        account: widget.account,
+        calculate: configureSynastryChart(),
+        compare: configureSynastryComparison(),
+        summarize: configureSynastrySummary(
+          readNativeSession: widget.account?.readNativeSession,
+        ),
+        openAccount: widget.account == null
+            ? null
+            : () => selectTab(JovianTab.account),
+        openDestiny: () => selectTab(JovianTab.destiny),
       ),
       JovianTab.divination => DivinationPage(
         key: ValueKey(_scope),

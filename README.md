@@ -8,7 +8,7 @@ Flutter 版沿用项目的[目录分工](../FRAMEWORK.md)和[协作协议](../CO
 
 ```sh
 flutter pub get
-flutter run -d chrome --web-port 8081 --target src/app/main.dart --dart-define=ACCOUNT_API_URL=http://localhost:8787 --dart-define=DIVINATION_REPORT_URL=http://localhost:8115 --dart-define=DESTINY_REPORT_URL=http://localhost:8788 --dart-define=FORTUNE_TIME_URL=http://localhost:8791
+flutter run -d chrome --web-port 8081 --target src/app/main.dart --dart-define=ACCOUNT_API_URL=http://localhost:8787 --dart-define=DIVINATION_REPORT_URL=http://localhost:8115 --dart-define=DESTINY_REPORT_URL=http://localhost:8788 --dart-define=SYNASTRY_REPORT_URL=http://localhost:8794 --dart-define=FORTUNE_TIME_URL=http://localhost:8791
 ```
 
 手机与桌面浏览器共用页面主题、卡片、表单及底栏，桌面将页面居中到 460 逻辑像素。底栏顺序为命理、合盘、算事、消息、个人中心，周期运势仍从命理进入。个人中心设置可以切换外观，并在本设备保存选择。
@@ -20,6 +20,8 @@ flutter run -d chrome --web-port 8081 --target src/app/main.dart --dart-define=A
 个人中心通过原账户服务恢复会话、显示 UID、关注与粉丝，并读取报告和命理档案。算事通过原 `/reading` 接口发送问题、起盘和追问。同一浏览器标签页可按当前账号恢复尚有效的算事会话。浏览器 Worker 的构建及对照见[本机计算说明](tool/legacy_compute/README.md)。
 
 算事沿用原版的单一对话入口。输入问题并发送后，按服务返回的流程投六次铜钱，再从 78 张牌里选三张。仪式可暂停续接，支持逐张翻牌和一键翻牌。六爻、梅花易数和塔罗盘面均可在同一对话中查看。服务端提供切牌位置时，前端按该位置演示切牌。
+
+合盘可在 Web 手动填写双方资料并使用原 TypeScript 排盘与比较。会员也可读取本人最近的命理档案。在线解读使用已有 `/synastry/summary` 服务，访客或会员开启合盘用途的 AI 授权后可生成并保存报告。
 
 ```text
 app-flutter/
@@ -137,7 +139,8 @@ Flutter 首页的「命理」入口可填写出生资料并在本机计算八字
 | 命理 | 出生资料、八字预览、Web 复用原有 TypeScript 排盘、可配置的原报告服务 | 完整盘面样式、紫微和西占平台回归、报告生成与保存端到端验收 |
 | 账户 | 密码登录、会话、UID、报告与档案、设置、资料编辑和实名认证占位表单 | 实名验证服务、密码设置界面、正式第三方登录与隐私请求 |
 | 合规 | 三份现有草案正文、版本与摘要，发布参数校验 | 合规中心界面及服务接线 |
-| 社交和其他业务 | 消息通知、关注与粉丝、按 UID 或昵称查找用户 | 合盘在线计算与报告界面、推荐 |
+| 合盘 | Web 双人排盘和比较、本人档案、在线四类解读与归档 | 原生平台运行原计算与真机回归 |
+| 社交和其他业务 | 消息通知、关注与粉丝、按 UID 或昵称查找用户 | 推荐 |
 | 切换 | 本地迁移分支 | 各模块旧数据回读、服务装配、启动脚本、平台回归 |
 
 牌图按旧版[资源清单](../src/features/divination/data/asset_manifest.json)逐张校验。Dart 的 Pro 提示词统一用 LF 换行生成版本摘要，已归档报告沿用原有数据格式。

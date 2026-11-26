@@ -18,6 +18,13 @@ class ReportHistoryApi {
     return record == null ? null : ArchivedDestinyCharts.fromJson(record);
   }
 
+  Future<Map<String, Object?>> latestSynastrySnapshot(String owner) =>
+      _account.request(
+        ['synastry-chart-snapshots', 'latest'],
+        authenticated: true,
+        query: {'expectedOwnerId': owner},
+      );
+
   String _history(ReportKind kind) =>
       kind == ReportKind.destiny ? 'destiny-history' : 'reading-history';
   Map<String, String> _owner(String owner, ReportKind kind) => {

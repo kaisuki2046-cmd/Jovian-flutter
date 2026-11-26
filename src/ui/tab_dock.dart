@@ -234,10 +234,13 @@ class _Tray extends StatelessWidget {
     if (hole == null) return sample;
     // Keep the tray's stronger blur out of the reserved lens sample. A path
     // clip alone leaves its full rectangular sample in some web renderers.
+    // Inscribe the sample in the capsule so its corners never show through
+    // the frosted tray. The bevel softens the sharper sample toward the edge.
+    final sampleInset = hole.shortestSide * 0.15;
     return LayoutBuilder(
       builder: (context, constraints) {
         final size = constraints.biggest;
-        final opening = hole.intersect(Offset.zero & size);
+        final opening = hole.deflate(sampleInset).intersect(Offset.zero & size);
         final regions = [
           Rect.fromLTRB(0, 0, opening.left, size.height),
           Rect.fromLTRB(opening.right, 0, size.width, size.height),
@@ -348,13 +351,11 @@ class _Lens extends StatelessWidget {
       child: RepaintBoundary(
         child: ClipRRect(
           borderRadius: _capsule,
-          child: BackdropFilter(
-            filter: raised
-                ? _raisedFilter(size, dark)
-                : ui.ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-            child: raised
-                ? CustomPaint(painter: _RaisedRim(dark))
-                : DecoratedBox(
+          child: raised
+              ? _RaisedGlass(size: size, dark: dark)
+              : BackdropFilter(
+                  filter: _restingBlur,
+                  child: DecoratedBox(
                     decoration: BoxDecoration(
                       borderRadius: _capsule,
                       border: Border.all(
@@ -371,11 +372,68 @@ class _Lens extends StatelessWidget {
                       ),
                     ),
                   ),
-          ),
+                ),
         ),
       ),
     ),
   );
+
+  static final _restingBlur = ui.ImageFilter.blur(sigmaX: 4, sigmaY: 4);
+}
+
+class _RaisedGlass extends StatelessWidget {
+  const _RaisedGlass({required this.size, required this.dark});
+
+  final Size size;
+  final bool dark;
+
+  @override
+  Widget build(BuildContext context) {
+    final rimWidth = (size.shortestSide * 0.12).clamp(3.0, 6.0);
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        // The edge of the glass bends its live sample in much more than the
+        // face. Both clip paths follow the same moving capsule.
+        ClipPath(
+          clipper: _LensBand(rimWidth: rimWidth, rim: true),
+          child: BackdropFilter(
+            filter: _refraction(size, dark, scale: 1.34, blur: 1.45),
+            child: const SizedBox.expand(),
+          ),
+        ),
+        ClipPath(
+          clipper: _LensBand(rimWidth: rimWidth, rim: false),
+          child: BackdropFilter(
+            filter: _refraction(size, dark, scale: 1.07, blur: 0.75),
+            child: const SizedBox.expand(),
+          ),
+        ),
+        CustomPaint(painter: _RaisedRim(dark)),
+      ],
+    );
+  }
+}
+
+class _LensBand extends CustomClipper<Path> {
+  const _LensBand({required this.rimWidth, required this.rim});
+
+  final double rimWidth;
+  final bool rim;
+
+  @override
+  Path getClip(Size size) {
+    final shape = _capsule.toRRect(Offset.zero & size);
+    final path = Path()
+      ..fillType = PathFillType.evenOdd
+      ..addRRect(shape.deflate(rimWidth));
+    if (rim) path.addRRect(shape);
+    return path;
+  }
+
+  @override
+  bool shouldReclip(_LensBand oldClipper) =>
+      rimWidth != oldClipper.rimWidth || rim != oldClipper.rim;
 }
 
 class _GlassShadow extends CustomPainter {
@@ -419,19 +477,24 @@ class _GlassShadow extends CustomPainter {
       drop != oldDelegate.drop;
 }
 
-ui.ImageFilter _raisedFilter(Size size, bool dark) {
+ui.ImageFilter _refraction(
+  Size size,
+  bool dark, {
+  required double scale,
+  required double blur,
+}) {
   final center = size.center(Offset.zero);
-  const scale = 1.21;
   final magnify = Matrix4.diagonal3Values(scale, scale, 1)
     ..setTranslationRaw(center.dx * (1 - scale), center.dy * (1 - scale), 0);
-  final brightness = dark ? 1.13 : 1.04;
-  final lift = dark ? 5.0 : 1.5;
-  // Actual backdrop pixels, including covered glyphs, shift progressively
-  // farther from the optical centre toward the glass edge.
+  final brightness = dark ? 1.13 : 1.025;
+  final lift = dark ? 5.0 : 1.0;
   return ui.ImageFilter.compose(
-    inner: ui.ImageFilter.matrix(magnify.storage),
+    inner: ui.ImageFilter.matrix(
+      magnify.storage,
+      filterQuality: FilterQuality.low,
+    ),
     outer: ui.ImageFilter.compose(
-      inner: ui.ImageFilter.blur(sigmaX: 0.85, sigmaY: 0.85),
+      inner: ui.ImageFilter.blur(sigmaX: blur, sigmaY: blur),
       outer: ColorFilter.matrix([
         brightness * 1.094,
         brightness * -0.086,
@@ -474,8 +537,22 @@ class _RaisedRim extends CustomPainter {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: dark
-              ? const [Color(0x23ffffff), Color(0x12ffffff)]
-              : const [Color(0x24ffffff), Color(0x0fffffff)],
+              ? const [Color(0x17ffffff), Color(0x0bffffff)]
+              : const [Color(0x1affffff), Color(0x06ffffff)],
+        ).createShader(rect),
+    );
+    canvas.drawRRect(
+      shape.deflate(1.7),
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.8
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1.1)
+        ..shader = LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: dark
+              ? const [Color(0x8ccee7ff), Color(0x1bffffff)]
+              : const [Color(0xbaffffff), Color(0x426378b4)],
         ).createShader(rect),
     );
     final rim = Paint()

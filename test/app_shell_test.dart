@@ -89,21 +89,26 @@ void main() {
     await tester.pumpWidget(const JovianApp(initialTab: JovianTab.synastry));
     await tester.pumpAndSettle();
     final lens = find.byKey(const ValueKey('tab-glass-lens'));
-    final lensFace = find.descendant(
+    final lensFilters = find.descendant(
       of: lens,
       matching: find.byType(BackdropFilter),
     );
-    final resting = tester.getRect(lensFace);
+    expect(lensFilters, findsOneWidget);
+    final resting = tester.getRect(lens);
     expect(resting.width / resting.height, closeTo(1.36, 0.02));
     final start = tester.getCenter(_tab(JovianTab.synastry));
     final target = tester.getCenter(_tab(JovianTab.messages));
     final gesture = await tester.startGesture(start);
     await tester.pump(const Duration(milliseconds: 120));
+    expect(lensFilters, findsNWidgets(2));
     await gesture.moveBy(const Offset(30, 0));
     await gesture.moveTo(target);
     await tester.pump();
-    expect(tester.getCenter(lensFace).dx, closeTo(target.dx, 1));
-    expect(tester.getSize(lensFace).height, greaterThan(resting.height));
+    final optics = tester.widgetList<BackdropFilter>(lensFilters).toList();
+    expect(optics, hasLength(2));
+    expect(optics[0].filter, isNot(equals(optics[1].filter)));
+    expect(tester.getCenter(lens).dx, closeTo(target.dx, 1));
+    expect(tester.getSize(lens).height, greaterThan(resting.height));
     expect(
       tester.widget<NavigationBar>(find.byType(NavigationBar)).selectedIndex,
       JovianTab.synastry.index,
@@ -114,7 +119,8 @@ void main() {
       tester.widget<NavigationBar>(find.byType(NavigationBar)).selectedIndex,
       JovianTab.messages.index,
     );
-    expect(tester.getSize(lensFace).height, closeTo(resting.height, 0.01));
+    expect(lensFilters, findsOneWidget);
+    expect(tester.getSize(lens).height, closeTo(resting.height, 0.01));
 
     final interrupted = await tester.startGesture(target);
     await interrupted.moveTo(start);

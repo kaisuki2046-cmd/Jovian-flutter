@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:flutter/scheduler.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../ui/tab_dock.dart';
@@ -42,14 +43,59 @@ class JovianShell extends StatefulWidget {
 class _JovianShellState extends State<JovianShell> {
   late JovianTab _active = widget.initialTab;
   late final Set<JovianTab> _visited = {_active};
+  final _dockCollapse = ValueNotifier(0.0);
+  double _nextCollapse = 0;
+  double _scrollDelta = 0;
+  int? _dockFrame;
 
   void _select(JovianTab next) {
     if (next == _active) return;
     FocusScope.of(context).unfocus();
+    _scrollDelta = 0;
+    _queueDockCollapse(0);
     setState(() {
       _active = next;
       _visited.add(next);
     });
+  }
+
+  bool _trackDockScroll(ScrollUpdateNotification notification) {
+    final metrics = notification.metrics;
+    final source = notification.context;
+    if (notification.depth != 0 ||
+        metrics.axis != Axis.vertical ||
+        (source != null && Scaffold.maybeOf(source)?.isDrawerOpen == true) ||
+        metrics.viewportDimension < MediaQuery.sizeOf(context).height * .35 ||
+        metrics.maxScrollExtent - metrics.minScrollExtent < 2)
+      return false;
+    if (metrics.pixels <= metrics.minScrollExtent + 2) {
+      _scrollDelta = 0;
+      _queueDockCollapse(0);
+    } else if (!metrics.outOfRange) {
+      _scrollDelta += notification.scrollDelta ?? 0;
+      if (_scrollDelta.abs() >= 2) {
+        _queueDockCollapse((_nextCollapse + _scrollDelta / 66).clamp(0.0, 1.0));
+        _scrollDelta = 0;
+      }
+    }
+    return false;
+  }
+
+  void _queueDockCollapse(double value) {
+    if (_nextCollapse == value) return;
+    _nextCollapse = value;
+    _dockFrame ??= SchedulerBinding.instance.scheduleFrameCallback((_) {
+      _dockFrame = null;
+      _dockCollapse.value = _nextCollapse;
+    });
+  }
+
+  @override
+  void dispose() {
+    if (_dockFrame case final frame?)
+      SchedulerBinding.instance.cancelFrameCallbackWithId(frame);
+    _dockCollapse.dispose();
+    super.dispose();
   }
 
   @override
@@ -67,11 +113,15 @@ class _JovianShellState extends State<JovianShell> {
                     enabled: tab == _active,
                     child: ExcludeFocus(
                       excluding: tab != _active,
-                      child: widget.buildPage(
-                        context,
-                        tab,
-                        tab == _active,
-                        _select,
+                      child: NotificationListener<ScrollUpdateNotification>(
+                        onNotification: (event) =>
+                            tab == _active && _trackDockScroll(event),
+                        child: widget.buildPage(
+                          context,
+                          tab,
+                          tab == _active,
+                          _select,
+                        ),
                       ),
                     ),
                   )
@@ -80,19 +130,23 @@ class _JovianShellState extends State<JovianShell> {
       ),
       bottomNavigationBar: keyboardVisible
           ? null
-          : JovianTabDock(
-              selected: _active.index,
-              select: (index) => _select(JovianTab.values[index]),
-              destinations: [
-                for (final tab in JovianTab.values)
-                  NavigationDestination(
-                    key: ValueKey(tab),
-                    label: tab.label,
-                    tooltip: tab.label,
-                    icon: TabGlyph(tab.glyph),
-                    selectedIcon: TabGlyph(tab.glyph, selected: true),
-                  ),
-              ],
+          : ValueListenableBuilder(
+              valueListenable: _dockCollapse,
+              builder: (context, collapse, _) => JovianTabDock(
+                collapse: collapse,
+                selected: _active.index,
+                select: (index) => _select(JovianTab.values[index]),
+                destinations: [
+                  for (final tab in JovianTab.values)
+                    NavigationDestination(
+                      key: ValueKey(tab),
+                      label: tab.label,
+                      tooltip: tab.label,
+                      icon: TabGlyph(tab.glyph),
+                      selectedIcon: TabGlyph(tab.glyph, selected: true),
+                    ),
+                ],
+              ),
             ),
     );
   }

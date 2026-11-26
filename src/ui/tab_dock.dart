@@ -1,13 +1,25 @@
+import 'dart:async';
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 
+import 'package:flutter/gestures.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:material_ui/material_ui.dart';
+
+import 'tab_glyph.dart';
+import 'tab_lens.dart';
 
 const tabDockMargin = 14.0;
 const _trayPadding = 5.0;
 const _rowHeight = 56.0;
 const _trayHeight = _rowHeight + 2 * _trayPadding;
 
-typedef _LensContact = ({double x, double travel, bool dragging});
+typedef _LensContact = ({
+  double x,
+  double travel,
+  bool dragging,
+  Duration time,
+});
 
 class JovianTabDock extends StatefulWidget {
   const JovianTabDock({
@@ -15,79 +27,189 @@ class JovianTabDock extends StatefulWidget {
     required this.selected,
     required this.destinations,
     required this.select,
+    this.collapse = 0,
   });
 
   final int selected;
   final List<NavigationDestination> destinations;
   final ValueChanged<int> select;
+  final double collapse;
 
   @override
   State<JovianTabDock> createState() => _JovianTabDockState();
 }
 
-class _JovianTabDockState extends State<JovianTabDock> {
-  int? _pointer;
+class _JovianTabDockState extends State<JovianTabDock>
+    with SingleTickerProviderStateMixin {
+  final _pointers = <int>{};
+  final _paintSpace = GlobalKey();
+  late List<GlobalKey> _anchors = _makeAnchors();
   final _contact = ValueNotifier<_LensContact?>(null);
   final _trayBackdrop = BackdropKey();
+  late final _confirmation = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 270),
+    value: 1,
+  );
+  _LensContact? _latest;
+  int? _frame;
+  Timer? _idle;
+  double? _heldCollapse;
+  double _downX = 0;
   bool _cancelled = false;
+  bool _suppressTap = false;
+
+  List<GlobalKey> _makeAnchors() =>
+      List.generate(widget.destinations.length, (_) => GlobalKey());
+
+  bool get _reducedMotion => MediaQuery.disableAnimationsOf(context);
+
+  @override
+  void initState() {
+    super.initState();
+    GestureBinding.instance.pointerRouter.addGlobalRoute(_observePointer);
+  }
+
+  @override
+  void didUpdateWidget(JovianTabDock oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.destinations.length != _anchors.length)
+      _anchors = _makeAnchors();
+    if (widget.selected != oldWidget.selected && !_reducedMotion) {
+      _confirmation.forward(from: 0);
+    }
+  }
 
   @override
   void dispose() {
+    GestureBinding.instance.pointerRouter.removeGlobalRoute(_observePointer);
+    _idle?.cancel();
+    if (_frame case final frame?)
+      SchedulerBinding.instance.cancelFrameCallbackWithId(frame);
+    _confirmation.dispose();
     _contact.dispose();
     super.dispose();
   }
 
   void _press(PointerDownEvent event) {
-    if (_pointer != null) {
-      _cancelled = true;
-      _clear();
+    if ((event.buttons & kPrimaryButton) == 0) return;
+    _pointers.add(event.pointer);
+    if (_pointers.length > 1) {
+      _interruptDrag();
       return;
     }
-    _pointer = event.pointer;
     _cancelled = false;
-    _contact.value = (x: event.localPosition.dx, travel: 0, dragging: false);
+    _suppressTap = false;
+    _heldCollapse = widget.collapse;
+    _downX = event.localPosition.dx;
+    _latest = (x: _downX, travel: 0, dragging: false, time: event.timeStamp);
+    _contact.value = _latest;
   }
 
-  void _release(PointerUpEvent event) {
-    if (_pointer != event.pointer) return;
-    _pointer = null;
-    if (_contact.value?.dragging != true) _clear();
-    _endCancellation();
+  void _observePointer(PointerEvent event) {
+    if (event is PointerDownEvent &&
+        !_cancelled &&
+        _pointers.isNotEmpty &&
+        !_pointers.contains(event.pointer)) {
+      _interruptDrag();
+    }
   }
 
-  void _cancel(PointerCancelEvent event) {
-    if (_pointer != event.pointer) return;
-    _pointer = null;
+  void _interruptDrag() {
     _cancelled = true;
+    _suppressTap = true;
     _clear();
-    _endCancellation();
   }
 
-  void _endCancellation() {
-    if (!_cancelled) return;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_pointer == null) _cancelled = false;
+  void _end(PointerEvent event, int Function(double) slotAt) {
+    if (!_pointers.remove(event.pointer)) return;
+    final drag = _latest?.dragging == true;
+    final confirmed = !_cancelled && drag && event is PointerUpEvent;
+    if (event is PointerCancelEvent) _suppressTap = true;
+    _clear();
+    if (confirmed) _confirmTab(slotAt(event.localPosition.dx));
+    if (_pointers.isEmpty) {
+      final held = _heldCollapse;
+      _heldCollapse = null;
+      if (held != widget.collapse) setState(() {});
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_pointers.isEmpty) _suppressTap = false;
+      });
+    }
+  }
+
+  void _move(PointerMoveEvent event) {
+    final previous = _latest;
+    if (_cancelled || previous == null || !_pointers.contains(event.pointer))
+      return;
+    final x = event.localPosition.dx;
+    if (!previous.dragging && (x - _downX).abs() < 7) return;
+    _suppressTap = true;
+    final elapsed = ((event.timeStamp - previous.time).inMicroseconds / 1000)
+        .clamp(8.0, double.infinity);
+    final speed = ((x - previous.x) / elapsed / .75).clamp(-1.0, 1.0);
+    _latest = (
+      x: x,
+      travel: .25 * previous.travel + .75 * speed,
+      dragging: true,
+      time: event.timeStamp,
+    );
+    _queuePaint();
+    _idle?.cancel();
+    _idle = Timer(const Duration(milliseconds: 88), _relax);
+  }
+
+  void _relax() {
+    final current = _latest;
+    if (current == null) return;
+    final travel = current.travel.abs() < .02 ? 0.0 : current.travel * .55;
+    _latest = (
+      x: current.x,
+      travel: travel,
+      dragging: true,
+      time: current.time,
+    );
+    _queuePaint();
+    if (travel != 0) _idle = Timer(const Duration(milliseconds: 24), _relax);
+  }
+
+  void _queuePaint() {
+    _frame ??= SchedulerBinding.instance.scheduleFrameCallback((_) {
+      _frame = null;
+      _contact.value = _latest;
     });
   }
 
-  void _move(double x) {
-    if (_cancelled) return;
-    final previous = _contact.value;
-    final previousX = previous?.dragging == true ? previous!.x : x;
-    final travel = (x - previousX).abs().clamp(0, 12) / 12;
-    _contact.value = (x: x, travel: travel, dragging: true);
+  void _clear() {
+    _idle?.cancel();
+    if (_frame case final frame?)
+      SchedulerBinding.instance.cancelFrameCallbackWithId(frame);
+    _frame = null;
+    _latest = null;
+    _contact.value = null;
   }
 
-  void _clear() => _contact.value = null;
-
   void _select(int index) {
-    if (!_cancelled) widget.select(index);
+    if (!_suppressTap) _confirmTab(index);
+  }
+
+  void _confirmTab(int index) {
+    if (index != widget.selected && widget.destinations[index].enabled)
+      widget.select(index);
   }
 
   @override
   Widget build(BuildContext context) {
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    final reduced = MediaQuery.disableAnimationsOf(context);
+    final brightness = Theme.of(context).brightness;
+    final dark = brightness == Brightness.dark;
+    final reduced = _reducedMotion;
+    final canCompact =
+        !reduced && MediaQuery.textScalerOf(context).scale(12) <= 14;
+    final collapse = canCompact
+        ? (_heldCollapse ?? widget.collapse).clamp(0.0, 1.0)
+        : 0.0;
+    final rowHeight = ui.lerpDouble(_rowHeight, 44, collapse)!;
+    final trayHeight = rowHeight + 2 * _trayPadding;
     return SafeArea(
       top: false,
       minimum: const EdgeInsets.fromLTRB(tabDockMargin, 12, tabDockMargin, 12),
@@ -96,113 +218,140 @@ class _JovianTabDockState extends State<JovianTabDock> {
           final dockWidth = constraints.maxWidth;
           final length = widget.destinations.length;
           final slotWidth = (dockWidth - 2 * _trayPadding) / length;
+          final baseWidth = (slotWidth - 8).clamp(1.0, slotWidth);
+          final resting = Size(
+            baseWidth,
+            (baseWidth / 1.36).clamp(22.0, rowHeight),
+          );
+          double slotCenter(int index) =>
+              _trayPadding + (index + .5) * slotWidth;
           int slotAt(double x) =>
               ((x - _trayPadding) / slotWidth).floor().clamp(0, length - 1);
-          return Listener(
-            onPointerDown: _press,
-            onPointerUp: _release,
-            onPointerCancel: _cancel,
-            child: GestureDetector(
-              excludeFromSemantics: true,
-              behavior: HitTestBehavior.opaque,
-              onHorizontalDragStart: (event) => _move(event.localPosition.dx),
-              onHorizontalDragUpdate: (event) => _move(event.localPosition.dx),
-              onHorizontalDragEnd: (_) {
-                final contact = _contact.value;
-                _clear();
-                if (contact?.dragging == true) _select(slotAt(contact!.x));
-              },
-              onHorizontalDragCancel: _clear,
-              child: SizedBox(
-                height: _trayHeight,
-                child: ValueListenableBuilder(
-                  valueListenable: _contact,
-                  child: Positioned.fill(
-                    child: Padding(
-                      padding: const EdgeInsets.all(_trayPadding),
-                      child: NavigationBar(
-                        height: _rowHeight,
-                        backgroundColor: Colors.transparent,
-                        surfaceTintColor: Colors.transparent,
-                        indicatorColor: Colors.transparent,
-                        overlayColor: const WidgetStatePropertyAll(
-                          Colors.transparent,
+          return SizedBox(
+            height: _trayHeight,
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Listener(
+                behavior: HitTestBehavior.opaque,
+                onPointerDown: _press,
+                onPointerMove: _move,
+                onPointerUp: (event) => _end(event, slotAt),
+                onPointerCancel: (event) => _end(event, slotAt),
+                child: SizedBox(
+                  height: trayHeight,
+                  child: ValueListenableBuilder(
+                    valueListenable: _contact,
+                    child: Positioned.fill(
+                      child: Padding(
+                        padding: const EdgeInsets.all(_trayPadding),
+                        child: NavigationBar(
+                          height: rowHeight,
+                          backgroundColor: Colors.transparent,
+                          surfaceTintColor: Colors.transparent,
+                          indicatorColor: Colors.transparent,
+                          overlayColor: const WidgetStatePropertyAll(
+                            Colors.transparent,
+                          ),
+                          animationDuration: reduced
+                              ? Duration.zero
+                              : const Duration(milliseconds: 235),
+                          selectedIndex: widget.selected,
+                          onDestinationSelected: _select,
+                          destinations: [
+                            for (final (index, item)
+                                in widget.destinations.indexed)
+                              if (item.icon is TabGlyph)
+                                NavigationDestination(
+                                  key: item.key,
+                                  label: item.label,
+                                  tooltip: item.tooltip,
+                                  enabled: item.enabled,
+                                  icon: SizedBox.square(
+                                    key: _anchors[index],
+                                    dimension: 24,
+                                  ),
+                                )
+                              else
+                                item,
+                          ],
                         ),
-                        animationDuration: reduced
-                            ? Duration.zero
-                            : const Duration(milliseconds: 235),
-                        selectedIndex: widget.selected,
-                        onDestinationSelected: _select,
-                        destinations: widget.destinations,
                       ),
                     ),
-                  ),
-                  builder: (context, contact, navigation) {
-                    final raised = contact != null && !reduced;
-                    final dragging = contact?.dragging == true;
-                    final index = contact == null
-                        ? widget.selected
-                        : slotAt(contact.x);
-                    final baseWidth = (slotWidth - 8).clamp(0.0, slotWidth);
-                    final baseHeight = (baseWidth / 1.36).clamp(
-                      32.0,
-                      _rowHeight,
-                    );
-                    final width = raised
-                        ? baseWidth * (1.24 + 0.12 * contact.travel)
-                        : baseWidth;
-                    final height = raised ? baseHeight * 1.19 : baseHeight;
-                    final center = raised && dragging
-                        ? contact.x
-                        : _trayPadding + (index + 0.5) * slotWidth;
-                    final target = Rect.fromLTWH(
-                      (center - width / 2).clamp(2.0, dockWidth - width - 2),
-                      (_trayHeight - height) / 2,
-                      width,
-                      height,
-                    );
-                    // Update the lens and the opening it reveals from the same
-                    // rectangle, with the same press and release transitions.
-                    return TweenAnimationBuilder<Rect?>(
-                      tween: RectTween(end: target),
-                      duration: Duration(
-                        milliseconds: reduced || dragging
-                            ? 0
-                            : raised
-                            ? 108
-                            : 235,
-                      ),
-                      curve: Curves.easeOutCubic,
-                      child: navigation,
-                      builder: (context, bounds, navigation) {
-                        final rect = bounds!;
-                        final lens = Positioned.fromRect(
-                          key: const ValueKey('tab-glass-lens'),
-                          rect: rect,
-                          child: _Lens(
-                            dark: dark,
-                            raised: raised,
-                            size: rect.size,
-                          ),
-                        );
-                        return Stack(
-                          clipBehavior: Clip.none,
-                          children: [
-                            Positioned.fill(
-                              child: _Tray(
-                                dark: dark,
-                                aperture: raised ? rect : null,
-                                backdropKey: _trayBackdrop,
-                              ),
+                    builder: (context, contact, navigation) {
+                      final dragging = contact?.dragging == true;
+                      final index = contact == null
+                          ? widget.selected
+                          : slotAt(contact.x);
+                      final target = TabLensPose(
+                        dragging && !reduced ? contact!.x : slotCenter(index),
+                        press: contact != null && !reduced ? 1 : 0,
+                        travel: reduced ? 0 : contact?.travel ?? 0,
+                      );
+                      return TweenAnimationBuilder<TabLensPose>(
+                        tween: _LensPoseTween(target),
+                        duration: Duration(
+                          milliseconds: reduced || dragging
+                              ? 0
+                              : contact != null
+                              ? 108
+                              : 235,
+                        ),
+                        curve: Curves.easeOutCubic,
+                        child: navigation,
+                        builder: (context, pose, navigation) {
+                          final outline = tabLensOutline(
+                            pose: pose,
+                            tray: Size(dockWidth, trayHeight),
+                            resting: resting,
+                          );
+                          final raised = pose.press > 0;
+                          final lens = Positioned.fromRect(
+                            key: const ValueKey('tab-glass-lens'),
+                            rect: outline.bounds,
+                            child: _Lens(
+                              dark: dark,
+                              raised: raised,
+                              outline: outline,
                             ),
-                            if (!raised) lens,
-                            navigation!,
-                            if (raised) lens,
-                          ],
-                        );
-                      },
-                    );
-                  },
+                          );
+                          return Stack(
+                            key: _paintSpace,
+                            clipBehavior: Clip.none,
+                            children: [
+                              Positioned.fill(
+                                child: _Tray(
+                                  dark: dark,
+                                  aperture: raised ? outline : null,
+                                  backdropKey: _trayBackdrop,
+                                ),
+                              ),
+                              lens,
+                              navigation!,
+                              Positioned.fill(
+                                child: ExcludeSemantics(
+                                  child: IgnorePointer(
+                                    child: CustomPaint(
+                                      painter: _DockArtwork(
+                                        paintSpace: _paintSpace,
+                                        anchors: _anchors,
+                                        items: widget.destinations,
+                                        selected: widget.selected,
+                                        confirmation: _confirmation,
+                                        brightness: brightness,
+                                        outline: raised ? outline : null,
+                                        lift: pose.press,
+                                        reduced: reduced,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
@@ -213,6 +362,143 @@ class _JovianTabDockState extends State<JovianTabDock> {
   }
 }
 
+class _LensPoseTween extends Tween<TabLensPose> {
+  _LensPoseTween(TabLensPose end) : super(end: end);
+
+  @override
+  TabLensPose lerp(double t) => TabLensPose.lerp(begin!, end!, t);
+}
+
+class _DockArtwork extends CustomPainter {
+  _DockArtwork({
+    required this.paintSpace,
+    required this.anchors,
+    required this.items,
+    required this.selected,
+    required this.confirmation,
+    required this.brightness,
+    required this.outline,
+    required this.lift,
+    required this.reduced,
+  }) : super(repaint: confirmation);
+
+  final GlobalKey paintSpace;
+  final List<GlobalKey> anchors;
+  final List<NavigationDestination> items;
+  final int selected;
+  final Animation<double> confirmation;
+  final Brightness brightness;
+  final TabLensOutline? outline;
+  final double lift;
+  final bool reduced;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final root = paintSpace.currentContext?.findRenderObject();
+    if (root is! RenderBox) return;
+    final lens = outline;
+    final glass = lens?.path().shift(lens.bounds.topLeft);
+    final inset = lens == null
+        ? 0.0
+        : (lens.bounds.shortestSide * .12).clamp(3.0, 7.0);
+    final face = lens?.path(inset: inset).shift(lens.bounds.topLeft);
+    final rim = glass == null
+        ? null
+        : Path.combine(PathOperation.difference, glass, face!);
+    final exterior = glass == null
+        ? null
+        : (Path()
+            ..fillType = PathFillType.evenOdd
+            ..addRect(Offset.zero & size)
+            ..addPath(glass, Offset.zero));
+
+    for (final (i, item) in items.indexed) {
+      final icon = item.icon;
+      final anchor = anchors[i].currentContext?.findRenderObject();
+      if (icon is! TabGlyph || anchor is! RenderBox || !anchor.hasSize)
+        continue;
+      final center = anchor.localToGlobal(
+        anchor.size.center(Offset.zero),
+        ancestor: root,
+      );
+      final current = i == selected;
+      final selectedGlyph = item.selectedIcon;
+      final normal =
+          (current && selectedGlyph is TabGlyph ? selectedGlyph : icon).artwork(
+            brightness,
+            filled: current,
+          );
+      final phase = reduced || !current ? 1.0 : confirmation.value;
+      final scale = phase < .38
+          ? ui.lerpDouble(1, 1.17, phase / .38)!
+          : phase < .72
+          ? ui.lerpDouble(1.17, .97, (phase - .38) / .34)!
+          : ui.lerpDouble(.97, 1, (phase - .72) / .28)!;
+      final iconCenter = center.translate(0, -math.sin(phase * math.pi) * 2.5);
+      final covered =
+          lens != null &&
+          lens.bounds.overlaps(
+            Rect.fromCenter(center: center, width: 36, height: 32),
+          );
+      if (covered) {
+        canvas.save();
+        canvas.clipPath(exterior!);
+      }
+      _drawGlyph(canvas, normal, iconCenter, scale: scale);
+      if (!covered) continue;
+      canvas.restore();
+
+      final filled = icon.artwork(brightness, filled: true);
+      final relative = center - lens.bounds.center;
+      final nx = relative.dx / lens.bounds.width;
+      final ny = relative.dy / lens.bounds.height;
+      final distance = math.sqrt(nx * nx + ny * ny);
+      final influence = math.max(0.0, 1 - 1.7 * distance);
+      final magnified =
+          center + relative * (.22 * influence * influence * lift);
+      final inGlassScale = 1 + .24 * lift;
+      canvas.save();
+      canvas.clipPath(face!);
+      _drawGlyph(canvas, filled, magnified, scale: inGlassScale);
+      canvas.restore();
+
+      final angle = math.atan2(ny, nx);
+      final drift = distance > 0 ? 2.8 * lift / distance : 0.0;
+      canvas.save();
+      canvas.clipPath(rim!);
+      canvas.translate(magnified.dx - nx * drift, magnified.dy - ny * drift);
+      canvas.rotate(angle);
+      canvas.scale(1 + .52 * lift, 1 - .17 * lift);
+      canvas.rotate(-angle);
+      _drawGlyph(canvas, filled, Offset.zero, scale: inGlassScale);
+      canvas.restore();
+    }
+  }
+
+  void _drawGlyph(
+    Canvas canvas,
+    CustomPainter glyph,
+    Offset center, {
+    required double scale,
+  }) {
+    canvas.save();
+    canvas.translate(center.dx, center.dy);
+    canvas.scale(scale);
+    canvas.translate(-12, -12);
+    glyph.paint(canvas, const Size.square(24));
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(_DockArtwork old) =>
+      old.items != items ||
+      old.anchors != anchors ||
+      old.outline != outline ||
+      old.brightness != brightness ||
+      old.selected != selected ||
+      old.reduced != reduced;
+}
+
 const _capsule = BorderRadius.all(Radius.circular(999));
 
 class _Tray extends StatelessWidget {
@@ -220,7 +506,7 @@ class _Tray extends StatelessWidget {
 
   final bool dark;
   final BackdropKey backdropKey;
-  final Rect? aperture;
+  final TabLensOutline? aperture;
 
   static final _blur = ui.ImageFilter.blur(sigmaX: 11, sigmaY: 11);
 
@@ -230,13 +516,13 @@ class _Tray extends StatelessWidget {
       backdropGroupKey: backdropKey,
       child: const SizedBox.expand(),
     );
-    final hole = aperture;
+    final hole = aperture?.bounds;
     if (hole == null) return sample;
     // Keep the tray's stronger blur out of the reserved lens sample. A path
     // clip alone leaves its full rectangular sample in some web renderers.
     // Inscribe the sample in the capsule so its corners never show through
     // the frosted tray. The bevel softens the sharper sample toward the edge.
-    final sampleInset = hole.shortestSide * 0.15;
+    final sampleInset = hole.shortestSide * 0.19;
     return LayoutBuilder(
       builder: (context, constraints) {
         final size = constraints.biggest;
@@ -308,7 +594,7 @@ class _Tray extends StatelessWidget {
 class _TrayClip extends CustomClipper<Path> {
   const _TrayClip(this.aperture);
 
-  final Rect? aperture;
+  final TabLensOutline? aperture;
 
   @override
   Path getClip(Size size) {
@@ -318,7 +604,7 @@ class _TrayClip extends CustomClipper<Path> {
     return Path.combine(
       PathOperation.difference,
       tray,
-      Path()..addRRect(_capsule.toRRect(opening.deflate(0.8))),
+      opening.path(inset: .8).shift(opening.bounds.topLeft),
     );
   }
 
@@ -327,11 +613,15 @@ class _TrayClip extends CustomClipper<Path> {
 }
 
 class _Lens extends StatelessWidget {
-  const _Lens({required this.dark, required this.raised, required this.size});
+  const _Lens({
+    required this.dark,
+    required this.raised,
+    required this.outline,
+  });
 
   final bool dark;
   final bool raised;
-  final Size size;
+  final TabLensOutline outline;
 
   @override
   Widget build(BuildContext context) => IgnorePointer(
@@ -345,14 +635,15 @@ class _Lens extends StatelessWidget {
         ),
         blur: raised ? 17 : 6,
         drop: raised ? 7 : 2,
+        outline: outline,
       ),
       // This composited boundary puts the filter's origin at the moving lens,
       // so its magnification follows the rectangle rather than the screen.
       child: RepaintBoundary(
-        child: ClipRRect(
-          borderRadius: _capsule,
+        child: ClipPath(
+          clipper: _LensBand(outline: outline),
           child: raised
-              ? _RaisedGlass(size: size, dark: dark)
+              ? _RaisedGlass(outline: outline, dark: dark)
               : BackdropFilter(
                   filter: _restingBlur,
                   child: DecoratedBox(
@@ -382,13 +673,14 @@ class _Lens extends StatelessWidget {
 }
 
 class _RaisedGlass extends StatelessWidget {
-  const _RaisedGlass({required this.size, required this.dark});
+  const _RaisedGlass({required this.outline, required this.dark});
 
-  final Size size;
+  final TabLensOutline outline;
   final bool dark;
 
   @override
   Widget build(BuildContext context) {
+    final size = outline.bounds.size;
     final rimWidth = (size.shortestSide * 0.12).clamp(3.0, 6.0);
     return Stack(
       fit: StackFit.expand,
@@ -396,44 +688,45 @@ class _RaisedGlass extends StatelessWidget {
         // The edge of the glass bends its live sample in much more than the
         // face. Both clip paths follow the same moving capsule.
         ClipPath(
-          clipper: _LensBand(rimWidth: rimWidth, rim: true),
+          clipper: _LensBand(outline: outline, inset: rimWidth, rim: true),
           child: BackdropFilter(
             filter: _refraction(size, dark, scale: 1.34, blur: 1.45),
             child: const SizedBox.expand(),
           ),
         ),
         ClipPath(
-          clipper: _LensBand(rimWidth: rimWidth, rim: false),
+          clipper: _LensBand(outline: outline, inset: rimWidth),
           child: BackdropFilter(
             filter: _refraction(size, dark, scale: 1.07, blur: 0.75),
             child: const SizedBox.expand(),
           ),
         ),
-        CustomPaint(painter: _RaisedRim(dark)),
+        CustomPaint(painter: _RaisedRim(dark, outline)),
       ],
     );
   }
 }
 
 class _LensBand extends CustomClipper<Path> {
-  const _LensBand({required this.rimWidth, required this.rim});
+  const _LensBand({required this.outline, this.inset = 0, this.rim = false});
 
-  final double rimWidth;
+  final TabLensOutline outline;
+  final double inset;
   final bool rim;
 
   @override
   Path getClip(Size size) {
-    final shape = _capsule.toRRect(Offset.zero & size);
-    final path = Path()
-      ..fillType = PathFillType.evenOdd
-      ..addRRect(shape.deflate(rimWidth));
-    if (rim) path.addRRect(shape);
-    return path;
+    final face = outline.path(inset: inset);
+    return rim
+        ? Path.combine(PathOperation.difference, outline.path(), face)
+        : face;
   }
 
   @override
   bool shouldReclip(_LensBand oldClipper) =>
-      rimWidth != oldClipper.rimWidth || rim != oldClipper.rim;
+      outline != oldClipper.outline ||
+      inset != oldClipper.inset ||
+      rim != oldClipper.rim;
 }
 
 class _GlassShadow extends CustomPainter {
@@ -441,24 +734,27 @@ class _GlassShadow extends CustomPainter {
     required this.color,
     required this.blur,
     required this.drop,
+    this.outline,
   });
 
   final Color color;
   final double blur;
   final double drop;
+  final TabLensOutline? outline;
 
   @override
   void paint(Canvas canvas, Size size) {
     final bounds = Offset.zero & size;
-    final glass = _capsule.toRRect(bounds);
+    final glass =
+        outline?.path() ?? (Path()..addRRect(_capsule.toRRect(bounds)));
     final exterior = Path()
       ..fillType = PathFillType.evenOdd
       ..addRect(bounds.inflate(2 * blur + drop))
-      ..addRRect(glass);
+      ..addPath(glass, Offset.zero);
     // A box shadow's solid centre would darken pixels sampled by the lens.
     canvas.save();
     canvas.clipPath(exterior);
-    canvas.drawRRect(
+    canvas.drawPath(
       glass.shift(Offset(0, drop)),
       Paint()
         ..color = color
@@ -474,7 +770,8 @@ class _GlassShadow extends CustomPainter {
   bool shouldRepaint(_GlassShadow oldDelegate) =>
       color != oldDelegate.color ||
       blur != oldDelegate.blur ||
-      drop != oldDelegate.drop;
+      drop != oldDelegate.drop ||
+      outline != oldDelegate.outline;
 }
 
 ui.ImageFilter _refraction(
@@ -522,16 +819,16 @@ ui.ImageFilter _refraction(
 }
 
 class _RaisedRim extends CustomPainter {
-  const _RaisedRim(this.dark);
+  const _RaisedRim(this.dark, this.outline);
 
   final bool dark;
+  final TabLensOutline outline;
 
   @override
   void paint(Canvas canvas, Size size) {
     final rect = Offset.zero & size;
-    final shape = _capsule.toRRect(rect);
-    canvas.drawRRect(
-      shape,
+    canvas.drawPath(
+      outline.path(),
       Paint()
         ..shader = LinearGradient(
           begin: Alignment.topCenter,
@@ -541,8 +838,8 @@ class _RaisedRim extends CustomPainter {
               : const [Color(0x1affffff), Color(0x06ffffff)],
         ).createShader(rect),
     );
-    canvas.drawRRect(
-      shape.deflate(1.7),
+    canvas.drawPath(
+      outline.path(inset: 1.7),
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2.8
@@ -551,15 +848,15 @@ class _RaisedRim extends CustomPainter {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: dark
-              ? const [Color(0x8ccee7ff), Color(0x1bffffff)]
-              : const [Color(0xbaffffff), Color(0x426378b4)],
+              ? const [Color(0x7affffff), Color(0x1bffffff)]
+              : const [Color(0x9fffffff), Color(0x364f4f4f)],
         ).createShader(rect),
     );
     final rim = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.15
       ..color = dark ? const Color(0x5effffff) : const Color(0xa3ffffff);
-    canvas.drawRRect(shape.deflate(0.65), rim);
+    canvas.drawPath(outline.path(inset: .65), rim);
     rim
       ..strokeWidth = 2.15
       ..shader = LinearGradient(
@@ -580,9 +877,10 @@ class _RaisedRim extends CustomPainter {
                 Color(0x4d3c392e),
               ],
       ).createShader(rect);
-    canvas.drawRRect(shape.deflate(1.7), rim);
+    canvas.drawPath(outline.path(inset: 1.7), rim);
   }
 
   @override
-  bool shouldRepaint(_RaisedRim oldDelegate) => dark != oldDelegate.dark;
+  bool shouldRepaint(_RaisedRim oldDelegate) =>
+      dark != oldDelegate.dark || outline != oldDelegate.outline;
 }

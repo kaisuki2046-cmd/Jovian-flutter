@@ -9,15 +9,18 @@ class TabGlyph extends StatelessWidget {
   final bool selected;
 
   @override
-  Widget build(BuildContext context) {
-    final dark = Theme.of(context).brightness == Brightness.dark;
+  Widget build(BuildContext context) => CustomPaint(
+    size: const Size.square(24),
+    painter: artwork(Theme.of(context).brightness),
+  );
+
+  CustomPainter artwork(Brightness brightness, {bool? filled}) {
+    final dark = brightness == Brightness.dark;
+    final selected = filled ?? this.selected;
     final color = selected
         ? (dark ? const Color(0xff73b3ff) : const Color(0xff176ce4))
         : (dark ? const Color(0xffaeb0b7) : const Color(0xff61666c));
-    return CustomPaint(
-      size: const Size.square(24),
-      painter: _TabGlyphPainter(shape, color, selected),
-    );
+    return _TabGlyphPainter(shape, color, selected);
   }
 }
 

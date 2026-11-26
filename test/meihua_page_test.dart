@@ -1,16 +1,15 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
-import '../src/app/main.dart';
+import '../src/features/divination/view/meihua_page.dart';
 
 void main() {
   testWidgets(
     'validates numeric fields and displays the calculated hexagrams',
     (tester) async {
       await tester.pumpWidget(
-        const JovianApp(initialTab: JovianTab.divination),
+        const MaterialApp(home: Scaffold(body: MeihuaForm())),
       );
-      await tester.tap(find.text('梅花易数'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('用这三个数起卦'));
       await tester.pump();

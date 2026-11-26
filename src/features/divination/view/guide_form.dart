@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:jovian_divination/jovian_divination.dart';
 import 'package:material_ui/material_ui.dart';
 
-import 'cast_content.dart';
 import 'guide_composer.dart';
 import 'guide_conversation.dart';
 import 'liuyao_form.dart';
@@ -13,9 +12,10 @@ import 'ritual/guide_ritual_dialog.dart';
 import 'tarot_cards.dart';
 
 class GuideForm extends StatefulWidget {
-  const GuideForm({super.key, this.online});
+  const GuideForm({super.key, this.online, this.openSynastry});
 
   final OnlineGuideController? online;
+  final VoidCallback? openSynastry;
 
   @override
   State<GuideForm> createState() => _GuideFormState();
@@ -95,14 +95,17 @@ class _GuideFormState extends State<GuideForm>
     super.dispose();
   }
 
-  void _start({required bool automatic}) {
-    if (!_form.currentState!.validate()) return;
+  void _sendQuestion() {
+    if (_form.currentState?.validate() != true) return;
     FocusScope.of(context).unfocus();
     _presentation = null;
     final question = _question.text.trim();
     if (widget.online case final online?) {
-      setState(() => _pendingQuestion = question);
-      unawaited(_startOnline(online, question, automatic));
+      setState(() {
+        _pendingQuestion = question;
+        _question.clear();
+      });
+      unawaited(_startOnline(online, question));
       return;
     }
     setState(() {
@@ -113,18 +116,18 @@ class _GuideFormState extends State<GuideForm>
       _ritual = GuideRitual(
         question: question,
         focus: question,
-        automatic: automatic,
+        automatic: false,
       );
+      _question.clear();
     });
-    if (!automatic) _openRitual();
+    _openRitual();
   }
 
   Future<void> _startOnline(
     OnlineGuideController online,
     String question,
-    bool automatic,
   ) async {
-    await online.start(question, automatic: automatic);
+    await online.start(question, automatic: false);
     _finishQuestion(online);
   }
 
@@ -142,6 +145,8 @@ class _GuideFormState extends State<GuideForm>
         _pendingQuestion = null;
         _question.clear();
       });
+    } else if (online.canRetry && _question.text.isEmpty) {
+      _question.text = _pendingQuestion!;
     }
   }
 
@@ -238,11 +243,14 @@ class _GuideFormState extends State<GuideForm>
   }
 
   void _restart() {
+    FocusScope.of(context).unfocus();
     final online = widget.online;
     final completed = online?.reading;
     setState(() {
       if (completed?.report != null) _completed.add(completed!);
       _clearDraft();
+      _showHistory = false;
+      _savedReading = null;
     });
     unawaited(online?.nextQuestion());
   }
@@ -270,6 +278,37 @@ class _GuideFormState extends State<GuideForm>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final historyOpen = _showHistory || _savedReading != null;
+    return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 48,
+        centerTitle: true,
+        titleTextStyle: Theme.of(context).textTheme.titleMedium,
+        title: const Text('对话'),
+        leading: IconButton(
+          tooltip: historyOpen ? '返回对话' : '会话历史',
+          icon: Icon(historyOpen ? Icons.chevron_left : Icons.menu_rounded),
+          onPressed: () {
+            FocusScope.of(context).unfocus();
+            setState(() {
+              _savedReading = null;
+              _showHistory = !historyOpen;
+            });
+          },
+        ),
+        actions: [
+          IconButton(
+            tooltip: '新对话',
+            icon: const Icon(Icons.add_comment_outlined),
+            onPressed: widget.online?.busy == true ? null : _restart,
+          ),
+        ],
+      ),
+      body: SafeArea(top: false, child: _conversationBody(context)),
+    );
+  }
+
+  Widget _conversationBody(BuildContext context) {
     final online = widget.online;
     final busy = online?.busy ?? false;
     final ritual = _snapshot;
@@ -297,7 +336,6 @@ class _GuideFormState extends State<GuideForm>
           !busy && _pendingQuestion == null && _clarifications.isEmpty;
       return GuideThread(
         key: const ValueKey('guide-question'),
-        headerAction: _historyAction(),
         welcome: welcome ? GuideWelcome(offline: online == null) : null,
         messages: [
           ..._conversation(),
@@ -313,82 +351,40 @@ class _GuideFormState extends State<GuideForm>
           form: _form,
           text: _question,
           focus: _questionFocus,
-          label: '你想问哪件事？',
+          hint: '输入你想测算的问题…',
           sendLabel: '发送消息',
           busy: busy,
-          send: () => _start(automatic: false),
+          send: _sendQuestion,
           suggest: _setSuggestedQuestion,
-          actions: [
-            guideComposerAction(
-              label: '手动起盘',
-              action: busy ? null : () => _start(automatic: false),
-            ),
-            guideComposerAction(
-              label: '自动起盘',
-              action: busy ? null : () => _start(automatic: true),
-            ),
-          ],
+          openSynastry: widget.openSynastry,
+          showAssistant: !welcome,
         ),
       );
     }
 
     return switch (ritual.stage) {
-      GuideStage.cast => _buildRitualPrompt(ritual, '扔六次铜钱'),
-      GuideStage.draw => _buildRitualPrompt(ritual, '抽三张塔罗'),
+      GuideStage.cast || GuideStage.draw => _buildRitualPrompt(ritual),
       GuideStage.reading when _presentation?.needsReveal(ritual) == true =>
-        _buildRitualPrompt(ritual, '翻开三张塔罗'),
+        _buildRitualPrompt(ritual),
       GuideStage.reading => _buildResult(context, ritual),
     };
   }
 
-  Widget _buildRitualPrompt(GuideRitualSnapshot ritual, String title) =>
-      CastContent(
-        key: ValueKey(ritual.stage),
-        children: [
-          _heading(title),
-          const SizedBox(height: 8),
-          ..._questionContext(ritual),
-          ..._feedback(),
-          OverflowBar(
-            alignment: MainAxisAlignment.start,
-            overflowAlignment: OverflowBarAlignment.start,
-            spacing: 8,
-            overflowSpacing: 8,
-            children: [
-              FilledButton.icon(
-                onPressed: _openRitual,
-                icon: const Icon(Icons.play_arrow),
-                label: const Text('继续本次仪式'),
-              ),
-              OutlinedButton.icon(
-                onPressed: widget.online?.busy == true ? null : _restart,
-                icon: const Icon(Icons.add_comment_outlined),
-                label: const Text('另问一件事'),
-              ),
-            ],
-          ),
-        ],
-      );
-
-  Widget _heading(String title) => Row(
-    children: [
-      Expanded(
-        child: Semantics(
-          header: true,
-          child: Text(title, style: Theme.of(context).textTheme.headlineMedium),
+  Widget _buildRitualPrompt(GuideRitualSnapshot ritual) => GuideThread(
+    key: ValueKey(ritual.stage),
+    messages: [
+      ..._conversation(),
+      ..._questionContext(ritual),
+      ..._feedback(),
+      Align(
+        alignment: AlignmentDirectional.centerStart,
+        child: OutlinedButton(
+          onPressed: _openRitual,
+          child: const Text('继续本次仪式'),
         ),
       ),
-      if (_historyAction() case final action?) action,
     ],
   );
-
-  Widget? _historyAction() => widget.online == null
-      ? null
-      : IconButton(
-          tooltip: '会话记录',
-          onPressed: () => setState(() => _showHistory = true),
-          icon: const Icon(Icons.menu_rounded),
-        );
 
   List<Widget> _conversation() => [
     for (final turn in _clarifications) ...[
@@ -418,9 +414,9 @@ class _GuideFormState extends State<GuideForm>
     final canFollowUp = hasReport && reading!.followUps.length < 8;
     return GuideThread(
       key: const ValueKey('guide-result'),
-      headerAction: _historyAction(),
       scroll: _reportScroll,
       messages: [
+        ..._conversation(),
         ..._questionContext(ritual),
         if (online == null) ...[
           Text('翻开三张塔罗', style: text.titleMedium),
@@ -449,7 +445,7 @@ class _GuideFormState extends State<GuideForm>
           child: OutlinedButton.icon(
             onPressed: () => setState(() => _showCharts = !_showCharts),
             icon: Icon(_showCharts ? Icons.expand_less : Icons.expand_more),
-            label: Text(_showCharts ? '收起盘面' : '查看盘面'),
+            label: Text(_showCharts ? '收起盘面' : '查看三套盘面'),
           ),
         ),
         if (_showCharts) ...[
@@ -480,11 +476,11 @@ class _GuideFormState extends State<GuideForm>
           ? GuideComposer(
               form: _followUpForm,
               text: _followUp,
-              label: '基于当前盘面追问',
-              sendLabel: '发送追问',
+              hint: '接着上一题问',
+              sendLabel: '发送消息',
               send: _sendFollowUp,
               busy: busy,
-              followUp: true,
+              showAssistant: true,
               actions: [
                 guideComposerAction(
                   label: '另问一件事',

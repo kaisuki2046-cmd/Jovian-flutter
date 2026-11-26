@@ -64,11 +64,12 @@ void main() {
             data: MediaQuery.of(context).copyWith(disableAnimations: true),
             child: child!,
           ),
-          home: const Scaffold(body: GuideForm()),
+          home: const GuideForm(),
         ),
       );
       await tester.enterText(find.byType(TextFormField), '我这次面试后续会怎样？');
-      await tester.tap(find.text('手动起盘'));
+      await tester.pump();
+      await tester.tap(find.byTooltip('发送消息'));
       await tester.pumpAndSettle();
       final toss = find.byKey(const ValueKey('coin-ritual-toss-button'));
       for (var index = 0; index < 6; index++) {
@@ -125,7 +126,7 @@ void main() {
       await tester.tap(find.text('查看解读'));
       await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey('guide-ritual-dialog')), findsNothing);
-      final charts = find.text('查看盘面');
+      final charts = find.text('查看三套盘面');
       await tester.ensureVisible(charts);
       await tester.tap(charts);
       await tester.pumpAndSettle();

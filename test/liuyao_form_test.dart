@@ -1,12 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
-import '../src/app/main.dart';
+import '../src/features/divination/view/liuyao_form.dart';
 
 void main() {
-  testWidgets('casts six times, keeps progress across tabs, and resets', (
-    tester,
-  ) async {
+  testWidgets('casts six times and resets the chart', (tester) async {
     tester.view.devicePixelRatio = 1;
     tester.view.physicalSize = const Size(360, 640);
     addTearDown(tester.view.resetPhysicalSize);
@@ -16,8 +14,9 @@ void main() {
     addTearDown(
       tester.binding.platformDispatcher.clearAccessibilityFeaturesTestValue,
     );
-    await tester.pumpWidget(const JovianApp(initialTab: JovianTab.divination));
-    await tester.tap(find.text('六爻'));
+    await tester.pumpWidget(
+      const MaterialApp(home: Scaffold(body: LiuYaoForm())),
+    );
     await tester.pumpAndSettle();
 
     final toss = find.byKey(const ValueKey('coin-ritual-toss-button'));
@@ -26,12 +25,6 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('已投 1 / 6 次'), findsOneWidget);
     expect(find.text('六爻结果'), findsNothing);
-
-    await tester.tap(find.text('梅花易数'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('六爻'));
-    await tester.pumpAndSettle();
-    expect(find.text('已投 1 / 6 次'), findsOneWidget);
 
     for (var count = 2; count <= 6; count++) {
       await tester.ensureVisible(toss);

@@ -25,6 +25,11 @@ void main() {
       tester.view.physicalSize = const Size(320, 680);
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
+      tester.binding.platformDispatcher.accessibilityFeaturesTestValue =
+          const FakeAccessibilityFeatures(disableAnimations: true);
+      addTearDown(
+        tester.binding.platformDispatcher.clearAccessibilityFeaturesTestValue,
+      );
       final service = _ReadingService();
       final recovery = _Recovery();
       final online = service.connect(recovery);
@@ -33,13 +38,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('有什么事情想知道吗？'), findsOneWidget);
-      expect(find.text('梅花易数'), findsOneWidget);
-      expect(find.text('六爻'), findsOneWidget);
-      await _tap(tester, '梅花易数');
-      expect(find.text('用这三个数起卦'), findsOneWidget);
-      await _tap(tester, '六爻');
-      expect(find.text('投三枚铜钱'), findsOneWidget);
-      await _tap(tester, '综合算事');
+      expect(find.byType(TabBar), findsNothing);
+      expect(find.byTooltip('发送消息'), findsNothing);
       await _tap(tester, '这次面试会顺利吗？');
       expect(
         tester
@@ -49,21 +49,35 @@ void main() {
         '这次面试会顺利吗？',
       );
       await tester.enterText(find.byType(TextFormField), _question);
-      await _tap(tester, '自动起盘');
+      await _send(tester);
       expect(find.text(_question), findsOneWidget);
       expect(find.text(_explained), findsOneWidget);
       expect(service.calls, ['POST /reading/understand']);
 
       await tester.enterText(find.byType(TextFormField), _details);
-      await _tap(tester, '自动起盘');
+      await _send(tester);
+      expect(service.automatic, [false]);
+      final toss = find.byKey(const ValueKey('coin-ritual-toss-button'));
+      for (var index = 0; index < 6; index++) {
+        await tester.ensureVisible(toss);
+        await tester.tap(toss);
+        await tester.pumpAndSettle();
+      }
+      for (final position in [40, 38, 39]) {
+        final card = find.bySemanticsLabel('选取第 $position 张牌');
+        tester.widget<Semantics>(card).properties.onTap!();
+        await tester.pumpAndSettle();
+      }
+      await _tap(tester, '一键翻牌');
+      await _tap(tester, '查看解读');
       expect(find.text('确认的关注点'), findsOneWidget);
       expect(find.text(_concern), findsOneWidget);
       expect(find.text('解读暂不可用，可以稍后重试。'), findsOneWidget);
-      expect(find.text('查看盘面'), findsOneWidget);
+      expect(find.text('查看三套盘面'), findsOneWidget);
       await _tap(tester, '重试');
       expect(find.text('塔罗解读'), findsOneWidget);
       expect(find.text('塔罗对照报告。'), findsOneWidget);
-      expect(find.text('查看盘面'), findsOneWidget);
+      expect(find.text('查看三套盘面'), findsOneWidget);
       expect(service.understood.last, '$_question；补充：$_details');
       expect(service.calls.where((call) => call == 'POST /reading').length, 1);
       expect(
@@ -74,8 +88,7 @@ void main() {
       final compose = find.byType(TextFormField);
       await tester.ensureVisible(compose);
       await tester.enterText(compose, _followUp);
-      await tester.tap(find.byTooltip('发送追问'));
-      await tester.pumpAndSettle();
+      await _send(tester);
       expect(find.text(_followUp), findsOneWidget);
       expect(find.text('先确认后续时间。'), findsOneWidget);
       expect(find.text('• 整理面试问题。'), findsOneWidget);
@@ -93,13 +106,13 @@ void main() {
       expect(find.text('有什么事情想知道吗？'), findsOneWidget);
       expect(find.text(_details), findsNothing);
 
-      await tester.tap(find.byTooltip('会话记录'));
+      await tester.tap(find.byTooltip('会话历史'));
       await tester.pumpAndSettle();
       expect(find.text('本次会话记录'), findsOneWidget);
       await _tap(tester, '$_question；补充：$_details');
       expect(find.text('塔罗对照报告。'), findsOneWidget);
       expect(find.text('先确认后续时间。'), findsOneWidget);
-      expect(find.byTooltip('发送追问'), findsNothing);
+      expect(find.byTooltip('发送消息'), findsNothing);
       expect(
         service.calls.where((call) => call == 'POST /reading/follow-up').length,
         1,
@@ -109,7 +122,7 @@ void main() {
       await tester.pumpWidget(_app(other));
       await tester.pumpAndSettle();
       expect(find.text('先确认后续时间。'), findsNothing);
-      await tester.tap(find.byTooltip('会话记录'));
+      await tester.tap(find.byTooltip('会话历史'));
       await tester.pumpAndSettle();
       expect(find.text('本次会话暂无已完成的解读。'), findsOneWidget);
       expect(tester.takeException(), isNull);
@@ -148,6 +161,12 @@ Future<void> _tap(WidgetTester tester, String label) async {
   await tester.pumpAndSettle();
 }
 
+Future<void> _send(WidgetTester tester) async {
+  await tester.pump();
+  await tester.tap(find.byTooltip('发送消息'));
+  await tester.pumpAndSettle();
+}
+
 class _Recovery implements GuideRecoveryStore {
   GuideRecovery? state;
 
@@ -163,6 +182,7 @@ class _ReadingService {
   bool failReport = true;
   final understood = <String>[];
   final calls = <String>[];
+  final automatic = <bool>[];
   GuideRitual? _ritual;
   bool _hasReport = false;
   final _followUps = <Map<String, Object?>>[];
@@ -185,11 +205,11 @@ class _ReadingService {
         : jsonDecode(request.body) as Map;
     calls.add(call);
     if (call != 'POST /reading/understand' && call != 'POST /reading') {
-      expect(request.headers['Authorization'], 'Bearer $_token');
+      expectSync(request.headers['Authorization'], 'Bearer $_token');
     }
     switch (call) {
       case 'POST /reading/understand':
-        expect(body['requireModel'], true);
+        expectSync(body['requireModel'], true);
         final question = body['question'] as String;
         understood.add(question);
         return _json({
@@ -199,18 +219,38 @@ class _ReadingService {
           if (question != _question) 'proof': 'accepted-proof',
         });
       case 'POST /reading':
-        expect(body['method'], 'combined');
-        expect(body['profile'], guideVersion);
-        expect(body['focus'], _concern);
-        expect(body['proof'], 'accepted-proof');
-        expect(body['automatic'], true);
+        expectSync(body['method'], 'combined');
+        expectSync(body['profile'], guideVersion);
+        expectSync(body['focus'], _concern);
+        expectSync(body['proof'], 'accepted-proof');
+        automatic.add(body['automatic'] == true);
         _ritual = GuideRitual(
           question: body['question'] as String,
           focus: _concern,
-          automatic: true,
+          automatic: automatic.last,
           random: () => 0.3,
         );
         return _json({'token': _token, 'task': _state()});
+      case 'POST /reading/toss':
+        _ritual!.toss(
+          GuideCoinEvent(
+            actionId: body['actionId'] as String,
+            step: body['step'] as int,
+          ),
+        );
+        return _json(_state());
+      case 'POST /reading/pick':
+        _ritual!.pick(
+          GuideCardEvent(
+            actionId: body['actionId'] as String,
+            step: body['step'] as int,
+            slot: body['slot'] as int,
+            epochMs: body['epochMs'] as String,
+            monotonicMs: body['monotonicMs'] as num,
+            clockSessionId: body['clockSessionId'] as String,
+          ),
+        );
+        return _json(_state());
       case 'GET /reading':
         return _json(_state());
       case 'POST /reading/report':
@@ -221,7 +261,7 @@ class _ReadingService {
         _hasReport = true;
         return _json(_state());
       case 'POST /reading/follow-up':
-        expect(body, {'step': 0, 'question': _followUp});
+        expectSync(body, {'step': 0, 'question': _followUp});
         _followUps.add({
           'question': _followUp,
           'report': {

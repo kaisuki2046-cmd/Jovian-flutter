@@ -217,9 +217,7 @@ class _AppHomeState extends State<_AppHome> {
       JovianTab.divination => DivinationPage(
         key: ValueKey(_scope),
         onlineGuide: widget.account == null ? widget.onlineGuide : _guide,
-        openAccount: widget.account == null
-            ? null
-            : () => selectTab(JovianTab.account),
+        openSynastry: () => selectTab(JovianTab.synastry),
       ),
       JovianTab.messages => SocialPage(
         account: widget.account,

@@ -149,25 +149,27 @@ class GuideComposer extends StatelessWidget {
     super.key,
     required this.form,
     required this.text,
-    required this.label,
+    required this.hint,
     required this.sendLabel,
     required this.send,
     required this.busy,
     this.focus,
     this.suggest,
+    this.openSynastry,
     this.actions = const [],
-    this.followUp = false,
+    this.showAssistant = false,
   });
 
   final GlobalKey<FormState> form;
   final TextEditingController text;
   final FocusNode? focus;
-  final String label;
+  final String hint;
   final String sendLabel;
   final VoidCallback send;
   final bool busy;
-  final bool followUp;
+  final bool showAssistant;
   final ValueChanged<String>? suggest;
+  final VoidCallback? openSynastry;
   final List<Widget> actions;
 
   @override
@@ -188,23 +190,37 @@ class GuideComposer extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               if (suggest case final pick?)
-                PopupMenuButton<String>(
+                PopupMenuButton<VoidCallback>(
                   tooltip: '快捷提问',
                   enabled: !busy,
-                  onSelected: pick,
-                  icon: const Icon(Icons.add_rounded),
+                  onSelected: (action) => action(),
+                  icon: showAssistant ? null : const Icon(Icons.add_rounded),
+                  child: showAssistant
+                      ? const SizedBox.square(
+                          dimension: 52,
+                          child: GuideAssistantPortrait(),
+                        )
+                      : null,
                   iconSize: 24,
                   itemBuilder: (_) => [
-                    for (final question in guideSuggestedQuestions)
-                      PopupMenuItem(value: question, child: Text(question)),
+                    PopupMenuItem(
+                      value: () => pick(''),
+                      child: const Text('算一件事'),
+                    ),
+                    if (openSynastry case final open?)
+                      PopupMenuItem(value: open, child: const Text('看合盘')),
+                    PopupMenuItem(
+                      value: () => pick('帮我看看最近的整体运势'),
+                      child: const Text('帮我看看最近的整体运势'),
+                    ),
                   ],
                   style: IconButton.styleFrom(
-                    minimumSize: const Size(44, 52),
+                    minimumSize: const Size.square(44),
                     backgroundColor: colors.surfaceContainerLow,
                     foregroundColor: colors.onSurface,
                   ),
                 )
-              else if (followUp)
+              else if (showAssistant)
                 const SizedBox(
                   width: 48,
                   height: 56,
@@ -228,49 +244,59 @@ class GuideComposer extends StatelessWidget {
                         Expanded(
                           child: Form(
                             key: form,
-                            child: TextFormField(
-                              controller: text,
-                              focusNode: focus,
-                              enabled: !busy,
-                              style: inputText,
-                              decoration: InputDecoration(
-                                labelText: label,
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.never,
-                                labelStyle: TextStyle(
-                                  color: colors.onSurfaceVariant,
+                            child: Semantics(
+                              label: '你的问题',
+                              child: TextFormField(
+                                controller: text,
+                                focusNode: focus,
+                                enabled: !busy,
+                                style: inputText,
+                                decoration: InputDecoration(
+                                  hintText: hint,
+                                  hintStyle: TextStyle(
+                                    color: colors.onSurfaceVariant,
+                                  ),
+                                  filled: false,
+                                  border: InputBorder.none,
+                                  enabledBorder: InputBorder.none,
+                                  disabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  errorBorder: InputBorder.none,
+                                  focusedErrorBorder: InputBorder.none,
+                                  errorMaxLines: 3,
+                                  counterText: '',
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 12,
+                                  ),
                                 ),
-                                filled: false,
-                                border: InputBorder.none,
-                                enabledBorder: InputBorder.none,
-                                disabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                errorBorder: InputBorder.none,
-                                focusedErrorBorder: InputBorder.none,
-                                errorMaxLines: 3,
-                                counterText: '',
-                                contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 12,
-                                ),
+                                minLines: 1,
+                                maxLines: 4,
+                                maxLength: guideQuestionMaxLength,
+                                textInputAction: TextInputAction.send,
+                                validator: (input) =>
+                                    validateGuideQuestion(input ?? ''),
+                                onFieldSubmitted: (value) {
+                                  if (!busy && value.trim().isNotEmpty) send();
+                                },
                               ),
-                              minLines: 1,
-                              maxLines: 4,
-                              maxLength: guideQuestionMaxLength,
-                              textInputAction: TextInputAction.send,
-                              validator: (input) =>
-                                  validateGuideQuestion(input ?? ''),
-                              onFieldSubmitted: busy ? null : (_) => send(),
                             ),
                           ),
                         ),
-                        IconButton.filled(
-                          tooltip: sendLabel,
-                          onPressed: busy ? null : send,
-                          style: IconButton.styleFrom(
-                            backgroundColor: colors.onSurface,
-                            foregroundColor: colors.surface,
-                          ),
-                          icon: const Icon(Icons.arrow_upward_rounded),
+                        ValueListenableBuilder<TextEditingValue>(
+                          valueListenable: text,
+                          builder: (context, draft, _) {
+                            if (draft.text.trim().isEmpty)
+                              return const SizedBox(width: 8);
+                            return IconButton.filled(
+                              tooltip: sendLabel,
+                              onPressed: busy ? null : send,
+                              style: IconButton.styleFrom(
+                                backgroundColor: colors.onSurface,
+                                foregroundColor: colors.surface,
+                              ),
+                              icon: const Icon(Icons.arrow_upward_rounded),
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -291,14 +317,12 @@ class GuideThread extends StatelessWidget {
     required this.messages,
     this.composer,
     this.welcome,
-    this.headerAction,
     this.scroll,
   });
 
   final List<Widget> messages;
   final Widget? composer;
   final GuideWelcome? welcome;
-  final Widget? headerAction;
   final ScrollController? scroll;
 
   @override
@@ -308,8 +332,6 @@ class GuideThread extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (headerAction case final action?)
-            Align(alignment: AlignmentDirectional.centerEnd, child: action),
           Expanded(
             child: LayoutBuilder(
               builder: (context, viewport) => SingleChildScrollView(

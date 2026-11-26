@@ -252,10 +252,10 @@ class _CoinCastRitualState extends State<CoinCastRitual>
             const SizedBox(height: 6),
             Center(
               child: Semantics(
+                container: true,
                 button: true,
                 enabled: ready,
-                label: '投三枚铜钱',
-                value: buttonText,
+                label: buttonText,
                 onTap: ready ? _startToss : null,
                 excludeSemantics: true,
                 child: InkWell(
@@ -315,6 +315,7 @@ class _CoinCastRitualState extends State<CoinCastRitual>
             ),
             const SizedBox(height: 6),
             Semantics(
+              container: true,
               liveRegion: true,
               child: Text(
                 _moving
@@ -329,6 +330,7 @@ class _CoinCastRitualState extends State<CoinCastRitual>
             ),
             const SizedBox(height: 4),
             Semantics(
+              container: true,
               liveRegion: true,
               child: Text(
                 '已投 ${values.length} / ${_lineNames.length} 次',

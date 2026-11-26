@@ -11,7 +11,9 @@ import '../src/features/account/reading-profile/model/account_birth_fields.dart'
 import '../src/features/account/reading-profile/model/account_reading_profile.dart';
 import '../src/features/account/reading-profile/requests/account_birth_api.dart';
 import '../src/features/account/settings/model/agreements.dart';
+import '../src/features/account/settings/model/privacy_request.dart';
 import '../src/features/account/settings/requests/agreements_api.dart';
+import '../src/features/account/settings/requests/privacy_requests_api.dart';
 import '../src/shared/http/json_client.dart';
 
 class _TestTokenStore implements NativeSessionStorage {
@@ -39,6 +41,64 @@ Map<String, Object?> _document(String id) => {
 };
 
 void main() {
+  test('privacy receipts and writes stay bound to the active member', () async {
+    var activeMember = 'owner';
+    final sent = <Object?>[];
+    const record = {
+      'id': 'receipt',
+      'kind': 'correction',
+      'detail': '出生日期',
+      'createdAt': 1700000000000,
+      'reviewedAt': null,
+      'conclusion': null,
+      'ownerId': 'owner',
+    };
+    final api = AccountApi(
+      JsonHttpClient(
+        base: Uri.parse('https://account.example.test'),
+        client: MockClient((request) async {
+          if (request.url.path == '/account/session')
+            return _json({
+              'user': {'id': activeMember},
+            });
+          expect(request.url.path, '/account/privacy-requests');
+          if (request.method == 'GET') {
+            expect(request.url.queryParameters['before'], 'cursor');
+            return _json({
+              'items': [record],
+              'next': 'next',
+              'canReview': false,
+            });
+          }
+          sent.add(jsonDecode(request.body));
+          return _json(record);
+        }),
+      ),
+    );
+    addTearDown(api.close);
+    final privacy = PrivacyRequestsApi(api, 'owner', () => true);
+    final page = await privacy.list(queue: false, before: 'cursor');
+    expect(page.next, 'next');
+    expect(page.receipts.single.ownerId, isNull);
+    expect(page.receipts.single.kind, PrivacyRequestKind.correction);
+    expect(
+      (await privacy.submit(PrivacyRequestKind.correction, '出生日期')).id,
+      'receipt',
+    );
+    activeMember = 'other';
+    await expectLater(
+      privacy.list(queue: false, before: 'cursor'),
+      throwsA(isA<JsonRequestError>()),
+    );
+    await expectLater(
+      privacy.submit(PrivacyRequestKind.correction, '越过账号'),
+      throwsA(isA<JsonRequestError>()),
+    );
+    expect(sent, [
+      {'kind': 'correction', 'detail': '出生日期'},
+    ]);
+  });
+
   test(
     'visitor preview keeps only fields allowed by the public projection',
     () {

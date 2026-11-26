@@ -9,6 +9,7 @@ import '../../reading-profile/model/account_reading_profile.dart';
 import '../../reading-profile/requests/account_birth_api.dart';
 import '../../settings/model/agreements.dart';
 import '../../settings/requests/agreements_api.dart';
+import '../../settings/requests/privacy_requests_api.dart';
 import '../model/password.dart';
 import '../model/session.dart';
 import '../requests/account_api.dart';
@@ -44,6 +45,9 @@ class AccountController extends ChangeNotifier {
   String? get notice => _notice;
 
   Future<String?> readNativeSession() => _account.readNativeSession();
+
+  PrivacyRequestsApi privacyRequests(String owner) =>
+      PrivacyRequestsApi(_account, owner, () => memberId == owner);
 
   Future<void> probeIdentityVerification(
     String memberId, {

@@ -9,6 +9,7 @@ import '../../profile/view/profile_preview_page.dart';
 import '../../reading-profile/view/reading_profile_panel.dart';
 import 'account_permissions.dart';
 import 'agreement_document_page.dart';
+import 'privacy_rights_page.dart';
 
 class AccountSettingsPage extends StatefulWidget {
   const AccountSettingsPage({
@@ -266,6 +267,17 @@ class _PrivacyPage extends StatelessWidget {
             if (account.notice case final message?)
               Semantics(liveRegion: true, child: Text(message)),
             if (account.memberId case final owner?) ...[
+              _SettingsEntry(
+                title: '个人信息权利',
+                icon: Icons.assignment_ind_outlined,
+                onTap: () => Navigator.of(context).push<void>(
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        PrivacyRightsPage(account: account, owner: owner),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 9),
               _SettingsEntry(
                 title: '预览他人可见内容',
                 icon: Icons.visibility_outlined,

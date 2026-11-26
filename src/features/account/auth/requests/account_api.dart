@@ -99,16 +99,35 @@ class AccountApi {
     String memberId, {
     required bool Function() isCurrent,
     Future<void>? cancel,
+    Map<String, String>? query,
   }) async {
     final result = await request(
       path,
       authenticated: true,
       isCurrent: isCurrent,
       cancel: cancel,
+      query: query,
     );
     // Older account read responses have no owner ID of their own.
     await _verifyMember(memberId, isCurrent: isCurrent, cancel: cancel);
     return result;
+  }
+
+  Future<Map<String, Object?>> writeAsMember(
+    List<String> path,
+    String memberId, {
+    required Map<String, Object?> body,
+    required bool Function() isCurrent,
+    Future<void>? cancel,
+  }) async {
+    await _verifyMember(memberId, isCurrent: isCurrent, cancel: cancel);
+    return request(
+      path,
+      body: body,
+      authenticated: true,
+      isCurrent: isCurrent,
+      cancel: cancel,
+    );
   }
 
   Future<void> _verifyMember(

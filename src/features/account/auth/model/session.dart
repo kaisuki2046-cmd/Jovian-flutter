@@ -5,6 +5,7 @@ class AccountSession {
     required this.id,
     required this.displayName,
     this.uid,
+    this.email,
     this.bio = '',
     this.namePublic = false,
     this.bioPublic = false,
@@ -16,6 +17,7 @@ class AccountSession {
     : kind = AccountKind.guest,
       displayName = '游客',
       uid = null,
+      email = null,
       bio = '',
       namePublic = false,
       bioPublic = false,
@@ -26,6 +28,7 @@ class AccountSession {
   final String id;
   final String displayName;
   final String? uid;
+  final String? email;
   final String bio;
   final bool namePublic;
   final bool bioPublic;
@@ -47,6 +50,7 @@ class AccountSession {
       return AccountSession.member(
         id: id,
         displayName: name,
+        email: user['email'] is String ? user['email'] as String : null,
         uid: uid is String && RegExp(r'^[1-9]\d{7}$').hasMatch(uid)
             ? uid
             : null,

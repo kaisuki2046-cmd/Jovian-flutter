@@ -285,70 +285,91 @@ class AccountPrivacyPage extends StatelessWidget {
         listenable: account,
         builder: (context, _) {
           final memberId = account.memberId;
-          return ListView(
-            padding: const EdgeInsets.all(16),
+          return Column(
             children: [
               if (account.busy) const LinearProgressIndicator(),
               if (account.notice case final message?)
-                Semantics(liveRegion: true, child: Text(message)),
-              if (!onlyAiPermissions && memberId != null) ...[
-                _SettingsEntry(
-                  title: '个人信息权利',
-                  icon: Icons.assignment_ind_outlined,
-                  onTap: () => AccountSectionLinks.openPage(
-                    context,
-                    AccountSection.privacyRights,
-                    () => PrivacyRightsPage(account: account, owner: memberId),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                  child: Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: Semantics(liveRegion: true, child: UiText(message)),
                   ),
                 ),
-                const SizedBox(height: 9),
-                _SettingsEntry(
-                  title: '预览他人可见内容',
-                  icon: Icons.visibility_outlined,
-                  onTap: () => AccountSectionLinks.openPage(
-                    context,
-                    AccountSection.profilePreview,
-                    () => ProfilePreviewPage(account: account, owner: memberId),
-                  ),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.all(16),
+                  children: [
+                    if (!onlyAiPermissions && memberId != null) ...[
+                      _SettingsEntry(
+                        title: '个人信息权利',
+                        icon: Icons.assignment_ind_outlined,
+                        onTap: () => AccountSectionLinks.openPage(
+                          context,
+                          AccountSection.privacyRights,
+                          () => PrivacyRightsPage(
+                            account: account,
+                            owner: memberId,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 9),
+                      _SettingsEntry(
+                        title: '预览他人可见内容',
+                        icon: Icons.visibility_outlined,
+                        onTap: () => AccountSectionLinks.openPage(
+                          context,
+                          AccountSection.profilePreview,
+                          () => ProfilePreviewPage(
+                            account: account,
+                            owner: memberId,
+                          ),
+                        ),
+                      ),
+                      _SettingsEntry(
+                        title: '社交隐私',
+                        icon: Icons.manage_accounts_outlined,
+                        onTap: () => AccountSectionLinks.openPage(
+                          context,
+                          AccountSection.socialPrivacy,
+                          () => SocialPrivacyPage(
+                            controller: SocialController.forMember(
+                              account,
+                              memberId,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (account.session == null || account.sessionChanging)
+                      const Text('登录或进入游客体验后可查看和管理授权。')
+                    else if (account.catalog != null &&
+                        account.agreementState != null)
+                      Card(
+                        margin: EdgeInsets.zero,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: AccountPermissions(account: account),
+                        ),
+                      )
+                    else if (!account.busy)
+                      TextButton(
+                        onPressed: account.initialize,
+                        child: const Text('重新加载授权状态'),
+                      ),
+                    if (!onlyAiPermissions && memberId != null) ...[
+                      const SizedBox(height: 12),
+                      ReadingProfilePanel(
+                        key: ValueKey(memberId),
+                        account: account,
+                        owner: memberId,
+                        privacy: true,
+                      ),
+                    ],
+                  ],
                 ),
-                _SettingsEntry(
-                  title: '社交隐私',
-                  icon: Icons.manage_accounts_outlined,
-                  onTap: () => AccountSectionLinks.openPage(
-                    context,
-                    AccountSection.socialPrivacy,
-                    () => SocialPrivacyPage(
-                      controller: SocialController.forMember(account, memberId),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-              ],
-              if (account.session == null || account.sessionChanging)
-                const Text('登录或进入游客体验后可查看和管理授权。')
-              else if (account.catalog != null &&
-                  account.agreementState != null)
-                Card(
-                  margin: EdgeInsets.zero,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: AccountPermissions(account: account),
-                  ),
-                )
-              else if (!account.busy)
-                TextButton(
-                  onPressed: account.initialize,
-                  child: const Text('重新加载授权状态'),
-                ),
-              if (!onlyAiPermissions && memberId != null) ...[
-                const SizedBox(height: 12),
-                ReadingProfilePanel(
-                  key: ValueKey(memberId),
-                  account: account,
-                  owner: memberId,
-                  privacy: true,
-                ),
-              ],
+              ),
             ],
           );
         },

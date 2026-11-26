@@ -184,6 +184,175 @@ void main() {
     },
   );
 
+  testWidgets(
+    'report filters preserve loaded pages and retry the same cursor',
+    (tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(320, 640);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPhysicalSize);
+      final firstPage = [
+        for (var index = 1; index <= 12; index++)
+          _entry(index.toRadixString(16).padLeft(64, '0'), '运势报告 $index'),
+      ];
+      final older = 'd' * 64;
+      final cursor = 'b' * 64;
+      final fortunePages = <String?>[];
+      var destinyPages = 0;
+      final account = _account((request) {
+        final path = request.url.path;
+        if (path == '/account/session') return _member();
+        if (path == '/account/destiny-history') {
+          destinyPages++;
+          return _json({'entries': [], 'nextCursor': null});
+        }
+        expect(request.url.queryParameters['kind'], 'fortune');
+        if (path.endsWith('/$older')) {
+          return _json({
+            ..._entry(older, '较早的运势报告'),
+            'report': {
+              'version': 1,
+              'kind': 'fortune',
+              'sections': [
+                {'title': '小结', 'body': '较早的归档内容'},
+                {'title': '建议', 'body': '较早报告的建议'},
+              ],
+            },
+          });
+        }
+        final before = request.url.queryParameters['before'];
+        fortunePages.add(before);
+        if (before == null) {
+          return _json({'entries': firstPage, 'nextCursor': cursor});
+        }
+        expect(before, cursor);
+        if (fortunePages.length == 2) return _json({}, 503);
+        return _json({
+          'entries': [_entry(older, '较早的运势报告')],
+          'nextCursor': null,
+        });
+      });
+      addTearDown(account.dispose);
+      await account.initialize();
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: jovianTheme(Brightness.dark),
+          home: ReportsPage(account: account, initialKind: ReportKind.fortune),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(destinyPages, 0);
+      await tester.scrollUntilVisible(find.text('加载更多'), 250);
+      await tester.tap(find.text('加载更多'));
+      await tester.pumpAndSettle();
+      expect(find.text('运势报告 12').hitTestable(), findsOneWidget);
+      expect(find.text('重试').hitTestable(), findsOneWidget);
+      await tester.tap(find.text('重试'));
+      await tester.pumpAndSettle();
+      expect(fortunePages, [null, cursor, cursor]);
+      expect(find.text('较早的运势报告').hitTestable(), findsOneWidget);
+
+      final position = tester
+          .state<ScrollableState>(find.byType(Scrollable))
+          .position
+          .pixels;
+      expect(position, greaterThan(0));
+      await tester.tap(find.text('命理'));
+      await tester.pumpAndSettle();
+      expect(find.text('暂无已保存的报告。').hitTestable(), findsOneWidget);
+      expect(find.text('较早的运势报告').hitTestable(), findsNothing);
+      expect(destinyPages, 1);
+      await tester.tap(find.text('运势'));
+      await tester.pumpAndSettle();
+      expect(
+        tester.state<ScrollableState>(find.byType(Scrollable)).position.pixels,
+        position,
+      );
+      expect(fortunePages, [null, cursor, cursor]);
+      await tester.tap(find.text('较早的运势报告'));
+      await tester.pumpAndSettle();
+      expect(find.text('小结'), findsOneWidget);
+      expect(find.text('较早的归档内容'), findsOneWidget);
+      expect(find.text('建议'), findsOneWidget);
+      expect(find.text('较早报告的建议'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
+    'an inactive report request can hide every cached category and the open reader',
+    (tester) async {
+      final fortune = 'e' * 64;
+      final destiny = 'f' * 64;
+      final pendingPage = Completer<http.Response>();
+      final pendingRestore = Completer<http.Response>();
+      var sessionReads = 0;
+      var pageRequested = false;
+      final account = _account((request) {
+        final path = request.url.path;
+        if (path == '/account/session') {
+          return ++sessionReads == 1 ? _member() : pendingRestore.future;
+        }
+        if (path == '/account/destiny-history') {
+          return _json({
+            'entries': [_entry(destiny, '原账号命理报告')],
+            'nextCursor': null,
+          });
+        }
+        if (path.endsWith('/$destiny')) {
+          return _json({
+            ..._entry(destiny, '原账号命理报告'),
+            'report': {'version': 1, 'overview': '原账号的命理解读内容'},
+          });
+        }
+        if (request.url.queryParameters['before'] == fortune) {
+          pageRequested = true;
+          return pendingPage.future;
+        }
+        expect(request.url.queryParameters['kind'], 'fortune');
+        return _json({
+          'entries': [_entry(fortune, '原账号运势报告')],
+          'nextCursor': fortune,
+        });
+      });
+      addTearDown(account.dispose);
+      await account.initialize();
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: jovianTheme(Brightness.dark),
+          home: ReportsPage(account: account, initialKind: ReportKind.fortune),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('加载更多'));
+      await tester.pump();
+      expect(pageRequested, isTrue);
+      await tester.tap(find.text('命理'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('原账号命理报告'));
+      await tester.pumpAndSettle();
+      expect(find.text('原账号的命理解读内容'), findsOneWidget);
+
+      pendingPage.complete(_json({}, 403));
+      await tester.pump();
+      await tester.pump();
+      expect(sessionReads, 2);
+      expect(find.text('原账号的命理解读内容'), findsNothing);
+      expect(find.text('会话已变化，请返回后重新读取。'), findsOneWidget);
+
+      pendingRestore.complete(_member());
+      await tester.pumpAndSettle();
+      await tester.pageBack();
+      await tester.pumpAndSettle();
+      expect(find.text('会话已变化，重新读取').hitTestable(), findsOneWidget);
+      await tester.tap(find.text('运势'));
+      await tester.pumpAndSettle();
+      expect(find.text('原账号运势报告'), findsNothing);
+      expect(find.text('会话已变化，重新读取').hitTestable(), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets('archived four pillars wrap and keep their saved details', (
     tester,
   ) async {
@@ -266,7 +435,9 @@ void main() {
   });
 }
 
-AccountController _account(http.Response Function(http.Request) onRequest) {
+AccountController _account(
+  FutureOr<http.Response> Function(http.Request) onRequest,
+) {
   final api = AccountApi(
     JsonHttpClient(
       base: Uri.parse('https://account.example.test'),

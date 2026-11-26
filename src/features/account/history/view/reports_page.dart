@@ -63,35 +63,13 @@ class _ReportsPageState extends State<ReportsPage> {
               ),
             );
           }
-          return Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                child: Wrap(
-                  spacing: 8,
-                  children: [
-                    for (final kind in ReportKind.values)
-                      ChoiceChip(
-                        label: Text(kind.label),
-                        selected: kind == _kind,
-                        onSelected: (_) => setState(() => _kind = kind),
-                      ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: _Category(
-                  key: ValueKey('${owner.scope}:${_kind.name}'),
-                  account: account,
-                  owner: owner.id,
-                  scope: owner.scope,
-                  kind: _kind,
-                ),
-              ),
-            ],
+          return _ReportCategories(
+            key: ValueKey((account, owner.scope)),
+            account: account,
+            owner: owner.id,
+            scope: owner.scope,
+            kind: _kind,
+            onSelected: (kind) => setState(() => _kind = kind),
           );
         },
       ),
@@ -99,81 +77,167 @@ class _ReportsPageState extends State<ReportsPage> {
   );
 }
 
-class _Category extends StatefulWidget {
-  const _Category({
+class _ReportCategories extends StatefulWidget {
+  const _ReportCategories({
     super.key,
     required this.account,
     required this.owner,
     required this.scope,
     required this.kind,
+    required this.onSelected,
   });
+
   final AccountController account;
   final String owner;
   final String scope;
   final ReportKind kind;
+  final ValueChanged<ReportKind> onSelected;
 
   @override
-  State<_Category> createState() => _CategoryState();
+  State<_ReportCategories> createState() => _ReportCategoriesState();
 }
 
-class _CategoryState extends State<_Category> {
-  late final _history = ReportHistoryController(
-    widget.account.reports,
-    widget.owner,
-    widget.kind,
-    widget.account.initialize,
-  );
+class _ReportCategoriesState extends State<_ReportCategories> {
+  final _histories = <ReportKind, ReportHistoryController>{};
+
+  @override
+  void initState() {
+    super.initState();
+    _openSelectedCategory();
+  }
+
+  @override
+  void didUpdateWidget(covariant _ReportCategories oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _openSelectedCategory();
+  }
+
+  void _openSelectedCategory() {
+    _histories.putIfAbsent(
+      widget.kind,
+      () => ReportHistoryController(
+        widget.account.reports,
+        widget.owner,
+        widget.kind,
+        _recheckAccount,
+      ),
+    );
+  }
+
+  Future<void> _recheckAccount() {
+    for (final history in _histories.values) {
+      history.lock();
+    }
+    return widget.account.initialize();
+  }
 
   @override
   void dispose() {
-    _history.dispose();
+    for (final history in _histories.values) {
+      history.dispose();
+    }
     super.dispose();
   }
 
-  Future<void> _read(ReportEntry entry) async {
-    if (_history.selected != null) return;
-    unawaited(_history.select(entry.id));
+  @override
+  Widget build(BuildContext context) => Column(
+    children: [
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Wrap(
+          spacing: 8,
+          children: [
+            for (final kind in ReportKind.values)
+              ChoiceChip(
+                label: UiText(kind.label),
+                selected: kind == widget.kind,
+                onSelected: (selected) {
+                  if (selected) widget.onSelected(kind);
+                },
+              ),
+          ],
+        ),
+      ),
+      Expanded(
+        child: IndexedStack(
+          index: widget.kind.index,
+          children: [
+            for (final kind in ReportKind.values)
+              if (_histories[kind] case final history?)
+                TickerMode(
+                  enabled: kind == widget.kind,
+                  child: ExcludeFocus(
+                    excluding: kind != widget.kind,
+                    child: _Category(
+                      account: widget.account,
+                      scope: widget.scope,
+                      history: history,
+                    ),
+                  ),
+                )
+              else
+                const SizedBox.shrink(),
+          ],
+        ),
+      ),
+    ],
+  );
+}
+
+class _Category extends StatelessWidget {
+  const _Category({
+    required this.account,
+    required this.scope,
+    required this.history,
+  });
+
+  final AccountController account;
+  final String scope;
+  final ReportHistoryController history;
+
+  Future<void> _read(BuildContext context, ReportEntry entry) async {
+    if (history.locked || history.selected != null) return;
+    unawaited(history.select(entry.id));
     await Navigator.of(context).push<void>(
       MaterialPageRoute(
         builder: (_) => _ReportReader(
-          account: widget.account,
-          scope: widget.scope,
-          history: _history,
+          account: account,
+          scope: scope,
+          history: history,
           entry: entry,
         ),
       ),
     );
-    if (mounted) _history.closeDetail();
+    if (context.mounted && !history.disposed) history.closeDetail();
   }
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
-    listenable: _history,
+    listenable: history,
     builder: (context, _) {
-      if (_history.locked) {
+      if (history.locked) {
         return Center(
           child: TextButton(
-            onPressed: _history.refresh,
-            child: const Text('会话已变化，重新读取'),
+            onPressed: history.refresh,
+            child: const UiText('会话已变化，重新读取'),
           ),
         );
       }
+      final page = history.page;
+      final error = history.listError;
       return RefreshIndicator(
-        onRefresh: _history.refresh,
+        onRefresh: history.refresh,
         child: ListView(
+          primary: false,
           padding: jovianPagePadding,
           physics: const AlwaysScrollableScrollPhysics(),
           children: [
-            if (_history.loading) const LinearProgressIndicator(),
-            if (_history.listError case final error?)
-              ListTile(
-                title: Text(error),
-                trailing: TextButton(
-                  onPressed: _history.refresh,
-                  child: const UiText('重试'),
-                ),
-              ),
-            if (_history.page case final page?) ...[
+            if (page == null)
+              if (error != null)
+                _ReportListError(message: error, retry: history.refresh)
+              else
+                const LinearProgressIndicator(),
+            if (page != null) ...[
               if (page.entries.isEmpty)
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 16),
@@ -187,16 +251,20 @@ class _CategoryState extends State<_Category> {
                     title: Text(entry.title),
                     subtitle: Text(_date(context, entry.savedAt)),
                     trailing: const Icon(Icons.chevron_right),
-                    onTap: () => _read(entry),
+                    onTap: () => _read(context, entry),
                   ),
                 ),
-              if (page.nextCursor != null)
+              if (history.loading)
+                const LinearProgressIndicator()
+              else if (error != null)
+                _ReportListError(message: error, retry: history.more)
+              else if (page.nextCursor != null)
                 TextButton(
-                  onPressed: _history.loading ? null : _history.more,
+                  onPressed: history.more,
                   child: const UiText('加载更多'),
                 ),
               TextButton(
-                onPressed: _history.loading ? null : _history.refresh,
+                onPressed: history.loading ? null : history.refresh,
                 child: const UiText('刷新报告'),
               ),
             ],
@@ -204,6 +272,19 @@ class _CategoryState extends State<_Category> {
         ),
       );
     },
+  );
+}
+
+class _ReportListError extends StatelessWidget {
+  const _ReportListError({required this.message, required this.retry});
+
+  final String message;
+  final VoidCallback retry;
+
+  @override
+  Widget build(BuildContext context) => ListTile(
+    title: Text(message),
+    trailing: TextButton(onPressed: retry, child: const UiText('重试')),
   );
 }
 

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 
 import '../../../../shared/http/json_client.dart';
@@ -18,6 +20,8 @@ import '../requests/account_deletion_api.dart';
 import '../requests/phone_binding_api.dart';
 import 'account_deletion_service.dart';
 import 'password_recovery_controller.dart';
+
+const _updatedAgreementNotice = '协议已更新，请阅读并重新确认后继续。';
 
 class AccountController extends ChangeNotifier {
   AccountController(
@@ -338,11 +342,13 @@ class AccountController extends ChangeNotifier {
         _session = session;
         _agreementState = null;
         signedIn = true;
-        _agreementState = grantAi
-            ? await _agreements.grantAll(accepted.ai, source: 'first-use')
-            : await _agreements.state();
-        if (grantAi && _agreementState?.allAiGranted != true) {
-          _notice = '部分 AI 授权未保存，可在隐私设置中查看或重试。';
+        if (grantAi) {
+          await _updateAiPermissions(
+            () => _agreements.grantAll(accepted.ai, source: 'first-use'),
+            all: true,
+          );
+        } else {
+          _agreementState = await _agreements.state();
         }
       },
       failure: '登录或注册失败，请重试。',
@@ -363,7 +369,7 @@ class AccountController extends ChangeNotifier {
   Future<void> _reloadUpdatedAgreements() async {
     _catalog = null;
     _catalog = await _agreements.catalog();
-    _notice = '协议已更新，请阅读并重新确认后继续。';
+    _notice = _updatedAgreementNotice;
   }
 
   Future<AgreementDocument> readConfirmedAgreement(
@@ -380,16 +386,45 @@ class AccountController extends ChangeNotifier {
     AgreementDocument document,
     String purpose,
     bool agreed,
-  ) => _run(() async {
-    _agreementState = await _agreements.choose(document, purpose, agreed);
-  }, failure: '保存授权失败，请重试。');
+  ) => _run(
+    () => _updateAiPermissions(
+      () => _agreements.choose(document, purpose, agreed),
+    ),
+    failure: '保存授权失败，请重试。',
+  );
 
-  Future<void> grantAll(AgreementDocument document) => _run(() async {
-    _agreementState = await _agreements.grantAll(document, source: 'settings');
-    if (_agreementState?.allAiGranted != true) {
-      _notice = '部分 AI 授权未保存，可在隐私设置中查看或重试。';
+  Future<void> grantAll(AgreementDocument document) => _run(
+    () => _updateAiPermissions(
+      () => _agreements.grantAll(document, source: 'settings'),
+      all: true,
+    ),
+    failure: '保存授权失败，请重试。',
+  );
+
+  Future<void> _updateAiPermissions(
+    Future<AgreementState> Function() update, {
+    bool all = false,
+  }) async {
+    try {
+      final state = await update();
+      _agreementState = state;
+      if (all && !state.allAiGranted) {
+        _notice = '部分 AI 授权未保存，可在隐私设置中查看或重试。';
+      }
+    } on JsonRequestError catch (error) {
+      if (error.status != 409 && error.status != 403) rethrow;
+      // Refresh the current proof and state. A new version requires a new choice.
+      _catalog = null;
+      _agreementState = null;
+      final (catalog, state) = await (
+        _agreements.catalog(),
+        _agreements.state(),
+      ).wait;
+      _catalog = catalog;
+      _agreementState = state;
+      _notice = _updatedAgreementNotice;
     }
-  }, failure: '保存授权失败，请重试。');
+  }
 
   Future<void> signOut() => _run(
     () async {

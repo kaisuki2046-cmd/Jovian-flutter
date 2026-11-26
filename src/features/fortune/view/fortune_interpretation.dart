@@ -1,9 +1,9 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../../../ui/interface_language.dart';
-
 import '../control/fortune_page_controller.dart';
 import '../model/online_fortune.dart';
+import 'fortune_display_labels.dart';
 
 class FortuneInterpretation extends StatefulWidget {
   const FortuneInterpretation({super.key, required this.fortune});
@@ -63,11 +63,15 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
               onPressed: fortune.busy
                   ? null
                   : () => setState(() => _showLocation = !_showLocation),
-              child: Text(_showLocation ? '收起太阳回归地点' : '设置太阳回归地点'),
+              child: UiText(_showLocation ? '收起太阳回归地点' : '设置太阳回归地点'),
             ),
           ),
         if (locationVisible) ...[
-          Text('填写 ${_returnDate(context, target, fortune)} 太阳回归时的地点。可留空。'),
+          Text(
+            context
+                .uiLabel('填写 {date} 太阳回归时的地点。可留空。')
+                .replaceFirst('{date}', _returnDate(context, target, fortune)),
+          ),
           _coordinates(),
           if (invalidLocation)
             const _FortuneStatus(
@@ -99,7 +103,7 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
                 });
                 fortune.generate();
               },
-              child: const Text('清空地点，生成常规解读'),
+              child: const UiText('清空地点，生成常规解读'),
             ),
           ),
         if (!fortune.loadingReport &&
@@ -114,11 +118,11 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
                       fortune.generate(returnLocation: location);
                     }
                   : null,
-              child: Text(fortune.generationError == null ? '解读' : '重试生成'),
+              child: UiText(fortune.generationError == null ? '解读' : '重试生成'),
             ),
           ),
         if (report != null) ...[
-          Text(
+          UiText(
             fortune.reportSaved
                 ? '已存档，可随时回看'
                 : fortune.saving
@@ -130,7 +134,7 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
             const SizedBox(height: 4),
             Semantics(
               header: true,
-              child: Text(
+              child: UiText(
                 value,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
@@ -150,8 +154,8 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
   Widget _coordinates() => LayoutBuilder(
     builder: (context, bounds) {
       final fields = [
-        _coordinate(_latitude, '纬度', '如 39.90', '北纬', '南纬'),
-        _coordinate(_longitude, '经度', '如 116.40', '东经', '西经'),
+        _coordinate(context, _latitude, '纬度', '如 39.90', '北纬', '南纬'),
+        _coordinate(context, _longitude, '经度', '如 116.40', '东经', '西经'),
       ];
       return bounds.maxWidth < MediaQuery.textScalerOf(context).scale(300)
           ? Column(spacing: 8, children: fields)
@@ -163,6 +167,7 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
   );
 
   Widget _coordinate(
+    BuildContext context,
     TextEditingController controller,
     String label,
     String hint,
@@ -170,6 +175,7 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
     String negative,
   ) {
     final isNegative = controller.text.trim().startsWith('-');
+    final nextDirection = context.uiLabel(isNegative ? positive : negative);
     return TextField(
       controller: controller,
       enabled: !widget.fortune.busy,
@@ -178,10 +184,12 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
         signed: true,
       ),
       decoration: InputDecoration(
-        labelText: label,
-        hintText: hint,
+        labelText: context.uiLabel(label),
+        hintText: context.uiLabel(hint),
         suffixIcon: IconButton(
-          tooltip: '切换为${isNegative ? positive : negative}',
+          tooltip: context
+              .uiLabel('切换为{direction}')
+              .replaceFirst('{direction}', nextDirection),
           onPressed: widget.fortune.busy
               ? null
               : () {
@@ -196,7 +204,7 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
                     );
                   });
                 },
-          icon: Text(isNegative ? negative : positive),
+          icon: UiText(isNegative ? negative : positive),
         ),
       ),
       onChanged: (_) => setState(() {}),
@@ -228,7 +236,7 @@ String _returnDate(
     TimeOfDay.fromDateTime(wall),
     alwaysUse24HourFormat: true,
   );
-  return '${wall.year}年${wall.month}月${wall.day}日 $hour';
+  return '${fortuneDateLabel(context, wall)} $hour';
 }
 
 class FortuneAdvice extends StatefulWidget {
@@ -255,6 +263,7 @@ class _FortuneAdviceState extends State<FortuneAdvice> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).textTheme;
+    final english = context.uiLanguage == InterfaceLanguage.english;
     final groups = widget.loading || widget.error != null
         ? null
         : widget.groups;
@@ -262,7 +271,7 @@ class _FortuneAdviceState extends State<FortuneAdvice> {
     return _FortuneCard(
       title: '提运建议',
       children: [
-        const Text('数字、饰品和颜色供日常象征搭配参考。'),
+        const UiText('数字、饰品和颜色供日常象征搭配参考。'),
         OutlinedButton(
           onPressed: widget.loading ? null : widget.onRequest,
           child: UiText(widget.error == null ? '按盘面获取建议' : '重试获取建议'),
@@ -281,18 +290,20 @@ class _FortuneAdviceState extends State<FortuneAdvice> {
           for (final group in groups) ...[
             Semantics(
               header: true,
-              child: Text('幸运${group.kind}', style: theme.titleMedium),
+              child: UiText('幸运${group.kind}', style: theme.titleMedium),
             ),
             if (group.items.isEmpty) const UiText('目前没有可确认主题的对应建议。'),
             for (final item in group.items) ...[
-              Text(item.options.join('、')),
+              Text(item.options.join(english ? ', ' : '、')),
               Text(
-                '${_methodLabels[item.method]} · ${item.theme}主题',
+                english
+                    ? '${context.uiLabel(_methodLabels[item.method]!)} · ${context.uiLabel('主题')} ${item.theme}'
+                    : '${_methodLabels[item.method]} · ${item.theme}主题',
                 style: theme.bodySmall,
               ),
               if (_details) ...[
                 Text(item.reason),
-                Text('来源：${item.source}'),
+                Text('${context.uiLabel('来源：')}${item.source}'),
                 for (final limit in item.limitations) Text(limit),
               ],
             ],

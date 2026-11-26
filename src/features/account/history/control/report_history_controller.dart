@@ -100,18 +100,22 @@ class ReportHistoryController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void lock() {
+    if (_closed || locked) return;
+    locked = true;
+    page = null;
+    report = null;
+    selected = null;
+    loading = false;
+    _pageRevision++;
+    _detailRevision++;
+    notifyListeners();
+  }
+
   void _checkIdentity(Object error) {
     if (error is JsonRequestError &&
         (error.status == 401 || error.status == 403)) {
-      locked = true;
-      page = null;
-      report = null;
-      selected = null;
-      loading = false;
-      _pageRevision++;
-      _detailRevision++;
-      // Account restore can change the owner, which disposes this controller.
-      notifyListeners();
+      lock();
       unawaited(_reloadAccount());
     }
   }

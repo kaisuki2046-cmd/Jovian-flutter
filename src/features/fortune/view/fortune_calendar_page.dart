@@ -4,9 +4,9 @@ import 'package:jovian_fortune/jovian_fortune.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../ui/interface_language.dart';
-
 import '../../../ui/theme.dart';
 import '../control/fortune_local.dart';
+import 'fortune_display_labels.dart';
 
 class FortuneCalendarPage extends StatefulWidget {
   const FortuneCalendarPage({
@@ -95,9 +95,9 @@ class _FortuneCalendarPageState extends State<FortuneCalendarPage> {
       firstDate: first,
       lastDate: last,
       currentDate: reference,
-      helpText: '选择北京日期',
-      cancelText: '取消',
-      confirmText: '确定',
+      helpText: context.uiLabel('选择北京日期'),
+      cancelText: context.uiLabel('取消'),
+      confirmText: context.uiLabel('确定'),
     );
     if (date == null || !mounted) return;
     _date.text = '${date.year}-${_two(date.month)}-${_two(date.day)}';
@@ -112,9 +112,9 @@ class _FortuneCalendarPageState extends State<FortuneCalendarPage> {
           _timeOfDay(_time.text.trim()) ??
           _timeOfDay(widget.reference.time) ??
           const TimeOfDay(hour: 0, minute: 0),
-      helpText: '选择北京时间',
-      cancelText: '取消',
-      confirmText: '确定',
+      helpText: context.uiLabel('选择北京时间'),
+      cancelText: context.uiLabel('取消'),
+      confirmText: context.uiLabel('确定'),
       builder: (context, child) => MediaQuery(
         data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
         child: child!,
@@ -144,10 +144,10 @@ class _FortuneCalendarPageState extends State<FortuneCalendarPage> {
                 textInputAction: TextInputAction.next,
                 onChanged: (_) => _clearFeedback(),
                 decoration: InputDecoration(
-                  labelText: '北京日期',
+                  labelText: context.uiLabel('北京日期'),
                   hintText: 'YYYY-MM-DD',
                   suffixIcon: IconButton(
-                    tooltip: '选择北京日期',
+                    tooltip: context.uiLabel('选择北京日期'),
                     onPressed: _pickDate,
                     icon: const Icon(Icons.calendar_today_outlined),
                   ),
@@ -160,10 +160,10 @@ class _FortuneCalendarPageState extends State<FortuneCalendarPage> {
                 onSubmitted: (_) => _query(),
                 onChanged: (_) => _clearFeedback(),
                 decoration: InputDecoration(
-                  labelText: '北京时间',
+                  labelText: context.uiLabel('北京时间'),
                   hintText: 'HH:mm',
                   suffixIcon: IconButton(
-                    tooltip: '选择北京时间',
+                    tooltip: context.uiLabel('选择北京时间'),
                     onPressed: _pickTime,
                     icon: const Icon(Icons.schedule),
                   ),
@@ -172,7 +172,7 @@ class _FortuneCalendarPageState extends State<FortuneCalendarPage> {
               if (_error case final error?)
                 Semantics(
                   liveRegion: true,
-                  child: Text(
+                  child: UiText(
                     error,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.error,
@@ -191,8 +191,8 @@ class _FortuneCalendarPageState extends State<FortuneCalendarPage> {
             _CalendarCard(
               title: '历法参考',
               children: [
-                _pillars('查询时刻四柱', result.referencePillars),
-                _pillars('下一整点四柱', result.actionPillars),
+                _pillars(context, '查询时刻四柱', result.referencePillars),
+                _pillars(context, '下一整点四柱', result.actionPillars),
               ],
             ),
             const SizedBox(height: 12),
@@ -209,9 +209,9 @@ class _FortuneCalendarPageState extends State<FortuneCalendarPage> {
                 title: _periodLabels[window.period]!,
                 children: [
                   if (window.periodStart != window.start)
-                    Text('周期起点 ${_beijingLabel(window.periodStart)}'),
-                  Text('查询起点 ${_beijingLabel(window.start)}'),
-                  Text('截止时刻 ${_beijingLabel(window.end)}'),
+                    _windowTime(context, '周期起点', window.periodStart),
+                  _windowTime(context, '查询起点', window.start),
+                  _windowTime(context, '截止时刻', window.end),
                 ],
               ),
           ],
@@ -220,12 +220,22 @@ class _FortuneCalendarPageState extends State<FortuneCalendarPage> {
     ),
   );
 
-  Widget _pillars(String title, Map<String, String> values) => Column(
+  Widget _pillars(
+    BuildContext context,
+    String title,
+    Map<String, String> values,
+  ) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text(title),
+      UiText(title),
       Text(
-        '${values['year']}年 · ${values['month']}月 · ${values['day']}日 · ${values['hour']}时',
+        fortunePillarLabels(
+          context,
+          values['year']!,
+          values['month']!,
+          values['day']!,
+          hour: values['hour']!,
+        ),
       ),
     ],
   );
@@ -248,7 +258,7 @@ class _CalendarCard extends StatelessWidget {
           if (title case final label?)
             Semantics(
               header: true,
-              child: Text(
+              child: UiText(
                 label,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
@@ -276,7 +286,7 @@ TimeOfDay? _timeOfDay(String value) {
   return TimeOfDay(hour: int.parse(parts[1]!), minute: int.parse(parts[2]!));
 }
 
-String _beijingLabel(int value) {
+Widget _windowTime(BuildContext context, String label, int value) {
   final fields = fortuneReferenceFields(value);
-  return '${fields.date} ${fields.time}';
+  return Text('${context.uiLabel(label)} ${fields.date} ${fields.time}');
 }

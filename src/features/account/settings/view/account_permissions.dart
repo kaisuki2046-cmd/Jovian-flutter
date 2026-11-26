@@ -21,7 +21,8 @@ class AccountPermissions extends StatelessWidget {
         context.mounted &&
         scope != null &&
         !account.sessionChanging &&
-        account.session?.scope == scope;
+        account.session?.scope == scope &&
+        identical(account.catalog, catalog);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -43,7 +44,7 @@ class AccountPermissions extends StatelessWidget {
                       await account.acceptRequired(catalog);
                     }
                   },
-            child: const Text('确认新版登录协议'),
+            child: const UiText('确认新版登录协议'),
           ),
         if (state.requiredAccepted && !state.allAiGranted)
           TextButton(
@@ -59,7 +60,7 @@ class AccountPermissions extends StatelessWidget {
           ),
         for (final MapEntry(:key, :value) in aiPurposes.entries)
           SwitchListTile(
-            title: Text(value),
+            title: UiText(value),
             contentPadding: EdgeInsets.zero,
             value: state.permissions[key] == true,
             onChanged:
@@ -83,29 +84,36 @@ class AccountPermissions extends StatelessWidget {
     BuildContext context,
     AgreementDocument document,
     String purpose,
-  ) async =>
-      await showDialog<bool>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('确认 AI 授权'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('开启后，可为「$purpose」处理所需资料。授权可随时撤回。'),
-              AgreementLink(document: document),
+  ) async {
+    final purposeLabel = context.uiLabel(purpose);
+    return await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            scrollable: true,
+            title: const UiText('确认 AI 授权'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  context.uiLanguage == InterfaceLanguage.english
+                      ? 'Allow $purposeLabel to process the required data. You can revoke this permission at any time.'
+                      : '开启后，可为「$purpose」处理所需资料。授权可随时撤回。',
+                ),
+                AgreementLink(document: document),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const UiText('取消'),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const UiText('同意授权'),
+              ),
             ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const UiText('取消'),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text('同意授权'),
-            ),
-          ],
-        ),
-      ) ==
-      true;
+        ) ==
+        true;
+  }
 }

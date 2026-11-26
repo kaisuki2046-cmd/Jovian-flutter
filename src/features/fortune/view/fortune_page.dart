@@ -2,7 +2,6 @@ import 'package:jovian_fortune/jovian_fortune.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../ui/interface_language.dart';
-
 import '../../../ui/report_body.dart';
 import '../../../ui/theme.dart';
 import '../../account/account.dart';
@@ -10,6 +9,7 @@ import '../control/fortune_local.dart';
 import '../control/fortune_online.dart';
 import '../control/fortune_page_controller.dart';
 import 'fortune_calendar_page.dart';
+import 'fortune_display_labels.dart';
 import 'fortune_interpretation.dart';
 import 'fortune_report_history.dart';
 
@@ -213,35 +213,37 @@ class _FortuneSessionState extends State<_FortuneSession> {
     final window = _fortune.preview?.window;
     final display = _fortune.display;
     final prepared = _fortune.displayedWindow;
-    final start = prepared == null
-        ? (window == null ? null : _date(display!.clock(window.start)))
-        : _date(
-            DateTime.parse(
-              '${prepared.firstDate}T00:00:00Z',
-            ).millisecondsSinceEpoch,
-          );
-    final end = prepared == null
-        ? (window == null ? null : _date(display!.clock(window.end - 1)))
-        : _date(
-            DateTime.parse(
-              '${prepared.lastDate}T00:00:00Z',
-            ).millisecondsSinceEpoch,
-          );
+    final dates = prepared != null
+        ? (
+            DateTime.parse('${prepared.firstDate}T00:00:00Z'),
+            DateTime.parse('${prepared.lastDate}T00:00:00Z'),
+          )
+        : window != null
+        ? (
+            _wallDate(display!.clock(window.start)),
+            _wallDate(display.clock(window.end - 1)),
+          )
+        : null;
+    final timeZone = [
+      '${context.uiLabel('日期时区')} ${_fortune.displayedZone}',
+      if (_fortune.usingFallbackTime) context.uiLabel('暂用设备时间'),
+    ].join(' · ');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (start != null)
+        if (dates != null)
           Text(
-            start == end ? start : '$start 至 $end',
+            fortuneDateRange(
+              context,
+              fortuneDateLabel(context, dates.$1),
+              fortuneDateLabel(context, dates.$2),
+            ),
             style: Theme.of(context).textTheme.titleMedium,
           ),
-        if (display != null)
-          Text(
-            '日期时区 ${_fortune.displayedZone}${_fortune.usingFallbackTime ? ' · 暂用设备时间' : ''}',
-          ),
-        if (_fortune.clockError case final error?) Text(error),
+        if (display != null) Text(timeZone),
+        if (_fortune.clockError case final error?) UiText(error),
         if (_fortune.previewError case final error?)
-          Semantics(liveRegion: true, child: Text(error)),
+          Semantics(liveRegion: true, child: UiText(error)),
         TextButton(
           onPressed: _fortune.syncingTime || _fortune.loadingPreview
               ? null
@@ -261,7 +263,7 @@ class _FortuneSessionState extends State<_FortuneSession> {
           Wrap(
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              Semantics(liveRegion: true, child: Text(error)),
+              Semantics(liveRegion: true, child: UiText(error)),
               if (_fortune.selectedArchiveMissing && Navigator.canPop(context))
                 TextButton(
                   onPressed: () => Navigator.pop(context),
@@ -270,21 +272,21 @@ class _FortuneSessionState extends State<_FortuneSession> {
               if (!_fortune.selectedArchiveMissing)
                 TextButton(
                   onPressed: _fortune.readArchive,
-                  child: const Text('重新读取'),
+                  child: const UiText('重新读取'),
                 ),
             ],
           ),
         if (_fortune.loadingReport && !_fortune.hasChart)
-          const Text('正在读取已保存的报告…'),
+          const UiText('正在读取已保存的报告…'),
         if (_fortune.reportError case final error?
             when _fortune.online == null || !_fortune.hasChart)
           Wrap(
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              Text(error),
+              UiText(error),
               TextButton(
                 onPressed: () => _fortune.readReport(retry: true),
-                child: const Text('重试报告'),
+                child: const UiText('重试报告'),
               ),
             ],
           ),
@@ -326,8 +328,16 @@ class _PreviewCard extends StatelessWidget {
           children: [
             UiText('参考干支', style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
-            Text('${current.year}年 · ${current.month}月 · ${current.day}日'),
-            if (current.tenGod case final god?) Text('与本命日干的关系 $god'),
+            Text(
+              fortunePillarLabels(
+                context,
+                current.year,
+                current.month,
+                current.day,
+              ),
+            ),
+            if (current.tenGod case final god?)
+              Text('${context.uiLabel('与本命日干的关系')} $god'),
             ExpansionTile(
               tilePadding: EdgeInsets.zero,
               title: const UiText('查看周期变化'),
@@ -336,10 +346,21 @@ class _PreviewCard extends StatelessWidget {
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     title: Text(event.reason),
-                    subtitle: Text(
-                      '${_date(clock(event.at))} ${_clock(clock(event.at))} · ${event.year}年 ${event.month}月 ${event.day}日',
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(_previewTime(context, _wallDate(clock(event.at)))),
+                        Text(
+                          fortunePillarLabels(
+                            context,
+                            event.year,
+                            event.month,
+                            event.day,
+                          ),
+                        ),
+                        if (event.tenGod case final relation?) Text(relation),
+                      ],
                     ),
-                    trailing: event.tenGod == null ? null : Text(event.tenGod!),
                   ),
               ],
             ),
@@ -355,32 +376,46 @@ class _AlmanacCard extends StatelessWidget {
   final AlmanacDay day;
 
   @override
-  Widget build(BuildContext context) => Card(
-    child: Padding(
-      padding: const EdgeInsets.all(14),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          UiText('黄历', style: Theme.of(context).textTheme.titleMedium),
-          Text('${day.date} 北京时间 · ${day.lunarDate} · ${day.dayPillar}日'),
-          Text(
-            '值日 ${day.officer}${day.solarTerm == null ? '' : ' · ${day.solarTerm}'}',
-          ),
-          if (day.yi.isNotEmpty) Text('宜 ${day.yi.join('、')}'),
-          if (day.ji.isNotEmpty) Text('忌 ${day.ji.join('、')}'),
-        ],
+  Widget build(BuildContext context) {
+    final separator = context.uiLanguage == InterfaceLanguage.english
+        ? ', '
+        : '、';
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            UiText('黄历', style: Theme.of(context).textTheme.titleMedium),
+            Text(
+              [
+                '${day.date} ${context.uiLabel('北京时间')}',
+                day.lunarDate,
+                context.uiLanguage == InterfaceLanguage.chinese
+                    ? '${day.dayPillar}日'
+                    : '${context.uiLabel('日柱')} ${day.dayPillar}',
+              ].join(' · '),
+            ),
+            Text(
+              '${context.uiLabel('值日')} ${day.officer}${day.solarTerm == null ? '' : ' · ${day.solarTerm}'}',
+            ),
+            if (day.yi.isNotEmpty)
+              Text('${context.uiLabel('宜')} ${day.yi.join(separator)}'),
+            if (day.ji.isNotEmpty)
+              Text('${context.uiLabel('忌')} ${day.ji.join(separator)}'),
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
 
-String _date(int wall) {
-  final d = DateTime.fromMillisecondsSinceEpoch(wall, isUtc: true);
-  return '${d.year}年${d.month}月${d.day}日';
-}
+DateTime _wallDate(int wall) =>
+    DateTime.fromMillisecondsSinceEpoch(wall, isUtc: true);
 
-String _clock(int wall) {
-  final d = DateTime.fromMillisecondsSinceEpoch(wall, isUtc: true);
-  String two(int value) => value.toString().padLeft(2, '0');
-  return '${two(d.hour)}:${two(d.minute)}';
+String _previewTime(BuildContext context, DateTime wall) {
+  final time = MaterialLocalizations.of(
+    context,
+  ).formatTimeOfDay(TimeOfDay.fromDateTime(wall), alwaysUse24HourFormat: true);
+  return '${fortuneDateLabel(context, wall)} $time';
 }

@@ -67,15 +67,20 @@ class AgreementsApi {
     AgreementDocument document, {
     required String source,
   }) async {
-    Future<void> grant(String purpose) async {
+    Future<JsonRequestError?> grant(String purpose) async {
       try {
         await choose(document, purpose, true, source: source);
-      } on JsonRequestError {
-        // A stale document or failed write is reflected in the final state.
+      } on JsonRequestError catch (error) {
+        if (error.status == 409 || error.status == 403) return error;
+        // Other partial failures are reflected in the stored state.
       }
+      return null;
     }
 
-    await Future.wait(aiPurposes.keys.map(grant));
+    final conflicts = await Future.wait(aiPurposes.keys.map(grant));
+    if (conflicts.whereType<JsonRequestError>().firstOrNull case final error?) {
+      throw error;
+    }
     return state();
   }
 }

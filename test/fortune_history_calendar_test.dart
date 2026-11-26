@@ -15,6 +15,7 @@ import '../src/features/fortune/requests/fortune_report_api.dart';
 import '../src/features/fortune/view/fortune_calendar_page.dart';
 import '../src/features/fortune/view/fortune_page.dart';
 import '../src/shared/http/json_client.dart';
+import '../src/ui/interface_language.dart';
 import 'support/fortune_local_fixture.dart';
 
 const _owner = 'fortune-history-member';
@@ -35,9 +36,14 @@ Map<String, Object?> _entry(String id, String title) => {
 };
 
 void main() {
+  final languages = ValueVariant<InterfaceLanguage>(
+    InterfaceLanguage.values.toSet(),
+  );
   testWidgets(
     'opens the exact saved fortune with its original date and advice run',
+    variant: languages,
     (tester) async {
+      final language = languages.currentValue!;
       FlutterSecureStorage.setMockInitialValues({
         'fixture-fortune-session': 'fixture',
       });
@@ -180,6 +186,14 @@ void main() {
       Future<DateTime> now() async => DateTime.utc(2026, 11, 12, 2);
       await tester.pumpWidget(
         MaterialApp(
+          locale: language.locale,
+          supportedLocales: [
+            for (final item in InterfaceLanguage.values) item.locale,
+          ],
+          localizationsDelegates: const [
+            interfaceStringsDelegate,
+            ...GlobalMaterialLocalizations.delegates,
+          ],
           home: FortunePage(
             account: account,
             local: const FortuneLocalFixture(),
@@ -195,68 +209,85 @@ void main() {
       await tester.pumpAndSettle();
       expect(listRequests, isEmpty);
       expect(find.text('已保存周运势'), findsNothing);
-      await tester.tap(find.text('查看已存解读'));
+      await tester.tap(find.text(language.label('查看已存解读')));
       await tester.pumpAndSettle();
-      expect(find.text('周期运势'), findsOneWidget);
-      expect(find.text('收起已存解读'), findsOneWidget);
+      expect(find.text(language.label('周期运势')), findsOneWidget);
+      expect(find.text(language.label('收起已存解读')), findsOneWidget);
       expect(listRequests, [null]);
       await tester.tap(find.text('已保存周运势'));
       await tester.pumpAndSettle();
-      expect(find.text('已保存本周正文。'), findsOneWidget);
       expect(
-        find.text('2026年11月9日 至 2026年11月15日 · Asia/Shanghai'),
+        find.text(
+          language == InterfaceLanguage.english ? 'Forecast reading' : '运势解读',
+        ),
         findsOneWidget,
       );
-      expect(find.text('提运建议'), findsNothing);
+      expect(find.text('已保存本周正文。'), findsOneWidget);
+      expect(
+        find.text(
+          language == InterfaceLanguage.english
+              ? 'Nov 9, 2026 to Nov 15, 2026 · Asia/Shanghai'
+              : '2026年11月9日 至 2026年11月15日 · Asia/Shanghai',
+        ),
+        findsOneWidget,
+      );
+      expect(find.text(language.label('提运建议')), findsNothing);
       await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
-      expect(find.text('收起已存解读'), findsOneWidget);
-      await tester.tap(find.text('收起已存解读'));
+      expect(find.text(language.label('收起已存解读')), findsOneWidget);
+      await tester.tap(find.text(language.label('收起已存解读')));
       await tester.pumpAndSettle();
       expect(find.text('已保存周运势'), findsNothing);
-      await tester.tap(find.text('查看已存解读'));
+      await tester.tap(find.text(language.label('查看已存解读')));
       await tester.pumpAndSettle();
       expect(find.text('已保存周运势'), findsOneWidget);
       expect(listRequests, [null]);
-      await tester.tap(find.text('加载更多'));
+      await tester.tap(find.text(language.label('加载更多')));
       await tester.pumpAndSettle();
       expect(listRequests, [null, _weekId]);
       await tester.tap(find.text('旧日运势'));
       await tester.pumpAndSettle();
       expect(find.text('已保存的旧日正文。'), findsOneWidget);
-      expect(find.text('2026年11月10日 · Asia/Shanghai'), findsOneWidget);
+      expect(
+        find.text(
+          language == InterfaceLanguage.english
+              ? 'Nov 10, 2026 · Asia/Shanghai'
+              : '2026年11月10日 · Asia/Shanghai',
+        ),
+        findsOneWidget,
+      );
       expect(onlineRequests, isEmpty);
-      await tester.tap(find.text('按盘面获取建议'));
+      await tester.tap(find.text(language.label('按盘面获取建议')));
       await tester.pumpAndSettle();
       expect(find.text('3'), findsOneWidget);
-      await tester.tap(find.text('查看建议依据'));
+      await tester.tap(find.text(language.label('查看建议依据')));
       await tester.pumpAndSettle();
       final reason = find.text('原盘建议依据。');
-      final source = find.text('来源：资料校验测试');
+      final source = find.text(language.label('来源：') + '资料校验测试');
       final limitation = find.text('原盘适用限制。');
       expect(reason, findsOneWidget);
       expect(source, findsOneWidget);
       expect(limitation, findsOneWidget);
-      await tester.ensureVisible(find.text('收起依据'));
-      await tester.tap(find.text('收起依据'));
+      await tester.ensureVisible(find.text(language.label('收起依据')));
+      await tester.tap(find.text(language.label('收起依据')));
       await tester.pumpAndSettle();
       expect(reason, findsNothing);
       expect(source, findsNothing);
       expect(limitation, findsNothing);
-      await tester.tap(find.text('查看建议依据'));
+      await tester.tap(find.text(language.label('查看建议依据')));
       await tester.pumpAndSettle();
       expect(reason, findsOneWidget);
-      await tester.ensureVisible(find.text('按盘面获取建议'));
-      await tester.tap(find.text('按盘面获取建议'));
+      await tester.ensureVisible(find.text(language.label('按盘面获取建议')));
+      await tester.tap(find.text(language.label('按盘面获取建议')));
       await tester.pump();
       expect(reason, findsNothing);
       expect(source, findsNothing);
       expect(limitation, findsNothing);
       adviceRefresh.complete(http.Response('', 500));
       await tester.pumpAndSettle();
-      expect(find.text('重试获取建议'), findsOneWidget);
+      expect(find.text(language.label('重试获取建议')), findsOneWidget);
       expect(reason, findsNothing);
-      await tester.tap(find.text('重试获取建议'));
+      await tester.tap(find.text(language.label('重试获取建议')));
       await tester.pumpAndSettle();
       expect(reason, findsOneWidget);
       expect(source, findsOneWidget);
@@ -266,11 +297,11 @@ void main() {
       await account.signOut();
       await tester.pumpAndSettle();
       expect(find.text('已保存的旧日正文。'), findsNothing);
-      expect(find.text('当前账号会话已变化，请返回周期运势。'), findsOneWidget);
+      expect(find.text(language.label('当前账号会话已变化，请返回周期运势。')), findsOneWidget);
       await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
-      expect(find.text('周期运势'), findsOneWidget);
-      expect(find.text('查看已存解读'), findsNothing);
+      expect(find.text(language.label('周期运势')), findsOneWidget);
+      expect(find.text(language.label('查看已存解读')), findsNothing);
       expect(tester.takeException(), isNull);
     },
   );
@@ -322,6 +353,82 @@ void main() {
       expect(find.text('截止时刻 2026-11-11 01:00'), findsOneWidget);
     },
   );
+
+  testWidgets('English calendar works at 320 dp and 200 percent text', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(320, 700);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    const reference = FortuneReference('2026-11-10', '23:40');
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: const [
+          interfaceStringsDelegate,
+          ...GlobalMaterialLocalizations.delegates,
+        ],
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: TextScaler.linear(2)),
+          child: child!,
+        ),
+        home: const FortuneCalendarPage(
+          reference: reference,
+          local: FortuneLocalFixture(),
+        ),
+      ),
+    );
+    final date = find.widgetWithText(TextField, 'Beijing date');
+    final time = find.widgetWithText(TextField, 'Beijing time');
+    expect(date, findsOneWidget);
+    expect(time, findsOneWidget);
+    await tester.tap(find.byTooltip('Select a Beijing date'));
+    await tester.pumpAndSettle();
+    expect(find.text('Select a Beijing date'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Select a Beijing time'));
+    await tester.pumpAndSettle();
+    expect(find.text('Select a Beijing time'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await tester.tap(find.text('OK'));
+    await tester.pumpAndSettle();
+    expect(tester.widget<TextField>(time).controller?.text, '23:40');
+    final search = find.text('Look up the calendar');
+    await tester.enterText(date, '2026-02-30');
+    await tester.ensureVisible(search);
+    await tester.pumpAndSettle();
+    await tester.tap(search);
+    await tester.pumpAndSettle();
+    expect(
+      find.textContaining('Enter a valid date from 1900 to 2099'),
+      findsOneWidget,
+    );
+    await tester.enterText(date, '2026-11-10');
+    await tester.ensureVisible(search);
+    await tester.pumpAndSettle();
+    await tester.tap(search);
+    await tester.pumpAndSettle();
+    final pillars = calculateFortuneCalendar(reference)!.actionPillars;
+    expect(
+      find.textContaining(
+        "Day pillar ${pillars['day']} · Hour pillar ${pillars['hour']}",
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('Four Pillars at the next hour'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('Next full hour'),
+      250,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(find.text('Lookup start 2026-11-11 00:00'), findsOneWidget);
+    expect(find.text('End time 2026-11-11 01:00'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('editing the query discards its pending calendar result', (
     tester,

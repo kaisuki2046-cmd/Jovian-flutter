@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../ui/interface_language.dart';
-
 import '../../../ui/report_body.dart';
 import '../../../ui/theme.dart';
 import '../../account/account.dart';
 import '../control/fortune_page_controller.dart';
 import '../model/online_fortune.dart';
+import 'fortune_display_labels.dart';
 import 'fortune_interpretation.dart';
 
 class FortuneReportHistory extends StatefulWidget {
@@ -79,7 +79,7 @@ class _FortuneReportHistoryState extends State<FortuneReportHistory> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(error),
+                      UiText(error),
                       TextButton(
                         onPressed: () => history.select(entry.id),
                         child: const UiText('重试读取'),
@@ -95,8 +95,10 @@ class _FortuneReportHistoryState extends State<FortuneReportHistory> {
                   fortune: widget.fortune,
                 );
               }
-              return const Center(
-                child: CircularProgressIndicator(semanticsLabel: '正在读取运势报告'),
+              return Center(
+                child: CircularProgressIndicator(
+                  semanticsLabel: context.uiLabel('正在读取运势报告'),
+                ),
               );
             },
           ),
@@ -145,14 +147,19 @@ class _FortuneReportHistoryState extends State<FortuneReportHistory> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (history.loading)
-            const LinearProgressIndicator(semanticsLabel: '正在读取运势报告历史'),
+            LinearProgressIndicator(
+              semanticsLabel: context.uiLabel('正在读取运势报告历史'),
+            ),
           if (history.listError case final error?)
-            ListTile(
-              title: UiText(error),
-              trailing: TextButton(
-                onPressed: history.refresh,
-                child: const UiText('重试'),
-              ),
+            Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                UiText(error),
+                TextButton(
+                  onPressed: history.refresh,
+                  child: const UiText('重试'),
+                ),
+              ],
             ),
           if (page != null) ...[
             if (!history.loading && page.entries.isEmpty)
@@ -245,12 +252,12 @@ class _SavedFortuneReportState extends State<_SavedFortuneReport> {
           builder: (context, snapshot) {
             final dates = snapshot.data;
             if (dates == null) return const SizedBox.shrink();
-            final first = _date(dates.first);
-            final last = _date(dates.last);
+            final first = fortuneDateLabel(context, dates.first);
+            final last = fortuneDateLabel(context, dates.last);
             return Padding(
               padding: const EdgeInsets.only(top: 4),
               child: Text(
-                '${first == last ? first : '$first 至 $last'} · ${dates.zone}',
+                '${fortuneDateRange(context, first, last)} · ${dates.zone}',
                 style: theme.bodySmall,
               ),
             );
@@ -280,5 +287,3 @@ class _SavedFortuneReportState extends State<_SavedFortuneReport> {
     );
   }
 }
-
-String _date(DateTime time) => '${time.year}年${time.month}月${time.day}日';

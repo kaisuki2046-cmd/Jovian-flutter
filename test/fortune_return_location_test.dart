@@ -58,7 +58,8 @@ void main() {
     expect(tester.widget<ChoiceChip>(current).selected, isTrue);
     await _tap(tester, 'This year');
     expect(tester.widget<ChoiceChip>(year).selected, isTrue);
-    expect(find.text('2026年1月1日 至 2026年12月31日'), findsOneWidget);
+    expect(find.text('Jan 1, 2026 to Dec 31, 2026'), findsOneWidget);
+    expect(find.textContaining('Date time zone'), findsOneWidget);
 
     await tester.tap(find.byTooltip('Calendar lookup'));
     await tester.pumpAndSettle();

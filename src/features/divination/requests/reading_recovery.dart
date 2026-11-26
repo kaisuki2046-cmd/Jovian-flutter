@@ -76,33 +76,30 @@ class _NativeReadingHistory implements GuideHistoryStore {
 
   final String _prefix;
   final _memory = <String, String?>{};
-  final _entries = <String>{};
 
-  Future<String?> _read(String suffix) async {
+  Future<String?> _read(String suffix) => _withStorage(() async {
     if (_memory.containsKey(suffix)) return _memory[suffix];
     try {
       return await _storage.read(key: '$_prefix$suffix');
     } catch (_) {
       return null;
     }
-  }
+  });
 
-  Future<void> _write(String suffix, String? data) =>
-      _withStorage(() => _writeNow(suffix, data));
-
-  Future<void> _writeNow(String suffix, String? data) async {
-    _memory[suffix] = data;
-    try {
-      final key = '$_prefix$suffix';
-      if (data == null) {
-        await _storage.delete(key: key);
-      } else {
-        await _storage.write(key: key, value: data);
-      }
-    } catch (_) {
-      // An unavailable local store doesn't interrupt an ongoing reading.
-    }
-  }
+  Future<void> _write(String suffix, String? data, {bool keepOnError = true}) =>
+      _withStorage(() async {
+        try {
+          final key = '$_prefix$suffix';
+          if (data == null) {
+            await _storage.delete(key: key);
+          } else {
+            await _storage.write(key: key, value: data);
+          }
+          _memory.remove(suffix);
+        } catch (_) {
+          if (keepOnError) _memory[suffix] = data;
+        }
+      });
 
   @override
   Future<GuideRecovery?> read() async =>
@@ -113,29 +110,32 @@ class _NativeReadingHistory implements GuideHistoryStore {
       _write('active', recovery == null ? null : jsonEncode(recovery.toJson()));
 
   @override
-  Future<List<GuideHistoryEntry>> readHistory() async {
+  Future<List<GuideHistoryEntry>> readHistory() => _withStorage(() async {
+    final prefix = '${_prefix}history.';
+    final Map<String, String> stored;
     try {
-      final list = jsonDecode(await _read('index') ?? '[]');
-      if (list is List)
-        _entries.addAll(list.whereType<String>().where(isGuideThreadId));
-    } on FormatException {
-      // Leave any already opened records in memory.
+      stored = await _storage.readAll();
+    } catch (_) {
+      // The current controller can still show its in-memory conversations.
+      return [];
     }
-    final entries = await Future.wait(
-      _entries.map((id) async {
-        final entry = decodeGuideHistory(await _read('history.$id'));
-        return entry?.id == id ? entry : null;
-      }),
-    );
-    return entries.whereType<GuideHistoryEntry>().toList();
-  }
+    final history = <GuideHistoryEntry>[];
+    for (final item in stored.entries) {
+      if (!item.key.startsWith(prefix)) continue;
+      final entry = decodeGuideHistory(item.value);
+      if (entry != null && item.key == '$prefix${entry.id}') {
+        history.add(entry);
+      }
+    }
+    return history;
+  });
 
   @override
-  Future<void> writeHistory(GuideHistoryEntry entry) => _withStorage(() async {
-    await _writeNow('history.${entry.id}', encodeGuideHistory(entry));
-    if (_entries.add(entry.id))
-      await _writeNow('index', jsonEncode(_entries.toList()));
-  });
+  Future<void> writeHistory(GuideHistoryEntry entry) => _write(
+    'history.${entry.id}',
+    encodeGuideHistory(entry),
+    keepOnError: false,
+  );
 
   @override
   Future<GuideRecovery?> readThread(String id) async =>

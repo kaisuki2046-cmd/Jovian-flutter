@@ -30,6 +30,8 @@ GuideHistoryEntry? decodeGuideHistory(String? text) {
     return null;
   } on TypeError {
     return null;
+  } on RangeError {
+    return null;
   }
   return null;
 }

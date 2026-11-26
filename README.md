@@ -68,7 +68,15 @@ flutter run -d chrome --web-port 8114 --target src/app/main.dart --dart-define=A
 
 Web 会话使用账户服务的 HttpOnly Cookie，浏览器同一标签页按已验证的账号恢复当前算事会话。Flutter 原生端通过系统安全存储保存会话令牌，算事读取同一会话令牌。验证码与免验证码注册根据账户服务公布的能力显示，微信与 QQ 目前接入现有本地服务商协议。原生平台尚待真机验收。
 
-命理、合盘和运势的原生计算通过系统 WebView 加载本机资源。当前工作树提供 Web 启动工程，Android 和 iOS 的启动工程及系统 WebView 验收仍需完成。[本机计算说明](tool/legacy_compute/README.md)
+命理、合盘和运势的原生计算通过系统 WebView 加载本机资源。Android、iOS 和 Web 都使用 `src/app/main.dart`，沿用当前目录结构。各端加载相同的业务页面和离线计算资源。[本机计算说明](tool/legacy_compute/README.md)
+
+## Android 和 iOS 前端源码
+
+`android/` 和 `ios/` 包含 Flutter 的平台启动工程。显示名沿用「木星环（测试）」，Android 包名和 iOS Bundle ID 暂用 `com.jovian.preview`。Android 的应用标识在 `android/app/build.gradle.kts`，iOS 的应用标识在 `ios/Runner.xcodeproj/project.pbxproj`。Flutter 版本号来自 `pubspec.yaml`，构建时可以覆盖。两端的启动图和应用图标沿用木星环素材。
+
+先生成本机计算资源。Flutter 命令加 `--target src/app/main.dart`，并继续用上面的五项 `--dart-define` 指定原服务地址。Android 模拟器访问宿主机时用 `10.0.2.2`，使用 `adb reverse` 的设备可用 `127.0.0.1`。Android 主清单声明网络访问，调试清单为本机地址提供 HTTP 例外。iOS 原生会话保存在应用自己的 Keychain 中。[Flutter 移动端网络配置](https://docs.flutter.dev/release/breaking-changes/network-policy-ios-android)
+
+在 `app-flutter/` 中用 `flutter build bundle --debug --target src/app/main.dart` 检查 Flutter 入口和资源。Android、iOS 的系统启动、WebView 运行和后端连接仍需分别在对应设备验收。签名由发布流程配置。
 
 在 `src/features/divination/control/` 下运行 Dart 计算对照。六爻历法和组合起盘对照使用旧项目的 npm 依赖。
 

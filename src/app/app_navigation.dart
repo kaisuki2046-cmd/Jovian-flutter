@@ -11,6 +11,7 @@ class JovianLocation {
     this.tab, {
     this.fortunePath,
     this.archiveId,
+    this.legacyFortuneLink = false,
     this.welcome = false,
     this.sections = const [],
   });
@@ -18,6 +19,7 @@ class JovianLocation {
   final JovianTab tab;
   final String? fortunePath;
   final String? archiveId;
+  final bool legacyFortuneLink;
   final bool welcome;
   final List<AccountDestination> sections;
 
@@ -27,6 +29,7 @@ class JovianLocation {
       tab == other.tab &&
       fortunePath == other.fortunePath &&
       archiveId == other.archiveId &&
+      legacyFortuneLink == other.legacyFortuneLink &&
       welcome == other.welcome &&
       listEquals(sections, other.sections);
 
@@ -35,6 +38,7 @@ class JovianLocation {
     tab,
     fortunePath,
     archiveId,
+    legacyFortuneLink,
     welcome,
     Object.hashAll(sections),
   );
@@ -60,6 +64,19 @@ String _routePath(Uri uri) {
   return path.length > 1 && path.endsWith('/')
       ? path.substring(0, path.length - 1)
       : path;
+}
+
+String? _readFortuneArchive(RouteInformation information) {
+  final requested = information.uri.queryParametersAll['snapshotId'];
+  if (requested != null) {
+    final id = requested.singleOrNull;
+    // Keep invalid explicit selections in the existing missing-chart state.
+    return id != null && _archiveId.hasMatch(id) ? id : '';
+  }
+  final state = information.state;
+  return state is String && (state.isEmpty || _archiveId.hasMatch(state))
+      ? state
+      : null;
 }
 
 AccountSection? _accountSection(String path) => path.startsWith('/account/')
@@ -115,7 +132,7 @@ RouteInformation initialJovianRoute(JovianTab fallback) {
       return RouteInformation(
         uri: Uri(
           path: path,
-          queryParameters: base.hasQuery ? base.queryParameters : null,
+          queryParameters: base.hasQuery ? base.queryParametersAll : null,
         ),
       );
     }
@@ -137,7 +154,10 @@ class JovianRouteParser extends RouteInformationParser<JovianLocation> {
       return JovianLocation(
         JovianTab.destiny,
         fortunePath: path,
-        archiveId: state is String && _archiveId.hasMatch(state) ? state : null,
+        archiveId: _readFortuneArchive(information),
+        legacyFortuneLink: information.uri.queryParameters.containsKey(
+          'snapshotId',
+        ),
       );
     }
     if (path == '/welcome')
@@ -229,6 +249,9 @@ class JovianRouteParser extends RouteInformationParser<JovianLocation> {
         path:
             configuration.fortunePath ??
             (configuration.welcome ? '/welcome' : configuration.tab.path),
+        queryParameters: configuration.legacyFortuneLink
+            ? {'snapshotId': configuration.archiveId}
+            : null,
       ),
       state: configuration.archiveId,
     );

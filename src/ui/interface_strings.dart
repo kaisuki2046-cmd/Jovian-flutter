@@ -780,4 +780,11 @@ const englishInterfaceStrings = <String, String>{
   "合盘在线解读": "Online compatibility readings",
   "算事问题理解与在线解读": "Question analysis and guidance",
   "确认新版登录协议": "Confirm updated sign-in agreements",
+  "公开昵称": "Make nickname public",
+  "公开个人简介": "Make bio public",
+  "保存个人资料可见性": "Save profile visibility",
+  "接着上一题问": "Start a related question",
+  "另问一件事": "Ask about something else",
+  "围绕这次结果继续问": "Ask about this reading",
+  "发送追问": "Send follow-up",
 };

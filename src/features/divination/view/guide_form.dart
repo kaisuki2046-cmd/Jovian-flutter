@@ -312,10 +312,14 @@ class _GuideFormState extends State<GuideForm>
     });
   }
 
-  void _restart() {
+  Future<void> _restart({bool carryContext = false}) async {
     FocusScope.of(context).unfocus();
     setState(_clearDraft);
-    unawaited(widget.online?.nextQuestion(carryContext: false));
+    final online = widget.online;
+    await online?.nextQuestion(carryContext: carryContext);
+    if (carryContext && mounted && widget.online == online && widget.active) {
+      _questionFocus.requestFocus();
+    }
   }
 
   void _selectHistory(String id) {
@@ -437,8 +441,10 @@ class _GuideFormState extends State<GuideForm>
     final busy = online?.busy ?? false;
     final ritual = _snapshot;
     if (ritual == null) {
+      final previousQuestion = online?.previousQuestion;
       final welcome =
           !busy &&
+          previousQuestion == null &&
           _pendingQuestion == null &&
           _clarifications.isEmpty &&
           _localQuestionTurns.isEmpty &&
@@ -449,6 +455,10 @@ class _GuideFormState extends State<GuideForm>
         sentRevision: _sentRevision,
         welcome: welcome ? const GuideWelcome() : null,
         messages: [
+          if (previousQuestion != null) ...[
+            GuideQuestionBubble(previousQuestion),
+            const SizedBox(height: 12),
+          ],
           ..._conversation(),
           if (_pendingQuestion case final submitted?) ...[
             GuideQuestionBubble(
@@ -465,7 +475,7 @@ class _GuideFormState extends State<GuideForm>
           form: _form,
           text: _question,
           focus: _questionFocus,
-          hint: '输入你想测算的问题…',
+          hint: previousQuestion == null ? '输入你想测算的问题…' : '接着上一题问',
           sendLabel: '发送消息',
           busy: busy || _attachmentSelection != null,
           textSendingAvailable: online != null,
@@ -556,6 +566,14 @@ class _GuideFormState extends State<GuideForm>
     final hasReport = reading?.report != null;
     final live = online?.canContinue == true;
     final canFollowUp = live && hasReport && reading!.followUps.length < 8;
+    final nextQuestionActions = [
+      if (hasReport)
+        guideComposerAction(
+          label: '接着上一题问',
+          action: busy ? null : () => _restart(carryContext: true),
+        ),
+      guideComposerAction(label: '另问一件事', action: busy ? null : _restart),
+    ];
     return GuideThread(
       key: ValueKey(('guide-result', online?.activeHistoryId)),
       latestMessage: _latestMessage,
@@ -625,8 +643,8 @@ class _GuideFormState extends State<GuideForm>
               form: _followUpForm,
               text: _followUp,
               focus: _followUpFocus,
-              hint: '接着上一题问',
-              sendLabel: '发送消息',
+              hint: '围绕这次结果继续问',
+              sendLabel: '发送追问',
               send: _sendFollowUp,
               busy: busy || _attachmentSelection != null,
               showAssistant: true,
@@ -637,20 +655,16 @@ class _GuideFormState extends State<GuideForm>
               addAttachment: _addAttachment,
               removeAttachment: _removeAttachment,
               attachmentError: _attachmentError,
-              actions: [
-                guideComposerAction(
-                  label: '另问一件事',
-                  action: busy ? null : _restart,
-                ),
-              ],
+              actions: nextQuestionActions,
             )
           : Align(
               alignment: AlignmentDirectional.centerStart,
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(14, 4, 14, 12),
-                child: guideComposerAction(
-                  label: '另问一件事',
-                  action: busy ? null : _restart,
+                child: Wrap(
+                  spacing: 6,
+                  runSpacing: 4,
+                  children: nextQuestionActions,
                 ),
               ),
             ),

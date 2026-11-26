@@ -70,7 +70,7 @@ void main() {
   );
 
   testWidgets(
-    'member can save, reuse, and delete the local copy after an archived report',
+    'member validates complete time, refreshes archives, and manages the local copy',
     (tester) async {
       FlutterSecureStorage.setMockInitialValues({_tokenKey: 'test-token'});
       tester.view.physicalSize = const Size(430, 1150);
@@ -86,6 +86,9 @@ void main() {
       };
       var remoteBirth = _birthFields();
       Map<String, Object?>? archive;
+      var birthUpdates = 0;
+      var calculations = 0;
+      var latestReads = 0;
       final api = AccountApi(
         JsonHttpClient(
           base: Uri.parse('https://fixture.invalid'),
@@ -122,12 +125,16 @@ void main() {
                 expect(request.url.queryParameters['expectedOwnerId'], _member);
                 return _json(remoteBirth);
               case 'PATCH /account/reading-profile/birth-profile':
+                birthUpdates++;
                 final body = jsonDecode(request.body) as Map<String, Object?>;
                 expect(body['expectedOwnerId'], _member);
                 expect(body['expected'], remoteBirth);
                 remoteBirth = body['profile'] as Map<String, Object?>;
                 return _json(remoteBirth);
               case 'GET /account/destiny-history/latest':
+                latestReads++;
+                expect(request.url.queryParameters['expectedOwnerId'], _member);
+                return _json(archive);
               case 'GET /account/destiny-history/$_archiveId':
                 expect(request.url.queryParameters['expectedOwnerId'], _member);
                 return _json(archive);
@@ -153,27 +160,31 @@ void main() {
       addTearDown(account.dispose);
       await account.initialize();
 
-      Future<void> mount(String key) async {
+      Future<void> mount(String key, {bool active = true}) async {
         await tester.pumpWidget(
           MaterialApp(
             home: DestinyPage(
               key: ValueKey(key),
+              active: active,
               account: account,
               loadPlaces: _places,
-              calculateReading: (profile, _, _) async =>
-                  DestinyReading.fromLegacy({
-                    'archive': {
-                      'version': 1,
-                      'calculatedAt': entry['calculatedAt'],
-                      'timeKnown': profile.time.timeKnown,
-                      'chartSnapshot': {},
-                      'charts': [
-                        for (final method in ['bazi', 'ziwei', 'western'])
-                          {'method': method, 'rows': []},
-                      ],
-                    },
-                    'reportRequest': {'checked': true},
-                  }),
+              calculateReading: (profile, _, _) async {
+                calculations++;
+                expect(profile.time.timeKnown, isTrue);
+                return DestinyReading.fromLegacy({
+                  'archive': {
+                    'version': 1,
+                    'calculatedAt': entry['calculatedAt'],
+                    'timeKnown': profile.time.timeKnown,
+                    'chartSnapshot': {},
+                    'charts': [
+                      for (final method in ['bazi', 'ziwei', 'western'])
+                        {'method': method, 'rows': []},
+                    ],
+                  },
+                  'reportRequest': {'checked': true},
+                });
+              },
               requestReport: (payload, _) async {
                 expect(payload, {'checked': true});
                 return '测试解读。';
@@ -187,11 +198,26 @@ void main() {
       await mount('new-reading');
       await tester.tap(find.text('核对资料'));
       await tester.pumpAndSettle();
+      final minute = find.byWidgetPredicate(
+        (widget) =>
+            widget is TextField &&
+            widget.decoration?.labelText?.startsWith('出生分钟') == true,
+      );
+      await tester.enterText(minute, '');
+      await tester.tap(find.text('核对出生资料'));
+      await tester.pumpAndSettle();
+      expect(find.text('请填写并核对出生小时和分钟。'), findsOneWidget);
+      expect(find.text('确认并同步测算'), findsNothing);
+      expect(birthUpdates, 0);
+      expect(calculations, 0);
+      expect(remoteBirth['birthTime'], '12:30');
+      await tester.enterText(minute, '30');
       await tester.tap(find.text('核对出生资料'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('确认并同步测算'));
       await tester.pumpAndSettle();
       expect(find.text('已保存，下次进入命理页可直接查看。'), findsOneWidget);
+      expect(calculations, 1);
       expect(await readLocalDestinyBirthProfile(_member, _places), isNull);
       await tester.tap(find.text('保存出生资料到本机'));
       await tester.pumpAndSettle();
@@ -200,6 +226,22 @@ void main() {
       remoteBirth = _birthFields(null);
       await mount('restore-device-and-report');
       expect(find.text('上次解读'), findsOneWidget);
+      expect(find.text('测试解读。'), findsOneWidget);
+      final beforeReturn = latestReads;
+      await mount('restore-device-and-report', active: false);
+      archive = {
+        ...archive!,
+        'report': {
+          ...archive!['report'] as Map<String, Object?>,
+          'overview': '另一台设备保存的解读。',
+        },
+      };
+      expect(latestReads, beforeReturn);
+      await mount('restore-device-and-report');
+      expect(latestReads, beforeReturn + 1);
+      expect(find.text('另一台设备保存的解读。'), findsOneWidget);
+      expect(find.text('测试解读。'), findsNothing);
+      expect(calculations, 1);
       expect(find.text('本机出生资料'), findsOneWidget);
       await tester.tap(find.text('重新测算'));
       await tester.pumpAndSettle();
@@ -207,6 +249,15 @@ void main() {
       expect(
         tester.widget<TextField>(dateField).controller!.text,
         '1998-08-09',
+      );
+
+      await tester.enterText(dateField, '1999-06-30');
+      await mount('restore-device-and-report', active: false);
+      await mount('restore-device-and-report');
+      expect(latestReads, beforeReturn + 1);
+      expect(
+        tester.widget<TextField>(dateField).controller!.text,
+        '1999-06-30',
       );
 
       remoteBirth = _birthFields('2000-01-02');

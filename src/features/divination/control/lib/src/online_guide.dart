@@ -250,6 +250,7 @@ class OnlineGuideController {
   Stream<void> get changes => _changes.stream;
   OnlineReading? get reading => _reading;
   String? get activeHistoryId => _threadId;
+  String? get previousQuestion => _previousQuestion;
   bool get canContinue => _token != null;
   List<GuideHistoryEntry> get history =>
       _history.values.toList()

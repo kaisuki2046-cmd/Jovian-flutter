@@ -35,6 +35,45 @@ void main() {
     },
   );
 
+  test('legacy fortune bookmarks select exactly one account archive', () async {
+    const parser = JovianRouteParser();
+    Future<JovianLocation> parse(String path, {Object? state}) =>
+        parser.parseRouteInformation(
+          RouteInformation(uri: Uri.parse(path), state: state),
+        );
+
+    final requested = 'a' * 64;
+    final previous = 'b' * 64;
+    for (final path in ['/fortune', '/modules/fortune']) {
+      final oldLink = await parse(
+        '$path?snapshotId=$requested',
+        state: previous,
+      );
+      expect(oldLink.archiveId, requested);
+      final restored = parser.restoreRouteInformation(oldLink);
+      expect(restored.uri.queryParameters['snapshotId'], requested);
+      expect(restored.state, requested);
+      expect(await parser.parseRouteInformation(restored), oldLink);
+    }
+
+    for (final query in ['', 'invalid', '$requested&snapshotId=$previous']) {
+      final invalid = await parse(
+        '/fortune?snapshotId=$query',
+        state: previous,
+      );
+      expect(invalid.archiveId, '');
+      expect(
+        await parser.parseRouteInformation(
+          parser.restoreRouteInformation(invalid),
+        ),
+        invalid,
+      );
+    }
+
+    expect((await parse('/fortune')).archiveId, isNull);
+    expect((await parse('/fortune', state: 'invalid')).archiveId, isNull);
+  });
+
   test(
     'legacy account URLs retain their parent stack and known aliases',
     () async {

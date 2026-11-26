@@ -192,7 +192,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(service.calls, ['GET /reading']);
     await _openAttachmentMenu(tester, '添加文件');
-    await _send(tester);
+    await _send(tester, label: '发送追问');
     expect(service.calls, ['GET /reading']);
     expect(find.text('follow-up-only.txt'), findsOneWidget);
     await _openAttachmentMenu(tester, '添加文件');
@@ -200,7 +200,7 @@ void main() {
       find.byType(TextFormField),
       divinationFixtureFollowUp,
     );
-    await _send(tester);
+    await _send(tester, label: '发送追问');
     expect(service.calls, ['GET /reading', 'POST /reading/follow-up']);
     expect(service.transmitted, [
       {},
@@ -327,7 +327,7 @@ void main() {
       final compose = find.byType(TextFormField);
       await tester.ensureVisible(compose);
       await tester.enterText(compose, divinationFixtureFollowUp);
-      await _send(tester);
+      await _send(tester, label: '发送追问');
       expect(find.text(divinationFixtureFollowUp), findsOneWidget);
       expect(find.text('先确认后续时间。'), findsOneWidget);
       expect(find.text('• 整理面试问题。'), findsOneWidget);
@@ -459,6 +459,44 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('continuing the previous question starts a contextual reading', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(320, 570));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    final service = DivinationServiceFixture()..failReport = false;
+    final recovery = DivinationRecoveryFixture();
+    final initial = service.connect(recovery);
+    await initial.start(divinationFixtureDetails, automatic: true);
+    initial.dispose();
+    final online = service.connect(recovery);
+    addTearDown(online.dispose);
+    await tester.pumpWidget(_app(online));
+    await tester.pumpAndSettle();
+    service.calls.clear();
+    service.transmitted.clear();
+    final firstReading = online.activeHistoryId;
+
+    expect(find.text('围绕这次结果继续问'), findsOneWidget);
+    await _tap(tester, '接着上一题问');
+    expect(find.text('接着上一题问'), findsOneWidget);
+    expect(find.text(divinationFixtureDetails), findsOneWidget);
+
+    const nextQuestion = '后续大概几天会有消息？';
+    await tester.enterText(find.byType(TextFormField), nextQuestion);
+    await _send(tester);
+    expect(service.calls, ['POST /reading/understand', 'POST /reading']);
+    for (final request in service.transmitted) {
+      expect(request['question'], nextQuestion);
+      expect(request['previousQuestion'], divinationFixtureDetails);
+    }
+    expect(online.activeHistoryId, isNot(firstReading));
+    expect(online.history.map((entry) => entry.id), contains(firstReading));
+    await tester.tap(find.byTooltip('暂停仪式'));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('another question starts without the prior question context', (
     tester,
   ) async {
@@ -527,7 +565,7 @@ void main() {
       divinationFixtureFollowUp,
     );
     await tester.pump();
-    await tester.tap(find.byTooltip('发送消息'));
+    await tester.tap(find.byTooltip('发送追问'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 200));
     position.jumpTo(30);
@@ -732,9 +770,9 @@ Future<void> _tap(WidgetTester tester, String label) async {
   await tester.pumpAndSettle();
 }
 
-Future<void> _send(WidgetTester tester) async {
+Future<void> _send(WidgetTester tester, {String label = '发送消息'}) async {
   await tester.pump();
-  await tester.tap(find.byTooltip('发送消息'));
+  await tester.tap(find.byTooltip(label));
   await tester.pumpAndSettle();
 }
 

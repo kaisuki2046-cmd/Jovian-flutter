@@ -9,7 +9,6 @@ import '../../auth/view/identity_preview_page.dart';
 import '../../model/account_section.dart';
 import '../../profile/view/profile_editor_page.dart';
 import '../../profile/view/profile_preview_page.dart';
-import '../../reading-profile/view/reading_profile_panel.dart';
 import '../../view/account_section_links.dart';
 import '../control/app_update_controller.dart';
 import 'account_permissions.dart';
@@ -277,104 +276,101 @@ class AccountPrivacyPage extends StatelessWidget {
   final bool onlyAiPermissions;
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: UiText(onlyAiPermissions ? 'AI 数据共享授权' : '隐私设置')),
-    body: SafeArea(
-      top: false,
-      child: ListenableBuilder(
-        listenable: account,
-        builder: (context, _) {
-          final memberId = account.memberId;
-          return Column(
+  Widget build(BuildContext context) => ListenableBuilder(
+    listenable: account,
+    builder: (context, _) {
+      final member = onlyAiPermissions || account.memberId == null
+          ? null
+          : account.authorizedSession;
+      final status = [
+        if (account.busy) const LinearProgressIndicator(),
+        if (account.notice case final message?)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+            child: Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: Semantics(liveRegion: true, child: UiText(message)),
+            ),
+          ),
+      ];
+      final entries = [
+        if (member != null) ...[
+          _SettingsEntry(
+            title: '个人信息权利',
+            icon: Icons.assignment_ind_outlined,
+            onTap: () => AccountSectionLinks.openPage(
+              context,
+              AccountSection.privacyRights,
+              () => PrivacyRightsPage(account: account, owner: member.id),
+            ),
+          ),
+          const SizedBox(height: 9),
+          _SettingsEntry(
+            title: '预览他人可见内容',
+            icon: Icons.visibility_outlined,
+            onTap: () => AccountSectionLinks.openPage(
+              context,
+              AccountSection.profilePreview,
+              () => ProfilePreviewPage(account: account, owner: member.id),
+            ),
+          ),
+          _SettingsEntry(
+            title: '社交隐私',
+            icon: Icons.manage_accounts_outlined,
+            onTap: () => AccountSectionLinks.openPage(
+              context,
+              AccountSection.socialPrivacy,
+              () => SocialPrivacyPage(
+                controller: SocialController.forMember(account, member.id),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+        ],
+        if (account.session == null || account.sessionChanging)
+          const UiText('登录或进入游客体验后可查看和管理授权。')
+        else if (account.catalog != null && account.agreementState != null)
+          Card(
+            margin: EdgeInsets.zero,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: AccountPermissions(account: account),
+            ),
+          )
+        else if (!account.busy)
+          TextButton(
+            onPressed: account.initialize,
+            child: const UiText('重新加载授权状态'),
+          ),
+      ];
+      if (member != null) {
+        return ProfileEditorPage(
+          key: ValueKey(member.scope),
+          account: account,
+          member: member,
+          privacy: true,
+          intro: [...entries, const SizedBox(height: 12)],
+          status: status,
+        );
+      }
+      return Scaffold(
+        appBar: AppBar(title: UiText(onlyAiPermissions ? 'AI 数据共享授权' : '隐私设置')),
+        body: SafeArea(
+          top: false,
+          child: Column(
             children: [
-              if (account.busy) const LinearProgressIndicator(),
-              if (account.notice case final message?)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                  child: Align(
-                    alignment: AlignmentDirectional.centerStart,
-                    child: Semantics(liveRegion: true, child: UiText(message)),
-                  ),
-                ),
+              ...status,
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.all(16),
-                  children: [
-                    if (!onlyAiPermissions && memberId != null) ...[
-                      _SettingsEntry(
-                        title: '个人信息权利',
-                        icon: Icons.assignment_ind_outlined,
-                        onTap: () => AccountSectionLinks.openPage(
-                          context,
-                          AccountSection.privacyRights,
-                          () => PrivacyRightsPage(
-                            account: account,
-                            owner: memberId,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 9),
-                      _SettingsEntry(
-                        title: '预览他人可见内容',
-                        icon: Icons.visibility_outlined,
-                        onTap: () => AccountSectionLinks.openPage(
-                          context,
-                          AccountSection.profilePreview,
-                          () => ProfilePreviewPage(
-                            account: account,
-                            owner: memberId,
-                          ),
-                        ),
-                      ),
-                      _SettingsEntry(
-                        title: '社交隐私',
-                        icon: Icons.manage_accounts_outlined,
-                        onTap: () => AccountSectionLinks.openPage(
-                          context,
-                          AccountSection.socialPrivacy,
-                          () => SocialPrivacyPage(
-                            controller: SocialController.forMember(
-                              account,
-                              memberId,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                    ],
-                    if (account.session == null || account.sessionChanging)
-                      const Text('登录或进入游客体验后可查看和管理授权。')
-                    else if (account.catalog != null &&
-                        account.agreementState != null)
-                      Card(
-                        margin: EdgeInsets.zero,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: AccountPermissions(account: account),
-                        ),
-                      )
-                    else if (!account.busy)
-                      TextButton(
-                        onPressed: account.initialize,
-                        child: const Text('重新加载授权状态'),
-                      ),
-                    if (!onlyAiPermissions && memberId != null) ...[
-                      const SizedBox(height: 12),
-                      ReadingProfilePanel(
-                        key: ValueKey(memberId),
-                        account: account,
-                        owner: memberId,
-                        privacy: true,
-                      ),
-                    ],
-                  ],
+                  children: entries,
                 ),
               ),
             ],
-          );
-        },
-      ),
-    ),
+          ),
+        ),
+      );
+    },
   );
 }
 

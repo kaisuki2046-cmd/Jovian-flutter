@@ -73,7 +73,12 @@ class _DestinyPageState extends State<DestinyPage> {
   @override
   void didUpdateWidget(covariant DestinyPage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.active && !oldWidget.active) unawaited(_birth.refresh());
+    if (widget.active && !oldWidget.active) {
+      unawaited(_birth.refresh());
+      if (!_editing && !_controller.busy && _controller.reading == null) {
+        unawaited(_controller.restoreReport());
+      }
+    }
   }
 
   @override
@@ -253,6 +258,7 @@ class _DestinyPageState extends State<DestinyPage> {
         loadPlaces: widget.loadPlaces,
         initialDraft: _prefill,
         submitLabel: '核对出生资料',
+        requireKnownTime: true,
         busy: _controller.busy,
         onSubmit: (profile) => _confirm(context, profile),
       ),

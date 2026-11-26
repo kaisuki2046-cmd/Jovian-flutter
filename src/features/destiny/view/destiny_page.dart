@@ -119,7 +119,7 @@ class _DestinyPageState extends State<DestinyPage> {
     body: SafeArea(
       top: false,
       child: ListenableBuilder(
-        listenable: Listenable.merge([_controller, _birth]),
+        listenable: Listenable.merge([_controller, _birth, widget.account]),
         builder: (context, _) => ListView(
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           padding: jovianPagePadding,
@@ -153,15 +153,7 @@ class _DestinyPageState extends State<DestinyPage> {
                 onPressed: () => _showCharts(context, reading.charts),
                 child: const UiText('查看命盘'),
               ),
-              if (widget.requestReport != null)
-                FilledButton(
-                  onPressed: _controller.generateReport,
-                  child: Text(
-                    _controller.reportError == null ? '获取命理解读' : '重试命理解读',
-                  ),
-                )
-              else
-                const UiText('解读服务暂未配置。'),
+              ..._reportActions(context),
               TextButton(
                 onPressed: _canEdit
                     ? () => _openEditor(useCurrentDraft: true)
@@ -212,6 +204,32 @@ class _DestinyPageState extends State<DestinyPage> {
       ),
     ),
   );
+
+  List<Widget> _reportActions(BuildContext context) {
+    if (widget.requestReport == null) {
+      return const [UiText('解读服务暂未配置。')];
+    }
+    if (_controller.needsReportPermission) {
+      final links = context
+          .getInheritedWidgetOfExactType<AccountSectionLinks>();
+      return [
+        const UiText('请在个人中心开启命理在线解读授权。'),
+        if (links != null)
+          OutlinedButton(
+            onPressed: () => unawaited(
+              links.open(accountDestination(AccountSection.aiPermissions)),
+            ),
+            child: const UiText('前往 AI 授权'),
+          ),
+      ];
+    }
+    return [
+      FilledButton(
+        onPressed: _controller.generateReport,
+        child: UiText(_controller.reportError == null ? '获取命理解读' : '重试命理解读'),
+      ),
+    ];
+  }
 
   Widget _entry(BuildContext context) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 8),
@@ -550,7 +568,7 @@ class _DestinyPageState extends State<DestinyPage> {
     liveRegion: true,
     child: Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Text(
+      child: UiText(
         error,
         style: TextStyle(color: Theme.of(context).colorScheme.error),
       ),

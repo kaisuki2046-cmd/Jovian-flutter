@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -66,6 +67,201 @@ void main() {
       await clearLocalDestinyBirthProfile(_member);
       await saveLocalDestinyBirthProfile(_member, _birth, () => false);
       expect(await readLocalDestinyBirthProfile(_member, _places), isNull);
+    },
+  );
+
+  testWidgets(
+    'destiny authorization preserves the chart and cancels stale reports',
+    (tester) async {
+      FlutterSecureStorage.setMockInitialValues({_tokenKey: 'test-token'});
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(430, 1100);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPhysicalSize);
+
+      const purpose = 'destiny.cloud_interpretation';
+      const calculatedAt = '2025-08-09T12:00:00Z';
+      final firstReport = Completer<String>();
+      var allowed = false;
+      var cancelled = false;
+      var calculations = 0;
+      var reportRequests = 0;
+      var archiveWrites = 0;
+      Map<String, Object?> agreementState() => {
+        'requiredAccepted': true,
+        'permissions': {
+          for (final key in aiPurposes.keys) key: key == purpose && allowed,
+        },
+      };
+
+      final api = AccountApi(
+        JsonHttpClient(
+          base: Uri.https('fixture.invalid'),
+          client: MockClient((request) async {
+            switch ('${request.method} ${request.url.path}') {
+              case 'GET /account/session':
+                return _json({
+                  'user': {'id': _member, 'displayName': '测试会员'},
+                });
+              case 'GET /account/auth/capabilities':
+                return _json({});
+              case 'GET /account/agreements/catalog':
+                return _json({
+                  'documents': [
+                    for (final id in ['terms', 'privacy', 'ai'])
+                      {
+                        'id': id,
+                        'title': id,
+                        'version': 'v1',
+                        'hash': id,
+                        'state': 'published',
+                        'sections': [],
+                      },
+                  ],
+                });
+              case 'GET /account/agreements':
+                return _json(agreementState());
+              case 'POST /account/agreements/permission':
+                final proof = jsonDecode(request.body) as Map<String, Object?>;
+                expect(proof['purpose'], purpose);
+                allowed = proof['agreed']! as bool;
+                return _json(agreementState());
+              case 'GET /account/reading-profile/birth-profile':
+              case 'PATCH /account/reading-profile/birth-profile':
+                return _json(_birthFields());
+              case 'GET /account/destiny-history/latest':
+                return _json(null);
+              case 'POST /account/destiny-history':
+                archiveWrites++;
+                final body = jsonDecode(request.body) as Map<String, Object?>;
+                expect(body['expectedOwnerId'], _member);
+                expect(body['report'], containsPair('overview', '最终解读。'));
+                return _json({
+                  'id': _archiveId,
+                  'title': '命盘记录',
+                  'calculatedAt': calculatedAt,
+                  'savedAt': 1754740800000,
+                  'chartSnapshotSaved': true,
+                });
+              default:
+                fail(
+                  'Unexpected request ${request.method} ${request.url.path}',
+                );
+            }
+          }),
+        ),
+        nativeSession: const SecureNativeSession(_tokenKey),
+      );
+      final account = AccountController(api, AgreementsApi(api));
+      addTearDown(account.dispose);
+      await account.initialize();
+
+      final navigation = GlobalKey<NavigatorState>();
+      await tester.pumpWidget(
+        MaterialApp(
+          navigatorKey: navigation,
+          builder: (_, child) => AccountSectionLinks(
+            open: (target) async {
+              expect(target.section, AccountSection.aiPermissions);
+              await navigation.currentState!.push<void>(
+                MaterialPageRoute(
+                  builder: (_) => AccountSectionPage(
+                    account: account,
+                    target: target,
+                    themeMode: ThemeMode.system,
+                    onThemeModeChanged: (_) {},
+                    openAccount: () {},
+                  ),
+                ),
+              );
+            },
+            child: child!,
+          ),
+          home: DestinyPage(
+            account: account,
+            loadPlaces: _places,
+            calculateReading: (profile, _, _) async {
+              calculations++;
+              return DestinyReading.fromLegacy({
+                'archive': {
+                  'version': 1,
+                  'calculatedAt': calculatedAt,
+                  'timeKnown': profile.time.timeKnown,
+                  'chartSnapshot': {},
+                  'charts': [
+                    for (final method in ['bazi', 'ziwei', 'western'])
+                      {'method': method, 'rows': []},
+                  ],
+                },
+                'reportRequest': {'checked': true},
+              });
+            },
+            requestReport: (payload, cancel) async {
+              reportRequests++;
+              expect(payload, {'checked': true});
+              if (!allowed) {
+                throw const JsonRequestError(
+                  'ai_permission_required',
+                  status: 428,
+                );
+              }
+              if (reportRequests == 1) {
+                unawaited(cancel.then((_) => cancelled = true));
+                return firstReport.future;
+              }
+              return '最终解读。';
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      Future<void> tap(String label) async {
+        await tester.tap(find.text(label));
+        await tester.pumpAndSettle();
+      }
+
+      Future<void> grant() async {
+        await tap('前往 AI 授权');
+        expect(find.text('AI 数据共享授权'), findsOneWidget);
+        await tap('命理在线解读');
+        await tap('同意授权');
+        await tester.pageBack();
+        await tester.pumpAndSettle();
+      }
+
+      await tap('核对资料');
+      await tap('核对出生资料');
+      await tap('确认并同步测算');
+      expect(calculations, 1);
+      expect(reportRequests, 0);
+      expect(find.text('查看命盘'), findsOneWidget);
+
+      await grant();
+      await tester.tap(find.text('获取命理解读'));
+      await tester.pump();
+      expect(reportRequests, 1);
+      await account.choose(account.catalog!.ai, purpose, false);
+      await tester.pump();
+      expect(cancelled, isTrue);
+      firstReport.complete('授权撤回后的旧结果。');
+      await tester.pumpAndSettle();
+      expect(find.text('授权撤回后的旧结果。'), findsNothing);
+      expect(archiveWrites, 0);
+
+      await grant();
+      allowed = false;
+      await tap('获取命理解读');
+      expect(reportRequests, 2);
+      expect(account.agreementState?.permissions[purpose], isFalse);
+      expect(find.text('前往 AI 授权'), findsOneWidget);
+
+      await grant();
+      await tap('获取命理解读');
+      expect(reportRequests, 3);
+      expect(calculations, 1);
+      expect(archiveWrites, 1);
+      expect(find.text('最终解读。'), findsOneWidget);
     },
   );
 

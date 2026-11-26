@@ -381,6 +381,10 @@ const englishInterfaceStrings = <String, String>{
   "账户出生地点「": "Account birth location “",
   "」无法唯一匹配，请重新选择。": "” is ambiguous. Select it again.",
   "解读服务暂未配置。": "The reading service is not configured.",
+  "获取命理解读": "Get birth chart reading",
+  "重试命理解读": "Retry birth chart reading",
+  "请在个人中心开启命理在线解读授权。":
+      "Enable online birth chart readings in Profile to continue.",
   "返回入口": "Back to start",
   "报告正在成稿": "Preparing your report",
   "星图正在展开": "Preparing your chart",

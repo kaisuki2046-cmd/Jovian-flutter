@@ -45,6 +45,8 @@ class DestinyPageController extends ChangeNotifier {
 
   bool get busy => calculating || generating || saving;
   bool get needsSave => _pendingSave != null;
+  bool get needsReportPermission =>
+      account?.authorizedSession != null && !_allowed;
 
   @override
   void dispose() {
@@ -164,23 +166,45 @@ class DestinyPageController extends ChangeNotifier {
   }
 
   Future<void> generateReport() async {
-    final session = account?.authorizedSession;
+    final client = account;
+    final session = client?.authorizedSession;
     final currentReading = reading;
     final request = requestReport;
     if (busy || currentReading == null || request == null) return;
-    if (session == null || !_current(session.scope)) {
+    if (client == null || session == null || !_current(session.scope)) {
       reportError = '请先在个人中心登录或进入游客体验。';
       _refresh();
       return;
     }
+    if (!_allowed) return;
     generating = true;
     reportError = null;
     stage = 'expressing';
     final task = _task = Completer<void>();
+    final stale = Completer<void>();
+    bool isCurrent() =>
+        !task.isCompleted &&
+        !stale.isCompleted &&
+        _current(session.scope) &&
+        _allowed;
+    void stopIfStale() {
+      if (!isCurrent() && !stale.isCompleted) stale.complete();
+    }
+
     _refresh();
     try {
-      final result = await request(currentReading.reportRequest, task.future);
-      if (task.isCompleted || !_current(session.scope) || !_allowed) return;
+      client.addListener(stopIfStale);
+      final String result;
+      try {
+        if (!isCurrent()) return;
+        result = await request(
+          currentReading.reportRequest,
+          Future.any([task.future, stale.future]),
+        );
+      } finally {
+        client.removeListener(stopIfStale);
+      }
+      if (!isCurrent()) return;
       report = result;
       _pendingSave = (
         owner: session.id,
@@ -189,7 +213,9 @@ class DestinyPageController extends ChangeNotifier {
       );
       await saveReport();
     } on JsonRequestError catch (error) {
-      if (!task.isCompleted && _current(session.scope)) {
+      if (isCurrent()) {
+        if (error.status == 428) await client.initialize();
+        if (!isCurrent()) return;
         reportError = switch (error.status) {
           401 => '当前会话已失效，请重新登录或进入游客体验。',
           428 => '请在个人中心开启命理在线解读授权。',
@@ -197,11 +223,9 @@ class DestinyPageController extends ChangeNotifier {
         };
       }
     } on FormatException catch (error) {
-      if (!task.isCompleted && _current(session.scope))
-        reportError = error.message;
+      if (isCurrent()) reportError = error.message;
     } catch (_) {
-      if (!task.isCompleted && _current(session.scope))
-        reportError = '暂时无法连接解读服务，请重试。';
+      if (isCurrent()) reportError = '暂时无法连接解读服务，请重试。';
     } finally {
       if (identical(_task, task)) {
         _task = null;

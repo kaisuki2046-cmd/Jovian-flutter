@@ -17,7 +17,7 @@ flutter run -d chrome --web-port 8081 --target src/app/main.dart --dart-define-f
 
 已有 RN 构建配置可沿用 `EXPO_PUBLIC_API_BASE_URL`、`EXPO_PUBLIC_DIVINATION_REPORT_URL`、`EXPO_PUBLIC_DESTINY_API_BASE_URL`、`EXPO_PUBLIC_SYNASTRY_API_BASE_URL` 和 `EXPO_PUBLIC_FORTUNE_TIME_BASE_URL`，仍通过 Flutter 的构建参数传入。同一服务同时配置时，Flutter 变量优先。
 
-手机与桌面浏览器共用页面主题、卡片、表单及底栏。内容区按可用宽度居中，最多 720 逻辑像素。底栏顺序为命理、合盘、算事、消息、个人中心，周期运势仍从命理进入。个人中心设置可以切换外观，并在本设备保存选择。
+手机与桌面浏览器共用页面主题、卡片、表单及底栏。内容区按可用宽度居中，最多 720 逻辑像素。底栏顺序为命理、合盘、算事、消息、个人中心，周期运势仍从命理进入。英文底栏沿用 RN 的单行短标签，长按提示和读屏使用完整名称。个人中心设置可以切换外观，并在本设备保存选择。
 
 Web 底栏同步当前页面路径，支持刷新和浏览器前进、后退。使用 `/#/synastry`、`/#/divination`、`/#/messages`、`/#/account` 可直达对应入口，`/#/fortune` 与 `/#/modules/fortune` 继续打开周期运势。旧版带 `snapshotId` 的链接按当前账号读取指定命盘。从命理页打开某张命盘的运势后，刷新当前浏览器页面也会继续查看同一张命盘。个人中心的设置、报告、资料和社交等子页也可通过原账户路径打开。账户服务启用后，完成会话与协议确认即可继续访问原目标。设置可切换浅色、深色或跟随系统，也可选择简体中文或英语。Web 会在首次使用时读取同源 RN 保存的语言和外观。Android 原位升级且保留原应用数据时，也可沿用 RN 保存的外观和语言。生成的报告和用户填写内容保留原文。
 

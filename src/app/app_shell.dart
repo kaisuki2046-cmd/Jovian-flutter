@@ -9,15 +9,16 @@ import '../ui/tab_dock.dart';
 import '../ui/tab_glyph.dart';
 
 enum JovianTab {
-  destiny('命理', TabGlyphShape.chart, '/'),
-  synastry('合盘', TabGlyphShape.match, '/synastry'),
-  divination('算事', TabGlyphShape.oracle, '/divination'),
-  messages('消息', TabGlyphShape.message, '/messages'),
-  account('个人中心', TabGlyphShape.profile, '/account');
+  destiny('命理', 'Chart', TabGlyphShape.chart, '/'),
+  synastry('合盘', 'Match', TabGlyphShape.match, '/synastry'),
+  divination('算事', 'Reading', TabGlyphShape.oracle, '/divination'),
+  messages('消息', 'Messages', TabGlyphShape.message, '/messages'),
+  account('个人中心', 'Profile', TabGlyphShape.profile, '/account');
 
-  const JovianTab(this.label, this.glyph, this.path);
+  const JovianTab(this.label, this.englishCaption, this.glyph, this.path);
 
   final String label;
+  final String englishCaption;
   final TabGlyphShape glyph;
   final String path;
 }
@@ -160,7 +161,9 @@ class _JovianShellState extends State<JovianShell> {
                   for (final tab in JovianTab.values)
                     NavigationDestination(
                       key: ValueKey(tab),
-                      label: context.uiLabel(tab.label),
+                      label: context.uiLanguage == InterfaceLanguage.english
+                          ? tab.englishCaption
+                          : tab.label,
                       tooltip: context.uiLabel(tab.label),
                       icon: TabGlyph(tab.glyph),
                       selectedIcon: TabGlyph(tab.glyph, selected: true),

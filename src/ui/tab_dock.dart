@@ -204,6 +204,67 @@ class _JovianTabDockState extends State<JovianTabDock>
       widget.select(index);
   }
 
+  Widget _destination(int index, NavigationDestination item) {
+    final destination = item.icon is TabGlyph
+        ? NavigationDestination(
+            key: item.key,
+            label: item.label,
+            tooltip: item.tooltip,
+            enabled: item.enabled,
+            icon: SizedBox.square(key: _anchors[index], dimension: 24),
+          )
+        : item;
+    final fullLabel = item.tooltip;
+    if (fullLabel == null || fullLabel == item.label) return destination;
+
+    // Keep the full destination name readable even when the caption is short.
+    return Focus(
+      canRequestFocus: false,
+      includeSemantics: false,
+      child: Builder(
+        builder: (context) {
+          final focus = Focus.of(context);
+          return Semantics(
+            label: fullLabel,
+            button: true,
+            enabled: item.enabled,
+            focused: item.enabled ? focus.hasFocus : null,
+            onFocus: item.enabled
+                ? () => focus.traversalDescendants.firstOrNull?.requestFocus()
+                : null,
+            onTap: item.enabled ? () => _select(index) : null,
+            excludeSemantics: true,
+            child: destination,
+          );
+        },
+      ),
+    );
+  }
+
+  double _maxLabelScale(BuildContext context, double slotWidth) {
+    final theme = Theme.of(context);
+    final style =
+        NavigationBarTheme.of(
+          context,
+        ).labelTextStyle?.resolve({WidgetState.selected}) ??
+        theme.textTheme.labelMedium;
+    final measure = TextPainter(
+      textDirection: Directionality.of(context),
+      maxLines: 1,
+    );
+    var widest = 1.0;
+    try {
+      for (final item in widget.destinations) {
+        measure.text = TextSpan(text: item.label, style: style);
+        measure.layout();
+        widest = math.max(widest, measure.width);
+      }
+    } finally {
+      measure.dispose();
+    }
+    return ((slotWidth - 4) / widest).clamp(0.0, 1.3);
+  }
+
   @override
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
@@ -265,36 +326,31 @@ class _JovianTabDockState extends State<JovianTabDock>
                     child: Positioned.fill(
                       child: Padding(
                         padding: const EdgeInsets.all(_trayPadding),
-                        child: NavigationBar(
-                          height: rowHeight,
-                          backgroundColor: Colors.transparent,
-                          surfaceTintColor: Colors.transparent,
-                          indicatorColor: Colors.transparent,
-                          overlayColor: const WidgetStatePropertyAll(
-                            Colors.transparent,
+                        child: MediaQuery.withClampedTextScaling(
+                          maxScaleFactor: _maxLabelScale(context, slotWidth),
+                          child: NavigationBar(
+                            height: rowHeight,
+                            backgroundColor: Colors.transparent,
+                            surfaceTintColor: Colors.transparent,
+                            indicatorColor: Colors.transparent,
+                            overlayColor: WidgetStateProperty.resolveWith(
+                              (states) => states.contains(WidgetState.focused)
+                                  ? Theme.of(
+                                      context,
+                                    ).colorScheme.primary.withValues(alpha: .18)
+                                  : Colors.transparent,
+                            ),
+                            animationDuration: reduced
+                                ? Duration.zero
+                                : const Duration(milliseconds: 235),
+                            selectedIndex: widget.selected,
+                            onDestinationSelected: _select,
+                            destinations: [
+                              for (final (index, item)
+                                  in widget.destinations.indexed)
+                                _destination(index, item),
+                            ],
                           ),
-                          animationDuration: reduced
-                              ? Duration.zero
-                              : const Duration(milliseconds: 235),
-                          selectedIndex: widget.selected,
-                          onDestinationSelected: _select,
-                          destinations: [
-                            for (final (index, item)
-                                in widget.destinations.indexed)
-                              if (item.icon is TabGlyph)
-                                NavigationDestination(
-                                  key: item.key,
-                                  label: item.label,
-                                  tooltip: item.tooltip,
-                                  enabled: item.enabled,
-                                  icon: SizedBox.square(
-                                    key: _anchors[index],
-                                    dimension: 24,
-                                  ),
-                                )
-                              else
-                                item,
-                          ],
                         ),
                       ),
                     ),

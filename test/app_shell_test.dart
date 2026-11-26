@@ -1,3 +1,5 @@
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -5,6 +7,7 @@ import '../src/app/app_shell.dart' show JovianShell;
 import '../src/app/main.dart';
 import '../src/features/divination/view/guide_assistant.dart';
 import '../src/features/divination/view/guide_composer.dart';
+import '../src/ui/interface_language.dart';
 import '../src/ui/tab_dock.dart';
 import '../src/ui/tab_lens.dart';
 import '../src/ui/theme.dart';
@@ -190,6 +193,97 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+
+  testWidgets('narrow English tabs use the original captions and full names', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(320, 640);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('en'),
+        localizationsDelegates: const [interfaceStringsDelegate],
+        theme: jovianTheme(Brightness.light),
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: const TextScaler.linear(2)),
+          child: child!,
+        ),
+        home: JovianShell(
+          initialTab: JovianTab.destiny,
+          buildPage: (_, tab, __, ___) =>
+              Center(child: Text('Screen ${tab.name}')),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final bar = find.byType(NavigationBar);
+    expect(tester.getSize(bar).height, 56);
+    final captions = ['Chart', 'Match', 'Reading', 'Messages', 'Profile'];
+    final fullNames = [
+      'Birth chart',
+      'Compatibility',
+      'AI reading',
+      'Messages',
+      'Profile',
+    ];
+    for (final (index, caption) in captions.indexed) {
+      final label = find.text(caption);
+      expect(label, findsOneWidget);
+      final paragraph = tester.renderObject<RenderParagraph>(label);
+      final width = paragraph.getMaxIntrinsicWidth(double.infinity);
+      expect(paragraph.size.width + .1, greaterThanOrEqualTo(width));
+
+      final destination = _tab(JovianTab.values[index]);
+      expect(tester.getSize(destination).width, greaterThanOrEqualTo(48));
+      expect(
+        tester.getSemantics(destination).label,
+        contains(fullNames[index]),
+      );
+      expect(
+        find.descendant(
+          of: destination,
+          matching: find.byWidgetPredicate(
+            (widget) => widget is Tooltip && widget.message == fullNames[index],
+          ),
+        ),
+        findsOneWidget,
+      );
+    }
+
+    final focusColor = tester.widget<NavigationBar>(bar).overlayColor!;
+    expect(
+      focusColor.resolve({WidgetState.focused}),
+      isNot(Colors.transparent),
+    );
+    expect(focusColor.resolve({WidgetState.pressed}), Colors.transparent);
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(
+      tester.widget<NavigationBar>(bar).selectedIndex,
+      JovianTab.synastry.index,
+    );
+
+    final start = tester.getCenter(_tab(JovianTab.synastry));
+    final profile = tester.getCenter(_tab(JovianTab.account));
+    final gesture = await tester.startGesture(start);
+    await gesture.moveTo(profile);
+    await tester.pump();
+    await gesture.up();
+    await tester.pumpAndSettle();
+    expect(
+      tester.widget<NavigationBar>(bar).selectedIndex,
+      JovianTab.account.index,
+    );
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('the glass lens follows a drag and settles at its target once', (
     tester,

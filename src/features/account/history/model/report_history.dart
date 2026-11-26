@@ -10,12 +10,19 @@ enum ReportKind {
 final _archiveId = RegExp(r'^[0-9a-f]{64}$');
 
 class ReportEntry {
-  const ReportEntry(this.id, this.title, this.calculatedAt, this.savedAt);
+  const ReportEntry(
+    this.id,
+    this.title,
+    this.calculatedAt,
+    this.savedAt, {
+    this.chartSnapshotSaved = false,
+  });
 
   final String id;
   final String title;
   final DateTime calculatedAt;
   final DateTime savedAt;
+  final bool chartSnapshotSaved;
 
   factory ReportEntry.fromJson(Object? value, ReportKind kind) {
     if (value
@@ -33,6 +40,9 @@ class ReportEntry {
         kind == ReportKind.destiny && title == '命盘记录' ? '命理解读' : title,
         DateTime.parse(calculated),
         DateTime.fromMillisecondsSinceEpoch(saved, isUtc: true),
+        chartSnapshotSaved:
+            kind == ReportKind.destiny &&
+            (value as Map)['chartSnapshotSaved'] == true,
       );
     }
     throw const FormatException('Invalid report entry.');
@@ -63,10 +73,16 @@ class ReportHistoryPage {
 }
 
 class ArchivedReport {
-  const ArchivedReport(this.entry, this.body, {this.context = const {}});
+  const ArchivedReport(
+    this.entry,
+    this.body, {
+    this.context = const {},
+    this.destiny = const {},
+  });
   final ReportEntry entry;
   final String body;
   final Map<String, Object?> context;
+  final Map<String, Object?> destiny;
 
   factory ArchivedReport.fromJson(Map<String, Object?> value, ReportKind kind) {
     final entry = ReportEntry.fromJson(value, kind);
@@ -74,8 +90,13 @@ class ArchivedReport {
     if (details is Map && details['version'] == 1) {
       if (kind == ReportKind.destiny) {
         final body = details['overview'];
-        if (body is String && body.trim().isNotEmpty)
-          return ArchivedReport(entry, body);
+        if (body is String && body.trim().isNotEmpty) {
+          return ArchivedReport(
+            entry,
+            body,
+            destiny: Map<String, Object?>.from(details),
+          );
+        }
       } else if (details['kind'] == kind.name && details['sections'] is List) {
         final paragraphs = <String>[];
         for (final item in details['sections'] as List) {

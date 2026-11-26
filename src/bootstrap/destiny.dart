@@ -30,14 +30,22 @@ Future<LocalBaZi> calculateDestinyBaZi(BirthProfile profile) async {
   return calculateLocalBaZi(profile);
 }
 
-Future<DestinyReading> Function(BirthProfile, Future<void>)?
+Future<DestinyReading> Function(
+  BirthProfile,
+  Future<void>,
+  void Function(String),
+)?
 legacyDestinyCalculation() {
   const compute = BrowserCompute();
   if (!compute.isAvailable) return null;
-  return (profile, cancel) async {
+  return (profile, cancel, progress) async {
     try {
       return DestinyReading.fromLegacy(
-        await compute.calculateDestiny(profile.toJson(), cancel: cancel),
+        await compute.calculateDestiny(
+          profile.toJson(),
+          cancel: cancel,
+          onProgress: progress,
+        ),
       );
     } on BrowserComputeException catch (error) {
       throw FormatException(error.message);
@@ -45,19 +53,20 @@ legacyDestinyCalculation() {
   };
 }
 
-Future<String> Function(Map<String, Object?>)? configureDestinyReport({
+Future<String> Function(Map<String, Object?>, Future<void>)?
+configureDestinyReport({
   String value = const String.fromEnvironment('DESTINY_REPORT_URL'),
   Future<String?> Function()? readNativeSession,
 }) {
   final base = serviceEndpoint(value, 'DESTINY_REPORT_URL');
   if (base == null) return null;
-  return (body) async {
+  return (body, cancel) async {
     final client = createCredentialedClient();
     try {
       return await DestinyReportApi(
         JsonHttpClient(base: base, client: client),
         readNativeSession: kIsWeb ? null : readNativeSession,
-      ).read(body);
+      ).read(body, cancel: cancel);
     } finally {
       client.close();
     }

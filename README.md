@@ -118,11 +118,13 @@ dart run test/knowledge_contract.dart
 
 在 `src/features/destiny/control/` 下运行 `dart pub get`、`dart run test/birth_clock_parity.dart` 和 `dart run test/bazi_parity.dart`。出生时刻对照覆盖时分缺失采样、历史时区和夏令时边界。八字对照覆盖节气前后、23 点换日和大运。运行对照需 Node.js，八字对照还需要原项目的 npm 依赖。Dart 时钟使用内置 IANA 转换规则，新时钟版本标识为 `gregory-iana-tzdb-v1`。
 
-Flutter 首页的「命理」入口可填写出生资料并在本机计算八字。时分缺失时，四柱保留采样得到的候选。出生地沿用旧版 2,941 条目录。
+Flutter Web 的「命理」沿用原版出生资料核对流程，使用原 TypeScript 在浏览器排八字、紫微和西方星盘。盘面可在同一弹窗切换，时分缺失时显示原计算给出的稳定结果和时辰情景。出生地沿用旧版 2,941 条目录。配置 `DESTINY_REPORT_URL` 后，报告沿用原 Node 解读和账户归档服务。重新进入可回看上次报告和已归档盘面，完整快照可直接用于周期运势。
+
+星盘的黄道与行星符号使用离线字体。[Noto Sans Symbols](https://notofonts.github.io/symbols/) · [字体许可证](src/features/destiny/assets/NotoSansSymbols-OFL.txt)
 
 在 `src/features/account/server/` 运行 `dart pub get` 和 `dart run bin/account.dart` 可启动迁移中的 Dart 账户服务。默认监听回环地址，临时 SQLite 文件位于系统临时目录。沿用 `APP_ACCOUNT_PORT`、`APP_ACCOUNT_HOST`、`APP_ACCOUNT_DB`、`APP_WEB_ORIGIN`、`APP_ACCOUNT_ISOLATE_WEB_SESSION` 和 `APP_AGREEMENTS_FILE`。当前支持密码登录、回环开发环境免验证码注册、游客、UID、协议、分用途 AI 授权，以及命理、运势和合盘归档接口。短信和邮箱发码、正式第三方登录、隐私请求仍待迁移。
 
-个人中心的「我的报告」分页读取当前账号或游客身份的已保存解读。「命理档案」查看最近一次命理记录的八字、紫微和西方星盘基础数据。Flutter Web 的运势、合盘解读沿用现有报告服务和账户归档格式。
+个人中心的「我的报告」分页读取当前账号或游客身份的已保存解读。「命理档案」查看最近一次命理记录的八字、紫微和西方星盘基础数据。Flutter Web 的命理、运势和合盘解读沿用现有报告服务和账户归档格式。
 
 在同一目录运行 `dart run test/legacy_credentials_contract.dart`、`dart run test/account_store_contract.dart` 和 `dart run test/account_http_contract.dart`，可核对密码兼容性、SQLite 双向读写、会话和授权。在 `src/features/compliance/server/` 执行 `dart pub get` 和 `dart run test/agreements_parity.dart` 核对协议草案及摘要。对照使用 Node.js、临时凭证与隔离数据库。
 
@@ -136,7 +138,7 @@ Flutter 首页的「命理」入口可填写出生资料并在本机计算八字
 | 算事控制层 | 盘面计算与校验、历史报告解析、待完成事件重放和解读重试 | 账号归档联动和原生恢复 |
 | 算事后台 | 原有 `/reading` 路由、问题确认凭证、模型、账户权限、SQLite 会话、报告和追问 | 实际服务切换和真实模型回归 |
 | 运势 | 命理入口、UTC 校时、四周期和指定日期计算、黄历、历法查询、Web 在线解读与归档恢复、独立每日提运建议 | 原生平台运行原计算与真机回归 |
-| 命理 | 出生资料、八字预览、Web 复用原有 TypeScript 排盘、可配置的原报告服务 | 完整盘面样式、紫微和西占平台回归、报告生成与保存端到端验收 |
+| 命理 | Web 出生资料核对、原 TypeScript 三类排盘、紫微宫位交互、西方星图、现有报告自动归档及回看 | 账户出生资料同步、设备档案、原生平台运行原计算与真机回归 |
 | 账户 | 密码登录、会话、UID、报告与档案、设置、资料编辑和实名认证占位表单 | 实名验证服务、密码设置界面、正式第三方登录与隐私请求 |
 | 合规 | 三份现有草案正文、版本与摘要，发布参数校验 | 合规中心界面及服务接线 |
 | 合盘 | Web 双人排盘和比较、本人档案、在线四类解读与归档 | 原生平台运行原计算与真机回归 |

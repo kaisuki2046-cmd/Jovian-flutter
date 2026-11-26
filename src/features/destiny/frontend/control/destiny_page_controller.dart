@@ -16,11 +16,17 @@ class DestinyPageController extends ChangeNotifier {
   });
 
   final Future<LocalBaZi> Function(BirthProfile) calculate;
-  final Future<DestinyReading> Function(BirthProfile, Future<void>)?
+  final Future<DestinyReading> Function(
+    BirthProfile,
+    Future<void>,
+    void Function(String),
+  )?
   calculateReading;
-  final Future<String> Function(Map<String, Object?>)? requestReport;
+  final Future<String> Function(Map<String, Object?>, Future<void>)?
+  requestReport;
   final AccountController? account;
   final _disposed = Completer<void>();
+  Completer<void>? _task;
   var _revision = 0;
 
   bool calculating = false;
@@ -30,9 +36,13 @@ class DestinyPageController extends ChangeNotifier {
   bool archiveError = false;
   String? calculationError;
   String? reportError;
+  String? stage;
   LocalBaZi? chart;
   DestinyReading? reading;
   String? report;
+  DestinyCharts? archivedCharts;
+  String? fortuneArchiveId;
+  bool summarySaved = false;
   ({String owner, String scope, Map<String, Object?> report})? _pendingSave;
 
   bool get busy => calculating || generating || saving;
@@ -41,6 +51,7 @@ class DestinyPageController extends ChangeNotifier {
   @override
   void dispose() {
     _disposed.complete();
+    _task?.complete();
     super.dispose();
   }
 
@@ -65,25 +76,67 @@ class DestinyPageController extends ChangeNotifier {
     chart = null;
     reading = null;
     report = null;
+    archivedCharts = null;
+    fortuneArchiveId = null;
+    summarySaved = false;
     reportError = null;
     archiveError = false;
     _pendingSave = null;
+    final task = _task = Completer<void>();
+    stage = 'validating';
     _refresh();
     try {
       final read = calculateReading;
       if (read == null) {
-        chart = await calculate(profile);
+        final result = await calculate(profile);
+        if (!task.isCompleted) chart = result;
       } else {
-        reading = await read(profile, _disposed.future);
+        final result = await read(profile, task.future, (value) {
+          if (task.isCompleted) return;
+          stage = value;
+          _refresh();
+        });
+        if (!task.isCompleted) reading = result;
       }
     } on FormatException catch (error) {
-      calculationError = error.message;
+      if (!task.isCompleted) calculationError = error.message;
     } catch (_) {
-      calculationError = '暂时无法排盘，请重试。';
+      if (!task.isCompleted) calculationError = '暂时无法排盘，请重试。';
     } finally {
-      calculating = false;
-      _refresh();
+      if (identical(_task, task)) {
+        _task = null;
+        calculating = false;
+        stage = null;
+        _refresh();
+      }
     }
+    if (!task.isCompleted && reading != null && requestReport != null)
+      await generateReport();
+  }
+
+  void cancelTask() {
+    if (saving) return;
+    _task?.complete();
+    _task = null;
+    calculating = false;
+    generating = false;
+    stage = null;
+    _refresh();
+  }
+
+  Future<void> returnToArchive() async {
+    if (busy) return;
+    _revision++;
+    reading = null;
+    report = null;
+    archivedCharts = null;
+    fortuneArchiveId = null;
+    summarySaved = false;
+    reportError = null;
+    calculationError = null;
+    _pendingSave = null;
+    _refresh();
+    await restoreReport();
   }
 
   Future<void> restoreReport() async {
@@ -99,8 +152,15 @@ class DestinyPageController extends ChangeNotifier {
         session.id,
         ReportKind.destiny,
       );
-      if (_current(session.scope) && revision == _revision)
+      if (_current(session.scope) && revision == _revision) {
         report = result?.body;
+        archivedCharts = result == null
+            ? null
+            : DestinyCharts.tryArchive(result.destiny);
+        fortuneArchiveId = result?.destiny['chartSnapshot'] is Map
+            ? result!.entry.id
+            : null;
+      }
     } catch (_) {
       if (_current(session.scope) && revision == _revision) archiveError = true;
     } finally {
@@ -119,17 +179,14 @@ class DestinyPageController extends ChangeNotifier {
       _refresh();
       return;
     }
-    if (!_allowed) {
-      reportError = '请在个人中心开启命理在线解读授权。';
-      _refresh();
-      return;
-    }
     generating = true;
     reportError = null;
+    stage = 'expressing';
+    final task = _task = Completer<void>();
     _refresh();
     try {
-      final result = await request(currentReading.reportRequest);
-      if (!_current(session.scope) || !_allowed) return;
+      final result = await request(currentReading.reportRequest, task.future);
+      if (task.isCompleted || !_current(session.scope) || !_allowed) return;
       report = result;
       _pendingSave = (
         owner: session.id,
@@ -138,7 +195,7 @@ class DestinyPageController extends ChangeNotifier {
       );
       await saveReport();
     } on JsonRequestError catch (error) {
-      if (_current(session.scope)) {
+      if (!task.isCompleted && _current(session.scope)) {
         reportError = switch (error.status) {
           401 => '当前会话已失效，请重新登录或进入游客体验。',
           428 => '请在个人中心开启命理在线解读授权。',
@@ -146,12 +203,18 @@ class DestinyPageController extends ChangeNotifier {
         };
       }
     } on FormatException catch (error) {
-      if (_current(session.scope)) reportError = error.message;
+      if (!task.isCompleted && _current(session.scope))
+        reportError = error.message;
     } catch (_) {
-      if (_current(session.scope)) reportError = '暂时无法连接解读服务，请重试。';
+      if (!task.isCompleted && _current(session.scope))
+        reportError = '暂时无法连接解读服务，请重试。';
     } finally {
-      generating = false;
-      _refresh();
+      if (identical(_task, task)) {
+        _task = null;
+        generating = false;
+        stage = null;
+        _refresh();
+      }
     }
   }
 
@@ -164,17 +227,47 @@ class DestinyPageController extends ChangeNotifier {
     reportError = null;
     _refresh();
     try {
-      await client.reports.save(
+      final entry = await _saveArchive(
+        client,
         pending.owner,
-        ReportKind.destiny,
+        pending.scope,
         pending.report,
       );
-      if (_current(pending.scope)) _pendingSave = null;
+      if (_current(pending.scope)) {
+        _pendingSave = null;
+        fortuneArchiveId = entry.chartSnapshotSaved ? entry.id : null;
+        summarySaved = !entry.chartSnapshotSaved;
+      }
+    } on JsonRequestError catch (error) {
+      if (_current(pending.scope)) {
+        reportError = switch (error.status) {
+          400 || 413 || 422 => '报告已生成，当前归档服务无法保存此内容，可重试归档。',
+          _ => '报告已生成，暂时无法存档。',
+        };
+      }
     } catch (_) {
       if (_current(pending.scope)) reportError = '报告已生成，暂时无法存档。';
     } finally {
       saving = false;
       _refresh();
+    }
+  }
+
+  Future<ReportEntry> _saveArchive(
+    AccountController client,
+    String owner,
+    String scope,
+    Map<String, Object?> record,
+  ) async {
+    try {
+      return await client.reports.save(owner, ReportKind.destiny, record);
+    } on JsonRequestError catch (error) {
+      if (error.status != 413 ||
+          !_current(scope) ||
+          !record.containsKey('chartSnapshot'))
+        rethrow;
+      final basics = {...record}..remove('chartSnapshot');
+      return client.reports.save(owner, ReportKind.destiny, basics);
     }
   }
 }

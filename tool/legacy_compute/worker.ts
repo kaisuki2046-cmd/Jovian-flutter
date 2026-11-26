@@ -12,6 +12,7 @@ import { compareCharts, hasUnknownBirthTime } from '../../../src/features/synast
 import { adaptInterpretationFacts } from '../../../src/features/synastry/control/interpretation-fact-adapter';
 import { prepareSynastrySummary } from '../../../src/features/synastry/control/summary';
 import type { ComparisonSubject } from '../../../src/features/synastry/model/comparison';
+import { destinyPresentation } from './destiny-presentation';
 
 type Operation =
   | { name: 'calculateDestiny' | 'calculateManualSubjectChart'; profile: BirthProfile }
@@ -38,6 +39,7 @@ async function run(operation: Operation) {
         reading,
         archive: toDestinyArchiveWithSnapshot(reading, ''),
         reportRequest: buildReportRequest(reading),
+        presentation: destinyPresentation(reading.charts),
       };
     }
     case 'calculateManualSubjectChart':

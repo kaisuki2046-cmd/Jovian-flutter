@@ -10,6 +10,7 @@ class BirthProfileEditor extends StatefulWidget {
     required this.onSubmit,
     this.busy = false,
     this.requireKnownTime = false,
+    this.initialProfile,
   });
 
   final Future<List<BirthPlace>> Function() loadPlaces;
@@ -17,18 +18,28 @@ class BirthProfileEditor extends StatefulWidget {
   final ValueChanged<BirthProfile> onSubmit;
   final bool busy;
   final bool requireKnownTime;
+  final BirthProfile? initialProfile;
 
   @override
   State<BirthProfileEditor> createState() => _BirthProfileEditorState();
 }
 
 class _BirthProfileEditorState extends State<BirthProfileEditor> {
-  final _date = TextEditingController();
-  final _hour = TextEditingController();
-  final _minute = TextEditingController();
+  late final _date = TextEditingController(
+    text: widget.initialProfile?.date.utcMidnight.toIso8601String().substring(
+      0,
+      10,
+    ),
+  );
+  late final _hour = TextEditingController(
+    text: widget.initialProfile?.time.hour?.toString(),
+  );
+  late final _minute = TextEditingController(
+    text: widget.initialProfile?.time.minute?.toString(),
+  );
   late Future<List<BirthPlace>> _places = widget.loadPlaces();
-  BirthPlace? _place;
-  BirthGender? _gender;
+  late BirthPlace? _place = widget.initialProfile?.place;
+  late BirthGender? _gender = widget.initialProfile?.gender;
   String? _error;
 
   @override
@@ -123,6 +134,9 @@ class _BirthProfileEditorState extends State<BirthProfileEditor> {
   );
 
   Widget _placeField(List<BirthPlace> places) => Autocomplete<BirthPlace>(
+    initialValue: TextEditingValue(
+      text: widget.initialProfile?.place.name ?? '',
+    ),
     displayStringForOption: (place) => place.name,
     fieldViewBuilder: (context, field, focus, submit) => TextField(
       enabled: !widget.busy,

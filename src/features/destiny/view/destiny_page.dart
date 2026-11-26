@@ -3,12 +3,13 @@ import 'dart:async';
 import 'package:jovian_destiny/jovian_destiny.dart';
 import 'package:material_ui/material_ui.dart';
 
-import '../../../ui/report_body.dart';
 import '../../../ui/theme.dart';
 import '../../account/account.dart';
 import '../frontend/control/destiny_page_controller.dart';
 import '../model/destiny_reading.dart';
 import 'birth_profile_editor.dart';
+import 'destiny_chart_dialog.dart';
+import 'destiny_report_text.dart';
 
 const _pillarLabels = {
   Pillar.year: '年柱',
@@ -30,10 +31,15 @@ class DestinyPage extends StatefulWidget {
 
   final Future<List<BirthPlace>> Function() loadPlaces;
   final Future<LocalBaZi> Function(BirthProfile) calculate;
-  final Future<DestinyReading> Function(BirthProfile, Future<void>)?
+  final Future<DestinyReading> Function(
+    BirthProfile,
+    Future<void>,
+    void Function(String),
+  )?
   calculateReading;
-  final Future<String> Function(Map<String, Object?>)? requestReport;
-  final VoidCallback? openFortune;
+  final Future<String> Function(Map<String, Object?>, Future<void>)?
+  requestReport;
+  final void Function(String? archiveId)? openFortune;
   final AccountController? account;
 
   @override
@@ -42,6 +48,8 @@ class DestinyPage extends StatefulWidget {
 
 class _DestinyPageState extends State<DestinyPage> {
   late final DestinyPageController _controller;
+  BirthProfile? _draft;
+  bool _editing = false;
 
   @override
   void initState() {
@@ -75,7 +83,7 @@ class _DestinyPageState extends State<DestinyPage> {
             if (widget.openFortune case final open?) ...[
               Card(
                 child: ListTile(
-                  onTap: open,
+                  onTap: () => open(null),
                   leading: const Icon(Icons.calendar_month_outlined),
                   title: const Text('周期运势'),
                   subtitle: const Text('日、周、月、年'),
@@ -84,47 +92,44 @@ class _DestinyPageState extends State<DestinyPage> {
               ),
               const SizedBox(height: 18),
             ],
-            if (_controller.report case final report?
-                when _controller.reading == null)
-              _reportCard(context, report, saved: true),
             if (_controller.archiveLoading) const LinearProgressIndicator(),
             if (_controller.archiveError)
               TextButton(
                 onPressed: _controller.restoreReport,
                 child: const Text('已存报告读取失败，点此重试'),
               ),
-            Text('出生资料', style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 12),
-            BirthProfileEditor(
-              loadPlaces: widget.loadPlaces,
-              submitLabel: _controller.calculating
-                  ? '正在排盘…'
-                  : widget.calculateReading == null
-                  ? '计算八字'
-                  : '排盘',
-              busy: _controller.busy,
-              onSubmit: _controller.submit,
-            ),
+            if (widget.calculateReading == null)
+              _editor(context, legacy: false)
+            else if (_controller.stage case final stage?
+                when !_controller.saving)
+              _progress(context, stage)
+            else if (_editing)
+              _editor(context, legacy: true)
+            else if (_controller.report case final body?)
+              ..._report(context, body)
+            else if (_controller.reading case final reading?) ...[
+              FilledButton.tonal(
+                onPressed: () => showDestinyCharts(context, reading.charts),
+                child: const Text('查看命盘'),
+              ),
+              if (widget.requestReport != null)
+                FilledButton(
+                  onPressed: _controller.generateReport,
+                  child: const Text('获取命理解读'),
+                )
+              else
+                const Text('解读服务暂未配置。'),
+              TextButton(
+                onPressed: () => setState(() => _editing = true),
+                child: const Text('修改出生资料'),
+              ),
+            ] else
+              _entry(context),
             if (_controller.calculationError case final error?)
               _status(context, error),
             if (_controller.chart case final chart?) ...[
               const SizedBox(height: 16),
               _BaZiResult(chart: chart),
-            ],
-            if (_controller.reading case final reading?) ...[
-              const SizedBox(height: 16),
-              for (final preview in reading.charts)
-                _LegacyChartCard(preview: preview),
-              const SizedBox(height: 12),
-              if (_controller.report == null && widget.requestReport != null)
-                FilledButton.tonal(
-                  onPressed: _controller.busy
-                      ? null
-                      : _controller.generateReport,
-                  child: Text(_controller.generating ? '正在生成解读…' : '获取命理解读'),
-                ),
-              if (_controller.report case final body?)
-                _reportCard(context, body, saved: !_controller.needsSave),
             ],
             if (_controller.reportError case final error?)
               _status(context, error),
@@ -138,6 +143,181 @@ class _DestinyPageState extends State<DestinyPage> {
       ),
     ),
   );
+
+  Widget _entry(BuildContext context) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 8),
+    child: Column(
+      children: [
+        Image.asset(
+          'src/features/destiny/assets/celestial-orb.png',
+          width: 154,
+          height: 154,
+          excludeFromSemantics: true,
+        ),
+        Text('星象手记', style: Theme.of(context).textTheme.headlineMedium),
+        const Text('从出生资料展开你的命盘'),
+        const SizedBox(height: 16),
+        FilledButton(
+          onPressed: () => setState(() => _editing = true),
+          child: const Text('开始解读'),
+        ),
+      ],
+    ),
+  );
+
+  Widget _editor(BuildContext context, {required bool legacy}) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      Text(
+        legacy ? '填写出生资料' : '出生资料',
+        style: Theme.of(context).textTheme.titleMedium,
+      ),
+      const SizedBox(height: 12),
+      BirthProfileEditor(
+        loadPlaces: widget.loadPlaces,
+        initialProfile: legacy ? _draft : null,
+        submitLabel: legacy
+            ? '核对出生资料'
+            : _controller.calculating
+            ? '正在排盘…'
+            : '计算八字',
+        busy: _controller.busy,
+        onSubmit: legacy
+            ? (profile) => _confirm(context, profile)
+            : _controller.submit,
+      ),
+      if (legacy)
+        TextButton(
+          onPressed: () => setState(() => _editing = false),
+          child: const Text('返回入口'),
+        ),
+    ],
+  );
+
+  Future<void> _confirm(BuildContext context, BirthProfile profile) async {
+    final time = profile.time;
+    final clock = time.timeKnown
+        ? '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}'
+        : '时刻未完全确定';
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('核对出生资料'),
+        content: Text(
+          '${profile.date.utcMidnight.toIso8601String().substring(0, 10)} · $clock\n${profile.place.name} · ${switch (profile.gender) {
+            BirthGender.female => '女',
+            BirthGender.male => '男',
+            BirthGender.other => '其他',
+          }}',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('返回修改'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('确认测算'),
+          ),
+        ],
+      ),
+    );
+    if (!mounted || confirmed != true) return;
+    setState(() {
+      _draft = profile;
+      _editing = false;
+    });
+    await _controller.submit(profile);
+  }
+
+  Widget _progress(BuildContext context, String stage) => Card(
+    child: Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          Text(
+            stage == 'expressing' ? '报告正在成稿' : '星图正在展开',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 12),
+          const LinearProgressIndicator(),
+          const SizedBox(height: 12),
+          Semantics(
+            liveRegion: true,
+            child: Text(switch (stage) {
+              'validating' => '核对出生资料',
+              'normalizing' => '定位出生地的当地时间',
+              'bazi' => '计算八字四柱',
+              'ziwei' => '计算紫微斗数',
+              'western' => '计算西方星盘',
+              _ => '检索解读素材并整理报告',
+            }),
+          ),
+          TextButton(
+            onPressed: _controller.cancelTask,
+            child: const Text('取消测算'),
+          ),
+        ],
+      ),
+    ),
+  );
+
+  List<Widget> _report(BuildContext context, String body) {
+    final charts = _controller.reading?.charts ?? _controller.archivedCharts;
+    return [
+      _reportCard(context, body, saved: _controller.reading == null),
+      if (_controller.saving) const LinearProgressIndicator(),
+      if (_controller.summarySaved) const Text('已保存解读和基础盘面。'),
+      if (charts != null)
+        FilledButton.tonal(
+          onPressed: () => showDestinyCharts(context, charts),
+          child: const Text('查看命盘'),
+        ),
+      if ((_controller.fortuneArchiveId, widget.openFortune) case (
+        final id?,
+        final open?,
+      ))
+        Card(
+          child: ListTile(
+            leading: const Icon(Icons.calendar_month_outlined),
+            title: const Text('查看此盘的周期运势'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => open(id),
+          ),
+        ),
+      if (widget.account case final account?
+          when _controller.fortuneArchiveId != null ||
+              _controller.summarySaved ||
+              _controller.archivedCharts != null)
+        TextButton(
+          onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute<void>(
+              builder: (_) => ReportsPage(account: account),
+            ),
+          ),
+          child: const Text('查看命盘记录'),
+        ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          TextButton(
+            onPressed: _controller.saving
+                ? null
+                : () => setState(() => _editing = true),
+            child: Text(_draft == null ? '重新测算' : '编辑出生资料'),
+          ),
+          if (_controller.reading != null)
+            TextButton(
+              onPressed: _controller.saving
+                  ? null
+                  : _controller.returnToArchive,
+              child: const Text('返回入口'),
+            ),
+        ],
+      ),
+    ];
+  }
 
   Widget _status(BuildContext context, String error) => Semantics(
     liveRegion: true,
@@ -161,30 +341,12 @@ class _DestinyPageState extends State<DestinyPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            saved ? '已保存的命理解读' : '命理解读',
+            saved ? '上次解读' : '人生解读',
             style: Theme.of(context).textTheme.titleMedium,
           ),
-          ReportBody(body),
+          DestinyReportText(body),
         ],
       ),
-    ),
-  );
-}
-
-class _LegacyChartCard extends StatelessWidget {
-  const _LegacyChartCard({required this.preview});
-
-  final DestinyChartPreview preview;
-
-  @override
-  Widget build(BuildContext context) => Card(
-    child: ExpansionTile(
-      title: Text(preview.label),
-      subtitle: preview.note == null ? null : Text(preview.note!),
-      children: [
-        for (final row in preview.rows)
-          ListTile(title: Text(row.label), subtitle: Text(row.value)),
-      ],
     ),
   );
 }

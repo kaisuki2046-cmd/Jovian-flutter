@@ -143,7 +143,8 @@ Widget _destinyPage(
     readNativeSession: account?.readNativeSession,
   ),
   account: account,
-  openFortune: () => Navigator.pushNamed(context, '/fortune'),
+  openFortune: (archiveId) =>
+      Navigator.pushNamed(context, '/fortune', arguments: archiveId),
 );
 
 class _AppHome extends StatefulWidget {

@@ -29,9 +29,14 @@ flutter:
     - family: JovianSansSC
       fonts:
         - asset: src/ui/assets/NotoSansSC-Regular.otf
+    - family: JovianChartSymbols
+      fonts:
+        - asset: src/features/destiny/assets/NotoSansSymbols-Regular.ttf
   assets:
     - src/ui/assets/NotoSansSC-OFL.txt
     - src/features/destiny/assets/birth_places.json
+    - src/features/destiny/assets/celestial-orb.png
+    - src/features/destiny/assets/NotoSansSymbols-OFL.txt
     - src/features/divination/assets/tarot/
     - src/features/divination/assets/coins/
     - src/features/divination/assets/coins/collision/

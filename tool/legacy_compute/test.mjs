@@ -127,7 +127,17 @@ try {
   const reading = await runReading(a, new AbortController().signal, (stage) => progress.push(stage));
   const archive = toDestinyArchiveWithSnapshot(reading, '');
   const result = await ask({ name: 'calculateDestiny', profile: a });
-  assertParity(result.result, { reading, archive, reportRequest: buildReportRequest(reading) });
+  const { presentation, ...legacy } = result.result;
+  assertParity(legacy, { reading, archive, reportRequest: buildReportRequest(reading) });
+  assert.equal(presentation.bazi.length, 7);
+  assert.deepEqual(presentation.ziwei.palaces.map(({ branch }) => branch),
+    reading.charts[1].summary.palaces.map(({ earthlyBranch }) => earthlyBranch));
+  assert.equal(presentation.western.wheel.ascendant, reading.charts[2].summary.exact.ascendant);
+  assert.deepEqual(presentation.western.wheel.houses.map(({ longitude }) => longitude),
+    reading.charts[2].summary.exact.houses);
+  const partial = await ask({name: 'calculateDestiny', profile: { ...a, time: { timeKnown: false, hour: null, minute: null } }});
+  assert.equal(partial.result.presentation.western.wheel, null);
+  assert.ok(!partial.result.presentation.ziwei.palaces);
   assert.deepEqual(result.stages, progress);
   const dartResult = await page.evaluate(async (profile) =>
     JSON.parse(await window.runBrowserComputeTest(JSON.stringify(profile))), a);

@@ -127,6 +127,7 @@ Map<String, Object?> _permissions(bool accepted) => {
 Widget _app(
   AccountController account, {
   VoidCallback? onUpgrade,
+  VoidCallback? onMessages,
   ValueChanged<ThemeMode>? onThemeModeChanged,
 }) => MaterialApp(
   home: Scaffold(
@@ -137,6 +138,7 @@ Widget _app(
           ProfileDashboard(
             account: account,
             onUpgrade: onUpgrade,
+            openMessages: onMessages,
             openSettings: () => Navigator.of(context).push<void>(
               MaterialPageRoute(
                 builder: (_) => AccountSettingsPage(
@@ -155,11 +157,16 @@ Widget _app(
 
 void main() {
   testWidgets(
-    'loads real member counts, copies the public UID and opens archives',
+    'preserves the original narrow layout, real counts, UID copying, and shortcuts',
     (tester) async {
       final paths = <String>[];
       final account = _fixture(paths);
       final clipboard = <Object?>[];
+      var openedMessages = false;
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(320, 720);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
         SystemChannels.platform,
         (call) async {
@@ -174,11 +181,26 @@ void main() {
         );
       });
       await account.initialize();
-      await tester.pumpWidget(_app(account));
+      await tester.pumpWidget(
+        _app(account, onMessages: () => openedMessages = true),
+      );
       await tester.pumpAndSettle();
+      final avatar = tester.getRect(
+        find.byKey(const ValueKey('profile-avatar')),
+      );
+      final gear = tester.getRect(find.byTooltip('设置'));
+      expect(avatar.size, const Size.square(104));
+      expect(gear.bottom, lessThan(avatar.top));
+      expect(gear.right, greaterThan(avatar.right));
+      expect(
+        tester.getTopLeft(find.text('我的报告')).dy,
+        tester.getTopLeft(find.text('消息')).dy,
+      );
+      await tester.tap(find.text('消息'));
+      expect(openedMessages, isTrue);
       expect(find.text('若水'), findsOneWidget);
       expect(find.text('粉丝 3'), findsOneWidget);
-      await tester.tap(find.text('UID 12345678'));
+      await tester.longPress(find.text('UID 12345678'));
       await tester.pumpAndSettle();
       expect(clipboard, [
         {'text': '12345678'},
@@ -198,6 +220,11 @@ void main() {
       expect(find.text('还没有已保存的盘面。'), findsOneWidget);
       expect(paths.where((route) => route == 'GET /social/me'), hasLength(2));
       expect(paths, contains('GET /social/following'));
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('添加个性签名'));
+      await tester.pumpAndSettle();
+      expect(find.widgetWithText(TextField, '个人简介'), findsOneWidget);
       await tester.pumpWidget(const SizedBox.shrink());
       account.dispose();
     },
@@ -262,7 +289,7 @@ void main() {
       await account.initialize();
       await tester.pumpWidget(_app(account, onUpgrade: () => upgraded = true));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('登录或注册账号'));
+      await tester.tap(find.text('登录'));
       await tester.pumpAndSettle();
       expect(upgraded, isTrue);
       expect(find.text('我的报告'), findsOneWidget);

@@ -16,12 +16,14 @@ class AccountPage extends StatefulWidget {
     this.active = true,
     this.themeMode = ThemeMode.system,
     this.onThemeModeChanged,
+    this.openMessages,
   });
 
   final AccountController account;
   final bool active;
   final ThemeMode themeMode;
   final ValueChanged<ThemeMode>? onThemeModeChanged;
+  final VoidCallback? openMessages;
 
   @override
   State<AccountPage> createState() => _AccountPageState();
@@ -51,38 +53,49 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('个人中心')),
-    body: SafeArea(
-      top: false,
-      child: ListenableBuilder(
-        listenable: _account,
-        builder: (context, _) {
-          final session = _account.session;
-          return AutofillGroup(
+  Widget build(BuildContext context) => ListenableBuilder(
+    listenable: _account,
+    builder: (context, _) {
+      final session = _account.session;
+      final showDashboard = session != null && !_upgrade;
+      final statusPadding = showDashboard
+          ? const EdgeInsets.symmetric(horizontal: 16)
+          : EdgeInsets.zero;
+      return Scaffold(
+        appBar: showDashboard ? null : AppBar(title: const Text('个人中心')),
+        body: SafeArea(
+          top: showDashboard,
+          child: AutofillGroup(
             child: ListView(
-              padding: jovianPagePadding,
+              padding: showDashboard ? EdgeInsets.zero : jovianPagePadding,
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               children: [
                 if (_account.busy) const LinearProgressIndicator(),
                 if (_account.notice case final message?)
-                  Semantics(liveRegion: true, child: Text(message)),
+                  Padding(
+                    padding: statusPadding,
+                    child: Semantics(liveRegion: true, child: Text(message)),
+                  ),
                 if ((_account.catalog == null ||
                         _account.capabilities == null ||
                         (session != null && _account.agreementState == null) ||
                         _account.notice != null) &&
                     !_account.busy)
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: TextButton(
-                      onPressed: _account.initialize,
-                      child: const Text('刷新账号与协议'),
+                  Padding(
+                    padding: statusPadding,
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: TextButton(
+                        onPressed: _account.initialize,
+                        child: const Text('刷新账号与协议'),
+                      ),
                     ),
                   ),
-                if (session != null && !_upgrade)
+                if (showDashboard)
                   ProfileDashboard(
                     account: _account,
                     openSettings: _openSettings,
+                    openMessages: widget.openMessages,
                     active: widget.active,
                     onUpgrade: _beginUpgrade,
                   )
@@ -90,10 +103,10 @@ class _AccountPageState extends State<AccountPage> {
                   ..._form(session != null),
               ],
             ),
-          );
-        },
-      ),
-    ),
+          ),
+        ),
+      );
+    },
   );
 
   void _openSettings() {

@@ -4,9 +4,29 @@ import 'package:http/http.dart' as http;
 import 'package:jovian_civil_time/jovian_civil_time.dart';
 import 'package:jovian_fortune/jovian_fortune.dart';
 
+import '../features/fortune/control/fortune_online.dart';
+import '../features/fortune/requests/fortune_report_api.dart';
 import '../features/fortune/requests/fortune_time_api.dart';
+import '../shared/browser_compute/browser_compute.dart';
+import '../shared/http/credentialed_client.dart'
+    if (dart.library.js_interop) '../shared/http/credentialed_client_web.dart';
 import '../shared/http/json_client.dart';
 import '../shared/http/service_endpoint.dart';
+
+FortuneOnline? configureFortuneOnline(
+  Future<DateTime> Function()? readTime, {
+  String value = const String.fromEnvironment('FORTUNE_TIME_URL'),
+}) {
+  const compute = BrowserCompute();
+  final base = serviceEndpoint(value, 'FORTUNE_TIME_URL');
+  if (!compute.isAvailable || base == null || readTime == null) return null;
+  return FortuneOnline(
+    FortuneReportApi(
+      JsonHttpClient(base: base, client: createCredentialedClient()),
+    ),
+    readTime,
+  );
+}
 
 Future<DateTime> Function()? configureFortuneTime({
   String value = const String.fromEnvironment('FORTUNE_TIME_URL'),

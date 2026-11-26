@@ -42,6 +42,8 @@ const { compareCharts } = await source('synastry/control/compare.ts');
 const { adaptInterpretationFacts } = await source('synastry/control/interpretation-fact-adapter.ts');
 const { prepareSynastrySummary } = await source('synastry/control/summary.ts');
 const { buildFortuneFactSubmission } = await source('fortune/control/fortune-fact-submission.ts');
+const { archiveFortuneReport, fortuneArchiveContext } = await source('fortune/control/report-archive.ts');
+const { lillyReturnLocationTarget } = await source('fortune/control/lilly-returns.ts');
 const { readClientFactTime, bindClientFortuneRun } = await source('fortune/server/client-facts.mjs');
 
 const server = createServer((request, response) => {
@@ -157,6 +159,26 @@ try {
   const time = readClientFactTime(fortune.input, batch.result, fortune.asOf);
   const bound = bindClientFortuneRun(fortune.input, batch.result, time, 'fixture-run', fortune.archive);
   assert.equal(bound.facts.length, batch.result.facts.length);
+
+  for (const periodType of ['day', 'week', 'month', 'year']) {
+    const input = { periodType, displayTimezone: 'America/Los_Angeles' };
+    const asOf = Date.UTC(2026, 10, 1, 9, 30);
+    const prepared = (await ask({ name: 'prepareFortunePeriod', input, asOf, archive: fortune.archive })).result;
+    const expected = fortuneArchiveContext(input, asOf, fortune.archive.snapshotId);
+    const lastDate = new Intl.DateTimeFormat('sv-SE', { timeZone: input.displayTimezone,
+      calendar: 'gregory', numberingSystem: 'latn', year: 'numeric', month: '2-digit', day: '2-digit'
+    }).format(expected.window.end - 1);
+    const returnAt = periodType === 'year' ? lillyReturnLocationTarget(expected.window, fortune.archive.chart) : undefined;
+    assertParity(prepared, { ...expected, lastDate, returnAt });
+    const report = {
+      reportId: 'a'.repeat(64), calculationRunId: 'b'.repeat(64), natalChartSnapshotId: fortune.archive.snapshotId,
+      periodType, sections: ['overall', 'wealth', 'romance'].map(sectionId => ({ sectionId, summary: '用于核对归档格式。' })),
+    };
+    const result = (await ask({ name: 'archiveFortuneReport', report, input, asOf })).result;
+    assert.match(result.calculatedAt, /^\d{4}-\d{2}-\d{2}T.*Z$/u);
+    const expectedArchive = archiveFortuneReport(report, input, asOf);
+    assertParity(result, { ...expectedArchive, calculatedAt: result.calculatedAt });
+  }
 
   const invalid = await ask({ name: 'calculateDestiny', profile: { ...a, date: { ...a.date, month: 13 } } });
   assert.equal(invalid.error, '请核对出生日期、时间和性别。');

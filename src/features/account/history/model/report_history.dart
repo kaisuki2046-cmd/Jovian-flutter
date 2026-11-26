@@ -63,9 +63,10 @@ class ReportHistoryPage {
 }
 
 class ArchivedReport {
-  const ArchivedReport(this.entry, this.body);
+  const ArchivedReport(this.entry, this.body, {this.context = const {}});
   final ReportEntry entry;
   final String body;
+  final Map<String, Object?> context;
 
   factory ArchivedReport.fromJson(Map<String, Object?> value, ReportKind kind) {
     final entry = ReportEntry.fromJson(value, kind);
@@ -87,8 +88,14 @@ class ArchivedReport {
             throw const FormatException('Invalid report section.');
           }
         }
-        if (paragraphs.isNotEmpty)
-          return ArchivedReport(entry, paragraphs.join('\n\n'));
+        if (paragraphs.isNotEmpty) {
+          final context = details['context'];
+          return ArchivedReport(
+            entry,
+            paragraphs.join('\n\n'),
+            context: context is Map<String, Object?> ? context : const {},
+          );
+        }
       }
     }
     throw const FormatException('Invalid archived report.');

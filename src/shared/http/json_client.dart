@@ -24,15 +24,19 @@ class JsonHttpClient {
     List<String> path, {
     Map<String, String> headers = const {},
     Map<String, Object?>? body,
+    List<int>? encodedBody,
     String? method,
     Map<String, String>? query,
+    Future<void>? cancel,
   }) async =>
       await requestNullable(
         path,
         headers: headers,
         body: body,
+        encodedBody: encodedBody,
         method: method,
         query: query,
+        cancel: cancel,
       ) ??
       (throw const JsonRequestError('invalid_response'));
 
@@ -40,9 +44,12 @@ class JsonHttpClient {
     List<String> path, {
     Map<String, String> headers = const {},
     Map<String, Object?>? body,
+    List<int>? encodedBody,
     String? method,
     Map<String, String>? query,
+    Future<void>? cancel,
   }) async {
+    assert(body == null || encodedBody == null);
     final aborted = Completer<void>();
     final url = base.replace(
       pathSegments: [
@@ -52,15 +59,17 @@ class JsonHttpClient {
       queryParameters: query,
     );
     final request = http.AbortableRequest(
-      method ?? (body == null ? 'GET' : 'POST'),
+      method ?? (body == null && encodedBody == null ? 'GET' : 'POST'),
       url,
-      abortTrigger: aborted.future,
+      abortTrigger: cancel == null
+          ? aborted.future
+          : Future.any([aborted.future, cancel]),
     )..followRedirects = false;
     request.headers.addAll(headers);
     request.headers['Accept'] = 'application/json';
-    if (body != null) {
+    if (body != null || encodedBody != null) {
       request.headers['Content-Type'] = 'application/json; charset=utf-8';
-      request.bodyBytes = utf8.encode(jsonEncode(body));
+      request.bodyBytes = encodedBody ?? utf8.encode(jsonEncode(body));
     }
     final http.Response response;
     try {

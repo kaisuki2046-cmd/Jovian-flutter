@@ -44,12 +44,14 @@ class ArchivedDestinyCharts {
     this.timeKnown,
     this.charts, {
     this.natalDays,
+    this.snapshot,
   });
 
   final ReportEntry entry;
   final bool timeKnown;
   final Map<ArchivedChartMethod, ArchivedChart> charts;
   final ({bool timeKnown, List<String?> candidates})? natalDays;
+  final Map<String, Object?>? snapshot;
 
   factory ArchivedDestinyCharts.fromJson(Map<String, Object?> value) {
     final report = value['report'];
@@ -58,6 +60,7 @@ class ArchivedDestinyCharts {
       'timeKnown': final bool known,
       'charts': final List charts,
     } when charts.length == ArchivedChartMethod.values.length) {
+      final snapshot = report['chartSnapshot'];
       return ArchivedDestinyCharts(
         ReportEntry.fromJson(value, ReportKind.destiny),
         known,
@@ -65,7 +68,10 @@ class ArchivedDestinyCharts {
           for (final (index, method) in ArchivedChartMethod.values.indexed)
             method: ArchivedChart.fromJson(charts[index], method),
         },
-        natalDays: _natalDays((report as Map)['chartSnapshot']),
+        natalDays: _natalDays(snapshot),
+        snapshot: snapshot is Map<String, Object?> && snapshot['version'] == 1
+            ? snapshot
+            : null,
       );
     }
     throw const FormatException('Invalid archived destiny charts.');

@@ -4,8 +4,10 @@ import 'package:material_ui/material_ui.dart';
 import '../../../ui/report_body.dart';
 import '../../../ui/theme.dart';
 import '../../account/account.dart';
+import '../control/fortune_online.dart';
 import '../control/fortune_page_controller.dart';
 import 'fortune_calendar_page.dart';
+import 'fortune_interpretation.dart';
 
 class FortunePage extends StatelessWidget {
   const FortunePage({
@@ -14,12 +16,14 @@ class FortunePage extends StatelessWidget {
     this.readServerTime,
     this.account,
     this.archiveId,
+    this.connectOnline,
   });
 
   final Future<FortuneDisplay> Function() loadDisplay;
   final Future<DateTime> Function()? readServerTime;
   final AccountController? account;
   final String? archiveId;
+  final FortuneOnline? Function()? connectOnline;
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +47,7 @@ class FortunePage extends StatelessWidget {
     account: account,
     ownerId: owner,
     archiveId: archiveId,
+    connectOnline: connectOnline,
   );
 }
 
@@ -54,6 +59,7 @@ class _FortuneSession extends StatefulWidget {
     required this.account,
     required this.ownerId,
     required this.archiveId,
+    required this.connectOnline,
   });
 
   final Future<FortuneDisplay> Function() loadDisplay;
@@ -61,6 +67,7 @@ class _FortuneSession extends StatefulWidget {
   final AccountController? account;
   final String? ownerId;
   final String? archiveId;
+  final FortuneOnline? Function()? connectOnline;
 
   @override
   State<_FortuneSession> createState() => _FortuneSessionState();
@@ -78,6 +85,7 @@ class _FortuneSessionState extends State<_FortuneSession> {
       account: widget.account,
       ownerId: widget.ownerId,
       archiveId: widget.archiveId,
+      online: widget.connectOnline?.call(),
     )..initialize();
   }
 
@@ -116,23 +124,54 @@ class _FortuneSessionState extends State<_FortuneSession> {
         child: ListView(
           padding: jovianPagePadding,
           children: [
-            Wrap(
-              spacing: 8,
+            Row(
+              spacing: 4,
               children: [
-                for (final period in FortunePeriod.values)
-                  ChoiceChip(
-                    label: Text(period.label),
-                    selected: _fortune.period == period,
-                    onSelected: (_) => _fortune.selectPeriod(period),
+                for (final (index, period) in FortunePeriod.values.indexed)
+                  Expanded(
+                    child: ChoiceChip(
+                      showCheckmark: false,
+                      label: Text(const ['今日', '本周', '本月', '本年'][index]),
+                      selected: _fortune.displayedPeriod == period,
+                      onSelected: (_) => _fortune.selectPeriod(period),
+                    ),
                   ),
               ],
             ),
             if (_fortune.syncingTime) const LinearProgressIndicator(),
             _dateControls(context),
-            if (_fortune.ownerId != null) _archives(context),
-            if (_fortune.preview case final preview?)
-              _PreviewCard(preview: preview, clock: _fortune.display!.clock),
-            if (_fortune.almanac case final day?) _AlmanacCard(day: day),
+            if (_fortune.ownerId != null) ...[
+              _archives(context),
+              if (_fortune.online != null && _fortune.hasChart)
+                FortuneInterpretation(
+                  key: ValueKey(_fortune.displayedWindow?.contextKey),
+                  fortune: _fortune,
+                ),
+              if (_fortune.online != null &&
+                  _fortune.hasChart &&
+                  _fortune.displayedPeriod == FortunePeriod.day)
+                FortuneAdvice(fortune: _fortune),
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: TextButton(
+                  onPressed: () => Navigator.of(context).push<void>(
+                    MaterialPageRoute(
+                      builder: (_) => ReportsPage(
+                        account: widget.account!,
+                        initialKind: ReportKind.fortune,
+                      ),
+                    ),
+                  ),
+                  child: const Text('运势报告历史'),
+                ),
+              ),
+            ] else
+              const Text('登录或进入游客体验后，可以保存并查看运势解读。'),
+            if (_fortune.online == null) ...[
+              if (_fortune.preview case final preview?)
+                _PreviewCard(preview: preview, clock: _fortune.display!.clock),
+              if (_fortune.almanac case final day?) _AlmanacCard(day: day),
+            ],
           ],
         ),
       ),
@@ -142,8 +181,21 @@ class _FortuneSessionState extends State<_FortuneSession> {
   Widget _dateControls(BuildContext context) {
     final window = _fortune.preview?.window;
     final display = _fortune.display;
-    final start = window == null ? null : _date(display!.clock(window.start));
-    final end = window == null ? null : _date(display!.clock(window.end - 1));
+    final prepared = _fortune.displayedWindow;
+    final start = prepared == null
+        ? (window == null ? null : _date(display!.clock(window.start)))
+        : _date(
+            DateTime.parse(
+              '${prepared.firstDate}T00:00:00Z',
+            ).millisecondsSinceEpoch,
+          );
+    final end = prepared == null
+        ? (window == null ? null : _date(display!.clock(window.end - 1)))
+        : _date(
+            DateTime.parse(
+              '${prepared.lastDate}T00:00:00Z',
+            ).millisecondsSinceEpoch,
+          );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -154,7 +206,7 @@ class _FortuneSessionState extends State<_FortuneSession> {
           ),
         if (display != null)
           Text(
-            '日期时区 ${display.zone}${_fortune.usingFallbackTime ? ' · 暂用设备时间' : ''}',
+            '日期时区 ${_fortune.displayedZone}${_fortune.usingFallbackTime ? ' · 暂用设备时间' : ''}',
           ),
         if (_fortune.clockError case final error?) Text(error),
         TextButton(
@@ -166,7 +218,6 @@ class _FortuneSessionState extends State<_FortuneSession> {
   }
 
   Widget _archives(BuildContext context) {
-    final account = widget.account!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -182,8 +233,10 @@ class _FortuneSessionState extends State<_FortuneSession> {
               ),
             ],
           ),
-        if (_fortune.loadingReport) const Text('正在读取已保存的报告…'),
-        if (_fortune.reportError case final error?)
+        if (_fortune.loadingReport && !_fortune.hasChart)
+          const Text('正在读取已保存的报告…'),
+        if (_fortune.reportError case final error?
+            when _fortune.online == null || !_fortune.hasChart)
           Wrap(
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
@@ -211,17 +264,6 @@ class _FortuneSessionState extends State<_FortuneSession> {
               ),
             ),
           ),
-        TextButton(
-          onPressed: () => Navigator.of(context).push<void>(
-            MaterialPageRoute(
-              builder: (_) => ReportsPage(
-                account: account,
-                initialKind: ReportKind.fortune,
-              ),
-            ),
-          ),
-          child: const Text('运势报告历史'),
-        ),
       ],
     );
   }

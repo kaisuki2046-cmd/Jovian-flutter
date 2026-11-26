@@ -51,4 +51,28 @@ class BrowserCompute {
     'archive': archive,
     'returnLocation': ?returnLocation,
   }, cancel: cancel);
+
+  Future<Map<String, Object?>> prepareFortunePeriod(
+    Map<String, Object?> input,
+    int asOf,
+    Map<String, Object?> archive,
+    Future<void> cancel,
+  ) => platform.runBrowserCompute({
+    'name': 'prepareFortunePeriod',
+    'input': input,
+    'asOf': asOf,
+    'archive': archive,
+  }, cancel: cancel);
+
+  Future<Map<String, Object?>> archiveFortuneReport(
+    Map<String, Object?> report,
+    Map<String, Object?> input,
+    int asOf,
+    Future<void> cancel,
+  ) => platform.runBrowserCompute({
+    'name': 'archiveFortuneReport',
+    'report': report,
+    'input': input,
+    'asOf': asOf,
+  }, cancel: cancel);
 }

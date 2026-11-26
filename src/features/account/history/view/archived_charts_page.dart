@@ -32,7 +32,7 @@ class ArchivedChartsPage extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
+                    UiText(
                       account.busy
                           ? '正在恢复归档身份…'
                           : account.notice != null
@@ -139,7 +139,7 @@ class _ChartContentState extends State<_ChartContent> {
         return Center(
           child: TextButton(
             onPressed: _reload,
-            child: const Text('暂时无法读取命盘，点击重试'),
+            child: const UiText('暂时无法读取命盘，点击重试'),
           ),
         );
       }
@@ -160,7 +160,7 @@ class _ChartContentState extends State<_ChartContent> {
                     ),
             ),
           ),
-          TextButton(onPressed: _reload, child: const Text('刷新盘面')),
+          TextButton(onPressed: _reload, child: const UiText('刷新盘面')),
         ],
       );
     },
@@ -197,7 +197,7 @@ class _ChartPanel extends StatelessWidget {
           child: UiText('三套盘面', style: theme.textTheme.titleLarge),
         ),
         Text(
-          '$date $clock${archive.timeKnown ? '' : ' · 出生时刻未完全确定'}',
+          '$date $clock${archive.timeKnown ? '' : ' · ${context.uiLabel('出生时刻未完全确定')}'}',
           style: theme.textTheme.bodySmall,
         ),
         Wrap(
@@ -205,7 +205,7 @@ class _ChartPanel extends StatelessWidget {
           children: [
             for (final item in ArchivedChartMethod.values)
               ChoiceChip(
-                label: Text(item.label),
+                label: UiText(item.label),
                 selected: item == method,
                 onSelected: (_) => select(item),
               ),
@@ -349,8 +349,8 @@ class _EmptyCharts extends StatelessWidget {
     crossAxisAlignment: CrossAxisAlignment.start,
     spacing: 6,
     children: [
-      Text('还没有已保存的盘面。', style: Theme.of(context).textTheme.titleMedium),
-      const Text('在命理页完成一次测算后，可在这里查看三套盘面的基础数据。'),
+      UiText('还没有已保存的盘面。', style: Theme.of(context).textTheme.titleMedium),
+      const UiText('在命理页完成一次测算后，可在这里查看三套盘面的基础数据。'),
     ],
   );
 }

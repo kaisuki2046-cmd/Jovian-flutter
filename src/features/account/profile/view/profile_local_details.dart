@@ -103,7 +103,7 @@ class _ProfileLocalDetailsState extends State<ProfileLocalDetails> {
                   onPressed: () => setState(() {
                     _details = _read();
                   }),
-                  child: const Text('无法读取本机签名和标签，点击重试'),
+                  child: const UiText('无法读取本机签名和标签，点击重试'),
                 ),
               ),
           ],
@@ -208,7 +208,7 @@ class _DetailsEditorState extends State<_DetailsEditor> {
     return PopScope(
       canPop: !_saving,
       child: AlertDialog(
-        title: Text(_isSignature ? '编辑个性签名' : '我的标签'),
+        title: UiText(_isSignature ? '编辑个性签名' : '我的标签'),
         scrollable: true,
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -220,7 +220,7 @@ class _DetailsEditorState extends State<_DetailsEditor> {
             else
               for (final tag in ProfileTag.values)
                 _field(_tags[tag]!, tag.label, profileTagLimit),
-            Text(
+            UiText(
               _isSignature ? '个性签名仅保存在当前设备。' : '标签仅保存在当前设备。',
               style: Theme.of(context).textTheme.bodySmall,
             ),
@@ -241,7 +241,7 @@ class _DetailsEditorState extends State<_DetailsEditor> {
           ),
           FilledButton(
             onPressed: _saving ? null : _save,
-            child: Text(_saving ? '正在保存…' : '保存'),
+            child: UiText(_saving ? '正在保存…' : '保存'),
           ),
         ],
       ),
@@ -260,6 +260,6 @@ class _DetailsEditorState extends State<_DetailsEditor> {
     maxLengthEnforcement: MaxLengthEnforcement.truncateAfterCompositionEnds,
     minLines: multiline ? 3 : 1,
     maxLines: multiline ? 4 : 1,
-    decoration: InputDecoration(labelText: label),
+    decoration: InputDecoration(labelText: context.uiLabel(label)),
   );
 }

@@ -81,7 +81,7 @@ class ProfileDashboard extends StatelessWidget {
                   Align(
                     alignment: AlignmentDirectional.centerEnd,
                     child: IconButton.filledTonal(
-                      tooltip: '设置',
+                      tooltip: context.uiLabel('设置'),
                       onPressed: openSettings,
                       icon: const Icon(Icons.settings_outlined, size: 21),
                       style: IconButton.styleFrom(
@@ -102,9 +102,14 @@ class ProfileDashboard extends StatelessWidget {
                       children: [
                         _Identity(
                           avatar: ProfileAvatar(account: account, scope: scope),
-                          name:
-                              owner?.displayName ??
-                              (waiting || auth != null ? '账号与隐私' : '个人中心'),
+                          name: guest
+                              ? context.uiLabel('访客')
+                              : owner?.displayName ??
+                                    context.uiLabel(
+                                      waiting || auth != null
+                                          ? '账号与隐私'
+                                          : '个人中心',
+                                    ),
                           uid: owner?.uid,
                           status: waiting
                               ? '正在确认当前账号…'
@@ -143,28 +148,31 @@ class ProfileDashboard extends StatelessWidget {
                     ),
                   ),
                   if (owner != null)
-                    Row(
-                      spacing: 7,
-                      children: [
-                        Expanded(
-                          child: _Shortcut(
-                            icon: Icons.description_outlined,
-                            label: '我的报告',
-                            onTap: () => open(
-                              AccountSection.reports,
-                              () => ReportsPage(account: account),
-                            ),
-                          ),
-                        ),
-                        if (openMessages != null)
+                    IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        spacing: 7,
+                        children: [
                           Expanded(
                             child: _Shortcut(
-                              icon: Icons.people_outline,
-                              label: '消息',
-                              onTap: openMessages!,
+                              icon: Icons.description_outlined,
+                              label: '我的报告',
+                              onTap: () => open(
+                                AccountSection.reports,
+                                () => ReportsPage(account: account),
+                              ),
                             ),
                           ),
-                      ],
+                          if (openMessages != null)
+                            Expanded(
+                              child: _Shortcut(
+                                icon: Icons.people_outline,
+                                label: '消息',
+                                onTap: openMessages!,
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
                   if (needsAgreement)
                     FilledButton.tonal(
@@ -265,7 +273,7 @@ class _Identity extends StatelessWidget {
                 Semantics(
                   header: true,
                   child: Text(
-                    name.isEmpty ? '木星环用户' : name,
+                    name.isEmpty ? context.uiLabel('木星环用户') : name,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontSize: 22,
                       height: 28 / 22,
@@ -277,7 +285,7 @@ class _Identity extends StatelessWidget {
                 ),
                 if (publicUid != null) _CopyUid(uid: publicUid),
                 if (status case final text?)
-                  Text(
+                  UiText(
                     text,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: colors.onSurfaceVariant,
@@ -285,14 +293,16 @@ class _Identity extends StatelessWidget {
                   ),
                 if (localSignature != null && editSignature != null)
                   Tooltip(
-                    message: '编辑个性签名',
+                    message: context.uiLabel('编辑个性签名'),
                     child: InkWell(
                       onTap: editSignature,
                       borderRadius: BorderRadius.circular(6),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
                         child: Text(
-                          localSignature.isEmpty ? '添加个性签名' : localSignature,
+                          localSignature.isEmpty
+                              ? context.uiLabel('添加个性签名')
+                              : localSignature,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.bodySmall?.copyWith(
@@ -309,7 +319,7 @@ class _Identity extends StatelessWidget {
           ),
           if (openAccount != null)
             Tooltip(
-              message: '登录或注册账号',
+              message: context.uiLabel('登录或注册账号'),
               child: TextButton(
                 onPressed: openAccount,
                 style: TextButton.styleFrom(
@@ -363,7 +373,9 @@ class _ProfileTags extends StatelessWidget {
           ),
         for (final tag in tags)
           Tooltip(
-            message: '编辑${tag.label}标签',
+            message: context
+                .uiLabel('编辑{tag}标签')
+                .replaceFirst('{tag}', context.uiLabel(tag.label)),
             child: TextButton(
               onPressed: onEdit,
               style: style,
@@ -392,28 +404,42 @@ class _CopyUid extends StatelessWidget {
       notice = '暂时无法复制 UID，请重试。';
     }
     if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(notice)));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: UiText(notice)));
   }
 
   @override
   Widget build(BuildContext context) => Align(
     alignment: Alignment.centerLeft,
-    child: Tooltip(
-      message: '复制 UID',
-      child: InkWell(
-        onTap: () => _copy(context),
-        onLongPress: () => _copy(context),
-        borderRadius: BorderRadius.circular(8),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4),
-          child: Wrap(
-            spacing: 6,
-            runSpacing: 2,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              Text('UID $uid', style: Theme.of(context).textTheme.bodySmall),
-              const Icon(Icons.copy_outlined, size: 14),
-            ],
+    child: MergeSemantics(
+      child: Semantics(
+        button: true,
+        label: context.uiLabel('复制 UID {uid}').replaceFirst('{uid}', uid),
+        child: Tooltip(
+          excludeFromSemantics: true,
+          message: context.uiLabel('复制 UID'),
+          child: InkWell(
+            onTap: () => _copy(context),
+            onLongPress: () => _copy(context),
+            borderRadius: BorderRadius.circular(8),
+            child: ExcludeSemantics(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Wrap(
+                  spacing: 6,
+                  runSpacing: 2,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Text(
+                      'UID $uid',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    const Icon(Icons.copy_outlined, size: 14),
+                  ],
+                ),
+              ),
+            ),
           ),
         ),
       ),
@@ -474,7 +500,7 @@ class _Shortcut extends StatelessWidget {
             spacing: 3,
             children: [
               Icon(icon, size: 19),
-              Text(
+              UiText(
                 label,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.labelMedium,
@@ -518,7 +544,7 @@ class _RelationshipRow extends StatelessWidget {
           TextButton(
             style: style,
             onPressed: openList == null ? null : () => openList(direction),
-            child: Text('$title ${count ?? '—'}'),
+            child: Text('${context.uiLabel(title)} ${count ?? '—'}'),
           ),
       ],
     );

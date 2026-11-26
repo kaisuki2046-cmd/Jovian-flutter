@@ -76,7 +76,7 @@ class _ProfileAvatarState extends State<ProfileAvatar> {
         );
         if (!ready) return avatar;
         return Tooltip(
-          message: '更换头像',
+          message: context.uiLabel('更换头像'),
           child: Material(
             type: MaterialType.transparency,
             shape: const CircleBorder(),
@@ -261,7 +261,7 @@ class _PhotoEditorState extends State<_PhotoEditor> {
           spacing: 12,
           children: [
             Semantics(
-              label: '头像预览',
+              label: context.uiLabel('头像预览'),
               image: true,
               child: source == null
                   ? _AvatarCircle(
@@ -285,9 +285,9 @@ class _PhotoEditorState extends State<_PhotoEditor> {
                     ),
             ),
             if (source != null) ...[
-              const Text('拖动照片调整裁剪位置'),
+              const UiText('拖动照片调整裁剪位置'),
               Semantics(
-                label: '缩放照片',
+                label: context.uiLabel('缩放照片'),
                 child: Slider(
                   min: 1,
                   max: 3,
@@ -309,13 +309,15 @@ class _PhotoEditorState extends State<_PhotoEditor> {
             if (_error case final message?)
               Semantics(
                 liveRegion: true,
-                child: Text(
+                child: UiText(
                   message,
                   style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
               ),
             if (_pending)
-              const LinearProgressIndicator(semanticsLabel: '正在处理图片'),
+              LinearProgressIndicator(
+                semanticsLabel: context.uiLabel('正在处理图片'),
+              ),
             OutlinedButton(
               onPressed: _pending ? null : _pick,
               child: const UiText('选择照片'),

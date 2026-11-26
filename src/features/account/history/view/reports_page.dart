@@ -46,7 +46,7 @@ class _ReportsPageState extends State<ReportsPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
+                    UiText(
                       account.busy
                           ? '正在恢复归档身份…'
                           : account.notice != null
@@ -284,7 +284,7 @@ class _ReportListError extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ListTile(
-    title: Text(message),
+    title: UiText(message),
     trailing: TextButton(onPressed: retry, child: const UiText('重试')),
   );
 }
@@ -313,13 +313,13 @@ class _ReportReader extends StatelessWidget {
           if (account.sessionChanging ||
               account.authorizedSession?.scope != scope ||
               history.disposed) {
-            return const Center(child: Text('会话已变化，请返回后重新读取。'));
+            return const Center(child: UiText('会话已变化，请返回后重新读取。'));
           }
           return ListenableBuilder(
             listenable: history,
             builder: (context, _) {
               if (history.locked) {
-                return const Center(child: Text('会话已变化，请返回后重新读取。'));
+                return const Center(child: UiText('会话已变化，请返回后重新读取。'));
               }
               final report = history.report;
               final header = report?.entry ?? entry;
@@ -341,7 +341,7 @@ class _ReportReader extends StatelessWidget {
                         : ReportBody(report.body)
                   else if (history.detailError case final error?)
                     ListTile(
-                      title: Text(error),
+                      title: UiText(error),
                       trailing: TextButton(
                         onPressed: () => history.select(entry.id),
                         child: const UiText('重试读取'),

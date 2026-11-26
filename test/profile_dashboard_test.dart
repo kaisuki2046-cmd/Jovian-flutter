@@ -13,6 +13,7 @@ import '../src/features/account/auth/model/session.dart';
 import '../src/features/account/profile/view/profile_dashboard.dart';
 import '../src/features/account/profile/model/profile_details_store.dart';
 import '../src/features/account/profile/model/profile_device_scope.dart';
+import '../src/ui/interface_language.dart';
 import '../src/features/account/settings/model/agreements.dart';
 import '../src/features/account/settings/view/account_settings_page.dart';
 import '../src/shared/http/json_client.dart';
@@ -138,7 +139,10 @@ Widget _app(
   VoidCallback? onUpgrade,
   VoidCallback? onMessages,
   ValueChanged<ThemeMode>? onThemeModeChanged,
+  bool english = false,
 }) => MaterialApp(
+  locale: english ? const Locale('en') : null,
+  localizationsDelegates: [if (english) interfaceStringsDelegate],
   home: Scaffold(
     body: Builder(
       builder: (context) => ListView(
@@ -175,7 +179,7 @@ void main() {
   });
 
   testWidgets(
-    'preserves the original narrow layout, real counts, UID copying, and shortcuts',
+    'English narrow dashboard preserves counts, accessible UID, and shortcuts',
     (tester) async {
       final paths = <String>[];
       final account = _fixture(paths);
@@ -200,49 +204,54 @@ void main() {
       });
       await account.initialize();
       await tester.pumpWidget(
-        _app(account, onMessages: () => openedMessages = true),
+        _app(account, onMessages: () => openedMessages = true, english: true),
       );
       await tester.pumpAndSettle();
       final avatar = tester.getRect(
         find.byKey(const ValueKey('profile-avatar')),
       );
-      final gear = tester.getRect(find.byTooltip('设置'));
+      final gear = tester.getRect(find.byTooltip('Settings'));
       expect(avatar.size, const Size.square(104));
       expect(gear.bottom, lessThan(avatar.top));
       expect(gear.right, greaterThan(avatar.right));
-      expect(
-        tester.getTopLeft(find.text('我的报告')).dy,
-        tester.getTopLeft(find.text('消息')).dy,
+      Rect shortcut(String label) => tester.getRect(
+        find
+            .ancestor(of: find.text(label), matching: find.byType(InkWell))
+            .first,
       );
-      await tester.tap(find.text('消息'));
+      expect(shortcut('My reports').top, shortcut('Messages').top);
+      expect(shortcut('My reports').height, shortcut('Messages').height);
+      await tester.tap(find.text('Messages'));
       expect(openedMessages, isTrue);
       expect(find.text('若水'), findsOneWidget);
-      expect(find.text('粉丝 3'), findsOneWidget);
+      expect(find.text('Followers 3'), findsOneWidget);
+      expect(find.bySemanticsLabel('Copy UID 12345678'), findsOneWidget);
       await tester.longPress(find.text('UID 12345678'));
       await tester.pumpAndSettle();
+      expect(find.text('UID copied'), findsOneWidget);
       expect(clipboard, [
         {'text': '12345678'},
       ]);
-      await tester.tap(find.text('关注 2'));
+      await tester.tap(find.text('Following 2'));
       await tester.pumpAndSettle();
       expect(find.text('苍蓝'), findsOneWidget);
       await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('我的报告'));
+      await tester.tap(find.text('My reports'));
       await tester.pumpAndSettle();
-      expect(find.text('暂无已保存的报告。'), findsOneWidget);
+      expect(find.text('No saved reports yet.'), findsOneWidget);
       await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('命理档案'));
+      await tester.tap(find.text('Birth chart profile'));
       await tester.pumpAndSettle();
-      expect(find.text('还没有已保存的盘面。'), findsOneWidget);
+      expect(find.text('No saved charts yet.'), findsOneWidget);
       expect(paths.where((route) => route == 'GET /social/me'), hasLength(2));
       expect(paths, contains('GET /social/following'));
       await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('添加个性签名'));
+      await tester.tap(find.text('Add a bio'));
       await tester.pumpAndSettle();
-      expect(find.widgetWithText(TextField, '个性签名'), findsOneWidget);
+      expect(find.widgetWithText(TextField, 'Bio'), findsOneWidget);
       expect(find.widgetWithText(TextField, '个人简介'), findsNothing);
       await tester.pumpWidget(const SizedBox.shrink());
       account.dispose();

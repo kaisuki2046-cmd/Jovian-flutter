@@ -7,11 +7,13 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../src/app/app_shell.dart';
 import '../src/features/account/account.dart';
 import '../src/features/account/auth/model/session.dart';
 import '../src/features/account/settings/model/agreements.dart';
 import '../src/features/social/social.dart';
 import '../src/shared/http/json_client.dart';
+import '../src/ui/interface_language.dart';
 
 const _memberId = '00000000-0000-0000-0000-000000000001';
 const _actorId = '00000000-0000-0000-0000-000000000002';
@@ -117,6 +119,76 @@ AccountController _account(
 }
 
 void main() {
+  testWidgets('returning to Messages refreshes unread and moderation access', (
+    tester,
+  ) async {
+    final delayed = Completer<http.Response>();
+    var reads = 0;
+    final account = _account(_Storage(), (request) async {
+      expect(request.url.path, '/social/notifications/summary');
+      return switch (++reads) {
+        1 => _json({'unread': 1, 'canModerate': true}),
+        2 => delayed.future,
+        3 => _json({'error': 'forbidden'}, 403),
+        4 => _json({'unread': 2, 'canModerate': false}),
+        _ => throw StateError('Unexpected summary refresh'),
+      };
+    });
+    addTearDown(account.dispose);
+    await account.initialize();
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('en'),
+        localizationsDelegates: const [interfaceStringsDelegate],
+        home: JovianShell(
+          initialTab: JovianTab.destiny,
+          buildPage: (_, tab, active, _) => tab == JovianTab.messages
+              ? SocialPage(account: account, active: active)
+              : const SizedBox.shrink(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(reads, 0);
+
+    Future<void> openTab(JovianTab tab) async {
+      await tester.tap(find.byKey(ValueKey(tab)));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+    }
+
+    await openTab(JovianTab.messages);
+    expect(reads, 1);
+    expect(find.text('1 unread'), findsOneWidget);
+    expect(find.text('Moderation queue'), findsOneWidget);
+
+    await openTab(JovianTab.destiny);
+    expect(reads, 1);
+    await openTab(JovianTab.messages);
+    expect(reads, 2);
+    expect(find.text('1 unread'), findsNothing);
+    expect(find.text('Moderation queue'), findsNothing);
+    expect(find.byType(LinearProgressIndicator), findsOneWidget);
+
+    await openTab(JovianTab.destiny);
+    await openTab(JovianTab.messages);
+    expect(reads, 3);
+    expect(
+      find.text('This account cannot access this feature.'),
+      findsOneWidget,
+    );
+
+    delayed.complete(_json({'unread': 99, 'canModerate': true}));
+    await tester.pumpAndSettle();
+    expect(find.text('99 unread'), findsNothing);
+    expect(find.text('Moderation queue'), findsNothing);
+
+    await tester.tap(find.text('Retry'));
+    await tester.pumpAndSettle();
+    expect(reads, 4);
+    expect(find.text('2 unread'), findsOneWidget);
+    expect(find.text('Moderation queue'), findsNothing);
+  });
   testWidgets('loads, reads and returns from a live follower alert', (
     tester,
   ) async {

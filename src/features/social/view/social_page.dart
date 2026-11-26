@@ -31,12 +31,15 @@ class SocialPage extends StatelessWidget {
       builder: (context, _) {
         final memberId = current.socialMemberId;
         if (memberId != null) {
-          return _MemberNavigator(
-            key: ValueKey(memberId),
-            page: _MessagesHome(
-              controller: SocialController.forMember(current, memberId),
+          return TickerMode(
+            enabled: active,
+            child: _MemberNavigator(
+              key: ValueKey(memberId),
+              page: _MessagesHome(
+                controller: SocialController.forMember(current, memberId),
+              ),
+              active: active,
             ),
-            active: active,
           );
         }
         final awaitingAccount = current.busy && !current.restored;
@@ -226,7 +229,17 @@ class _MessagesHome extends StatefulWidget {
 }
 
 class _MessagesHomeState extends State<_MessagesHome> {
-  late Future<SocialInboxSummary> _summary = widget.controller.inbox();
+  Future<SocialInboxSummary>? _summary;
+  bool _visible = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // The tab and its navigator keep this page mounted when it is covered.
+    final visible = TickerMode.valuesOf(context).enabled;
+    if (visible && !_visible) _summary = widget.controller.inbox();
+    _visible = visible;
+  }
 
   void _refresh() {
     final summary = widget.controller.inbox();
@@ -236,6 +249,7 @@ class _MessagesHomeState extends State<_MessagesHome> {
   }
 
   Future<void> _open(Widget Function() page, {AccountSection? section}) async {
+    final before = _summary;
     if (section == null) {
       await Navigator.of(
         context,
@@ -243,7 +257,8 @@ class _MessagesHomeState extends State<_MessagesHome> {
     } else {
       await AccountSectionLinks.openPage(context, section, page);
     }
-    if (mounted) _refresh();
+    // A quick return can finish before the covering route pauses this page.
+    if (mounted && _visible && identical(_summary, before)) _refresh();
   }
 
   @override
@@ -261,24 +276,26 @@ class _MessagesHomeState extends State<_MessagesHome> {
     body: FutureBuilder<SocialInboxSummary>(
       future: _summary,
       builder: (context, snapshot) {
-        final inbox = snapshot.data;
+        final loading = snapshot.connectionState == ConnectionState.waiting;
+        final inbox = loading ? null : snapshot.data;
+        final unread = inbox?.unread ?? 0;
         return ListView(
           padding: const EdgeInsets.all(20),
           children: [
-            if (inbox == null &&
-                snapshot.connectionState == ConnectionState.waiting)
-              const LinearProgressIndicator(),
+            if (loading) const LinearProgressIndicator(),
             Card(
               child: Column(
                 children: [
                   ListTile(
                     leading: const Icon(Icons.person_add_alt_1_outlined),
                     title: const UiText('新增粉丝'),
-                    subtitle: Text(
-                      (inbox?.unread ?? 0) > 0
-                          ? '${inbox!.unread} 条未读'
-                          : '查看关注提醒',
-                    ),
+                    subtitle: unread > 0
+                        ? Text(
+                            context.uiLanguage == InterfaceLanguage.english
+                                ? '$unread unread'
+                                : '$unread 条未读',
+                          )
+                        : const UiText('查看关注提醒'),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () => _open(
                       () => FollowerAlertsPage(controller: widget.controller),
@@ -314,9 +331,9 @@ class _MessagesHomeState extends State<_MessagesHome> {
                 ],
               ),
             ),
-            if (snapshot.hasError)
+            if (!loading && snapshot.hasError)
               ListTile(
-                title: Text(
+                title: UiText(
                   describeSocialError(snapshot.error!, '暂时无法更新未读消息。'),
                 ),
                 trailing: TextButton(

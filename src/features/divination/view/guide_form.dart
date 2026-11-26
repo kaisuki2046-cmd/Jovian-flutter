@@ -8,6 +8,7 @@ import 'guide_conversation.dart';
 import 'liuyao_form.dart';
 import 'meihua_page.dart';
 import 'reading_report.dart';
+import 'ritual/guide_ritual_dialog.dart';
 import 'tarot_cards.dart';
 
 class GuideForm extends StatefulWidget {
@@ -26,9 +27,12 @@ class _GuideFormState extends State<GuideForm>
   final _question = TextEditingController();
   final _followUp = TextEditingController();
   final _clock = Stopwatch();
+  final _ritualChanges = ValueNotifier(0);
   StreamSubscription<void>? _onlineChanges;
   late String _clockSessionId;
   GuideRitual? _ritual;
+  DialogRoute<void>? _ritualRoute;
+  GuideRitualPresentation? _presentation;
   final _clarifications = <({String question, String reply})>[];
   final _completed = <OnlineReading>[];
   String? _pendingQuestion;
@@ -38,6 +42,9 @@ class _GuideFormState extends State<GuideForm>
 
   @override
   bool get wantKeepAlive => true;
+
+  GuideRitualSnapshot? get _snapshot =>
+      widget.online?.reading?.snapshot ?? _ritual?.snapshot;
 
   @override
   void initState() {
@@ -68,6 +75,7 @@ class _GuideFormState extends State<GuideForm>
       if (previous != null && previous == _followUp.text.trim())
         _followUp.clear();
       setState(() {});
+      _ritualChanges.value++;
     });
     unawaited(online.restore());
   }
@@ -75,6 +83,8 @@ class _GuideFormState extends State<GuideForm>
   @override
   void dispose() {
     unawaited(_onlineChanges?.cancel());
+    _removeRitualRoute();
+    _ritualChanges.dispose();
     _question.dispose();
     _followUp.dispose();
     super.dispose();
@@ -83,6 +93,7 @@ class _GuideFormState extends State<GuideForm>
   void _start({required bool automatic}) {
     if (!_form.currentState!.validate()) return;
     FocusScope.of(context).unfocus();
+    _presentation = null;
     final question = _question.text.trim();
     if (widget.online case final online?) {
       setState(() => _pendingQuestion = question);
@@ -100,6 +111,7 @@ class _GuideFormState extends State<GuideForm>
         automatic: automatic,
       );
     });
+    if (!automatic) _openRitual();
   }
 
   Future<void> _startOnline(
@@ -118,6 +130,7 @@ class _GuideFormState extends State<GuideForm>
         _pendingQuestion = null;
         _question.clear();
       });
+      if (_snapshot?.stage == GuideStage.cast) _openRitual();
     } else if (online.message case final reply? when !online.canRetry) {
       setState(() {
         _clarifications.add((question: _pendingQuestion!, reply: reply));
@@ -142,6 +155,7 @@ class _GuideFormState extends State<GuideForm>
         ),
       );
     });
+    _ritualChanges.value++;
   }
 
   void _choose(int slot) {
@@ -168,6 +182,54 @@ class _GuideFormState extends State<GuideForm>
         ),
       );
     });
+    _ritualChanges.value++;
+  }
+
+  void _openRitual() {
+    if (_ritualRoute != null || _snapshot == null) return;
+    final presentation = _presentation ??= GuideRitualPresentation();
+    final navigator = Navigator.of(context, rootNavigator: true);
+    final motionOff =
+        MediaQuery.disableAnimationsOf(context) ||
+        MediaQuery.accessibleNavigationOf(context);
+    late final DialogRoute<void> route;
+    route = DialogRoute<void>(
+      context: context,
+      barrierDismissible: false,
+      animationStyle: motionOff ? AnimationStyle.noAnimation : null,
+      builder: (_) => GuideRitualDialog(
+        presentation: presentation,
+        changes: _ritualChanges,
+        snapshot: () => mounted ? _snapshot : null,
+        busy: () => mounted && (widget.online?.busy ?? false),
+        error: () => mounted ? widget.online?.message : null,
+        retry: () {
+          final online = mounted ? widget.online : null;
+          return online?.canRetry == true ? online!.retry : null;
+        },
+        toss: _toss,
+        choose: _choose,
+        pause: () {
+          if (route.isCurrent) navigator.pop();
+        },
+      ),
+    );
+    _ritualRoute = route;
+    unawaited(
+      navigator.push(route).then((_) {
+        if (!mounted || _ritualRoute != route) return;
+        setState(() => _ritualRoute = null);
+      }),
+    );
+  }
+
+  void _removeRitualRoute() {
+    final route = _ritualRoute;
+    if (route == null) return;
+    _ritualRoute = null;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (route.isActive) route.navigator?.removeRoute(route);
+    });
   }
 
   void _restart() {
@@ -181,6 +243,8 @@ class _GuideFormState extends State<GuideForm>
   }
 
   void _clearDraft() {
+    _removeRitualRoute();
+    _presentation = null;
     _clock.stop();
     _question.clear();
     _followUp.clear();
@@ -196,7 +260,7 @@ class _GuideFormState extends State<GuideForm>
     final text = Theme.of(context).textTheme;
     final online = widget.online;
     final busy = online?.busy ?? false;
-    final ritual = online?.reading?.snapshot ?? _ritual?.snapshot;
+    final ritual = _snapshot;
     if (_savedReading case final saved?) {
       return GuideSavedConversation(
         key: const ValueKey('guide-saved-conversation'),
@@ -266,41 +330,29 @@ class _GuideFormState extends State<GuideForm>
     }
 
     return switch (ritual.stage) {
-      GuideStage.cast => CastContent(
-        key: const ValueKey(GuideStage.cast),
-        children: [
-          _heading('扔六次铜钱'),
-          const SizedBox(height: 8),
-          const Text('每次投三枚，从初爻起向上记录。'),
-          const SizedBox(height: 12),
-          if (online != null) ..._questionContext(ritual),
-          CoinCastProgress(tosses: ritual.tosses),
-          ..._feedback(),
-          const SizedBox(height: 12),
-          FilledButton(
-            onPressed: busy ? null : _toss,
-            child: const Text('投三枚铜钱'),
-          ),
-        ],
-      ),
-      GuideStage.draw => CastContent(
-        key: const ValueKey(GuideStage.draw),
-        children: [
-          _heading('抽三张塔罗'),
-          if (online != null) ..._questionContext(ritual),
-          ..._feedback(),
-          const SizedBox(height: 12),
-          TarotGrid(
-            slotCount: ritual.slotCount,
-            selectedSlots: ritual.selectedSlots,
-            choose: _choose,
-            busy: busy,
-          ),
-        ],
-      ),
+      GuideStage.cast => _buildRitualPrompt(ritual, '扔六次铜钱'),
+      GuideStage.draw => _buildRitualPrompt(ritual, '抽三张塔罗'),
+      GuideStage.reading when _presentation?.needsReveal(ritual) == true =>
+        _buildRitualPrompt(ritual, '翻开三张塔罗'),
       GuideStage.reading => _buildResult(context, ritual),
     };
   }
+
+  Widget _buildRitualPrompt(GuideRitualSnapshot ritual, String title) =>
+      CastContent(
+        key: ValueKey(ritual.stage),
+        children: [
+          _heading(title),
+          const SizedBox(height: 8),
+          ..._questionContext(ritual),
+          ..._feedback(),
+          FilledButton.icon(
+            onPressed: _openRitual,
+            icon: const Icon(Icons.play_arrow),
+            label: const Text('继续本次仪式'),
+          ),
+        ],
+      );
 
   Widget _heading(String title) => Row(
     children: [

@@ -1,0 +1,6 @@
+name: jovian_destiny_model
+description: Birth data and chart contracts for Jovian.
+version: 0.1.0
+publish_to: none
+environment:
+  sdk: ^3.10.0

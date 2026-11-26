@@ -1,0 +1,8 @@
+name: jovian_compliance_server
+description: Versioned agreement and consent contracts for Jovian.
+version: 0.1.0
+publish_to: none
+environment:
+  sdk: ^3.10.0
+dependencies:
+  crypto: ^3.0.8

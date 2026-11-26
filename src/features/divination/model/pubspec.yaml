@@ -1,0 +1,6 @@
+name: jovian_divination_model
+description: Shared Dart data models for Jovian divination.
+version: 0.1.0
+publish_to: none
+environment:
+  sdk: ^3.10.0

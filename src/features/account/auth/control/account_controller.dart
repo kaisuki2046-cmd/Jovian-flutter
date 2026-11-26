@@ -1,0 +1,154 @@
+import 'package:flutter/foundation.dart';
+
+import '../../../../shared/http/json_client.dart';
+import '../../history/requests/report_history_api.dart';
+import '../../settings/model/agreements.dart';
+import '../../settings/requests/agreements_api.dart';
+import '../model/session.dart';
+import '../requests/account_api.dart';
+
+class AccountController extends ChangeNotifier {
+  AccountController(this._account, this._agreements);
+
+  final AccountApi _account;
+  final AgreementsApi _agreements;
+  late final reports = ReportHistoryApi(_account);
+
+  AccountSession? _session;
+  AgreementCatalog? _catalog;
+  AgreementState? _agreementState;
+  AuthCapabilities? _capabilities;
+  bool _restored = false;
+  bool _busy = false;
+  bool _sessionChanging = false;
+  bool _closed = false;
+  String? _notice;
+
+  AccountSession? get session => _session;
+  AccountSession? get authorizedSession =>
+      _agreementState?.requiredAccepted == true ? _session : null;
+  AgreementCatalog? get catalog => _catalog;
+  AgreementState? get agreementState => _agreementState;
+  AuthCapabilities? get capabilities => _capabilities;
+  bool get restored => _restored;
+  bool get busy => _busy;
+  bool get sessionChanging => _sessionChanging;
+  String? get notice => _notice;
+
+  Future<String?> readNativeSession() => _account.readNativeSession();
+
+  Future<void> initialize() => _run(() async {
+    final previousScope = _session?.scope;
+    _session = await _account.restore();
+    _restored = true;
+    if (previousScope != _session?.scope) _agreementState = null;
+    await Future.wait([
+      _account.capabilities().then((value) => _capabilities = value),
+      _agreements.catalog().then((value) => _catalog = value),
+      if (_session != null)
+        _agreements.state().then((value) => _agreementState = value),
+    ]);
+  });
+
+  Future<String?> sendCode(AccountIdentifier identifier) async {
+    String? challenge;
+    await _run(() async {
+      challenge = await _account.sendCode(identifier);
+      _notice = '验证码已发送，请查收。';
+    }, failure: '发送验证码失败，请重试。');
+    return challenge;
+  }
+
+  Future<bool> signIn(
+    AuthMethod method,
+    Map<String, Object?> input,
+    AgreementCatalog accepted, {
+    bool grantAi = false,
+  }) async {
+    var signedIn = false;
+    await _run(
+      () async {
+        final session = await _account.signIn(method, input, accepted);
+        _session = session;
+        _agreementState = null;
+        signedIn = true;
+        _agreementState = grantAi
+            ? await _agreements.grantAll(accepted.ai, source: 'first-use')
+            : await _agreements.state();
+        if (grantAi && _agreementState?.allAiGranted != true) {
+          _notice = '部分 AI 授权未保存，可在隐私设置中查看或重试。';
+        }
+      },
+      failure: '登录或注册失败，请重试。',
+      changesSession: true,
+    );
+    return signedIn;
+  }
+
+  Future<void> acceptRequired(AgreementCatalog accepted) => _run(() async {
+    _agreementState = await _agreements.acceptRequired(accepted);
+  }, failure: '保存协议确认失败，请重试。');
+
+  Future<void> choose(
+    AgreementDocument document,
+    String purpose,
+    bool agreed,
+  ) => _run(() async {
+    _agreementState = await _agreements.choose(document, purpose, agreed);
+  }, failure: '保存授权失败，请重试。');
+
+  Future<void> grantAll(AgreementDocument document) => _run(() async {
+    _agreementState = await _agreements.grantAll(document, source: 'settings');
+    if (_agreementState?.allAiGranted != true) {
+      _notice = '部分 AI 授权未保存，可在隐私设置中查看或重试。';
+    }
+  }, failure: '保存授权失败，请重试。');
+
+  Future<void> signOut() => _run(
+    () async {
+      await _account.signOut();
+      _session = null;
+      _agreementState = null;
+    },
+    failure: '退出登录失败，请重试。',
+    changesSession: true,
+  );
+
+  Future<void> _run(
+    Future<void> Function() work, {
+    String failure = '暂时无法连接账号服务，请重试。',
+    bool changesSession = false,
+  }) async {
+    if (_busy || _closed) return;
+    _busy = true;
+    _sessionChanging = changesSession;
+    _notice = null;
+    notifyListeners();
+    try {
+      await work();
+    } on JsonRequestError catch (error) {
+      _notice = switch (error.status) {
+        401 => '账号、密码或验证码有误，或者会话已过期。',
+        409 => '资料已被使用或状态已变化，请检查后重试。',
+        412 || 428 => '协议已更新，请刷新并阅读后重新确认。',
+        410 || 422 => '验证码已过期或不正确，请重新核对。',
+        429 => '操作太频繁，请稍后重试。',
+        503 => '账号服务暂不可用，请稍后重试。',
+        _ => failure,
+      };
+    } catch (_) {
+      _notice = failure;
+    } finally {
+      _busy = false;
+      _sessionChanging = false;
+      if (!_closed) notifyListeners();
+    }
+  }
+
+  @override
+  void dispose() {
+    _closed = true;
+    _account.close();
+    super.dispose();
+  }
+}

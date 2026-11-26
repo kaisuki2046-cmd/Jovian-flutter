@@ -1,0 +1,6 @@
+name: jovian_fortune_model
+description: Calendar and period contracts for Jovian fortune.
+version: 0.1.0
+publish_to: none
+environment:
+  sdk: ^3.10.0

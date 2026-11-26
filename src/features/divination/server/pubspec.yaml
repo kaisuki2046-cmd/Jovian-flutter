@@ -1,0 +1,11 @@
+name: jovian_divination_server
+description: Dart server components for Jovian divination.
+version: 0.1.0
+publish_to: none
+environment:
+  sdk: ^3.10.0
+dependencies:
+  crypto: ^3.0.8
+  jovian_divination:
+    path: ../control
+  sqlite3: ^3.9.2

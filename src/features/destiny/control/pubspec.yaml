@@ -1,0 +1,12 @@
+name: jovian_destiny
+description: Pure Dart calculation rules for Jovian destiny charts.
+version: 0.1.0
+publish_to: none
+environment:
+  sdk: ^3.10.0
+dependencies:
+  jovian_destiny_model:
+    path: ../model
+  jovian_civil_time:
+    path: ../../../shared/time
+  lunar: 1.7.9

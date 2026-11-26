@@ -1,0 +1,11 @@
+name: jovian_divination
+description: Pure Dart calculation rules for Jovian readings.
+version: 0.1.0
+publish_to: none
+environment:
+  sdk: ^3.10.0
+dependencies:
+  crypto: ^3.0.8
+  jovian_divination_model:
+    path: ../model
+  lunar: 1.7.9

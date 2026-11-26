@@ -1,0 +1,14 @@
+name: jovian_fortune_knowledge
+description: Validated, indexed SQLite fortune knowledge for Jovian servers.
+version: 0.1.0
+publish_to: none
+environment:
+  sdk: ^3.10.0
+dependencies:
+  crypto: ^3.0.8
+  jovian_fortune:
+    path: ../../control/calculation
+  jovian_json:
+    path: ../../../../shared/json
+  path: ^1.9.1
+  sqlite3: ^3.9.2

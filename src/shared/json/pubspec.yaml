@@ -1,0 +1,6 @@
+name: jovian_json
+description: JSON encoding for hashes shared with the original Jovian services.
+version: 0.1.0
+publish_to: none
+environment:
+  sdk: ^3.10.0

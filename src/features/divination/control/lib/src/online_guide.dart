@@ -1,0 +1,338 @@
+import 'dart:async';
+import 'dart:math';
+
+import 'package:jovian_divination_model/pro_report.dart';
+
+import 'guide_ritual.dart';
+
+typedef ReadingConfirmation = ({
+  String focus,
+  String clarification,
+  String? proof,
+  bool chatOnly,
+});
+typedef OpenedReading = ({String token, OnlineReading reading});
+typedef ReadingFollowUp = ({
+  String question,
+  String answer,
+  List<String> nextSteps,
+});
+
+class OnlineReading {
+  const OnlineReading(this.snapshot, {this.report, this.followUps = const []});
+  final GuideRitualSnapshot snapshot;
+  final ProReport? report;
+  final List<ReadingFollowUp> followUps;
+}
+
+class ReadingConnectionError implements Exception {
+  const ReadingConnectionError(this.code, {this.status});
+  final String code;
+  final int? status;
+}
+
+enum GuideAction { toss, pick }
+
+class PendingGuideAction {
+  PendingGuideAction(this.action, Map<String, Object?> body)
+    : body = Map.unmodifiable(body);
+  final GuideAction action;
+  final Map<String, Object?> body;
+}
+
+class GuideRecovery {
+  const GuideRecovery(this.token, [this.pending]);
+
+  factory GuideRecovery.fromJson(Map<String, Object?> value) {
+    final token = value['token'];
+    if (token is! String || !RegExp(r'^[A-Za-z0-9_-]{43}$').hasMatch(token)) {
+      throw const FormatException('Invalid reading recovery token.');
+    }
+    final pending = value['pending'];
+    if (pending == null) return GuideRecovery(token);
+    if (pending is! Map || pending['body'] is! Map)
+      throw const FormatException('Invalid pending reading action.');
+    final action = switch (pending['action']) {
+      'toss' => GuideAction.toss,
+      'pick' => GuideAction.pick,
+      _ => throw const FormatException('Invalid reading action.'),
+    };
+    return GuideRecovery(
+      token,
+      PendingGuideAction(action, (pending['body'] as Map).cast()),
+    );
+  }
+
+  final String token;
+  final PendingGuideAction? pending;
+
+  Map<String, Object?> toJson() => {
+    'token': token,
+    if (pending case final pending?)
+      'pending': {'action': pending.action.name, 'body': pending.body},
+  };
+}
+
+abstract interface class GuideRecoveryStore {
+  Future<GuideRecovery?> read();
+  Future<void> write(GuideRecovery? recovery);
+}
+
+abstract interface class GuideGateway {
+  Future<ReadingConfirmation> understand(
+    String question, {
+    String? previousQuestion,
+  });
+  Future<OpenedReading> start(
+    String question,
+    String focus,
+    String proof, {
+    required bool automatic,
+    String? previousQuestion,
+  });
+  Future<OnlineReading> get(String token);
+  Future<OnlineReading> perform(String token, PendingGuideAction action);
+  Future<OnlineReading> report(String token);
+  Future<OnlineReading> followUp(String token, int step, String question);
+}
+
+class OnlineGuideController {
+  OnlineGuideController(
+    this._gateway,
+    this._recovery, {
+    void Function()? onDispose,
+  }) : _onDispose = onDispose;
+
+  final GuideGateway _gateway;
+  final GuideRecoveryStore _recovery;
+  final void Function()? _onDispose;
+  final _changes = StreamController<void>.broadcast(sync: true);
+  final _clock = Stopwatch()..start();
+  final _clockSession = guideEventId();
+  String? _token;
+  PendingGuideAction? _pending;
+  String? _clarificationQuestion;
+  String? _previousQuestion;
+  Future<void> Function()? _retry;
+  OnlineReading? _reading;
+  bool _busy = false;
+  String? _message;
+
+  Stream<void> get changes => _changes.stream;
+  OnlineReading? get reading => _reading;
+  bool get busy => _busy;
+  String? get message => _message;
+  bool get canRetry => _retry != null;
+
+  Future<void> restore() => _run(() async {
+    final recovered = await _recovery.read();
+    if (recovered == null) return;
+    _token = recovered.token;
+    _pending = recovered.pending;
+    if (_pending != null) {
+      await _sendPending(refresh: true);
+    } else {
+      _reading = await _gateway.get(recovered.token);
+    }
+  });
+
+  Future<void> start(String text, {required bool automatic}) {
+    final combined = _clarificationQuestion == null
+        ? text
+        : '$_clarificationQuestion；补充：$text';
+    final question = combined.length <= guideQuestionMaxLength
+        ? combined
+        : text;
+    return _run(() async {
+      final previous = _previousQuestion;
+      final understood = await _gateway.understand(
+        question,
+        previousQuestion: previous,
+      );
+      if (understood.clarification.isNotEmpty) {
+        _clarificationQuestion = understood.chatOnly ? null : question;
+        _message = understood.clarification;
+        return;
+      }
+      final proof = understood.proof;
+      if (proof == null) throw const ReadingConnectionError('invalid_response');
+      final started = await _gateway.start(
+        question,
+        understood.focus,
+        proof,
+        automatic: automatic,
+        previousQuestion: previous,
+      );
+      _token = started.token;
+      _pending = null;
+      _reading = started.reading;
+      _clarificationQuestion = null;
+      _previousQuestion = null;
+      await _save();
+      _emit();
+      await _reportIfReady();
+    });
+  }
+
+  Future<void> toss() {
+    final state = _reading?.snapshot;
+    if (_busy || state?.stage != GuideStage.cast) return Future.value();
+    return _act(
+      PendingGuideAction(
+        GuideAction.toss,
+        GuideCoinEvent(
+          actionId: guideEventId(),
+          step: state!.tosses.length,
+        ).toJson(),
+      ),
+    );
+  }
+
+  Future<void> pick(int slot) {
+    final state = _reading?.snapshot;
+    if (_busy ||
+        state?.stage != GuideStage.draw ||
+        state!.selectedSlots.contains(slot)) {
+      return Future.value();
+    }
+    return _act(
+      PendingGuideAction(
+        GuideAction.pick,
+        GuideCardEvent(
+          actionId: guideEventId(),
+          step: state.selectedSlots.length,
+          slot: slot,
+          epochMs: DateTime.now().millisecondsSinceEpoch.toString(),
+          monotonicMs: _clock.elapsedMicroseconds / 1000,
+          clockSessionId: _clockSession,
+        ).toJson(),
+      ),
+    );
+  }
+
+  Future<void> requestReport() => _run(_reportIfReady);
+
+  Future<void> followUp(String question) {
+    final step = _reading?.followUps.length;
+    final token = _token;
+    if (token == null || step == null || _reading?.report == null)
+      return Future.value();
+    return _run(() async {
+      _reading = await _gateway.followUp(token, step, question);
+    });
+  }
+
+  Future<void> nextQuestion() => _run(() async {
+    _previousQuestion = _reading?.snapshot.question;
+    _token = null;
+    _pending = null;
+    _reading = null;
+    _clarificationQuestion = null;
+    await _save();
+  });
+
+  Future<void> retry() => _retry == null ? Future.value() : _run(_retry!);
+
+  Future<void> _act(PendingGuideAction event) {
+    final replay = _pending != null;
+    _pending ??= event;
+    return _run(() async {
+      _retry = () => _sendPending(refresh: true);
+      await _sendPending(refresh: replay);
+    });
+  }
+
+  Future<void> _sendPending({required bool refresh}) async {
+    final token = _token!;
+    final event = _pending!;
+    await _save();
+    try {
+      final next = await _gateway.perform(token, event);
+      _reading = refresh ? await _gateway.get(token) : next;
+    } on ReadingConnectionError catch (error) {
+      if (error.status != 409) rethrow;
+      _reading = await _gateway.get(token);
+    }
+    _pending = null;
+    await _save();
+    _emit();
+    await _reportIfReady();
+  }
+
+  Future<void> _reportIfReady() async {
+    if (_reading?.snapshot.stage != GuideStage.reading ||
+        _reading?.report != null)
+      return;
+    _retry = _reportIfReady;
+    _reading = await _gateway.report(_token!);
+  }
+
+  Future<void> _save() async {
+    if (_changes.isClosed) return;
+    await _recovery.write(
+      _token == null ? null : GuideRecovery(_token!, _pending),
+    );
+  }
+
+  Future<void> _run(Future<void> Function() action) async {
+    if (_busy || _changes.isClosed) return;
+    _busy = true;
+    _message = null;
+    _retry = action;
+    _emit();
+    try {
+      await action();
+      _retry = null;
+    } on ReadingConnectionError catch (error) {
+      if (error.status == 404 && _token != null) {
+        _token = null;
+        _pending = null;
+        _reading = null;
+        _retry = null;
+        await _save();
+      }
+      _message = _errorMessage(error);
+    } finally {
+      _busy = false;
+      _emit();
+    }
+  }
+
+  void _emit() {
+    if (!_changes.isClosed) _changes.add(null);
+  }
+
+  void dispose() {
+    if (_changes.isClosed) return;
+    unawaited(_changes.close());
+    _onDispose?.call();
+  }
+}
+
+String _errorMessage(ReadingConnectionError error) => switch (error.status) {
+  400 when error.code == 'question_needs_model_confirmation' =>
+    '问题确认已过期，请重试确认。',
+  400 => '服务器未接受这次输入，请核对后重试。',
+  401 => '当前账号会话无法验证，请重新登录后重试。',
+  404 => '这次算事已过期，可以发起新问题。',
+  428 => '请在隐私设置中开启 AI 数据共享授权后重试。',
+  429 => '操作太频繁，请稍后再试。',
+  502 => '解读格式不完整，盘面已保存，可以重试。',
+  503 when error.code == 'question_model_unavailable' => '暂时无法理解这条问题，请恢复连接后重试。',
+  503 => '解读暂不可用，可以稍后重试。',
+  504 => '算事服务响应超时，请重试。',
+  _ => error.code == 'timeout' ? '算事服务响应超时，请重试。' : '暂时未能连接算事服务，请重试。',
+};
+
+final _secureRandom = Random.secure();
+
+String guideEventId() {
+  final bytes = List.generate(16, (_) => _secureRandom.nextInt(256));
+  bytes[6] = (bytes[6] & 15) | 64;
+  bytes[8] = (bytes[8] & 63) | 128;
+  final hex = bytes
+      .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
+      .join();
+  return '${hex.substring(0, 8)}-${hex.substring(8, 12)}-'
+      '${hex.substring(12, 16)}-${hex.substring(16, 20)}-${hex.substring(20)}';
+}

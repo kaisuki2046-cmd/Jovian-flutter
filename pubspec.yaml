@@ -1,0 +1,30 @@
+name: jovian
+description: Jovian Flutter application.
+version: 0.1.0+1
+publish_to: none
+environment:
+  sdk: ^3.10.0
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_secure_storage: ^11.2.0
+  flutter_timezone: ^5.1.1
+  http: ^1.6.0
+  jovian_civil_time:
+    path: src/shared/time
+  jovian_destiny:
+    path: src/features/destiny/control
+  jovian_divination:
+    path: src/features/divination/control
+  jovian_fortune:
+    path: src/features/fortune/control/calculation
+  material_ui: ^1.11.1
+  web: ^1.1.2
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+flutter:
+  uses-material-design: true
+  assets:
+    - src/features/destiny/assets/birth_places.json
+    - src/features/divination/assets/tarot/

@@ -1,0 +1,16 @@
+name: jovian_account_server
+description: Dart server components for Jovian accounts.
+version: 0.1.0
+publish_to: none
+environment:
+  sdk: ^3.10.0
+dependencies:
+  convert: ^3.1.2
+  crypto: ^3.0.8
+  jovian_compliance_server:
+    path: ../../compliance/server
+  jovian_json:
+    path: ../../../shared/json
+  pointycastle: ^4.0.0
+  sqlite3: ^3.9.2
+  timezone: ^0.11.2

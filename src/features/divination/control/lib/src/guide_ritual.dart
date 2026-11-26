@@ -205,6 +205,7 @@ class GuideRitualSnapshot {
     required this.castStartedAt,
     required this.castResult,
     required this.chart,
+    this.tarotCutIndex,
   });
 
   final String question;
@@ -218,6 +219,7 @@ class GuideRitualSnapshot {
   final DateTime? castStartedAt;
   final JingfangReading? castResult;
   final GuideChart? chart;
+  final int? tarotCutIndex;
 
   Map<String, String> get calculationRules =>
       automatic ? _automaticGuideRules : _guideRules;
@@ -232,6 +234,7 @@ class GuideRitualSnapshot {
     'tosses': tosses,
     'slotCount': slotCount,
     'selectedSlots': selectedSlots,
+    if (tarotCutIndex case final point?) 'tarotCutIndex': point,
     if (castStartedAt case final started?) 'castStartedAt': _wireDate(started),
     if (castResult case final cast?) 'castResult': cast.toJson(),
     if (automatic)

@@ -9,6 +9,14 @@ GuideRitualSnapshot parseGuideSnapshot(Map<String, Object?> value) {
     final stage = GuideStage.values.byName(value['stage'] as String);
     final automatic = value['automatic'] == true;
     final slotCount = value['slotCount'] as int;
+    final rawCut = value['tarotCutIndex'];
+    if (value.containsKey('tarotCutIndex') &&
+        (rawCut is! int ||
+            stage == GuideStage.cast ||
+            rawCut < (tarotDeck.length * 0.45).ceil() ||
+            rawCut > (tarotDeck.length * 0.55).floor())) {
+      throw invalid;
+    }
     final selected = List<int>.unmodifiable(
       (value['selectedSlots'] as List).cast<int>(),
     );
@@ -89,6 +97,7 @@ GuideRitualSnapshot parseGuideSnapshot(Map<String, Object?> value) {
       castStartedAt: started,
       castResult: cast,
       chart: chart,
+      tarotCutIndex: rawCut as int?,
     );
     final computed = snapshot.toChartSnapshotJson();
     for (final field in [

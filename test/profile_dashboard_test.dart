@@ -268,7 +268,10 @@ void main() {
       expect(find.text('版本 0.1.0'), findsOneWidget);
       await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('退出登录'));
+      final signOut = find.text('退出登录');
+      await tester.ensureVisible(signOut);
+      await tester.pumpAndSettle();
+      await tester.tap(signOut);
       await tester.pumpAndSettle();
       await tester.tap(find.text('确认退出'));
       await tester.pumpAndSettle();

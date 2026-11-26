@@ -116,49 +116,38 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
             final session = account.session;
             final guest = session?.kind == AccountKind.guest;
             return ListView(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+              padding: const EdgeInsets.fromLTRB(22, 14, 22, 28),
               children: [
-                Card(
-                  margin: EdgeInsets.zero,
-                  child: Column(
-                    children: [
-                      if (account.authorizedSession case final member?
-                          when member.kind == AccountKind.member) ...[
-                        ListTile(
-                          leading: const Icon(Icons.person_outline),
-                          title: const Text('基础个人资料'),
-                          trailing: const Icon(Icons.chevron_right),
-                          onTap: () => _open(
-                            ProfileEditorPage(account: account, member: member),
-                          ),
-                        ),
-                        const Divider(height: 1, indent: 16, endIndent: 16),
-                      ],
-                      ListTile(
-                        leading: const Icon(Icons.shield_outlined),
-                        title: const Text('账户与安全'),
-                        trailing: const Icon(Icons.chevron_right),
-                        onTap: () =>
-                            _open(AccountSecurityPage(account: account)),
-                      ),
-                      const Divider(height: 1, indent: 16, endIndent: 16),
-                      ListTile(
-                        leading: const Icon(Icons.privacy_tip_outlined),
-                        title: const Text('隐私设置'),
-                        subtitle: const Text('管理 AI 数据共享授权'),
-                        trailing: const Icon(Icons.chevron_right),
-                        onTap: () => _open(_PrivacyPage(account: account)),
-                      ),
-                      const Divider(height: 1, indent: 16, endIndent: 16),
-                      ListTile(
-                        leading: const Icon(Icons.description_outlined),
-                        title: const Text('协议与政策'),
-                        subtitle: const Text('查看服务条款与隐私政策'),
-                        trailing: const Icon(Icons.chevron_right),
-                        onTap: () => _open(_AgreementsPage(account: account)),
-                      ),
-                    ],
+                if (account.authorizedSession case final member?
+                    when member.kind == AccountKind.member) ...[
+                  _SettingsEntry(
+                    title: '基础个人资料',
+                    icon: Icons.person_outline,
+                    onTap: () => _open(
+                      ProfileEditorPage(account: account, member: member),
+                    ),
                   ),
+                  const SizedBox(height: 9),
+                ],
+                _SettingsEntry(
+                  title: '账户与安全',
+                  subtitle: '查看登录方式',
+                  icon: Icons.shield_outlined,
+                  onTap: () => _open(AccountSecurityPage(account: account)),
+                ),
+                const SizedBox(height: 9),
+                _SettingsEntry(
+                  title: '隐私设置',
+                  subtitle: '管理 AI 数据共享授权',
+                  icon: Icons.privacy_tip_outlined,
+                  onTap: () => _open(_PrivacyPage(account: account)),
+                ),
+                const SizedBox(height: 9),
+                _SettingsEntry(
+                  title: '协议与政策',
+                  subtitle: '查看现行版本和确认记录',
+                  icon: Icons.description_outlined,
+                  onTap: () => _open(_AgreementsPage(account: account)),
                 ),
                 if (widget.onThemeModeChanged != null) ...[
                   const SizedBox(height: 16),
@@ -172,29 +161,21 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                       ),
                     ),
                   ),
-                  Card(
-                    margin: EdgeInsets.zero,
-                    child: ListTile(
-                      leading: const Icon(Icons.tonality_outlined),
-                      title: const Text('外观模式'),
-                      subtitle: Text(_modeLabel(_themeMode)),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: _chooseAppearance,
-                    ),
+                  _SettingsEntry(
+                    title: '外观模式',
+                    subtitle: _modeLabel(_themeMode),
+                    icon: Icons.tonality_outlined,
+                    onTap: _chooseAppearance,
                   ),
                 ],
                 const SizedBox(height: 12),
-                Card(
-                  margin: EdgeInsets.zero,
-                  child: ListTile(
-                    leading: const Icon(Icons.info_outline),
-                    title: const Text('关于木星环'),
-                    subtitle: widget.appVersion.trim().isEmpty
-                        ? null
-                        : Text('版本 ${widget.appVersion}'),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () => _open(_AboutPage(version: widget.appVersion)),
-                  ),
+                _SettingsEntry(
+                  title: '关于木星环',
+                  subtitle: widget.appVersion.trim().isEmpty
+                      ? '查看版本信息'
+                      : '版本 ${widget.appVersion}',
+                  icon: Icons.info_outline,
+                  onTap: () => _open(_AboutPage(version: widget.appVersion)),
                 ),
                 if (account.notice case final message?) ...[
                   const SizedBox(height: 12),
@@ -211,6 +192,47 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
             );
           },
         ),
+      ),
+    );
+  }
+}
+
+class _SettingsEntry extends StatelessWidget {
+  const _SettingsEntry({
+    required this.title,
+    this.subtitle,
+    required this.icon,
+    required this.onTap,
+  });
+
+  final String title;
+  final String? subtitle;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    return Card(
+      margin: EdgeInsets.zero,
+      clipBehavior: Clip.antiAlias,
+      child: ListTile(
+        minTileHeight: 69,
+        leading: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: colors.primaryContainer,
+            borderRadius: BorderRadius.circular(13),
+          ),
+          alignment: Alignment.center,
+          child: Icon(icon, color: colors.onSurface, size: 21),
+        ),
+        title: Text(title, style: theme.textTheme.titleMedium),
+        subtitle: subtitle == null ? null : Text(subtitle!),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: onTap,
       ),
     );
   }

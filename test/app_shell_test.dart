@@ -38,7 +38,7 @@ void main() {
       expect(
         find.descendant(
           of: find.byType(AppBar),
-          matching: find.text(tab.label),
+          matching: find.text(tab == JovianTab.divination ? '对话' : tab.label),
         ),
         findsOneWidget,
       );

@@ -35,9 +35,9 @@ class DivinationPage extends StatelessWidget {
         ],
         bottom: const TabBar(
           tabs: [
+            Tab(text: '综合算事'),
             Tab(text: '梅花易数'),
             Tab(text: '六爻'),
-            Tab(text: '综合算事'),
           ],
         ),
       ),
@@ -45,9 +45,9 @@ class DivinationPage extends StatelessWidget {
         top: false,
         child: TabBarView(
           children: [
+            GuideForm(key: ObjectKey(onlineGuide), online: onlineGuide),
             const MeihuaForm(),
             const LiuYaoForm(),
-            GuideForm(key: ObjectKey(onlineGuide), online: onlineGuide),
           ],
         ),
       ),

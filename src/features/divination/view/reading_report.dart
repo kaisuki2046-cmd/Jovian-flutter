@@ -15,33 +15,51 @@ class ReadingReportView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (current is LegacyProReport) Text(current.opening),
-        for (final method in proMethods) ...[
-          const SizedBox(height: 14),
-          Text(_methodLabels[method]!, style: text.titleLarge),
-          const SizedBox(height: 6),
-          ...switch (current) {
-            ProParagraphReport(:final sections) => [
-              for (final paragraph in sections[method]!)
-                if (paragraph.detail case final detail?)
-                  ExpansionTile(
-                    title: _marked(paragraph.text),
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                        child: Text(detail),
-                      ),
-                    ],
-                  )
-                else
-                  Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: _marked(paragraph.text),
+        for (final method in proMethods)
+          Card(
+            margin: const EdgeInsets.only(bottom: 8),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Semantics(
+                    header: true,
+                    child: Text(
+                      _methodLabels[method]!,
+                      style: text.titleMedium,
+                    ),
                   ),
-            ],
-            ProTextReport(:final sections) => [_marked(sections[method]!)],
-            LegacyProReport(:final sections) => [_archived(sections[method]!)],
-          },
-        ],
+                  const SizedBox(height: 8),
+                  ...switch (current) {
+                    ProParagraphReport(:final sections) => [
+                      for (final paragraph in sections[method]!)
+                        if (paragraph.detail case final detail?)
+                          ExpansionTile(
+                            title: _marked(paragraph.text),
+                            tilePadding: EdgeInsets.zero,
+                            childrenPadding: const EdgeInsets.only(bottom: 8),
+                            expandedCrossAxisAlignment:
+                                CrossAxisAlignment.start,
+                            children: [Text(detail)],
+                          )
+                        else
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4),
+                            child: _marked(paragraph.text),
+                          ),
+                    ],
+                    ProTextReport(:final sections) => [
+                      _marked(sections[method]!),
+                    ],
+                    LegacyProReport(:final sections) => [
+                      _archived(sections[method]!),
+                    ],
+                  },
+                ],
+              ),
+            ),
+          ),
         if (current is LegacyProReport) ...[
           const SizedBox(height: 12),
           Text(current.closing),

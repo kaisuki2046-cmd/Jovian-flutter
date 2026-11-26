@@ -13,6 +13,10 @@ flutter run -d chrome --web-port 8081 --target src/app/main.dart --dart-define=A
 
 手机与桌面浏览器共用页面主题、卡片、表单及底栏，桌面将页面居中到 460 逻辑像素。底栏顺序为命理、合盘、算事、消息、个人中心，周期运势仍从命理进入。个人中心设置可以切换外观，并在本设备保存选择。
 
+底栏沿用原界面的悬浮胶囊、图标和蓝色选中态。滑动时水滴跟随手势，松开后切到相应标签。个人中心沿用大头像、独立设置入口、关注和粉丝按钮及并排的报告与消息入口。
+
+界面内置简体中文字体，关闭 Web CDN 时也能正常显示中文。[Noto Sans SC v2.004](https://github.com/notofonts/noto-cjk/blob/Sans2.004/Sans/SubsetOTF/SC/NotoSansSC-Regular.otf) · [字体许可证](src/ui/assets/NotoSansSC-OFL.txt)
+
 个人中心通过原账户服务恢复会话、显示 UID、关注与粉丝，并读取报告和命理档案。算事通过原 `/reading` 接口发送问题、起盘和追问。同一浏览器标签页可按当前账号恢复尚有效的算事会话。浏览器 Worker 的构建及对照见[本机计算说明](tool/legacy_compute/README.md)。
 
 综合算事保留自动起盘，也可手动投六次铜钱，再从 78 张牌里选三张。仪式可以暂停，支持逐张翻牌或一键翻牌。服务端提供切牌位置时，前端按该位置演示切牌。较早版本的服务仍可完成其余仪式。

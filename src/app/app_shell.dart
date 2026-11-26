@@ -2,20 +2,21 @@ import 'dart:math' as math;
 
 import 'package:material_ui/material_ui.dart';
 
+import '../ui/tab_dock.dart';
+import '../ui/tab_glyph.dart';
 import '../ui/theme.dart';
 
 enum JovianTab {
-  destiny('命理', Icons.auto_awesome_outlined, Icons.auto_awesome),
-  synastry('合盘', Icons.favorite_border, Icons.favorite),
-  divination('算事', Icons.explore_outlined, Icons.explore),
-  messages('消息', Icons.chat_bubble_outline, Icons.chat_bubble),
-  account('个人中心', Icons.person_outline, Icons.person);
+  destiny('命理', TabGlyphShape.chart),
+  synastry('合盘', TabGlyphShape.match),
+  divination('算事', TabGlyphShape.oracle),
+  messages('消息', TabGlyphShape.message),
+  account('个人中心', TabGlyphShape.profile);
 
-  const JovianTab(this.label, this.icon, this.activeIcon);
+  const JovianTab(this.label, this.glyph);
 
   final String label;
-  final IconData icon;
-  final IconData activeIcon;
+  final TabGlyphShape glyph;
 }
 
 class JovianShell extends StatefulWidget {
@@ -53,7 +54,6 @@ class _JovianShellState extends State<JovianShell> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
     final keyboardVisible = MediaQuery.viewInsetsOf(context).bottom > 0;
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -79,26 +79,19 @@ class _JovianShellState extends State<JovianShell> {
       ),
       bottomNavigationBar: keyboardVisible
           ? null
-          : DecoratedBox(
-              decoration: BoxDecoration(
-                border: Border(top: BorderSide(color: colors.outlineVariant)),
-              ),
-              child: NavigationBar(
-                height: 65,
-                selectedIndex: _active.index,
-                onDestinationSelected: (index) =>
-                    _select(JovianTab.values[index]),
-                destinations: [
-                  for (final tab in JovianTab.values)
-                    NavigationDestination(
-                      key: ValueKey(tab),
-                      label: tab.label,
-                      tooltip: tab.label,
-                      icon: Icon(tab.icon),
-                      selectedIcon: Icon(tab.activeIcon),
-                    ),
-                ],
-              ),
+          : JovianTabDock(
+              selected: _active.index,
+              select: (index) => _select(JovianTab.values[index]),
+              destinations: [
+                for (final tab in JovianTab.values)
+                  NavigationDestination(
+                    key: ValueKey(tab),
+                    label: tab.label,
+                    tooltip: tab.label,
+                    icon: TabGlyph(tab.glyph),
+                    selectedIcon: TabGlyph(tab.glyph, selected: true),
+                  ),
+              ],
             ),
     );
   }

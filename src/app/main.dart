@@ -13,6 +13,7 @@ import '../features/destiny/destiny.dart';
 import '../features/divination/divination.dart';
 import '../features/fortune/fortune.dart';
 import '../features/social/social.dart';
+import '../ui/tab_glyph.dart';
 import '../ui/theme.dart';
 import 'app_shell.dart';
 
@@ -231,6 +232,7 @@ class _AppHomeState extends State<_AppHome> {
           child: AccountPage(
             account: account,
             active: active,
+            openMessages: () => selectTab(JovianTab.messages),
             themeMode: widget.themeMode,
             onThemeModeChanged: widget.onThemeModeChanged,
           ),
@@ -258,7 +260,7 @@ class _ModuleStatusPage extends StatelessWidget {
       child: Padding(
         padding: jovianPagePadding,
         child: Card(
-          child: ListTile(leading: Icon(tab.icon), title: Text(message)),
+          child: ListTile(leading: TabGlyph(tab.glyph), title: Text(message)),
         ),
       ),
     ),

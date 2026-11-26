@@ -25,7 +25,12 @@ dev_dependencies:
     sdk: flutter
 flutter:
   uses-material-design: true
+  fonts:
+    - family: JovianSansSC
+      fonts:
+        - asset: src/ui/assets/NotoSansSC-Regular.otf
   assets:
+    - src/ui/assets/NotoSansSC-OFL.txt
     - src/features/destiny/assets/birth_places.json
     - src/features/divination/assets/tarot/
     - src/features/divination/assets/coins/

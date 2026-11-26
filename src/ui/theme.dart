@@ -2,18 +2,25 @@ import 'package:material_ui/material_ui.dart';
 
 const jovianPageWidth = 460.0;
 const jovianPagePadding = EdgeInsets.fromLTRB(16, 12, 16, 24);
+const _fontFamily = 'JovianSansSC';
 
 ThemeData jovianTheme(Brightness brightness) {
   final dark = brightness == Brightness.dark;
   final background = dark ? const Color(0xff191919) : const Color(0xfffdfcf8);
   final surface = dark ? const Color(0xff1e1e1e) : const Color(0xfff3f2ec);
   final canvas = dark ? const Color(0xff111111) : const Color(0xffecebe5);
-  final ink = dark ? const Color(0xffe3e0db) : const Color(0xff292824);
-  final muted = dark ? const Color(0xffaaa6a0) : const Color(0xff66645d);
-  final line = dark ? const Color(0xff3a373b) : const Color(0xffdfddd4);
-  final accent = dark ? const Color(0xffded2ed) : const Color(0xff4b4458);
-  final tint = dark ? const Color(0xff37303e) : const Color(0xffeae3f0);
-  final onAccent = dark ? const Color(0xff261d2c) : Colors.white;
+  final ink = dark ? const Color(0xffd2d2d2) : const Color(0xff292824);
+  final muted = dark ? const Color(0xff8c8c8c) : const Color(0xff66645d);
+  final line = dark ? const Color(0xff252525) : const Color(0xffdfddd4);
+  final accent = dark ? const Color(0xffc4c4c4) : const Color(0xff484640);
+  final tint = dark ? const Color(0xff292929) : const Color(0xffeae8df);
+  final onAccent = dark ? const Color(0xff111111) : Colors.white;
+  final navigationInk = dark
+      ? const Color(0xffeeeaf3)
+      : const Color(0xff4b4458);
+  final navigationMuted = dark
+      ? const Color(0xffaeb0b7)
+      : const Color(0xff61666c);
   final scheme = ColorScheme.fromSeed(seedColor: accent, brightness: brightness)
       .copyWith(
         primary: accent,
@@ -41,6 +48,7 @@ ThemeData jovianTheme(Brightness brightness) {
   final base = ThemeData(
     useMaterial3: true,
     colorScheme: scheme,
+    fontFamily: _fontFamily,
     fontFamilyFallback: const [
       'PingFang SC',
       'Microsoft YaHei',
@@ -58,6 +66,12 @@ ThemeData jovianTheme(Brightness brightness) {
     scaffoldBackgroundColor: background,
     dividerColor: line,
     textTheme: text.copyWith(
+      headlineMedium: text.headlineMedium?.copyWith(
+        fontSize: 27,
+        height: 36 / 27,
+        letterSpacing: -0.35,
+        fontWeight: FontWeight.w600,
+      ),
       headlineSmall: text.headlineSmall?.copyWith(
         fontSize: 24,
         fontWeight: FontWeight.w600,
@@ -70,7 +84,7 @@ ThemeData jovianTheme(Brightness brightness) {
         fontSize: 16,
         fontWeight: FontWeight.w600,
       ),
-      bodyMedium: text.bodyMedium?.copyWith(fontSize: 14, height: 1.5),
+      bodyMedium: text.bodyMedium?.copyWith(fontSize: 14, height: 22 / 14),
     ),
     appBarTheme: AppBarThemeData(
       backgroundColor: background,
@@ -81,7 +95,8 @@ ThemeData jovianTheme(Brightness brightness) {
       titleSpacing: 16,
       titleTextStyle: text.headlineSmall?.copyWith(
         color: ink,
-        fontSize: 25,
+        fontSize: 27,
+        letterSpacing: -0.35,
         fontWeight: FontWeight.w600,
       ),
     ),
@@ -128,18 +143,23 @@ ThemeData jovianTheme(Brightness brightness) {
       elevation: 0,
       labelTextStyle: WidgetStateProperty.resolveWith(
         (states) => TextStyle(
+          fontFamily: _fontFamily,
           fontSize: 11,
           height: 1.2,
-          color: states.contains(WidgetState.selected) ? accent : muted,
+          color: states.contains(WidgetState.selected)
+              ? navigationInk
+              : navigationMuted,
           fontWeight: states.contains(WidgetState.selected)
-              ? FontWeight.w600
-              : FontWeight.w500,
+              ? FontWeight.w700
+              : FontWeight.w600,
         ),
       ),
       iconTheme: WidgetStateProperty.resolveWith(
         (states) => IconThemeData(
           size: 23,
-          color: states.contains(WidgetState.selected) ? accent : muted,
+          color: states.contains(WidgetState.selected)
+              ? navigationInk
+              : navigationMuted,
         ),
       ),
     ),

@@ -14,6 +14,12 @@ class AccountPermissions extends StatelessWidget {
     final catalog = account.catalog;
     final state = account.agreementState;
     if (catalog == null || state == null) return const SizedBox.shrink();
+    final scope = account.session?.scope;
+    bool isCurrent() =>
+        context.mounted &&
+        scope != null &&
+        !account.sessionChanging &&
+        account.session?.scope == scope;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -30,7 +36,8 @@ class AccountPermissions extends StatelessWidget {
             onPressed: account.busy
                 ? null
                 : () async {
-                    if (await confirmAccountAgreements(context, catalog)) {
+                    if (await confirmAccountAgreements(context, catalog) &&
+                        isCurrent()) {
                       await account.acceptRequired(catalog);
                     }
                   },
@@ -41,7 +48,8 @@ class AccountPermissions extends StatelessWidget {
             onPressed: account.busy
                 ? null
                 : () async {
-                    if (await _confirmAi(context, catalog.ai, '全部 AI 在线解读')) {
+                    if (await _confirmAi(context, catalog.ai, '全部 AI 在线解读') &&
+                        isCurrent()) {
                       await account.grantAll(catalog.ai);
                     }
                   },
@@ -61,7 +69,8 @@ class AccountPermissions extends StatelessWidget {
                         !await _confirmAi(context, catalog.ai, value)) {
                       return;
                     }
-                    await account.choose(catalog.ai, key, agreed);
+                    if (isCurrent())
+                      await account.choose(catalog.ai, key, agreed);
                   },
           ),
       ],

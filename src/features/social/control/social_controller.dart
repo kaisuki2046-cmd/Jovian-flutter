@@ -1,16 +1,22 @@
 import 'package:flutter/foundation.dart';
 
 import '../../../shared/http/json_client.dart';
+import '../../account/account.dart';
 import '../model/social.dart';
 import '../requests/social_api.dart';
 
 class SocialController {
   const SocialController(this._api);
 
+  SocialController.forMember(AccountController account, String memberId)
+    : _api = SocialApi(account, memberId);
+
   final SocialApi _api;
   String get memberId => _api.memberId;
 
   Future<SocialInboxSummary> inbox() => _api.inbox();
+
+  Future<SocialCounts> counts() => _api.counts();
 
   SocialPaginator<FollowerAlert> notifications() =>
       SocialPaginator(_api.notifications, (item) => item.id);

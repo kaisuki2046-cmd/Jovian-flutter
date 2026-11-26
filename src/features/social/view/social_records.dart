@@ -267,10 +267,12 @@ class SocialConnectionsPanel extends StatefulWidget {
     super.key,
     required this.controller,
     required this.direction,
+    this.onBack,
   });
 
   final SocialController controller;
   final SocialList direction;
+  final VoidCallback? onBack;
 
   @override
   State<SocialConnectionsPanel> createState() => _SocialConnectionsPanelState();
@@ -295,7 +297,12 @@ class _SocialConnectionsPanelState extends State<SocialConnectionsPanel> {
   Widget build(BuildContext context) {
     final followers = widget.direction == SocialList.followers;
     return Scaffold(
-      appBar: AppBar(title: Text(followers ? '粉丝' : '关注')),
+      appBar: AppBar(
+        title: Text(followers ? '粉丝' : '关注'),
+        leading: widget.onBack == null
+            ? null
+            : BackButton(onPressed: widget.onBack),
+      ),
       body: _PagedList(
         paginator: _people,
         empty: followers ? '暂无粉丝。' : '暂无关注。',

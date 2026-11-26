@@ -3,7 +3,6 @@ import 'package:material_ui/material_ui.dart';
 import '../../account/account.dart';
 import '../control/social_controller.dart';
 import '../model/social.dart';
-import '../requests/social_api.dart';
 import 'social_profile.dart';
 import 'social_records.dart';
 
@@ -31,9 +30,11 @@ class SocialPage extends StatelessWidget {
       builder: (context, _) {
         final memberId = current.socialMemberId;
         if (memberId != null) {
-          return _MemberMessages(
+          return _MemberNavigator(
             key: ValueKey(memberId),
-            controller: SocialController(SocialApi(current, memberId)),
+            page: _MessagesHome(
+              controller: SocialController.forMember(current, memberId),
+            ),
             active: active,
           );
         }
@@ -97,21 +98,53 @@ class _UnavailableMessages extends StatelessWidget {
   );
 }
 
-class _MemberMessages extends StatefulWidget {
-  const _MemberMessages({
+class SocialConnectionsPage extends StatelessWidget {
+  const SocialConnectionsPage({
     super.key,
-    required this.controller,
-    required this.active,
+    required this.account,
+    required this.direction,
   });
 
-  final SocialController controller;
+  final AccountController account;
+  final SocialList direction;
+
+  @override
+  Widget build(BuildContext context) => ListenableBuilder(
+    listenable: account,
+    builder: (context, _) {
+      final memberId = account.socialMemberId;
+      if (memberId == null) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(direction == SocialList.followers ? '粉丝' : '关注'),
+          ),
+          body: const Center(child: Text('登录后可以查看关注与粉丝。')),
+        );
+      }
+      return _MemberNavigator(
+        key: ValueKey((account, memberId, direction)),
+        active: true,
+        page: SocialConnectionsPanel(
+          controller: SocialController.forMember(account, memberId),
+          direction: direction,
+          onBack: () => Navigator.of(context).maybePop(),
+        ),
+      );
+    },
+  );
+}
+
+class _MemberNavigator extends StatefulWidget {
+  const _MemberNavigator({super.key, required this.page, required this.active});
+
+  final Widget page;
   final bool active;
 
   @override
-  State<_MemberMessages> createState() => _MemberMessagesState();
+  State<_MemberNavigator> createState() => _MemberNavigatorState();
 }
 
-class _MemberMessagesState extends State<_MemberMessages> {
+class _MemberNavigatorState extends State<_MemberNavigator> {
   final _navigation = GlobalKey<NavigatorState>();
 
   @override
@@ -120,9 +153,8 @@ class _MemberMessagesState extends State<_MemberMessages> {
     onPopWithResult: (_) => _navigation.currentState?.maybePop(),
     child: Navigator(
       key: _navigation,
-      onGenerateRoute: (_) => MaterialPageRoute<void>(
-        builder: (context) => _MessagesHome(controller: widget.controller),
-      ),
+      onGenerateRoute: (_) =>
+          MaterialPageRoute<void>(builder: (context) => widget.page),
     ),
   );
 }

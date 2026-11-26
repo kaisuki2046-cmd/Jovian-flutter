@@ -16,6 +16,9 @@ class SocialApi {
   Future<SocialInboxSummary> inbox() async =>
       SocialInboxSummary.fromJson(await _request(['notifications', 'summary']));
 
+  Future<SocialCounts> counts() async =>
+      decodeSocialCounts(await _request(['me']));
+
   Future<SocialResultPage<FollowerAlert>> notifications(String? before) async {
     final json = await _request([
       'notifications',

@@ -3,6 +3,13 @@ final socialUid = RegExp(r'^[1-9]\d{7}$');
 
 enum SocialList { following, followers }
 
+typedef SocialCounts = ({int following, int followers});
+
+SocialCounts decodeSocialCounts(Map<String, Object?> json) => (
+  following: _count(json['following']),
+  followers: _count(json['followers']),
+);
+
 enum SocialSearchMode { uid, nickname }
 
 enum SocialReportReason {
@@ -38,9 +45,10 @@ class SocialRelation {
     if (follows is! bool || followedBy is! bool) {
       throw const FormatException('Invalid social relation');
     }
+    final counts = decodeSocialCounts(json);
     return SocialRelation(
-      following: _count(json['following']),
-      followers: _count(json['followers']),
+      following: counts.following,
+      followers: counts.followers,
       follows: follows,
       followedBy: followedBy,
     );

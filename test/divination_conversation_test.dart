@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/rendering.dart';
@@ -7,6 +8,7 @@ import 'package:http/testing.dart';
 import 'package:jovian_divination/jovian_divination.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../src/app/main.dart';
 import '../src/features/divination/requests/reading_gateway.dart';
 import '../src/features/divination/view/divination_page.dart';
 import '../src/shared/http/json_client.dart';
@@ -147,6 +149,37 @@ void main() {
     expect(service.calls, ['GET /reading']);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets(
+    'a question finishing on a different main tab waits in its chat',
+    (tester) async {
+      final understanding = Completer<void>();
+      final online = (_ReadingService()..understanding = understanding.future)
+          .connect(_Recovery());
+      addTearDown(online.dispose);
+      await tester.pumpWidget(
+        JovianApp(initialTab: JovianTab.divination, onlineGuide: online),
+      );
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextFormField), _details);
+      await tester.pump();
+      await tester.tap(find.byTooltip('发送消息'));
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey(JovianTab.messages)));
+      await tester.pump();
+
+      understanding.complete();
+      await tester.pumpAndSettle();
+      final coin = find.byKey(const ValueKey('coin-ritual-toss-button'));
+      expect(coin, findsNothing);
+      await tester.tap(find.byKey(const ValueKey(JovianTab.divination)));
+      await tester.pumpAndSettle();
+      await _tap(tester, '继续本次仪式');
+      expect(coin, findsOneWidget);
+      await tester.tap(find.byTooltip('暂停仪式'));
+      await tester.pumpAndSettle();
+    },
+  );
 }
 
 Widget _app(OnlineGuideController online) => MaterialApp(
@@ -180,6 +213,7 @@ class _Recovery implements GuideRecoveryStore {
 class _ReadingService {
   String get _token => 'a' * 43;
   bool failReport = true;
+  Future<void>? understanding;
   final understood = <String>[];
   final calls = <String>[];
   final automatic = <bool>[];
@@ -210,6 +244,7 @@ class _ReadingService {
     switch (call) {
       case 'POST /reading/understand':
         expectSync(body['requireModel'], true);
+        await understanding;
         final question = body['question'] as String;
         understood.add(question);
         return _json({

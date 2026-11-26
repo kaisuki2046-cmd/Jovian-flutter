@@ -218,6 +218,7 @@ class _AppHomeState extends State<_AppHome> {
         key: ValueKey(_scope),
         onlineGuide: widget.account == null ? widget.onlineGuide : _guide,
         openSynastry: () => selectTab(JovianTab.synastry),
+        active: active,
       ),
       JovianTab.messages => SocialPage(
         account: widget.account,

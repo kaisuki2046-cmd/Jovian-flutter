@@ -112,11 +112,14 @@ void main() {
       tester.widget<Semantics>(present).properties.onTap!();
       await tester.pumpAndSettle();
       expect(present, findsNothing);
-      final faces = find.byWidgetPredicate(
-        (widget) =>
-            widget is Image &&
-            widget.image is AssetImage &&
-            (widget.image as AssetImage).assetName != tarotBack,
+      final faces = find.descendant(
+        of: find.byKey(const ValueKey('guide-ritual-dialog')),
+        matching: find.byWidgetPredicate(
+          (widget) =>
+              widget is Image &&
+              widget.image is AssetImage &&
+              (widget.image as AssetImage).assetName != tarotBack,
+        ),
       );
       expect(faces, findsOneWidget);
 

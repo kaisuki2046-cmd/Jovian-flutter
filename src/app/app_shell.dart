@@ -56,6 +56,7 @@ class _JovianShellState extends State<JovianShell> {
   Widget build(BuildContext context) {
     final keyboardVisible = MediaQuery.viewInsetsOf(context).bottom > 0;
     return Scaffold(
+      extendBody: !keyboardVisible,
       resizeToAvoidBottomInset: false,
       body: IndexedStack(
         index: _active.index,

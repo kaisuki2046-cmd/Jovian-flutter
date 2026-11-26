@@ -16,23 +16,34 @@ class GuideWelcome extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
+    final viewport = MediaQuery.sizeOf(context);
+    final portraitSize = math.min(204.0, (viewport.width - 36) * 0.55);
+    final welcomeInset = (viewport.height / 3 - 104 - portraitSize / 2).clamp(
+      14.0,
+      84.0,
+    );
+    final bubbleColor = theme.brightness == Brightness.dark
+        ? const Color(0xffdddfdc)
+        : colors.surfaceContainerLow;
+    const bubbleLine = Color(0xffdfddd4);
     return Padding(
-      padding: const EdgeInsets.only(top: 14, bottom: 12),
+      padding: EdgeInsets.only(top: welcomeInset, bottom: 12),
       child: Column(
         children: [
           DecoratedBox(
             decoration: ShapeDecoration(
-              color: colors.surfaceContainerLow,
-              shape: StadiumBorder(
-                side: BorderSide(color: colors.outlineVariant),
-              ),
+              color: bubbleColor,
+              shape: const StadiumBorder(side: BorderSide(color: bubbleLine)),
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
               child: Text(
                 '有什么事情想知道吗？',
                 textAlign: TextAlign.center,
-                style: theme.textTheme.titleMedium,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: const Color(0xff292824),
+                  fontSize: 18,
+                ),
               ),
             ),
           ),
@@ -44,23 +55,18 @@ class GuideWelcome extends StatelessWidget {
                 width: 10,
                 height: 10,
                 decoration: BoxDecoration(
-                  color: colors.surfaceContainerLow,
-                  border: Border(
-                    right: BorderSide(color: colors.outlineVariant),
-                    bottom: BorderSide(color: colors.outlineVariant),
+                  color: bubbleColor,
+                  border: const Border(
+                    right: BorderSide(color: bubbleLine),
+                    bottom: BorderSide(color: bubbleLine),
                   ),
                 ),
               ),
             ),
           ),
-          FractionallySizedBox(
-            widthFactor: .55,
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 204),
-                child: const GuideAssistantPortrait(accessible: true),
-              ),
-            ),
+          SizedBox(
+            width: portraitSize,
+            child: const GuideAssistantPortrait(accessible: true),
           ),
           if (offline)
             Padding(

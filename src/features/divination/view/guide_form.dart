@@ -12,10 +12,16 @@ import 'ritual/guide_ritual_dialog.dart';
 import 'tarot_cards.dart';
 
 class GuideForm extends StatefulWidget {
-  const GuideForm({super.key, this.online, this.openSynastry});
+  const GuideForm({
+    super.key,
+    this.online,
+    this.openSynastry,
+    this.active = true,
+  });
 
   final OnlineGuideController? online;
   final VoidCallback? openSynastry;
+  final bool active;
 
   @override
   State<GuideForm> createState() => _GuideFormState();
@@ -196,7 +202,7 @@ class _GuideFormState extends State<GuideForm>
   }
 
   void _openRitual() {
-    if (_ritualRoute != null || _snapshot == null) return;
+    if (!widget.active || _ritualRoute != null || _snapshot == null) return;
     final presentation = _presentation ??= GuideRitualPresentation();
     final navigator = Navigator.of(context, rootNavigator: true);
     final motionOff =
@@ -304,7 +310,20 @@ class _GuideFormState extends State<GuideForm>
           ),
         ],
       ),
-      body: SafeArea(top: false, child: _conversationBody(context)),
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          IgnorePointer(
+            child: Image.asset(
+              'src/features/divination/assets/assistant/antique-gold-dust.png',
+              fit: BoxFit.fill,
+              opacity: const AlwaysStoppedAnimation(0.1),
+              excludeFromSemantics: true,
+            ),
+          ),
+          SafeArea(top: false, child: _conversationBody(context)),
+        ],
+      ),
     );
   }
 

@@ -1,5 +1,6 @@
 import '../../../../shared/http/json_client.dart';
 import '../../settings/model/agreements.dart';
+import '../model/password.dart';
 import '../model/session.dart';
 
 class AccountApi {
@@ -106,15 +107,79 @@ class AccountApi {
       cancel: cancel,
     );
     // Older account read responses have no owner ID of their own.
+    await _verifyMember(memberId, isCurrent: isCurrent, cancel: cancel);
+    return result;
+  }
+
+  Future<void> _verifyMember(
+    String memberId, {
+    required bool Function() isCurrent,
+    Future<void>? cancel,
+  }) async {
     final session = await request(
       ['session'],
       authenticated: true,
       isCurrent: isCurrent,
       cancel: cancel,
     );
-    if (session['user'] case {'id': final String id} when id == memberId)
-      return result;
+    if (session['user'] case {'id': final String id} when id == memberId) {
+      return;
+    }
     throw const JsonRequestError('account_changed', status: 401);
+  }
+
+  Future<PasswordSetupChallenge> issuePasswordSetup(
+    String memberId, {
+    required bool Function() isCurrent,
+  }) async {
+    await _verifyMember(memberId, isCurrent: isCurrent);
+    final result = await request(
+      ['auth', 'phone', 'password-setup', 'code'],
+      body: const {},
+      authenticated: true,
+      isCurrent: isCurrent,
+    );
+    if (result case {'challengeId': final String id} when id.isNotEmpty) {
+      return (id: id, localInbox: result['delivery'] == 'local-inbox');
+    }
+    throw const JsonRequestError('invalid_response');
+  }
+
+  Future<void> changePassword(
+    String memberId,
+    String current,
+    String next, {
+    required bool Function() isCurrent,
+  }) async {
+    await _verifyMember(memberId, isCurrent: isCurrent);
+    await request(
+      ['auth', 'password'],
+      body: {'currentPassword': current, 'newPassword': next},
+      authenticated: true,
+      isCurrent: isCurrent,
+    );
+  }
+
+  Future<AccountSession> setupPassword(
+    String memberId,
+    String challengeId,
+    String code,
+    String next, {
+    required bool Function() isCurrent,
+  }) async {
+    await _verifyMember(memberId, isCurrent: isCurrent);
+    final result = await request(
+      ['auth', 'password'],
+      body: {'challengeId': challengeId, 'code': code, 'newPassword': next},
+      authenticated: true,
+      isCurrent: isCurrent,
+    );
+    final member = AccountSession.fromMember(result);
+    if (member.id != memberId) {
+      throw const JsonRequestError('account_changed', status: 401);
+    }
+    if (!member.hasPassword) throw const JsonRequestError('invalid_response');
+    return member;
   }
 
   Future<Map<String, Object?>?> _requestAt(

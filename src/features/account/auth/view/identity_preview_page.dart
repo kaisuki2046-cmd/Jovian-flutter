@@ -6,6 +6,7 @@ import '../../../../ui/theme.dart';
 import '../../settings/model/agreements.dart';
 import '../../settings/view/agreement_document_page.dart';
 import '../control/account_controller.dart';
+import 'password_security_page.dart';
 
 const _identityTerms = AgreementDocument(
   id: 'identity',
@@ -233,13 +234,37 @@ class AccountSecurityPage extends StatelessWidget {
       child: ListenableBuilder(
         listenable: account,
         builder: (context, _) {
-          final memberId = account.socialMemberId;
+          final memberId = account.memberId;
+          final member = account.session;
           return ListView(
             padding: jovianPagePadding,
             children: [
-              if (memberId == null)
+              if (memberId == null || member == null)
                 const Text('登录并确认协议后可管理账户安全。')
-              else
+              else ...[
+                if (member.socialProvider case final provider?)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Text(
+                      provider == 'wechat' ? '当前使用微信登录。' : '当前使用 QQ 登录。',
+                    ),
+                  )
+                else
+                  Card(
+                    child: ListTile(
+                      leading: const Icon(Icons.lock_outline),
+                      title: Text(member.hasPassword ? '修改密码' : '设置密码'),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () => Navigator.of(context).push<void>(
+                        MaterialPageRoute(
+                          builder: (_) => PasswordSecurityPage(
+                            account: account,
+                            owner: memberId,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 Card(
                   child: ListTile(
                     leading: const Icon(Icons.badge_outlined),
@@ -255,6 +280,7 @@ class AccountSecurityPage extends StatelessWidget {
                     ),
                   ),
                 ),
+              ],
             ],
           );
         },

@@ -8,6 +8,8 @@ class AccountSession {
     this.bio = '',
     this.namePublic = false,
     this.bioPublic = false,
+    this.hasPassword = false,
+    this.socialProvider,
   }) : kind = AccountKind.member;
 
   const AccountSession.guest(this.id)
@@ -16,7 +18,9 @@ class AccountSession {
       uid = null,
       bio = '',
       namePublic = false,
-      bioPublic = false;
+      bioPublic = false,
+      hasPassword = false,
+      socialProvider = null;
 
   final AccountKind kind;
   final String id;
@@ -25,6 +29,8 @@ class AccountSession {
   final String bio;
   final bool namePublic;
   final bool bioPublic;
+  final bool hasPassword;
+  final String? socialProvider;
 
   String get scope => '${kind.name}:$id';
 
@@ -36,6 +42,8 @@ class AccountSession {
     } when id.isNotEmpty) {
       final uid = user['uid'];
       final visibility = user['visibility'];
+      final password = user['hasPassword'];
+      final provider = user['socialProvider'];
       return AccountSession.member(
         id: id,
         displayName: name,
@@ -45,6 +53,11 @@ class AccountSession {
         bio: (user['bio'] as String?) ?? '',
         namePublic: visibility is Map && visibility['displayName'] == true,
         bioPublic: visibility is Map && visibility['bio'] == true,
+        hasPassword: password is bool ? password : user['email'] is String,
+        socialProvider:
+            provider is String && ['wechat', 'qq'].contains(provider)
+            ? provider
+            : null,
       );
     }
     throw const FormatException('Invalid account profile.');

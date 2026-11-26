@@ -162,7 +162,12 @@ void main() {
     () async {
       final storage = _TestTokenStore();
       final token = 'a' * 43;
-      const user = {'id': 'member-id', 'uid': '12345678', 'displayName': '甲'};
+      const user = {
+        'id': 'member-id',
+        'uid': '12345678',
+        'displayName': '甲',
+        'hasPassword': true,
+      };
       const birthFields = AccountBirthFields(
         birthDate: '1990-07-01',
         birthTime: '12:??',
@@ -208,6 +213,13 @@ void main() {
               case 'GET /account/session':
                 expect(request.headers['authorization'], 'Bearer $token');
                 return _json({'user': user});
+              case 'POST /account/auth/password':
+                expect(request.headers['authorization'], 'Bearer $token');
+                expect(jsonDecode(request.body), {
+                  'currentPassword': 'test-password',
+                  'newPassword': 'updated8',
+                });
+                return http.Response('', 204);
               case 'GET /account/reading-profile/birth-profile':
                 expect(request.headers['authorization'], 'Bearer $token');
                 expect(request.url.queryParameters, {
@@ -262,8 +274,31 @@ void main() {
       }, catalog);
       expect(session.uid, '12345678');
       expect(session.scope, 'member:member-id');
+      expect(session.hasPassword, isTrue);
       expect(await api.readNativeSession(), token);
       expect((await api.restore())?.scope, session.scope);
+      await expectLater(
+        api.changePassword(
+          'another-member',
+          'test-password',
+          'updated8',
+          isCurrent: () => true,
+        ),
+        throwsA(
+          isA<JsonRequestError>().having(
+            (error) => error.code,
+            'code',
+            'account_changed',
+          ),
+        ),
+      );
+      await api.changePassword(
+        session.id,
+        'test-password',
+        'updated8',
+        isCurrent: () => true,
+      );
+      expect(await api.readNativeSession(), token);
       final birth = AccountBirthApi(api);
       final expected = await birth.read(session.id, isCurrent: () => true);
       expect(expected.birthTime, '12:??');
@@ -305,6 +340,9 @@ void main() {
         'GET /account/agreements/catalog',
         'POST /account/auth/login',
         'GET /account/session',
+        'GET /account/session',
+        'GET /account/session',
+        'POST /account/auth/password',
         'GET /account/reading-profile/birth-profile',
         'PATCH /account/reading-profile/birth-profile',
         'POST /account/agreements/permission',

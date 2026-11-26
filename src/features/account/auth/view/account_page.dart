@@ -7,6 +7,7 @@ import '../../profile/view/profile_dashboard.dart';
 import '../../settings/view/account_settings_page.dart';
 import '../../settings/view/agreement_document_page.dart';
 import '../control/account_controller.dart';
+import '../model/password.dart';
 import '../model/session.dart';
 
 class AccountPage extends StatefulWidget {
@@ -226,7 +227,7 @@ class _AccountPageState extends State<AccountPage> {
           ],
           decoration: InputDecoration(
             labelText: '密码',
-            helperText: registering ? '至少 8 个字符' : null,
+            helperText: registering ? '至少 $minimumPasswordLength 个字符' : null,
             suffixIcon: IconButton(
               tooltip: _passwordVisible ? '隐藏密码' : '显示密码',
               onPressed: disabled
@@ -430,8 +431,13 @@ class _AccountPageState extends State<AccountPage> {
       if (!phoneCode) {
         final password = _password.text;
         final length = password.runes.length;
-        if (length < (registering ? 8 : 1) || length > 128) {
-          _show(registering ? '密码需要 8 至 128 个字符。' : '请输入有效的密码。');
+        if (length < (registering ? minimumPasswordLength : 1) ||
+            length > maximumPasswordLength) {
+          _show(
+            registering
+                ? '密码需要 $minimumPasswordLength 至 $maximumPasswordLength 个字符。'
+                : '请输入有效的密码。',
+          );
           return;
         }
         input['password'] = password;

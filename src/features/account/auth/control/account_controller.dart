@@ -9,6 +9,7 @@ import '../../reading-profile/model/account_reading_profile.dart';
 import '../../reading-profile/requests/account_birth_api.dart';
 import '../../settings/model/agreements.dart';
 import '../../settings/requests/agreements_api.dart';
+import '../model/password.dart';
 import '../model/session.dart';
 import '../requests/account_api.dart';
 
@@ -51,6 +52,35 @@ class AccountController extends ChangeNotifier {
     submit: submit,
     isCurrent: () => socialMemberId == memberId,
   );
+
+  Future<PasswordSetupChallenge> issuePasswordSetup(String owner) =>
+      _account.issuePasswordSetup(owner, isCurrent: () => memberId == owner);
+
+  Future<void> changePassword(String owner, String current, String next) =>
+      _account.changePassword(
+        owner,
+        current,
+        next,
+        isCurrent: () => memberId == owner,
+      );
+
+  Future<void> setupPassword(
+    String owner,
+    PasswordSetupChallenge challenge,
+    String code,
+    String next,
+  ) async {
+    final updated = await _account.setupPassword(
+      owner,
+      challenge.id,
+      code,
+      next,
+      isCurrent: () => memberId == owner,
+    );
+    if (memberId != owner) return;
+    _session = updated;
+    notifyListeners();
+  }
 
   Future<bool> updateProfile(
     String memberId,

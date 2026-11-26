@@ -116,7 +116,7 @@ class _SynastryPageState extends State<SynastryPage> {
   }
 
   Future<void> _edit(SynastrySide side) async {
-    final name = side == SynastrySide.a ? 'A 方' : 'B 方';
+    final isA = side == SynastrySide.a;
     final current = _synastry.manualProfile(side);
     final initial = current == null
         ? const BirthProfileDraft()
@@ -127,7 +127,7 @@ class _SynastryPageState extends State<SynastryPage> {
       builder: (context) => ListenableBuilder(
         listenable: _synastry,
         builder: (context, _) => Scaffold(
-          appBar: AppBar(title: Text('$name出生资料')),
+          appBar: AppBar(title: UiText(isA ? 'A 方出生资料' : 'B 方出生资料')),
           body: SafeArea(
             top: false,
             child: ListView(
@@ -141,7 +141,7 @@ class _SynastryPageState extends State<SynastryPage> {
                   initialDraft: initial,
                   requireKnownTime: true,
                   busy: _synastry.busy,
-                  submitLabel: '确认$name资料',
+                  submitLabel: isA ? '确认A 方资料' : '确认B 方资料',
                   onSubmit: (profile) async {
                     submitted = true;
                     final saved = await _synastry.setManual(side, profile);
@@ -149,11 +149,13 @@ class _SynastryPageState extends State<SynastryPage> {
                   },
                 ),
                 if (_synastry.busy)
-                  const LinearProgressIndicator(semanticsLabel: '正在计算盘面'),
+                  LinearProgressIndicator(
+                    semanticsLabel: context.uiLabel('正在计算盘面'),
+                  ),
                 if (_synastry.message case final String error when submitted)
                   Padding(
                     padding: const EdgeInsets.only(top: 10),
-                    child: Semantics(liveRegion: true, child: Text(error)),
+                    child: Semantics(liveRegion: true, child: UiText(error)),
                   ),
               ],
             ),
@@ -188,7 +190,7 @@ class _SynastryPageState extends State<SynastryPage> {
         actions: [
           if (_synastry.hasSession)
             IconButton(
-              tooltip: '合盘报告历史',
+              tooltip: context.uiLabel('合盘报告历史'),
               onPressed: _history,
               icon: const Icon(Icons.history),
             ),
@@ -210,7 +212,9 @@ class _SynastryPageState extends State<SynastryPage> {
                 ),
               if (_synastry.busy) ...[
                 const SizedBox(height: 10),
-                const LinearProgressIndicator(semanticsLabel: '正在处理合盘'),
+                LinearProgressIndicator(
+                  semanticsLabel: context.uiLabel('正在处理合盘'),
+                ),
               ],
               if (_synastry.report case final report?) ...[
                 const SizedBox(height: 12),
@@ -222,7 +226,7 @@ class _SynastryPageState extends State<SynastryPage> {
               ],
               if (!_synastry.canCalculate) ...[
                 const SizedBox(height: 12),
-                const Text('当前运行环境暂不支持本机合盘。可使用浏览器完成排盘。'),
+                const UiText('当前运行环境暂不支持本机合盘。可使用浏览器完成排盘。'),
               ],
               const SizedBox(height: 12),
               _section(context, 'A 方 · 本人盘面', [
@@ -239,7 +243,7 @@ class _SynastryPageState extends State<SynastryPage> {
                         onPressed: _synastry.busy
                             ? null
                             : _synastry.readOwnChart,
-                        child: Text(
+                        child: UiText(
                           _synastry.aFromArchive ? '重新读取本人盘面' : '读取本人盘面',
                         ),
                       ),
@@ -247,7 +251,7 @@ class _SynastryPageState extends State<SynastryPage> {
                       onPressed: !_synastry.canCalculate || _synastry.busy
                           ? null
                           : () => _edit(SynastrySide.a),
-                      child: Text(
+                      child: UiText(
                         _synastry.a == null ? '手动填写 A 方资料' : '修改 A 方资料',
                       ),
                     ),
@@ -281,7 +285,9 @@ class _SynastryPageState extends State<SynastryPage> {
                           _synastry.busy
                       ? null
                       : () => _edit(SynastrySide.b),
-                  child: Text(_synastry.b == null ? '手动填写 B 方资料' : '修改 B 方资料'),
+                  child: UiText(
+                    _synastry.b == null ? '手动填写 B 方资料' : '修改 B 方资料',
+                  ),
                 ),
               ]),
               const SizedBox(height: 14),
@@ -300,7 +306,7 @@ class _SynastryPageState extends State<SynastryPage> {
               if (_synastry.message case final message?)
                 Padding(
                   padding: const EdgeInsets.only(top: 10),
-                  child: Semantics(liveRegion: true, child: Text(message)),
+                  child: Semantics(liveRegion: true, child: UiText(message)),
                 ),
             ],
           ),
@@ -323,7 +329,7 @@ class _SynastryPageState extends State<SynastryPage> {
         _synastry.a == null ? '可读取本人最近一次命理盘面，或手动填写。' : null,
       OwnSynastryChartStatus.loading => '正在读取本人盘面…',
       OwnSynastryChartStatus.available =>
-        dateText == null ? '已读取最近的命理档案。' : '已读取 $dateText 的命理档案。',
+        dateText == null ? '已读取最近的命理档案。' : '已读取 {date} 的命理档案。',
       OwnSynastryChartStatus.noArchive => '还没有个人命理档案，可以先测算或手动填写。',
       OwnSynastryChartStatus.missingSnapshot => '最近的命理档案没有结构化盘面，请回命理重新测算。',
       OwnSynastryChartStatus.unknownTime => '最近的命理档案缺少出生时间，请回命理补齐。',
@@ -331,7 +337,12 @@ class _SynastryPageState extends State<SynastryPage> {
     };
     return message == null
         ? const SizedBox.shrink()
-        : Semantics(liveRegion: true, child: Text(message));
+        : Semantics(
+            liveRegion: true,
+            child: Text(
+              context.uiLabel(message).replaceFirst('{date}', dateText ?? ''),
+            ),
+          );
   }
 
   Widget _savedReports() => Card(
@@ -457,10 +468,10 @@ class _SynastryPageState extends State<SynastryPage> {
     return _section(context, '合盘解读', [
       Text(
         savedAt == null
-            ? '本次解读暂未存档'
-            : '已存档 · ${format.formatMediumDate(savedAt)}',
+            ? context.uiLabel('本次解读暂未存档')
+            : '${context.uiLabel('已存档 · ')}${format.formatMediumDate(savedAt)}',
       ),
-      if (_synastry.reportFromArchive) const Text('从合盘存档读取'),
+      if (_synastry.reportFromArchive) const UiText('从合盘存档读取'),
       _RelationshipReport(key: ValueKey(report), body: report),
       if (_synastry.needsSave)
         OutlinedButton(
@@ -482,6 +493,7 @@ class _SynastryPageState extends State<SynastryPage> {
             'evidence': final List evidence,
           } when _systems.containsKey(system))
             _comparisonSection(
+              context,
               _systems[system]!,
               coverage,
               section['limitation'],
@@ -491,6 +503,7 @@ class _SynastryPageState extends State<SynastryPage> {
   }
 
   Widget _comparisonSection(
+    BuildContext context,
     String name,
     String coverage,
     Object? limitation,
@@ -503,7 +516,9 @@ class _SynastryPageState extends State<SynastryPage> {
     return ExpansionTile(
       tilePadding: EdgeInsets.zero,
       expandedCrossAxisAlignment: CrossAxisAlignment.start,
-      title: Text('$name · ${_coverage(coverage)}'),
+      title: Text(
+        '${context.uiLabel(name)} · ${context.uiLabel(_coverage(coverage))}',
+      ),
       children: [
         if (limitation case final String detail) Text(detail),
         for (final observation in observations)
@@ -528,7 +543,10 @@ Widget _section(BuildContext context, String title, List<Widget> children) =>
             Semantics(
               container: true,
               header: true,
-              child: Text(title, style: Theme.of(context).textTheme.titleLarge),
+              child: UiText(
+                title,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
             ),
             ...children,
           ],
@@ -619,7 +637,7 @@ class _RelationshipReportState extends State<_RelationshipReport> {
                     ),
                   );
                 },
-                child: Text(name),
+                child: UiText(name),
               ),
           ],
         ),
@@ -633,7 +651,7 @@ class _RelationshipReportState extends State<_RelationshipReport> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               spacing: 8,
               children: [
-                ReportHeading(names[index]),
+                ReportHeading(context.uiLabel(names[index])),
                 ReportBody(
                   body
                       .substring(
@@ -670,7 +688,9 @@ class _ChartSummary extends StatelessWidget {
     children: [
       for (final MapEntry(:key, :value) in _systems.entries)
         if (chart[key] case {'status': final String status})
-          Text('$value ${_coverage(status)}'),
+          Text(
+            '${context.uiLabel(value)} ${context.uiLabel(_coverage(status))}',
+          ),
     ],
   );
 }

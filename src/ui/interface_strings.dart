@@ -668,6 +668,58 @@ const englishInterfaceStrings = <String, String>{
   '我已获准使用 B 方资料进行本次合盘':
       'I have permission to use person B’s details for this comparison',
   '生成合盘解读': 'Generate compatibility reading',
+  "A 方出生资料": "Person A’s birth details",
+  "B 方出生资料": "Person B’s birth details",
+  "确认A 方资料": "Confirm person A’s details",
+  "确认B 方资料": "Confirm person B’s details",
+  "正在计算盘面": "Calculating chart",
+  "正在处理合盘": "Preparing chart comparison",
+  "合盘报告历史": "Compatibility report history",
+  "当前运行环境暂不支持本机合盘。可使用浏览器完成排盘。":
+      "On-device chart comparison is unavailable here. Try the browser version.",
+  "可读取本人最近一次命理盘面，或手动填写。":
+      "Load your most recent birth chart or enter your details manually.",
+  "已读取最近的命理档案。": "Loaded your most recent birth chart.",
+  "已读取 {date} 的命理档案。": "Loaded your birth chart from {date}.",
+  "还没有个人命理档案，可以先测算或手动填写。":
+      "You have no saved birth chart yet. Create one or enter your details manually.",
+  "最近的命理档案没有结构化盘面，请回命理重新测算。":
+      "Your latest record has no chart data. Return to Birth chart and recalculate.",
+  "最近的命理档案缺少出生时间，请回命理补齐。":
+      "Your latest record is missing a birth time. Return to Birth chart to add it.",
+  "暂时无法读取本人盘面，请重试。": "Unable to load your chart. Try again.",
+  "双人盘面对照": "Chart comparison",
+  "合盘解读": "Compatibility reading",
+  "从合盘存档读取": "Loaded from saved compatibility readings",
+  "亲情": "Family",
+  "友情": "Friendship",
+  "爱情": "Romance",
+  "合作": "Collaboration",
+  "在线解读服务暂未配置。": "The online reading service is not configured.",
+  "登录或进入游客体验后生成解读": "Sign in or continue as a guest to get a reading",
+  "本期合盘需要双方的出生时间，请核对后重新排盘。":
+      "Both birth times are required. Check the details and recalculate.",
+  "排盘失败，请核对出生资料后重试。":
+      "Unable to calculate the chart. Check the birth details and try again.",
+  "暂时无法读取已存合盘。": "Unable to load the saved compatibility reading.",
+  "暂时无法读取这次合盘存档，请重试。": "Unable to load this saved comparison. Try again.",
+  "盘面比较失败，请核对双方资料。":
+      "Unable to compare the charts. Check both sets of details.",
+  "暂时无法确认双方盘面版本，请重新排盘。":
+      "Unable to verify both charts. Recalculate them and try again.",
+  "这组盘面还没有已存解读。": "There is no saved reading for this pair.",
+  "暂时无法读取已存合盘，请重试。":
+      "Unable to load the saved compatibility reading. Try again.",
+  "请先登录或进入游客体验，再生成在线解读。":
+      "Sign in or continue as a guest before generating an online reading.",
+  "请在个人中心开启合盘在线解读授权。":
+      "Enable online compatibility readings in Profile to continue.",
+  "在线解读尚未包含全部四种关系，暂时无法存档。":
+      "The reading is missing relationship sections and cannot be saved yet.",
+  "合盘解读请求失败，请重试。": "Unable to generate the compatibility reading. Try again.",
+  "解读已生成，暂时无法存档。": "The reading is ready, but could not be saved.",
+  "当前会话已失效，请重新登录或进入游客体验。":
+      "Your session has expired. Sign in again or continue as a guest.",
   '新增粉丝': 'New followers',
   '查看关注提醒': 'View follower alerts',
   '正在确认当前账号…': 'Checking your account…',

@@ -14,6 +14,7 @@ import '../src/features/account/settings/model/agreements.dart';
 import '../src/features/synastry/control/synastry_page_controller.dart';
 import '../src/features/synastry/synastry.dart';
 import '../src/shared/http/json_client.dart';
+import '../src/ui/interface_language.dart';
 
 const _place = BirthPlace(
   id: 'sample',
@@ -28,68 +29,88 @@ const _place = BirthPlace(
 );
 
 void main() {
-  testWidgets('a long generated report opens at the outline on a narrow page', (
-    tester,
-  ) async {
-    tester.view.devicePixelRatio = 1;
-    tester.view.physicalSize = const Size(360, 700);
-    addTearDown(tester.view.resetDevicePixelRatio);
-    addTearDown(tester.view.resetPhysicalSize);
-    final result = Completer<Map<String, String>>();
-    final account = await _fixtureAccount(
-      (request) {
-        if (request.method == 'POST' &&
-            request.url.path == '/account/reading-history') {
-          return _json(_entry('a' * 64, '四类关系归档'));
-        }
-        return _json(null);
-      },
-      share: true,
-      member: true,
-    );
-    await tester.pumpWidget(
-      MaterialApp(
-        home: SynastryPage(
-          loadPlaces: () async => [_place],
-          account: account,
-          calculate: (profile, _) async =>
-              _chart(profile.date.utcMidnight.toIso8601String()),
-          compare: (_, __, ___) async => _comparison,
-          summarize: (_, __, ___) => result.future,
+  testWidgets(
+    'English comparison and a long report keep their layout on a narrow page',
+    (tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(320, 700);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPhysicalSize);
+      final result = Completer<Map<String, String>>();
+      final account = await _fixtureAccount(
+        (request) {
+          if (request.method == 'POST' &&
+              request.url.path == '/account/reading-history') {
+            final report = (jsonDecode(request.body) as Map)['report'] as Map;
+            expect((report['sections'] as List).first['title'], '亲情');
+            return _json(_entry('a' * 64, '四类关系归档'));
+          }
+          return _json(null);
+        },
+        share: true,
+        member: true,
+      );
+      await tester.pumpWidget(
+        MaterialApp(
+          locale: const Locale('en'),
+          localizationsDelegates: const [interfaceStringsDelegate],
+          home: SynastryPage(
+            loadPlaces: () async => [_place],
+            account: account,
+            calculate: (profile, _) async =>
+                _chart(profile.date.utcMidnight.toIso8601String()),
+            compare: (_, __, ___) async => _comparison,
+            summarize: (_, __, ___) => result.future,
+          ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
-    await _tap(tester, '手动填写 A 方资料');
-    await _fillProfile(tester, '1990-06-01');
-    await _tap(tester, '确认A 方资料');
-    await _tap(tester, '我已获准使用 B 方资料进行本次合盘');
-    await _tap(tester, '手动填写 B 方资料');
-    await _fillProfile(tester, '1992-07-02');
-    await _tap(tester, '确认B 方资料');
-    await _tap(tester, '比较盘面');
-    final generate = find.text('生成合盘解读');
-    await tester.ensureVisible(generate);
-    await tester.pumpAndSettle();
-    await tester.tap(generate);
-    await tester.pump();
-    result.complete({
-      for (final key in ['family', 'friendship', 'romance', 'collaboration'])
-        key: List.filled(30, '保存在同一份合盘报告中的段落。').join('\n\n'),
-    });
-    await tester.pumpAndSettle();
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Person A · Your chart'), findsOneWidget);
+      await _tap(tester, 'Enter person A manually');
+      expect(find.text('Person A’s birth details'), findsOneWidget);
+      await _fillProfile(tester, '1990-06-01');
+      await _tap(tester, 'Confirm person A’s details');
+      await _tap(
+        tester,
+        'I have permission to use person B’s details for this comparison',
+      );
+      await _tap(tester, 'Enter person B manually');
+      expect(find.text('Person B’s birth details'), findsOneWidget);
+      await _fillProfile(tester, '1992-07-02');
+      await _tap(tester, 'Confirm person B’s details');
+      await _tap(tester, 'Compare charts');
+      expect(find.text('Chart comparison'), findsOneWidget);
+      await _tap(tester, 'BaZi · Available');
+      expect(find.text('八字真实对照事实'), findsOneWidget);
+      final generate = find.text('Generate compatibility reading');
+      await tester.ensureVisible(generate);
+      await tester.pumpAndSettle();
+      await tester.tap(generate);
+      await tester.pump();
+      result.complete({
+        for (final key in ['family', 'friendship', 'romance', 'collaboration'])
+          key: List.filled(30, '保存在同一份合盘报告中的段落。').join('\n\n'),
+      });
+      await tester.pumpAndSettle();
 
-    expect(find.text('合盘解读').hitTestable(), findsOneWidget);
-    final collaboration = find.widgetWithText(OutlinedButton, '合作');
-    expect(collaboration.hitTestable(), findsOneWidget);
-    await tester.tap(collaboration);
-    await tester.pumpAndSettle();
-    final heading = find
-        .descendant(of: find.byType(Semantics), matching: find.text('合作'))
-        .hitTestable();
-    expect(heading, findsOneWidget);
-    expect(tester.takeException(), isNull);
-  });
+      expect(find.text('Compatibility reading').hitTestable(), findsOneWidget);
+      final collaboration = find.widgetWithText(
+        OutlinedButton,
+        'Collaboration',
+      );
+      expect(collaboration.hitTestable(), findsOneWidget);
+      await tester.tap(collaboration);
+      await tester.pumpAndSettle();
+      final heading = find
+          .descendant(
+            of: find.byType(Semantics),
+            matching: find.text('Collaboration'),
+          )
+          .hitTestable();
+      expect(heading, findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets(
     'guest edits both profiles, retries the draft and compares locally',
@@ -718,13 +739,16 @@ TextField _input(WidgetTester tester, String label) =>
     tester.widget<TextField>(find.widgetWithText(TextField, label));
 
 Future<void> _fillProfile(WidgetTester tester, String date) async {
-  await tester.enterText(find.widgetWithText(TextField, '出生日期'), date);
-  await tester.enterText(find.widgetWithText(TextField, '出生小时'), '09');
-  await tester.enterText(find.widgetWithText(TextField, '出生分钟'), '20');
-  await tester.enterText(find.widgetWithText(TextField, '出生地'), '杭州');
+  final context = tester.element(find.byType(TextField).first);
+  Finder input(String label) =>
+      find.widgetWithText(TextField, context.uiLabel(label));
+  await tester.enterText(input('出生日期'), date);
+  await tester.enterText(input('出生小时'), '09');
+  await tester.enterText(input('出生分钟'), '20');
+  await tester.enterText(input('出生地'), '杭州');
   await tester.pumpAndSettle();
   await _tap(tester, '杭州市');
-  await _tap(tester, '女');
+  await _tap(tester, context.uiLabel('女'));
 }
 
 Future<void> _tap(WidgetTester tester, String label) async {

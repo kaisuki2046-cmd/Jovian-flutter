@@ -40,6 +40,8 @@ class AccountPage extends StatefulWidget {
   State<AccountPage> createState() => _AccountPageState();
 }
 
+enum _WelcomePane { landing, phone, email, registration }
+
 class _AccountPageState extends State<AccountPage> {
   final _address = TextEditingController();
   final _password = TextEditingController();
@@ -47,6 +49,7 @@ class _AccountPageState extends State<AccountPage> {
   final _name = TextEditingController();
   final _code = TextEditingController();
   AuthMethod _method = AuthMethod.password;
+  _WelcomePane _pane = _WelcomePane.landing;
   AgreementCatalog? _accepted;
   AgreementDocument? _aiAccepted;
   ({String address, SignInCodeChallenge issued})? _challenge;
@@ -56,6 +59,14 @@ class _AccountPageState extends State<AccountPage> {
   String? _recoveredPhone;
 
   AccountController get _account => widget.account;
+
+  bool get _registrationAvailable {
+    final capabilities = _account.capabilities;
+    return capabilities != null &&
+        (capabilities.emailRegistrationAvailable ||
+            capabilities.phoneRegistrationWithoutCode ||
+            capabilities.phoneCodesAvailable);
+  }
 
   @override
   void dispose() {
@@ -78,66 +89,79 @@ class _AccountPageState extends State<AccountPage> {
       final statusPadding = showDashboard
           ? const EdgeInsets.symmetric(horizontal: 16)
           : EdgeInsets.zero;
-      return Scaffold(
-        appBar: showDashboard || widget.standalone
-            ? null
-            : AppBar(title: const UiText('个人中心')),
-        body: SafeArea(
-          top: showDashboard || widget.standalone,
-          child: Align(
-            alignment: Alignment.topCenter,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: widget.standalone ? 480 : double.infinity,
-              ),
-              child: AutofillGroup(
-                child: ListView(
-                  padding: showDashboard ? EdgeInsets.zero : jovianPagePadding,
-                  keyboardDismissBehavior:
-                      ScrollViewKeyboardDismissBehavior.onDrag,
-                  children: [
-                    if (widget.standalone) const _WelcomeBrand(),
-                    if (_account.busy) const LinearProgressIndicator(),
-                    if (_account.notice case final message?)
-                      Padding(
-                        padding: statusPadding,
-                        child: Semantics(
-                          liveRegion: true,
-                          child: UiText(message),
-                        ),
-                      ),
-                    if (_account.deletion case final deletion?
-                        when _account.restored && session == null)
-                      DeletionReceiptNotice(service: deletion),
-                    if ((_account.catalog == null ||
-                            _account.capabilities == null ||
-                            (session != null &&
-                                _account.agreementState == null) ||
-                            _account.notice != null) &&
-                        !_account.busy)
-                      Padding(
-                        padding: statusPadding,
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: TextButton(
-                            onPressed: _account.initialize,
-                            child: const UiText('刷新账号与协议'),
+      final innerWelcome =
+          widget.standalone && !renewAgreement && _pane != _WelcomePane.landing;
+      return PopScope<void>(
+        canPop: !innerWelcome,
+        onPopInvokedWithResult: (didPop, _) {
+          if (!didPop && innerWelcome) _returnToLanding();
+        },
+        child: Scaffold(
+          appBar: showDashboard || widget.standalone
+              ? null
+              : AppBar(title: const UiText('个人中心')),
+          body: SafeArea(
+            top: showDashboard || widget.standalone,
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: widget.standalone ? 480 : double.infinity,
+                ),
+                child: AutofillGroup(
+                  child: ListView(
+                    padding: showDashboard
+                        ? EdgeInsets.zero
+                        : jovianPagePadding,
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
+                    children: [
+                      if (widget.standalone && !innerWelcome)
+                        const _WelcomeBrand(),
+                      if (_account.busy) const LinearProgressIndicator(),
+                      if (_account.notice case final message?)
+                        Padding(
+                          padding: statusPadding,
+                          child: Semantics(
+                            liveRegion: true,
+                            child: UiText(message),
                           ),
                         ),
-                      ),
-                    if (renewAgreement)
-                      ..._renewAgreementForm(session)
-                    else if (showDashboard)
-                      ProfileDashboard(
-                        account: _account,
-                        openSettings: _openSettings,
-                        openMessages: widget.openMessages,
-                        active: widget.active,
-                        onUpgrade: _beginUpgrade,
-                      )
-                    else
-                      ..._form(session != null),
-                  ],
+                      if (_account.deletion case final deletion?
+                          when _account.restored && session == null)
+                        DeletionReceiptNotice(service: deletion),
+                      if ((_account.catalog == null ||
+                              _account.capabilities == null ||
+                              (session != null &&
+                                  _account.agreementState == null) ||
+                              _account.notice != null) &&
+                          !_account.busy)
+                        Padding(
+                          padding: statusPadding,
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: TextButton(
+                              onPressed: _account.initialize,
+                              child: const UiText('刷新账号与协议'),
+                            ),
+                          ),
+                        ),
+                      if (renewAgreement)
+                        ..._renewAgreementForm(session)
+                      else if (showDashboard)
+                        ProfileDashboard(
+                          account: _account,
+                          openSettings: _openSettings,
+                          openMessages: widget.openMessages,
+                          active: widget.active,
+                          onUpgrade: _beginUpgrade,
+                        )
+                      else if (widget.standalone && !innerWelcome)
+                        ..._landing(session != null)
+                      else
+                        ..._form(session != null),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -201,7 +225,6 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   List<Widget> _form(bool upgrading) {
-    final catalog = _account.catalog;
     final capabilities = _account.capabilities;
     final registering = _method == AuthMethod.register;
     final phoneCode = _method == AuthMethod.phoneCode;
@@ -216,8 +239,36 @@ class _AccountPageState extends State<AccountPage> {
             capabilities?.emailRegistrationCodeRequired == true);
     final disabled = _account.busy || !_account.restored;
     final small = Theme.of(context).textTheme.bodySmall;
+    final phoneEntry =
+        phoneCode || (widget.standalone && _pane == _WelcomePane.phone);
+    final emailEntry = widget.standalone && _pane == _WelcomePane.email;
     return [
-      if (upgrading)
+      if (widget.standalone) ...[
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            TextButton.icon(
+              onPressed: disabled ? null : _returnToLanding,
+              icon: const Icon(Icons.arrow_back_rounded),
+              label: const UiText('返回'),
+            ),
+            if (_pane == _WelcomePane.phone && _registrationAvailable)
+              TextButton(
+                onPressed: disabled
+                    ? null
+                    : () => _openWelcomePane(_WelcomePane.registration),
+                child: const UiText('注册'),
+              ),
+          ],
+        ),
+        UiText(switch (_pane) {
+          _WelcomePane.phone => '手机号登录',
+          _WelcomePane.email => '邮箱登录',
+          _ => '注册',
+        }, style: Theme.of(context).textTheme.headlineSmall),
+        const SizedBox(height: 12),
+      ],
+      if (upgrading && !widget.standalone)
         Align(
           alignment: Alignment.centerLeft,
           child: TextButton(
@@ -245,27 +296,30 @@ class _AccountPageState extends State<AccountPage> {
         ),
         const SizedBox(height: 16),
       ],
-      Wrap(
-        spacing: 8,
-        children: [
-          for (final (method, label) in [
-            (AuthMethod.password, '密码登录'),
-            (AuthMethod.register, '注册'),
-            if (capabilities?.phoneCodesAvailable == true)
-              (AuthMethod.phoneCode, '短信验证码登录'),
-          ])
-            ChoiceChip(
-              label: UiText(label),
-              selected: _method == method,
-              onSelected: disabled ? null : (_) => _selectMethod(method),
-            ),
-        ],
-      ),
+      if (!widget.standalone ||
+          (_pane == _WelcomePane.phone &&
+              capabilities?.phoneCodesAvailable == true))
+        Wrap(
+          spacing: 8,
+          children: [
+            for (final (method, label) in [
+              (AuthMethod.password, '密码登录'),
+              if (!widget.standalone) (AuthMethod.register, '注册'),
+              if (capabilities?.phoneCodesAvailable == true)
+                (AuthMethod.phoneCode, '短信验证码登录'),
+            ])
+              ChoiceChip(
+                label: UiText(label),
+                selected: _method == method,
+                onSelected: disabled ? null : (_) => _selectMethod(method),
+              ),
+          ],
+        ),
       const SizedBox(height: 12),
       TextField(
         controller: _address,
         enabled: !disabled,
-        autofillHints: phoneCode
+        autofillHints: phoneEntry
             ? const [AutofillHints.telephoneNumber]
             : const [AutofillHints.username],
         autocorrect: false,
@@ -273,11 +327,17 @@ class _AccountPageState extends State<AccountPage> {
             ? TextInputAction.go
             : TextInputAction.next,
         onSubmitted: verifyPhone && !disabled ? (_) => _submit(_method) : null,
-        keyboardType: phoneCode
+        keyboardType: phoneEntry
             ? TextInputType.phone
             : TextInputType.emailAddress,
         decoration: InputDecoration(
-          labelText: context.uiLabel(phoneCode ? '手机号' : '手机号或邮箱'),
+          labelText: context.uiLabel(
+            phoneEntry
+                ? '手机号'
+                : emailEntry
+                ? '邮箱'
+                : '手机号或邮箱',
+          ),
         ),
         onChanged: (_) => setState(() {
           _challenge = null;
@@ -418,7 +478,14 @@ class _AccountPageState extends State<AccountPage> {
               : '登录',
         ),
       ),
-      if (capabilities != null)
+      if (widget.standalone && registering)
+        TextButton(
+          onPressed: disabled
+              ? null
+              : () => _openWelcomePane(_WelcomePane.email),
+          child: const UiText('已有邮箱账户'),
+        ),
+      if (!widget.standalone && capabilities != null)
         UiText(
           capabilities.localSocialProviders.isEmpty
               ? '微信和 QQ 登录暂不可用。'
@@ -430,26 +497,38 @@ class _AccountPageState extends State<AccountPage> {
         alignment: WrapAlignment.center,
         spacing: 8,
         children: [
-          TextButton(
-            onPressed: disabled ? null : () => _submit(AuthMethod.wechat),
-            child: const UiText('微信登录'),
-          ),
-          TextButton(
-            onPressed: disabled ? null : () => _submit(AuthMethod.qq),
-            child: const UiText('QQ 登录'),
-          ),
-          if (!registering && capabilities?.phoneCodesAvailable == true)
+          if (!widget.standalone)
+            TextButton(
+              onPressed: disabled ? null : () => _submit(AuthMethod.wechat),
+              child: const UiText('微信登录'),
+            ),
+          if (!widget.standalone)
+            TextButton(
+              onPressed: disabled ? null : () => _submit(AuthMethod.qq),
+              child: const UiText('QQ 登录'),
+            ),
+          if (!registering &&
+              (!widget.standalone || _pane == _WelcomePane.phone) &&
+              capabilities?.phoneCodesAvailable == true)
             TextButton(
               onPressed: disabled ? null : _openRecovery,
               child: const UiText('找回账号'),
             ),
-          if (!upgrading)
+          if (!upgrading && !widget.standalone)
             TextButton(
               onPressed: disabled ? null : () => _submit(AuthMethod.guest),
               child: const UiText('游客体验'),
             ),
         ],
       ),
+      ..._consentControls(disabled: disabled),
+    ];
+  }
+
+  List<Widget> _consentControls({required bool disabled}) {
+    final catalog = _account.catalog;
+    final small = Theme.of(context).textTheme.bodySmall;
+    return [
       Row(
         children: [
           Semantics(
@@ -510,6 +589,173 @@ class _AccountPageState extends State<AccountPage> {
     ];
   }
 
+  List<Widget> _landing(bool upgrading) {
+    final capabilities = _account.capabilities;
+    final disabled = _account.busy || !_account.restored;
+    final unavailable = disabled || capabilities == null;
+    return [
+      if (_registrationAvailable)
+        Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: TextButton(
+            onPressed: disabled
+                ? null
+                : () => _openWelcomePane(_WelcomePane.registration),
+            child: const UiText('注册'),
+          ),
+        ),
+      const SizedBox(height: 12),
+      FilledButton(
+        onPressed:
+            unavailable || !capabilities.localSocialProviders.contains('wechat')
+            ? null
+            : () => _submit(AuthMethod.wechat),
+        child: const UiText('微信登录'),
+      ),
+      const SizedBox(height: 8),
+      FilledButton.tonal(
+        onPressed: unavailable
+            ? null
+            : () => _openWelcomePane(_WelcomePane.phone),
+        child: const UiText('手机号登录'),
+      ),
+      TextButton(
+        onPressed: disabled ? null : _chooseSignInMethod,
+        child: const UiText('其他登录方式'),
+      ),
+      if (capabilities != null)
+        UiText(
+          capabilities.localSocialProviders.isEmpty
+              ? '微信和 QQ 登录暂不可用。'
+              : '第三方登录使用本机模拟身份。',
+          style: Theme.of(context).textTheme.bodySmall,
+          textAlign: TextAlign.center,
+        ),
+      if (_validation case final message?)
+        Semantics(
+          liveRegion: true,
+          child: UiText(
+            message,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
+        ),
+      TextButton(
+        onPressed: disabled
+            ? null
+            : upgrading
+            ? widget.onWelcomeExit ?? _clearForm
+            : () => _submit(AuthMethod.guest),
+        child: UiText(upgrading ? '返回游客资料' : '游客体验'),
+      ),
+      ..._consentControls(disabled: disabled),
+    ];
+  }
+
+  Future<void> _chooseSignInMethod() async {
+    final capabilities = _account.capabilities;
+    final method = await showModalBottomSheet<AuthMethod>(
+      context: context,
+      useSafeArea: true,
+      builder: (context) => SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Semantics(
+                      header: true,
+                      child: UiText(
+                        '选择登录方式',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: context.uiLabel('关闭'),
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.close_rounded),
+                  ),
+                ],
+              ),
+              for (final (method, label, available) in [
+                (AuthMethod.phoneCode, '手机号登录', capabilities != null),
+                (
+                  AuthMethod.qq,
+                  'QQ 登录',
+                  capabilities?.localSocialProviders.contains('qq') == true,
+                ),
+                (
+                  AuthMethod.wechat,
+                  '微信登录',
+                  capabilities?.localSocialProviders.contains('wechat') == true,
+                ),
+                (AuthMethod.password, '邮箱登录', capabilities != null),
+              ])
+                ListTile(
+                  enabled: available,
+                  title: UiText(label),
+                  onTap: available
+                      ? () => Navigator.pop(context, method)
+                      : null,
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (!mounted || method == null || _pane != _WelcomePane.landing) return;
+    switch (method) {
+      case AuthMethod.phoneCode:
+        await _openWelcomePane(_WelcomePane.phone);
+      case AuthMethod.password:
+        await _openWelcomePane(_WelcomePane.email);
+      case AuthMethod.wechat || AuthMethod.qq:
+        await _submit(method);
+      default:
+        break;
+    }
+  }
+
+  Future<void> _openWelcomePane(_WelcomePane pane) async {
+    final previous = _pane;
+    if (_account.busy || pane == previous) return;
+    if (pane != _WelcomePane.registration) {
+      final catalog = _account.catalog;
+      if (catalog == null) {
+        _show('协议暂时无法加载，请刷新后重试。');
+        return;
+      }
+      if (!await _acceptRequired(catalog) || !mounted || _pane != previous)
+        return;
+    }
+    FocusScope.of(context).unfocus();
+    setState(() {
+      _clearCredentials();
+      _pane = pane;
+      _method = switch (pane) {
+        _WelcomePane.registration => AuthMethod.register,
+        _WelcomePane.phone
+            when _account.capabilities?.phoneCodesAvailable == true =>
+          AuthMethod.phoneCode,
+        _ => AuthMethod.password,
+      };
+      _validation = null;
+    });
+  }
+
+  void _returnToLanding() {
+    if (_account.busy) return;
+    FocusScope.of(context).unfocus();
+    setState(() {
+      _clearCredentials();
+      _pane = _WelcomePane.landing;
+    });
+  }
+
   void _selectMethod(AuthMethod method) => setState(() {
     if (_method != method) {
       _password.clear();
@@ -525,19 +771,25 @@ class _AccountPageState extends State<AccountPage> {
   void _show(String message) => setState(() => _validation = message);
 
   void _clearForm() => setState(() {
+    _clearCredentials();
+    _accepted = null;
+    _aiAccepted = null;
+    _pane = _WelcomePane.landing;
+    _upgrade = false;
+  });
+
+  void _clearCredentials() {
     _address.clear();
     _password.clear();
     _confirmation.clear();
     _name.clear();
     _code.clear();
-    _accepted = null;
-    _aiAccepted = null;
     _challenge = null;
     _validation = null;
     _recoveredPhone = null;
     _method = AuthMethod.password;
-    _upgrade = false;
-  });
+    _passwordVisible = false;
+  }
 
   Future<void> _sendCode() async {
     final identifier = AccountIdentifier.parse(_address.text);
@@ -585,8 +837,19 @@ class _AccountPageState extends State<AccountPage> {
       final identifier = AccountIdentifier.parse(_address.text);
       final phoneCode = method == AuthMethod.phoneCode;
       final registering = method == AuthMethod.register;
-      if (identifier == null || (phoneCode && !identifier.isPhone)) {
-        _show(phoneCode ? '请输入有效的手机号。' : '请输入有效的手机号或邮箱。');
+      final phoneEntry =
+          phoneCode || (widget.standalone && _pane == _WelcomePane.phone);
+      final emailEntry = widget.standalone && _pane == _WelcomePane.email;
+      if (identifier == null ||
+          (phoneEntry && !identifier.isPhone) ||
+          (emailEntry && identifier.isPhone)) {
+        _show(
+          phoneEntry
+              ? '请输入有效的手机号。'
+              : emailEntry
+              ? '请输入有效的邮箱。'
+              : '请输入有效的手机号或邮箱。',
+        );
         return;
       }
       if (registering &&
@@ -597,6 +860,7 @@ class _AccountPageState extends State<AccountPage> {
           return;
         }
         FocusManager.instance.primaryFocus?.unfocus();
+        if (widget.standalone) _pane = _WelcomePane.phone;
         _selectMethod(AuthMethod.phoneCode);
         return;
       }

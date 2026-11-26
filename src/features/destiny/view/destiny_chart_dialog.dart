@@ -7,18 +7,45 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../ui/interface_language.dart';
 
+import '../frontend/control/destiny_chart_presentation.dart';
 import '../model/destiny_reading.dart';
 
 const _chartSymbols = 'JovianChartSymbols';
 const _chartSymbolFallback = ['JovianSansSC'];
 
-Future<void> showDestinyCharts(BuildContext context, DestinyCharts charts) =>
-    showDialog<void>(context: context, builder: (_) => _ChartDialog(charts));
+Future<void> showDestinyCharts(
+  BuildContext context,
+  DestinyCharts charts, {
+  RestoreDestinyPresentation restore = restoreDestinyPresentation,
+  ({Listenable listenable, bool Function() isCurrent})? access,
+}) => showDialog<void>(
+  context: context,
+  builder: (context) {
+    final dialog = _ChartDialog(charts, restore);
+    if (access == null) return dialog;
+    return ListenableBuilder(
+      listenable: access.listenable,
+      child: dialog,
+      builder: (context, child) => access.isCurrent()
+          ? child!
+          : AlertDialog(
+              content: const UiText('会话已变化，请返回后重新读取。'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const UiText('关闭'),
+                ),
+              ],
+            ),
+    );
+  },
+);
 
 class _ChartDialog extends StatefulWidget {
-  const _ChartDialog(this.charts);
+  const _ChartDialog(this.charts, this.restore);
 
   final DestinyCharts charts;
+  final RestoreDestinyPresentation restore;
 
   @override
   State<_ChartDialog> createState() => _ChartDialogState();
@@ -26,10 +53,30 @@ class _ChartDialog extends StatefulWidget {
 
 class _ChartDialogState extends State<_ChartDialog> {
   var _active = DestinyChartMethod.bazi;
+  final _cancelRestore = Completer<void>();
+  late final _restoration = switch (widget.charts.archiveSnapshot) {
+    final snapshot? => widget.restore(snapshot, _cancelRestore.future),
+    null => null,
+  };
 
   @override
-  Widget build(BuildContext context) {
+  void dispose() {
+    _cancelRestore.complete();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => FutureBuilder<Map<String, Object?>>(
+    future: _restoration,
+    builder: _content,
+  );
+
+  Widget _content(
+    BuildContext context,
+    AsyncSnapshot<Map<String, Object?>> restored,
+  ) {
     final charts = widget.charts;
+    final presentation = charts.presentation ?? restored.data;
     final preview = charts.previews[_active];
     final scheme = Theme.of(context).colorScheme;
     return Dialog(
@@ -49,7 +96,13 @@ class _ChartDialogState extends State<_ChartDialog> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _Title('命盘结果'),
-                        Text(charts.presentation == null ? '已保存的基础盘面' : '本次排盘'),
+                        UiText(
+                          charts.presentation != null
+                              ? '本次排盘'
+                              : restored.data?.isNotEmpty == true
+                              ? '已保存的盘面'
+                              : '已保存的基础盘面',
+                        ),
                         if (!charts.timeKnown) const UiText('出生时刻未完全确定'),
                       ],
                     ),
@@ -82,41 +135,49 @@ class _ChartDialogState extends State<_ChartDialog> {
               ),
             ),
             const Divider(height: 1),
+            if (restored.connectionState == ConnectionState.waiting)
+              const LinearProgressIndicator(semanticsLabel: '正在读取盘面…'),
             Expanded(
               child: ListView(
                 key: ValueKey(_active),
                 padding: const EdgeInsets.all(12),
                 children: [
                   if (preview?.note case final note?) _Note(note),
-                  if (preview != null && preview.rows.isNotEmpty)
-                    ...switch (_active) {
-                      DestinyChartMethod.bazi => [
+                  ...switch (_active) {
+                    DestinyChartMethod.bazi
+                        when preview?.rows.isNotEmpty == true ||
+                            presentation?['bazi'] is List =>
+                      [
                         const _Title('四柱、十神与神煞'),
-                        _Pillars(
-                          charts.presentation == null
-                              ? restoreArchivedBaZiRows(preview.rows)
-                              : _freshPillarRows(preview.rows),
-                        ),
-                        if (charts.presentation?['bazi']
-                            case final List analysis)
+                        if (preview?.rows case final rows? when rows.isNotEmpty)
+                          _Pillars(
+                            charts.presentation == null
+                                ? restoreArchivedBaZiRows(rows)
+                                : _freshPillarRows(rows),
+                          ),
+                        if (presentation?['bazi'] case final List analysis)
                           _FactsBox('八字本命结构', analysis.map(chartRow)),
                         if (!charts.timeKnown && charts.presentation != null)
                           const _Note('只展示各有效时刻情景一致的干支、十神和神煞。'),
                       ],
-                      DestinyChartMethod.ziwei
-                          when charts.presentation?['ziwei'] is Map =>
-                        [
-                          const _Title('紫微 · 十二宫'),
-                          _Fact(preview.rows.first),
-                          _ZiweiPanel(charts.presentation!['ziwei'] as Map),
-                        ],
-                      DestinyChartMethod.western
-                          when charts.presentation?['western'] is Map =>
-                        [_WesternPanel(charts.presentation!['western'] as Map)],
-                      _ => preview.rows.map(_Fact.new),
-                    }
-                  else if (preview?.note == null)
-                    const _Note('这次记录没有保存该盘面的基础数据。'),
+                    DestinyChartMethod.ziwei
+                        when presentation?['ziwei'] is Map =>
+                      [
+                        const _Title('紫微 · 十二宫'),
+                        if (preview?.rows.firstOrNull case final year?)
+                          _Fact(year),
+                        _ZiweiPanel(presentation!['ziwei'] as Map),
+                      ],
+                    DestinyChartMethod.western
+                        when presentation?['western'] is Map =>
+                      [_WesternPanel(presentation!['western'] as Map)],
+                    _ when preview?.rows.isNotEmpty == true =>
+                      preview!.rows.map(_Fact.new),
+                    _ when preview?.note == null => const [
+                      _Note('这次记录没有保存该盘面的基础数据。'),
+                    ],
+                    _ => const <Widget>[],
+                  },
                 ],
               ),
             ),

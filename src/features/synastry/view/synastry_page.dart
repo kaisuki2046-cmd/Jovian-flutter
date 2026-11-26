@@ -39,6 +39,7 @@ class SynastryPage extends StatefulWidget {
 
 class _SynastryPageState extends State<SynastryPage> {
   final _scroll = ScrollController();
+  bool _historyExpanded = false;
   MaterialPageRoute<void>? _editorRoute;
   late final _synastry = SynastryPageController(
     account: widget.account,
@@ -51,7 +52,6 @@ class _SynastryPageState extends State<SynastryPage> {
   void initState() {
     super.initState();
     unawaited(_synastry.restoreLatest());
-    unawaited(_synastry.loadRecent());
   }
 
   @override
@@ -84,7 +84,10 @@ class _SynastryPageState extends State<SynastryPage> {
 
   Future<void> _openSaved(String id) async {
     await _synastry.openSaved(id);
-    if (_synastry.message == null) _scrollAfterLayout(bottom: false);
+    if (!mounted || _synastry.message != null) return;
+    FocusManager.instance.primaryFocus?.unfocus();
+    setState(() => _historyExpanded = false);
+    _scrollAfterLayout(bottom: false);
   }
 
   void _scrollAfterLayout({required bool bottom}) {
@@ -207,7 +210,7 @@ class _SynastryPageState extends State<SynastryPage> {
             ],
             if (_synastry.hasSession) ...[
               const SizedBox(height: 12),
-              _recentReports(context),
+              _savedReports(),
             ],
             if (!_synastry.canCalculate) ...[
               const SizedBox(height: 12),
@@ -320,35 +323,85 @@ class _SynastryPageState extends State<SynastryPage> {
         : Semantics(liveRegion: true, child: Text(message));
   }
 
-  Widget _recentReports(BuildContext context) => Card(
+  Widget _savedReports() => Card(
+    key: const ValueKey('synastry-report-history'),
     margin: EdgeInsets.zero,
-    child: ExpansionTile(
-      title: const UiText('查看已存解读'),
-      childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-      expandedCrossAxisAlignment: CrossAxisAlignment.start,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (_synastry.historyLoading)
-          const LinearProgressIndicator(semanticsLabel: '正在读取合盘报告历史')
-        else if (_synastry.historyFailed) ...[
-          const Text('暂时无法读取合盘报告历史。'),
-          TextButton(
-            onPressed: _synastry.loadRecent,
-            child: const Text('重试读取历史'),
-          ),
-        ] else if (_synastry.recentReports.isEmpty)
-          const UiText('暂无合盘报告。')
-        else
-          for (final entry in _synastry.recentReports)
-            ListTile(
-              key: ValueKey(entry.id),
-              contentPadding: EdgeInsets.zero,
-              title: Text(entry.title),
-              subtitle: Text(_formattedDate(context, entry.savedAt)!),
-              trailing: const Icon(Icons.chevron_right),
-              enabled: !_synastry.busy,
-              onTap: () => _openSaved(entry.id),
+        Semantics(
+          expanded: _historyExpanded,
+          child: ListTile(
+            title: UiText(_historyExpanded ? '收起已存解读' : '查看已存解读'),
+            trailing: Icon(
+              _historyExpanded ? Icons.expand_less : Icons.expand_more,
             ),
-        TextButton(onPressed: _history, child: const UiText('查看全部合盘报告')),
+            onTap: () {
+              if (!_historyExpanded) _synastry.openHistory();
+              setState(() => _historyExpanded = !_historyExpanded);
+            },
+          ),
+        ),
+        if (_synastry.history case final history? when _historyExpanded)
+          ListenableBuilder(
+            listenable: history,
+            builder: (context, _) {
+              final page = history.locked ? null : history.page;
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (history.loading)
+                      Semantics(
+                        liveRegion: true,
+                        child: LinearProgressIndicator(
+                          semanticsLabel: context.uiLabel('正在读取已存解读…'),
+                        ),
+                      ),
+                    if (history.listError != null || history.locked)
+                      Semantics(
+                        liveRegion: true,
+                        child: const UiText('暂时无法读取存档。'),
+                      ),
+                    if (page != null) ...[
+                      if (page.entries.isEmpty && !history.loading)
+                        const UiText('暂无合盘报告。'),
+                      for (final entry in page.entries)
+                        ListTile(
+                          key: ValueKey(entry.id),
+                          contentPadding: EdgeInsets.zero,
+                          title: Text(entry.title),
+                          subtitle: Text(
+                            _formattedDate(context, entry.savedAt)!,
+                          ),
+                          trailing: const Icon(Icons.chevron_right),
+                          enabled: !_synastry.busy,
+                          onTap: () => _openSaved(entry.id),
+                        ),
+                    ],
+                    Wrap(
+                      children: [
+                        if (page?.nextCursor != null)
+                          TextButton(
+                            onPressed: history.loading ? null : history.more,
+                            child: const UiText('加载更多'),
+                          ),
+                        TextButton(
+                          onPressed: history.loading ? null : history.refresh,
+                          child: const UiText('刷新报告'),
+                        ),
+                        TextButton(
+                          onPressed: _history,
+                          child: const UiText('查看全部合盘报告'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
       ],
     ),
   );

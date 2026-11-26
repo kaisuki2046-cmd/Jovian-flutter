@@ -44,7 +44,7 @@ Future<DestinyReading> calculateDestinyReading(
 
 Future<String> Function(Map<String, Object?>, Future<void>)?
 configureDestinyReport({
-  String value = const String.fromEnvironment('DESTINY_REPORT_URL'),
+  String value = ServiceEnvironment.destiny,
   Future<String?> Function()? readNativeSession,
 }) {
   final base = serviceEndpoint(value, 'DESTINY_REPORT_URL');

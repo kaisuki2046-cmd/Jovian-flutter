@@ -10,7 +10,7 @@ import '../shared/http/json_client.dart';
 import '../shared/http/service_endpoint.dart';
 
 AccountController? configureAccount({
-  String value = const String.fromEnvironment('ACCOUNT_API_URL'),
+  String value = ServiceEnvironment.account,
 }) {
   final base = serviceEndpoint(value, 'ACCOUNT_API_URL');
   if (base == null) return null;

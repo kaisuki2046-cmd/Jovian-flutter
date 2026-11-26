@@ -10,7 +10,7 @@ import '../shared/http/json_client.dart';
 import '../shared/http/service_endpoint.dart';
 
 OnlineGuideController? configureOnlineGuide({
-  String value = const String.fromEnvironment('DIVINATION_REPORT_URL'),
+  String value = ServiceEnvironment.divination,
   Future<String?> Function()? readNativeSession,
   GuideRecoveryStore? nativeRecovery,
   String? ownerScope,

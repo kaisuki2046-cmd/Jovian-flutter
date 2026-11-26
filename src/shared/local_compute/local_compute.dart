@@ -21,6 +21,14 @@ class LocalCompute {
     cancel: cancel,
   );
 
+  Future<Map<String, Object?>> restoreDestinyPresentation(
+    Map<String, Object?> snapshot, {
+    Future<void>? cancel,
+  }) => platform.runLocalCompute({
+    'name': 'restoreDestinyPresentation',
+    'snapshot': snapshot,
+  }, cancel: cancel);
+
   Future<Map<String, Object?>> calculateManualSubjectChart(
     Map<String, Object?> profile, {
     Future<void>? cancel,

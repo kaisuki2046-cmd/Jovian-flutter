@@ -20,7 +20,7 @@ SynastryComparisonReader? configureSynastryComparison() => _compute.isAvailable
     : null;
 
 SynastrySummaryReader? configureSynastrySummary({
-  String value = const String.fromEnvironment('SYNASTRY_REPORT_URL'),
+  String value = ServiceEnvironment.synastry,
   Future<String?> Function()? readNativeSession,
 }) {
   final base = serviceEndpoint(value, 'SYNASTRY_REPORT_URL');

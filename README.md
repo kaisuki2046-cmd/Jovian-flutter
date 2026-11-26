@@ -10,8 +10,12 @@ Flutter 版沿用项目的[目录分工](../FRAMEWORK.md)、[协作协议](../CO
 
 ```sh
 flutter pub get
-flutter run -d chrome --web-port 8081 --target src/app/main.dart --dart-define=ACCOUNT_API_URL=http://localhost:8787 --dart-define=DIVINATION_REPORT_URL=http://localhost:8115 --dart-define=DESTINY_REPORT_URL=http://localhost:8788 --dart-define=SYNASTRY_REPORT_URL=http://localhost:8794 --dart-define=FORTUNE_TIME_URL=http://localhost:8791
+flutter run -d chrome --web-port 8081 --target src/app/main.dart --dart-define-from-file=config/local-web.example.json
 ```
+
+示例文件使用原 `Start-app.cmd` 的主树首选端口，其中合盘为 `8812`。预览树或端口被占用时，以已启动服务的实际地址为准，通过自己的 `--dart-define-from-file` 文件或逐项 `--dart-define` 传入。Flutter Web 监听来源也要与 Node 服务允许的 `APP_WEB_ORIGIN` 一致。构建配置只填客户端可见的 URL。
+
+已有 RN 构建配置可沿用 `EXPO_PUBLIC_API_BASE_URL`、`EXPO_PUBLIC_DIVINATION_REPORT_URL`、`EXPO_PUBLIC_DESTINY_API_BASE_URL`、`EXPO_PUBLIC_SYNASTRY_API_BASE_URL` 和 `EXPO_PUBLIC_FORTUNE_TIME_BASE_URL`，仍通过 Flutter 的构建参数传入。同一服务同时配置时，Flutter 变量优先。
 
 手机与桌面浏览器共用页面主题、卡片、表单及底栏。内容区按可用宽度居中，最多 720 逻辑像素。底栏顺序为命理、合盘、算事、消息、个人中心，周期运势仍从命理进入。个人中心设置可以切换外观，并在本设备保存选择。
 

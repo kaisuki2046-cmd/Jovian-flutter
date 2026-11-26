@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../src/features/account/account.dart';
+import '../src/features/destiny/frontend/control/destiny_chart_presentation.dart';
 import '../src/features/destiny/model/destiny_reading.dart';
 import '../src/features/destiny/view/birth_profile_confirmation.dart';
 import '../src/features/destiny/view/destiny_chart_dialog.dart';
@@ -75,6 +78,86 @@ void main() {
     },
   );
 
+  testWidgets('reopens stored charts and masks them when the account changes', (
+    tester,
+  ) async {
+    _narrow(tester);
+    final authorized = ValueNotifier(true);
+    addTearDown(authorized.dispose);
+    final storedFacts = <String, Object?>{'version': 1, 'timeKnown': true};
+    var restored = 0;
+    var cancelled = false;
+    await _showCharts(
+      tester,
+      DestinyCharts.fromArchive({
+        ..._archive(timeKnown: true),
+        'chartSnapshot': storedFacts,
+      }),
+      textScale: 1.3,
+      access: (listenable: authorized, isCurrent: () => authorized.value),
+      restore: (snapshot, cancel) async {
+        restored++;
+        expect(snapshot, same(storedFacts));
+        unawaited(cancel.then((_) => cancelled = true));
+        return _live;
+      },
+    );
+    expect(restored, 1);
+    expect(find.text('已保存的盘面'), findsOneWidget);
+    expect(find.text('藏干十神 原样保存的条目'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('八字本命结构'),
+      220,
+      scrollable: find.descendant(
+        of: find.byType(Dialog),
+        matching: find.byType(Scrollable),
+      ),
+    );
+    expect(find.text('八字本命结构'), findsOneWidget);
+    await tester.tap(find.text('紫微斗数'));
+    await tester.pumpAndSettle();
+    expect(find.text('命宫 · 甲子'), findsOneWidget);
+    final palace = find.text('父母');
+    await tester.ensureVisible(palace);
+    await tester.tap(palace);
+    await tester.pumpAndSettle();
+    expect(find.text('父母 · 乙丑'), findsOneWidget);
+    await tester.tap(find.text('西方星盘'));
+    await tester.pumpAndSettle();
+    expect(find.text('本命星图'), findsOneWidget);
+    expect(restored, 1);
+
+    authorized.value = false;
+    await tester.pumpAndSettle();
+    expect(cancelled, isTrue);
+    expect(find.text('本命星图'), findsNothing);
+    expect(find.text('会话已变化，请返回后重新读取。'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+    'retains saved rows when the archived projection is unavailable',
+    (tester) async {
+      _narrow(tester);
+      final charts = DestinyCharts.fromArchive({
+        ..._archive(timeKnown: true),
+        'chartSnapshot': {'version': 1, 'timeKnown': true},
+      });
+      await _showCharts(
+        tester,
+        charts,
+        textScale: 1,
+        restore: (_, _) async => throw const FormatException('fixture'),
+      );
+      expect(find.text('已保存的基础盘面'), findsOneWidget);
+      await tester.tap(find.text('西方星盘'));
+      await tester.pumpAndSettle();
+      expect(find.text('金牛座'), findsOneWidget);
+      expect(find.text('本命星图'), findsNothing);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets(
     'confirmation names fields and distinguishes partial birth time',
     (tester) async {
@@ -125,6 +208,8 @@ Future<void> _showCharts(
   WidgetTester tester,
   DestinyCharts charts, {
   required double textScale,
+  RestoreDestinyPresentation restore = restoreDestinyPresentation,
+  ({Listenable listenable, bool Function() isCurrent})? access,
 }) async {
   await tester.pumpWidget(
     MaterialApp(
@@ -138,7 +223,12 @@ Future<void> _showCharts(
       home: Scaffold(
         body: Builder(
           builder: (context) => TextButton(
-            onPressed: () => showDestinyCharts(context, charts),
+            onPressed: () => showDestinyCharts(
+              context,
+              charts,
+              restore: restore,
+              access: access,
+            ),
             child: const Text('查看命盘'),
           ),
         ),

@@ -16,10 +16,12 @@ import { compareCharts, hasUnknownBirthTime } from 'jovian-legacy/features/synas
 import { adaptInterpretationFacts } from 'jovian-legacy/features/synastry/control/interpretation-fact-adapter';
 import { prepareSynastrySummary } from 'jovian-legacy/features/synastry/control/summary';
 import type { ComparisonSubject } from 'jovian-legacy/features/synastry/model/comparison';
-import { destinyPresentation } from './destiny-presentation';
+import type { DestinyChartSnapshot } from 'jovian-legacy/features/destiny/model/chart-snapshot';
+import { archivedDestinyPresentation, destinyPresentation } from './destiny-presentation';
 
 type Operation =
   | { name: 'calculateDestiny' | 'calculateManualSubjectChart'; profile: BirthProfile }
+  | { name: 'restoreDestinyPresentation'; snapshot: DestinyChartSnapshot }
   | { name: 'compareSynastry'; a: ComparisonSubject; b: ComparisonSubject }
   | { name: 'previewFortune'; asOf: number; period: PreviewPeriod; timeZone: string;
       archive?: Parameters<typeof readNatalDay>[0] }
@@ -49,6 +51,8 @@ async function run(operation: Operation) {
         presentation: destinyPresentation(reading.charts),
       };
     }
+    case 'restoreDestinyPresentation':
+      return archivedDestinyPresentation(operation.snapshot);
     case 'calculateManualSubjectChart':
       return calculateManualSubjectChart(operation.profile);
     case 'compareSynastry': {

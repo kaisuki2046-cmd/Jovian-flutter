@@ -94,9 +94,13 @@ void main() {
       })..updateAgreements = true;
       await _open(tester, service);
       expect(find.text('第三方登录使用本机模拟身份。'), findsOneWidget);
-      await _tap(tester, 'QQ 登录');
-      expect(find.text('暂未接入QQ登录服务。'), findsOneWidget);
+      await _tap(tester, '其他登录方式');
+      final qq = find.widgetWithText(ListTile, 'QQ 登录');
+      expect(qq, findsOneWidget);
+      expect(tester.widget<ListTile>(qq).enabled, isFalse);
       expect(service.submitted, isEmpty);
+      await tester.tap(find.byTooltip('关闭'));
+      await tester.pumpAndSettle();
 
       await _tap(tester, '微信登录');
       await _tap(tester, '同意并继续');

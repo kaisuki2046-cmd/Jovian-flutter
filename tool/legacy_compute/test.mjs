@@ -143,12 +143,26 @@ try {
   assert.equal(partial.result.presentation.western.wheel, null);
   assert.ok(!partial.result.presentation.ziwei.palaces);
   assert.deepEqual(result.stages, progress);
+  const restore = { name: 'restoreDestinyPresentation', snapshot: archive.chartSnapshot };
+  const restored = await ask(restore);
+  assert.deepEqual(restored.stages, [], 'Opening an archive must not start a calculation');
+  assertParity(restored.result, presentation);
+  assert.deepEqual((await ask({
+    name: restore.name, snapshot: partial.result.archive.chartSnapshot,
+  })).result, {});
+  const sparse = structuredClone(archive.chartSnapshot);
+  sparse.bazi.rawResult[0].analysis = {};
+  delete sparse.ziwei.rawResult[0].palaces[0].heavenlyStem;
+  assertParity((await ask({ ...restore, snapshot: sparse })).result, {
+    western: presentation.western,
+  });
   const dartResult = await page.evaluate(async (profile) =>
     JSON.parse(await window.runBrowserComputeTest(JSON.stringify(profile))), a);
   assert.equal(dartResult.available, true);
   assert.equal(dartResult.cancellation, 'cancelled');
   assert.deepEqual(dartResult.stages, progress);
   assertParity(dartResult.result, result.result);
+  assertParity(dartResult.restored, presentation);
 
   const chartA = await calculateManualSubjectChart(a);
   const chartB = await calculateManualSubjectChart(b);
@@ -278,6 +292,7 @@ try {
   const nativeReading = await askNative({ name: 'calculateDestiny', profile: a });
   assert.deepEqual(nativeReading.stages, progress);
   assertParity(nativeReading.result, result.result);
+  assertParity((await askNative(restore)).result, presentation);
   const nativePartial = await askNative({ name: 'calculateDestiny', profile: {
     ...a, time: { timeKnown: false, hour: null, minute: null },
   } });

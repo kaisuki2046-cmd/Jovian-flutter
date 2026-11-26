@@ -48,6 +48,7 @@ class DestinyPage extends StatefulWidget {
 class _DestinyPageState extends State<DestinyPage> {
   late final DestinyPageController _controller;
   late final DestinyBirthController _birth;
+  late final String? _chartScope;
   BirthProfile? _draft;
   BirthProfileDraft _prefill = const BirthProfileDraft();
   AccountBirthFields? _baseline;
@@ -58,6 +59,7 @@ class _DestinyPageState extends State<DestinyPage> {
   @override
   void initState() {
     super.initState();
+    _chartScope = widget.account?.authorizedSession?.scope;
     _controller = DestinyPageController(
       calculateReading: widget.calculateReading,
       requestReport: widget.requestReport,
@@ -143,7 +145,7 @@ class _DestinyPageState extends State<DestinyPage> {
               ..._report(context, body)
             else if (_controller.reading case final reading?) ...[
               FilledButton.tonal(
-                onPressed: () => showDestinyCharts(context, reading.charts),
+                onPressed: () => _showCharts(context, reading.charts),
                 child: const UiText('查看命盘'),
               ),
               if (widget.requestReport != null)
@@ -446,6 +448,25 @@ class _DestinyPageState extends State<DestinyPage> {
     );
   }
 
+  void _showCharts(BuildContext context, DestinyCharts charts) {
+    final account = widget.account;
+    unawaited(
+      showDestinyCharts(
+        context,
+        charts,
+        access: account == null
+            ? null
+            : (
+                listenable: account,
+                isCurrent: () =>
+                    _chartScope != null &&
+                    !account.sessionChanging &&
+                    account.authorizedSession?.scope == _chartScope,
+              ),
+      ),
+    );
+  }
+
   List<Widget> _report(BuildContext context, String body) {
     final charts = _controller.reading?.charts ?? _controller.archivedCharts;
     final entry = _controller.archiveEntry;
@@ -466,7 +487,7 @@ class _DestinyPageState extends State<DestinyPage> {
         Semantics(liveRegion: true, child: const UiText('已保存，下次进入命理页可直接查看。')),
       if (charts != null)
         FilledButton.tonal(
-          onPressed: () => showDestinyCharts(context, charts),
+          onPressed: () => _showCharts(context, charts),
           child: const UiText('查看命盘'),
         ),
       if ((_controller.fortuneArchiveId, widget.openFortune) case (

@@ -6,6 +6,7 @@ import '../../../../ui/interface_language.dart';
 
 import '../../../../shared/http/json_client.dart';
 import '../../../../ui/theme.dart';
+import '../../../destiny/destiny.dart';
 import '../../auth/control/account_controller.dart';
 import '../model/archived_charts.dart';
 
@@ -52,6 +53,7 @@ class ArchivedChartsPage extends StatelessWidget {
           return _ChartContent(
             key: ValueKey(owner.scope),
             owner: owner.id,
+            scope: owner.scope,
             account: account,
           );
         },
@@ -61,8 +63,14 @@ class ArchivedChartsPage extends StatelessWidget {
 }
 
 class _ChartContent extends StatefulWidget {
-  const _ChartContent({super.key, required this.owner, required this.account});
+  const _ChartContent({
+    super.key,
+    required this.owner,
+    required this.scope,
+    required this.account,
+  });
   final String owner;
+  final String scope;
   final AccountController account;
 
   @override
@@ -82,6 +90,35 @@ class _ChartContentState extends State<_ChartContent> {
       }
       rethrow;
     }
+  }
+
+  VoidCallback? _fullCharts(
+    BuildContext context,
+    ArchivedDestinyCharts archive,
+  ) {
+    final charts = DestinyCharts.archived(
+      previews: {
+        for (final method in DestinyChartMethod.values)
+          if (archive.charts[ArchivedChartMethod.values.byName(method.name)]
+              case final chart?)
+            method: DestinyChartPreview(method, chart.note, chart.rows),
+      },
+      timeKnown: archive.timeKnown,
+      snapshot: archive.snapshot,
+    );
+    if (charts.archiveSnapshot == null) return null;
+    final account = widget.account;
+    final scope = widget.scope;
+    return () => showDestinyCharts(
+      context,
+      charts,
+      access: (
+        listenable: account,
+        isCurrent: () =>
+            !account.sessionChanging &&
+            account.authorizedSession?.scope == scope,
+      ),
+    );
   }
 
   void _reload() {
@@ -119,6 +156,7 @@ class _ChartContentState extends State<_ChartContent> {
                       archive: archive,
                       method: _method,
                       select: (method) => setState(() => _method = method),
+                      showFullCharts: _fullCharts(context, archive),
                     ),
             ),
           ),
@@ -134,11 +172,13 @@ class _ChartPanel extends StatelessWidget {
     required this.archive,
     required this.method,
     required this.select,
+    this.showFullCharts,
   });
 
   final ArchivedDestinyCharts archive;
   final ArchivedChartMethod method;
   final ValueChanged<ArchivedChartMethod> select;
+  final VoidCallback? showFullCharts;
 
   @override
   Widget build(BuildContext context) {
@@ -171,6 +211,8 @@ class _ChartPanel extends StatelessWidget {
               ),
           ],
         ),
+        if (showFullCharts case final open?)
+          OutlinedButton(onPressed: open, child: const UiText('查看命盘')),
         if (chart.note case final note?) Text(note),
         if (chart.rows.isEmpty && chart.note == null)
           const UiText('这次记录没有保存该盘面的基础数据。'),

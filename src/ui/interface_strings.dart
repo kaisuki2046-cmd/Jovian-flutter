@@ -694,4 +694,10 @@ const englishInterfaceStrings = <String, String>{
   "收起已存解读": "Collapse saved readings",
   "刷新运势报告": "Refresh forecast history",
   "暂时无法读取存档。": "Could not load saved readings.",
+  "手机号登录": "Sign in with phone",
+  "其他登录方式": "Other sign-in methods",
+  "邮箱登录": "Sign in with email",
+  "选择登录方式": "Choose a sign-in method",
+  "已保存的盘面": "Saved charts",
+  "已有邮箱账户": "I already have an email account",
 };

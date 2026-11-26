@@ -66,9 +66,14 @@ class SynastryPageController extends ChangeNotifier {
   String? report;
   DateTime? savedAt;
   bool reportFromArchive = false;
-  List<ReportEntry> recentReports = const [];
-  bool historyLoading = false;
-  bool historyFailed = false;
+  ReportHistoryController? _history;
+  String? _historyScope;
+
+  ReportHistoryController? get history {
+    final scope = _historyScope;
+    return scope != null && _scope(scope) ? _history : null;
+  }
+
   Map<String, Object?>? _draft;
   bool get needsSave => _draft != null;
 
@@ -116,6 +121,7 @@ class SynastryPageController extends ChangeNotifier {
 
   @override
   void dispose() {
+    _history?.dispose();
     _work.complete();
     _disposed = true;
     super.dispose();
@@ -232,25 +238,25 @@ class SynastryPageController extends ChangeNotifier {
     }
   }
 
-  Future<void> loadRecent() async {
-    final session = account?.authorizedSession;
-    if (_disposed || session == null || historyLoading) return;
-    historyLoading = true;
-    historyFailed = false;
-    notifyListeners();
-    try {
-      final page = await account!.reports.list(session.id, ReportKind.synastry);
-      if (!_disposed && _scope(session.scope)) {
-        recentReports = page.entries.take(3).toList(growable: false);
-      }
-    } catch (_) {
-      if (!_disposed && _scope(session.scope)) historyFailed = true;
-    } finally {
-      if (!_disposed) {
-        historyLoading = false;
-        notifyListeners();
-      }
+  void openHistory() {
+    final client = account;
+    final session = client?.authorizedSession;
+    if (_disposed ||
+        client == null ||
+        session == null ||
+        !_scope(session.scope) ||
+        history != null) {
+      return;
     }
+    _history?.dispose();
+    _history = ReportHistoryController(
+      client.reports,
+      session.id,
+      ReportKind.synastry,
+      client.initialize,
+    );
+    _historyScope = session.scope;
+    notifyListeners();
   }
 
   Future<void> openSaved(String id) async {
@@ -469,7 +475,9 @@ class SynastryPageController extends ChangeNotifier {
       if (current()) {
         _draft = null;
         savedAt = receipt.savedAt;
-        unawaited(loadRecent());
+        if (history case final currentHistory?) {
+          unawaited(currentHistory.refresh());
+        }
       }
     } catch (_) {
       if (current()) message = '解读已生成，暂时无法存档。';

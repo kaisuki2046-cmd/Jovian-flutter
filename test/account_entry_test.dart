@@ -325,16 +325,17 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    await press('找回账号');
-    expect(find.text('请输入账号已绑定的手机号。'), findsOneWidget);
-    await tester.enterText(
-      find.widgetWithText(TextField, '手机号或邮箱'),
-      '13900139000',
-    );
-    await press('找回账号');
+    await press('手机号登录');
     expect(find.text('请确认登录协议'), findsOneWidget);
     expect(calls, isEmpty);
     await press('同意并继续');
+    await press('找回账号');
+    expect(find.text('请输入账号已绑定的手机号。'), findsOneWidget);
+    await tester.enterText(
+      find.widgetWithText(TextField, '手机号'),
+      '13900139000',
+    );
+    await press('找回账号');
     expect(find.text('验证手机号 139******00'), findsOneWidget);
     for (var attempt = 0; attempt < 2; attempt++) {
       await press('获取验证码');
@@ -363,7 +364,7 @@ void main() {
     expect(calls, ['code', 'verify', 'complete', 'code', 'verify', 'complete']);
     expect(find.text('密码已重置，请使用新密码登录。'), findsOneWidget);
     final address = tester.widget<TextField>(
-      find.widgetWithText(TextField, '手机号或邮箱'),
+      find.widgetWithText(TextField, '手机号'),
     );
     expect(address.controller!.text, '13900139000');
     expect(tester.takeException(), isNull);
@@ -454,8 +455,25 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      Future<void> openEmail() async {
+        await tester.tap(find.text('其他登录方式'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('邮箱登录'));
+        await tester.pumpAndSettle();
+      }
+
+      await openEmail();
+      expect(find.text('请确认登录协议'), findsOneWidget);
+      expect(loginBodies, isEmpty);
+      await tester.tap(find.text('取消'));
+      await tester.pumpAndSettle();
+      expect(loginBodies, isEmpty);
+
+      await openEmail();
+      await tester.tap(find.text('同意并继续'));
+      await tester.pumpAndSettle();
       await tester.enterText(
-        find.widgetWithText(TextField, '手机号或邮箱'),
+        find.widgetWithText(TextField, '邮箱'),
         'test@example.test',
       );
       await tester.enterText(
@@ -466,16 +484,6 @@ void main() {
       expect(tester.widget<FilledButton>(login).onPressed, isNotNull);
       await tester.ensureVisible(login);
       await tester.tap(login);
-      await tester.pumpAndSettle();
-      expect(find.text('请确认登录协议'), findsOneWidget);
-      expect(loginBodies, isEmpty);
-      await tester.tap(find.text('取消'));
-      await tester.pumpAndSettle();
-      expect(loginBodies, isEmpty);
-
-      await tester.tap(login);
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('同意并继续'));
       await tester.pumpAndSettle();
       expect(loginBodies, [
         {

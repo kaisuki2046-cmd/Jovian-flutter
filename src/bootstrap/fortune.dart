@@ -16,7 +16,7 @@ import '../shared/http/service_endpoint.dart';
 
 FortuneOnline? configureFortuneOnline(
   Future<DateTime> Function()? readTime, {
-  String value = const String.fromEnvironment('FORTUNE_TIME_URL'),
+  String value = ServiceEnvironment.fortune,
   Future<String?> Function()? readNativeSession,
 }) {
   const compute = LocalCompute();
@@ -32,7 +32,7 @@ FortuneOnline? configureFortuneOnline(
 }
 
 Future<DateTime> Function()? configureFortuneTime({
-  String value = const String.fromEnvironment('FORTUNE_TIME_URL'),
+  String value = ServiceEnvironment.fortune,
 }) {
   final base = serviceEndpoint(value, 'FORTUNE_TIME_URL');
   if (base == null) return null;

@@ -101,6 +101,104 @@ void main() {
     },
   );
 
+  testWidgets('welcome chooses a sign-in route and keeps consent on return', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(320, 640);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPhysicalSize);
+    final attempts = <Map<String, Object?>>[];
+    final account = _account((request) async {
+      switch (request.method + ' ' + request.url.path) {
+        case 'GET /account/session':
+        case 'GET /account/auth/guest':
+          return _json({}, 401);
+        case 'GET /account/auth/capabilities':
+          return _json({
+            'emailRegistrationAvailable': true,
+            'phoneCodesAvailable': true,
+            'localSocialProviders': ['qq'],
+          });
+        case 'GET /account/agreements/catalog':
+          return _json(_catalog);
+        case 'POST /account/auth/login':
+          attempts.add(jsonDecode(request.body) as Map<String, Object?>);
+          return _json({
+            'user': {'id': 'welcome-member', 'displayName': '邮箱会员'},
+          });
+        case 'GET /account/agreements':
+          return _agreementState(true);
+        default:
+          return _json({}, 404);
+      }
+    });
+    await tester.pumpWidget(JovianApp(account: account));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(TextField), findsNothing);
+    final wechat = tester.widget<FilledButton>(
+      find.widgetWithText(FilledButton, '微信登录'),
+    );
+    expect(wechat.onPressed, isNull);
+
+    await _press(tester, '手机号登录');
+    expect(find.byType(TextField), findsNothing);
+    await _press(tester, '取消');
+    expect(find.text('其他登录方式'), findsOneWidget);
+    expect(attempts, isEmpty);
+    await _press(tester, '手机号登录');
+    await _press(tester, '同意并继续');
+    expect(find.widgetWithText(TextField, '手机号'), findsOneWidget);
+    expect(find.widgetWithText(TextField, '验证码'), findsOneWidget);
+    await tester.enterText(
+      find.widgetWithText(TextField, '手机号'),
+      '13800000000',
+    );
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.text('其他登录方式'), findsOneWidget);
+
+    await _press(tester, '注册');
+    final registration = find.widgetWithText(TextField, '手机号或邮箱');
+    expect(tester.widget<TextField>(registration).controller?.text, isEmpty);
+    expect(find.widgetWithText(TextField, '昵称'), findsOneWidget);
+    await _press(tester, '返回');
+
+    await _press(tester, '其他登录方式');
+    expect(find.text('选择登录方式'), findsOneWidget);
+    final qq = tester.widget<ListTile>(find.widgetWithText(ListTile, 'QQ 登录'));
+    expect(qq.onTap, isNotNull);
+    await _press(tester, '邮箱登录');
+    expect(find.text('同意并继续'), findsNothing);
+    await tester.enterText(
+      find.widgetWithText(TextField, '邮箱'),
+      'User@example.test',
+    );
+    await tester.enterText(
+      find.widgetWithText(TextField, '密码'),
+      'FixturePassword',
+    );
+    await _press(tester, '登录');
+
+    expect(attempts, [
+      {
+        'email': 'user@example.test',
+        'password': 'FixturePassword',
+        'acceptance': {
+          'agreed': true,
+          'agreements': [
+            for (final id in ['privacy', 'terms'])
+              {'id': id, 'version': 'preview-v2', 'hash': 'digest-' + id},
+          ],
+        },
+      },
+    ]);
+    expect(account.authorizedSession?.scope, 'member:welcome-member');
+    expect(find.byType(NavigationBar), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('a direct fortune link waits for the current agreement version', (
     tester,
   ) async {

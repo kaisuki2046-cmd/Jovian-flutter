@@ -246,6 +246,89 @@ void main() {
     },
   );
 
+  testWidgets(
+    'loads all saved reports in place and retries the same older cursor',
+    (tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(320, 680);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPhysicalSize);
+
+      final cursor = 'd' * 64;
+      final older = 'e' * 64;
+      final cursors = <String?>[];
+      var olderReads = 0;
+      final account = await _guestAccount((request) {
+        expect(request.url.queryParameters['expectedOwnerId'], 'guest-fixture');
+        expect(request.url.queryParameters['kind'], 'synastry');
+        final path = request.url.path;
+        if (path == '/account/reading-history/latest') return _json({}, 404);
+        if (path.endsWith(older)) {
+          olderReads++;
+          return _json(_archived(older, '第二页'));
+        }
+        expect(path, '/account/reading-history');
+        final before = request.url.queryParameters['before'];
+        cursors.add(before);
+        if (before == null) {
+          return _json({
+            'entries': [
+              _entry('a' * 64, '第一页第一篇'),
+              _entry('b' * 64, '第一页第二篇'),
+              _entry('c' * 64, '第一页第三篇'),
+              _entry(cursor, '第一页第四篇'),
+            ],
+            'nextCursor': cursor,
+          });
+        }
+        expect(before, cursor);
+        if (cursors.length == 2) return _json({}, 503);
+        return _json({
+          'entries': [_entry(older, '第二页合盘')],
+          'nextCursor': null,
+        });
+      });
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: SynastryPage(
+            loadPlaces: () async => [_place],
+            account: account,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await _tap(tester, '查看已存解读');
+      expect(find.text('第一页第四篇'), findsOneWidget);
+      expect(cursors, [null]);
+
+      await _tap(tester, '加载更多');
+      expect(find.text('暂时无法读取存档。'), findsOneWidget);
+      expect(find.text('第一页第一篇'), findsOneWidget);
+      await _tap(tester, '加载更多');
+      expect(find.text('第二页合盘'), findsOneWidget);
+      expect(cursors, [null, cursor, cursor]);
+
+      await _tap(tester, '收起已存解读');
+      expect(find.text('第二页合盘'), findsNothing);
+      await _tap(tester, '查看已存解读');
+      await _tap(tester, '第二页合盘');
+      expect(find.text('第二页亲情正文'), findsOneWidget);
+      expect(olderReads, 1);
+      expect(cursors, [null, cursor, cursor]);
+
+      expect(find.text('收起已存解读'), findsNothing);
+      await _tap(tester, '查看已存解读');
+      expect(find.text('第二页合盘'), findsOneWidget);
+      expect(cursors, [null, cursor, cursor]);
+      await _tap(tester, '刷新报告');
+      expect(cursors, [null, cursor, cursor, null]);
+      expect(find.text('第二页合盘'), findsNothing);
+      expect(find.text('第一页第四篇'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   for (final revokeAi in [false, true]) {
     final kind = revokeAi ? 'AI authorization' : 'B-side consent';
     test('withdrawing $kind aborts the actual model request', () async {

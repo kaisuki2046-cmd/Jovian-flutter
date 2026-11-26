@@ -42,11 +42,30 @@ ChartRow chartRow(Object? input) {
 }
 
 class DestinyCharts {
-  const DestinyCharts._(this.previews, this.timeKnown, this.presentation);
+  const DestinyCharts._(
+    this.previews,
+    this.timeKnown,
+    this.presentation,
+    this.archiveSnapshot,
+  );
 
   final Map<DestinyChartMethod, DestinyChartPreview> previews;
   final bool timeKnown;
   final Map<String, Object?>? presentation;
+  final Map<String, Object?>? archiveSnapshot;
+
+  factory DestinyCharts.archived({
+    required Map<DestinyChartMethod, DestinyChartPreview> previews,
+    required bool timeKnown,
+    required Map<String, Object?>? snapshot,
+  }) => DestinyCharts._(
+    previews,
+    timeKnown,
+    null,
+    timeKnown && snapshot?['version'] == 1 && snapshot?['timeKnown'] == true
+        ? snapshot
+        : null,
+  );
 
   static DestinyCharts? tryArchive(Map<String, Object?> report) {
     try {
@@ -65,10 +84,17 @@ class DestinyCharts {
       'timeKnown': final bool timeKnown,
     }) {
       final previews = charts.map(DestinyChartPreview.fromJson);
-      return DestinyCharts._(
-        {for (final preview in previews) preview.method: preview},
-        timeKnown,
-        presentation,
+      final byMethod = {
+        for (final preview in previews) preview.method: preview,
+      };
+      if (presentation != null) {
+        return DestinyCharts._(byMethod, timeKnown, presentation, null);
+      }
+      final snapshot = archive['chartSnapshot'];
+      return DestinyCharts.archived(
+        previews: byMethod,
+        timeKnown: timeKnown,
+        snapshot: snapshot is Map<String, Object?> ? snapshot : null,
       );
     }
     throw const FormatException('盘面格式无法读取。');

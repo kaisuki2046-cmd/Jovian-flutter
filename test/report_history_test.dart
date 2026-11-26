@@ -242,6 +242,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(reads, 2);
     expect(find.text('三套盘面'), findsOneWidget);
+    expect(find.text('查看命盘'), findsNothing);
     expect(find.textContaining('出生时刻未完全确定'), findsOneWidget);
     final first = tester.getTopLeft(find.text('甲子'));
     final second = tester.getTopLeft(find.text('乙丑'));

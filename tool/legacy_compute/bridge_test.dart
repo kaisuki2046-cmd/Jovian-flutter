@@ -39,6 +39,10 @@ Future<JSString> _exercise(JSString input) async {
     profile,
     onProgress: stages.add,
   );
+  final archive = result['archive'] as Map<String, Object?>;
+  final restored = await compute.restoreDestinyPresentation(
+    archive['chartSnapshot'] as Map<String, Object?>,
+  );
   final cancel = Completer<void>()..complete();
   String? failure;
   try {
@@ -49,6 +53,7 @@ Future<JSString> _exercise(JSString input) async {
   return jsonEncode({
     'available': compute.isAvailable,
     'result': result,
+    'restored': restored,
     'stages': stages,
     'cancellation': failure,
   }).toJS;

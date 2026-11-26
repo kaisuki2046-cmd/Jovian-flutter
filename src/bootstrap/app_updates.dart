@@ -5,17 +5,13 @@ import 'package:http/http.dart' as http;
 import '../features/account/account.dart'
     show AppUpdateController, AndroidAppVersion, AndroidRelease;
 import '../shared/http/json_client.dart';
+import '../shared/http/service_endpoint.dart' show ServiceEnvironment;
 
 const _platform = MethodChannel('jovian/app_updates');
 
 AppUpdateController? configureAppUpdates({
-  String endpoint = const String.fromEnvironment(
-    'APP_UPDATE_API_URL',
-    defaultValue: String.fromEnvironment('ACCOUNT_API_URL'),
-  ),
-  String downloadOrigin = const String.fromEnvironment(
-    'ANDROID_UPDATE_DOWNLOAD_ORIGIN',
-  ),
+  String endpoint = ServiceEnvironment.appUpdates,
+  String downloadOrigin = ServiceEnvironment.androidDownloadOrigin,
 }) {
   if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) return null;
   final base = Uri.tryParse(endpoint.trim());

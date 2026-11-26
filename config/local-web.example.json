@@ -1,0 +1,7 @@
+{
+  "ACCOUNT_API_URL": "http://localhost:8787",
+  "DIVINATION_REPORT_URL": "http://localhost:8115",
+  "DESTINY_REPORT_URL": "http://localhost:8788",
+  "SYNASTRY_REPORT_URL": "http://localhost:8812",
+  "FORTUNE_TIME_URL": "http://localhost:8791"
+}

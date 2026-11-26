@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:jovian_fortune/jovian_fortune.dart' show FortunePeriod;
 import 'package:material_ui/material_ui.dart';
 
 import '../src/app/app_navigation.dart';
@@ -72,6 +73,75 @@ void main() {
 
     expect((await parse('/fortune')).archiveId, isNull);
     expect((await parse('/fortune', state: 'invalid')).archiveId, isNull);
+  });
+
+  test(
+    'forecast permission links preserve the forecast and its archive',
+    () async {
+      const parser = JovianRouteParser();
+      final archiveId = 'a' * 64;
+      final fromSelection = await parser.parseRouteInformation(
+        RouteInformation(
+          uri: Uri.parse('/fortune?aiPermissions=month'),
+          state: archiveId,
+        ),
+      );
+      expect(fromSelection.fortunePermissionsPeriod, FortunePeriod.month);
+      final selected = parser.restoreRouteInformation(fromSelection);
+      expect(selected.uri.toString(), '/fortune?aiPermissions=month');
+      expect(selected.state, archiveId);
+      expect(await parser.parseRouteInformation(selected), fromSelection);
+
+      final bookmark = Uri.parse(
+        '/modules/fortune?snapshotId=$archiveId&aiPermissions=year',
+      );
+      final legacy = await parser.parseRouteInformation(
+        RouteInformation(uri: bookmark),
+      );
+      expect(legacy.archiveId, archiveId);
+      expect(legacy.fortunePermissionsPeriod, FortunePeriod.year);
+      expect(parser.restoreRouteInformation(legacy).uri, bookmark);
+
+      for (final query in ['unknown', 'month&aiPermissions=year']) {
+        final invalid = await parser.parseRouteInformation(
+          RouteInformation(uri: Uri.parse('/fortune?aiPermissions=$query')),
+        );
+        expect(invalid.fortunePermissionsPeriod, isNull);
+        expect(
+          parser.restoreRouteInformation(invalid).uri.toString(),
+          '/fortune',
+        );
+      }
+    },
+  );
+
+  testWidgets('return from forecast permissions restores its active period', (
+    tester,
+  ) async {
+    final platform = tester.binding.platformDispatcher;
+    platform.defaultRouteNameTestValue = '/modules/fortune?aiPermissions=year';
+    addTearDown(platform.clearDefaultRouteNameTestValue);
+    await tester.pumpWidget(const JovianApp());
+    await tester.pumpAndSettle();
+    expect(find.text('账号服务暂不可用。'), findsOneWidget);
+
+    await tester.binding.handlePopRoute();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    final year = find.widgetWithText(ChoiceChip, '本年');
+    expect(tester.widget<ChoiceChip>(year).selected, isTrue);
+
+    await tester.binding.handlePushRoute(
+      '/modules/fortune?aiPermissions=month',
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('账号服务暂不可用。'), findsOneWidget);
+    await tester.binding.handlePushRoute('/modules/fortune');
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    final month = find.widgetWithText(ChoiceChip, '本月');
+    expect(tester.widget<ChoiceChip>(month).selected, isTrue);
+    expect(tester.takeException(), isNull);
   });
 
   test(

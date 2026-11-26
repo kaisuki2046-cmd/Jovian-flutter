@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:jovian_fortune/jovian_fortune.dart' show FortunePeriod;
 import 'package:material_ui/material_ui.dart';
 
 import '../features/account/account.dart';
@@ -12,6 +13,7 @@ class JovianLocation {
     this.tab, {
     this.fortunePath,
     this.archiveId,
+    this.fortunePermissionsPeriod,
     this.legacyFortuneLink = false,
     this.welcome = false,
     this.sections = const [],
@@ -20,6 +22,7 @@ class JovianLocation {
   final JovianTab tab;
   final String? fortunePath;
   final String? archiveId;
+  final FortunePeriod? fortunePermissionsPeriod;
   final bool legacyFortuneLink;
   final bool welcome;
   final List<AccountDestination> sections;
@@ -30,6 +33,7 @@ class JovianLocation {
       tab == other.tab &&
       fortunePath == other.fortunePath &&
       archiveId == other.archiveId &&
+      fortunePermissionsPeriod == other.fortunePermissionsPeriod &&
       legacyFortuneLink == other.legacyFortuneLink &&
       welcome == other.welcome &&
       listEquals(sections, other.sections);
@@ -39,6 +43,7 @@ class JovianLocation {
     tab,
     fortunePath,
     archiveId,
+    fortunePermissionsPeriod,
     legacyFortuneLink,
     welcome,
     Object.hashAll(sections),
@@ -157,10 +162,15 @@ class JovianRouteParser extends RouteInformationParser<JovianLocation> {
     final path = _routePath(information.uri);
     final state = information.state;
     if (_fortunePaths.contains(path)) {
+      final permissionPeriod =
+          information.uri.queryParametersAll['aiPermissions']?.singleOrNull;
       return JovianLocation(
         JovianTab.destiny,
         fortunePath: path,
         archiveId: _readFortuneArchive(information),
+        fortunePermissionsPeriod: FortunePeriod.values
+            .where((period) => period.name == permissionPeriod)
+            .firstOrNull,
         legacyFortuneLink: information.uri.queryParameters.containsKey(
           'snapshotId',
         ),
@@ -250,14 +260,18 @@ class JovianRouteParser extends RouteInformationParser<JovianLocation> {
         ],
       );
     }
+    final query = {
+      if (configuration.legacyFortuneLink)
+        'snapshotId': configuration.archiveId,
+      if (configuration.fortunePermissionsPeriod case final period?)
+        'aiPermissions': period.name,
+    };
     return RouteInformation(
       uri: Uri(
         path:
             configuration.fortunePath ??
             (configuration.welcome ? '/welcome' : configuration.tab.path),
-        queryParameters: configuration.legacyFortuneLink
-            ? {'snapshotId': configuration.archiveId}
-            : null,
+        queryParameters: query.isEmpty ? null : query,
       ),
       state: configuration.archiveId,
     );
@@ -371,12 +385,18 @@ class JovianRouteInformationProvider extends PlatformRouteInformationProvider {
 
 class JovianRouter extends RouterDelegate<JovianLocation>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<JovianLocation> {
-  JovianRouter({required this.shell, required this.fortune});
+  JovianRouter({
+    required this.shell,
+    required this.fortune,
+    required this.fortunePermissions,
+  });
 
   final Widget Function(JovianLocation) shell;
-  final Widget Function(String?) fortune;
+  final Widget Function(String?, FortunePeriod?) fortune;
+  final Widget Function() fortunePermissions;
 
   static const _fortuneKey = ValueKey('jovian-fortune');
+  static const _fortunePermissionsKey = ValueKey('jovian-fortune-permissions');
 
   @override
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -434,6 +454,23 @@ class JovianRouter extends RouterDelegate<JovianLocation>
       archiveId: archiveId,
     ),
   );
+
+  void openFortunePermissions(FortunePeriod period) =>
+      _setFortunePermissions(period);
+
+  void _setFortunePermissions(FortunePeriod? period) {
+    final path = _location.fortunePath;
+    if (path == null) return;
+    _navigate(
+      JovianLocation(
+        _location.tab,
+        fortunePath: path,
+        archiveId: _location.archiveId,
+        legacyFortuneLink: _location.legacyFortuneLink,
+        fortunePermissionsPeriod: period,
+      ),
+    );
+  }
 
   void closeWelcome() {
     if (!_location.welcome) return;
@@ -534,10 +571,22 @@ class JovianRouter extends RouterDelegate<JovianLocation>
         MaterialPage<void>(
           key: _fortuneKey,
           name: path,
-          child: fortune(_location.archiveId),
+          child: fortune(
+            _location.archiveId,
+            _location.fortunePermissionsPeriod,
+          ),
+        ),
+      if (_location.fortunePermissionsPeriod != null)
+        MaterialPage<void>(
+          key: _fortunePermissionsKey,
+          child: fortunePermissions(),
         ),
     ],
     onDidRemovePage: (page) {
+      if (page.key == _fortunePermissionsKey &&
+          _location.fortunePermissionsPeriod != null) {
+        Router.neglect(context, () => _setFortunePermissions(null));
+      }
       if (page.key == _fortuneKey && _location.fortunePath != null) {
         Router.neglect(context, () => selectTab(JovianTab.destiny));
       }

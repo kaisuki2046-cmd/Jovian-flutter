@@ -18,10 +18,12 @@ class FortunePageController extends ChangeNotifier {
     required this.account,
     required this.ownerId,
     required this.archiveId,
+    FortunePeriod? initialPeriod,
     this.local = const FortuneLocal(),
     this.online,
     this.now = DateTime.now,
-  });
+  }) : period = initialPeriod ?? FortunePeriod.day,
+       _resumeLatest = initialPeriod == null;
 
   final Future<FortuneDisplay> Function() loadDisplay;
   final Future<DateTime> Function()? readServerTime;
@@ -32,7 +34,7 @@ class FortunePageController extends ChangeNotifier {
   final FortuneOnline? online;
   final DateTime Function() now;
 
-  FortunePeriod period = FortunePeriod.day;
+  FortunePeriod period;
   FortuneDisplay? display;
   FortunePreview? preview;
   AlmanacDay? almanac;
@@ -64,7 +66,7 @@ class FortunePageController extends ChangeNotifier {
   Map<String, Object?>? _draft;
   String? _calculation;
   String? _archivedZone;
-  bool _resumeLatest = true;
+  bool _resumeLatest;
   var _work = Completer<void>();
   Completer<void>? _previewWork;
   bool _closed = false;

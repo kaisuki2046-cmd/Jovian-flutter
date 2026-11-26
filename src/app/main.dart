@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:jovian_divination/jovian_divination.dart';
+import 'package:jovian_fortune/jovian_fortune.dart' show FortunePeriod;
 import 'package:material_ui/material_ui.dart';
 
 import '../bootstrap/account.dart';
@@ -69,6 +70,7 @@ class _JovianAppState extends State<JovianApp> {
   late final _navigation = JovianRouter(
     shell: _shellPage,
     fortune: _fortunePage,
+    fortunePermissions: _fortunePermissionsPage,
   );
   late final _routeInformation = JovianRouteInformationProvider(
     initialRouteInformation: initialJovianRoute(widget.initialTab),
@@ -285,16 +287,29 @@ class _JovianAppState extends State<JovianApp> {
     );
   }
 
-  Widget _fortunePage(String? archiveId) => _accountEntry(
-    FortunePage(
+  Widget _fortunePage(String? archiveId, FortunePeriod? period) =>
+      _accountEntry(
+        FortunePage(
+          account: widget.account,
+          loadDisplay: loadFortuneDisplay,
+          readServerTime: widget.readFortuneTime,
+          connectOnline: () => configureFortuneOnline(
+            widget.readFortuneTime,
+            readNativeSession: widget.account?.readNativeSession,
+          ),
+          archiveId: archiveId,
+          restoredPeriod: period,
+          openAiPermissions: _navigation.openFortunePermissions,
+        ),
+      );
+
+  Widget _fortunePermissionsPage() => _accountEntry(
+    AccountSectionPage(
       account: widget.account,
-      loadDisplay: loadFortuneDisplay,
-      readServerTime: widget.readFortuneTime,
-      connectOnline: () => configureFortuneOnline(
-        widget.readFortuneTime,
-        readNativeSession: widget.account?.readNativeSession,
-      ),
-      archiveId: archiveId,
+      target: accountDestination(AccountSection.aiPermissions),
+      themeMode: _themeMode,
+      onThemeModeChanged: _changeAppearance,
+      openAccount: _navigation.openWelcome,
     ),
   );
 }

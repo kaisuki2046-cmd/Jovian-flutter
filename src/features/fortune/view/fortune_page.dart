@@ -20,6 +20,8 @@ class FortunePage extends StatelessWidget {
     this.readServerTime,
     this.account,
     this.archiveId,
+    this.restoredPeriod,
+    this.openAiPermissions,
     this.connectOnline,
     this.local = const FortuneLocal(),
   });
@@ -28,6 +30,8 @@ class FortunePage extends StatelessWidget {
   final Future<DateTime> Function()? readServerTime;
   final AccountController? account;
   final String? archiveId;
+  final FortunePeriod? restoredPeriod;
+  final ValueChanged<FortunePeriod>? openAiPermissions;
   final FortuneOnline? Function()? connectOnline;
   final FortuneLocal local;
 
@@ -54,6 +58,8 @@ class FortunePage extends StatelessWidget {
     ownerId: owner,
     scope: scope,
     archiveId: archiveId,
+    restoredPeriod: restoredPeriod,
+    openAiPermissions: openAiPermissions,
     connectOnline: connectOnline,
     local: local,
   );
@@ -68,6 +74,8 @@ class _FortuneSession extends StatefulWidget {
     required this.ownerId,
     required this.scope,
     required this.archiveId,
+    required this.restoredPeriod,
+    required this.openAiPermissions,
     required this.connectOnline,
     required this.local,
   });
@@ -78,6 +86,8 @@ class _FortuneSession extends StatefulWidget {
   final String? ownerId;
   final String? scope;
   final String? archiveId;
+  final FortunePeriod? restoredPeriod;
+  final ValueChanged<FortunePeriod>? openAiPermissions;
   final FortuneOnline? Function()? connectOnline;
   final FortuneLocal local;
 
@@ -97,9 +107,36 @@ class _FortuneSessionState extends State<_FortuneSession> {
       account: widget.account,
       ownerId: widget.ownerId,
       archiveId: widget.archiveId,
+      initialPeriod: widget.restoredPeriod,
       online: widget.connectOnline?.call(),
       local: widget.local,
     )..initialize();
+  }
+
+  @override
+  void didUpdateWidget(covariant _FortuneSession oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final period = widget.restoredPeriod;
+    if (period != null &&
+        period != oldWidget.restoredPeriod &&
+        period != _fortune.period) {
+      _fortune.selectPeriod(period);
+    }
+  }
+
+  void _openAiPermissions(BuildContext context) {
+    if (widget.openAiPermissions case final open?) {
+      open(_fortune.period);
+      return;
+    }
+    Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) => AccountPrivacyPage(
+          account: widget.account!,
+          onlyAiPermissions: true,
+        ),
+      ),
+    );
   }
 
   @override
@@ -166,14 +203,7 @@ class _FortuneSessionState extends State<_FortuneSession> {
                       _fortune.displayedWindow?.contextKey,
                     )),
                     fortune: _fortune,
-                    openAiPermissions: () => Navigator.of(context).push<void>(
-                      MaterialPageRoute(
-                        builder: (_) => AccountPrivacyPage(
-                          account: widget.account!,
-                          onlyAiPermissions: true,
-                        ),
-                      ),
-                    ),
+                    openAiPermissions: () => _openAiPermissions(context),
                   ),
                 if (_fortune.online != null &&
                     _fortune.hasChart &&

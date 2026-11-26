@@ -147,21 +147,71 @@ class AccountApi {
     throw const JsonRequestError('account_changed', status: 401);
   }
 
-  Future<PasswordSetupChallenge> issuePasswordSetup(
+  Future<PasswordSmsChallenge> issuePasswordSetup(
     String memberId, {
     required bool Function() isCurrent,
   }) async {
     await _verifyMember(memberId, isCurrent: isCurrent);
-    final result = await request(
-      ['auth', 'phone', 'password-setup', 'code'],
-      body: const {},
-      authenticated: true,
-      isCurrent: isCurrent,
+    return _readPasswordChallenge(
+      await request(
+        ['auth', 'phone', 'password-setup', 'code'],
+        body: const {},
+        authenticated: true,
+        isCurrent: isCurrent,
+      ),
     );
+  }
+
+  Future<PasswordSmsChallenge> issuePasswordRecovery(
+    String phone, {
+    required Future<void> cancel,
+  }) async => _readPasswordChallenge(
+    await request(
+      ['auth', 'password-reset', 'code'],
+      body: {'phone': phone},
+      cancel: cancel,
+    ),
+  );
+
+  PasswordSmsChallenge _readPasswordChallenge(Map<String, Object?> result) {
     if (result case {'challengeId': final String id} when id.isNotEmpty) {
       return (id: id, localInbox: result['delivery'] == 'local-inbox');
     }
     throw const JsonRequestError('invalid_response');
+  }
+
+  Future<String> verifyPasswordRecovery(
+    String phone,
+    String challenge,
+    String code, {
+    required Future<void> cancel,
+  }) async {
+    final result = await request(
+      ['auth', 'password-reset', 'verify'],
+      body: {'phone': phone, 'challengeId': challenge, 'code': code},
+      cancel: cancel,
+    );
+    if (result['resetToken'] case final String token
+        when RegExp(r'^[A-Za-z0-9_-]{43}$').hasMatch(token)) {
+      return token;
+    }
+    throw const JsonRequestError('invalid_response');
+  }
+
+  Future<void> completePasswordRecovery(
+    String phone,
+    String resetToken,
+    String password, {
+    required bool keepGuest,
+    required Future<void> cancel,
+  }) async {
+    await request(
+      ['auth', 'password-reset', 'complete'],
+      body: {'phone': phone, 'resetToken': resetToken, 'newPassword': password},
+      authenticated: true,
+      cancel: cancel,
+    );
+    if (!keepGuest) await _nativeSession?.write(null);
   }
 
   Future<void> changePassword(

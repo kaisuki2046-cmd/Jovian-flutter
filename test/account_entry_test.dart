@@ -25,6 +25,111 @@ Map<String, Object?> _document(String id, String title) => {
 };
 
 void main() {
+  testWidgets('recovers with a bound phone and returns to password sign-in', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(320, 640);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPhysicalSize);
+
+    const phone = '+8613900139000';
+    final calls = <String>[];
+    final api = AccountApi(
+      JsonHttpClient(
+        base: Uri.parse('https://account.example.test'),
+        client: MockClient((request) async {
+          final path = request.url.path;
+          if (path.startsWith('/account/auth/password-reset/')) {
+            calls.add(request.url.pathSegments.last);
+            final input = jsonDecode(request.body) as Map<String, Object?>;
+            expect(input['phone'], phone);
+            if (path.endsWith('/code'))
+              return _json({'challengeId': 'fixture-sms'});
+            if (path.endsWith('/verify')) {
+              expect(input['challengeId'], 'fixture-sms');
+              expect(input['code'], '012345');
+              return _json({'resetToken': 'r' * 43});
+            }
+            expect(input['resetToken'], 'r' * 43);
+            expect(input['newPassword'], 'fixture-next');
+            return calls.where((call) => call == 'complete').length == 1
+                ? _json({}, 410)
+                : http.Response('', 204);
+          }
+          return switch (path) {
+            '/account/session' || '/account/auth/guest' => _json({}, 401),
+            '/account/auth/capabilities' => _json({
+              'phoneCodesAvailable': true,
+            }),
+            '/account/agreements/catalog' => _json({
+              'documents': [
+                _document('terms', '用户服务协议'),
+                _document('privacy', '隐私政策'),
+                _document('ai', 'AI 数据共享告知'),
+              ],
+            }),
+            _ => fail('Unexpected request $path'),
+          };
+        }),
+      ),
+    );
+    final account = AccountController(api, AgreementsApi(api));
+    await tester.pumpWidget(
+      JovianApp(account: account, initialTab: JovianTab.account),
+    );
+    await tester.pumpAndSettle();
+    Future<void> press(String label) async {
+      final target = find.text(label);
+      await tester.ensureVisible(target);
+      await tester.tap(target);
+      await tester.pumpAndSettle();
+    }
+
+    await press('找回账号');
+    expect(find.text('请输入账号已绑定的手机号。'), findsOneWidget);
+    await tester.enterText(
+      find.widgetWithText(TextField, '手机号或邮箱'),
+      '13900139000',
+    );
+    await press('找回账号');
+    expect(find.text('请确认登录协议'), findsOneWidget);
+    expect(calls, isEmpty);
+    await press('同意并继续');
+    expect(find.text('验证手机号 139******00'), findsOneWidget);
+    for (var attempt = 0; attempt < 2; attempt++) {
+      await press('获取验证码');
+      await tester.enterText(find.widgetWithText(TextField, '恢复验证码'), '012345');
+      await press('验证并继续');
+      await tester.enterText(
+        find.widgetWithText(TextField, '新密码'),
+        'fixture-next',
+      );
+      await tester.enterText(
+        find.widgetWithText(TextField, '确认新密码'),
+        'different',
+      );
+      await press('确认重置密码');
+      expect(find.text('两次输入的新密码不一致。'), findsOneWidget);
+      expect(calls.last, 'verify');
+      await tester.enterText(
+        find.widgetWithText(TextField, '确认新密码'),
+        'fixture-next',
+      );
+      await press('确认重置密码');
+      if (attempt == 0) {
+        expect(find.text('验证已过期，请重新获取验证码。'), findsOneWidget);
+      }
+    }
+    expect(calls, ['code', 'verify', 'complete', 'code', 'verify', 'complete']);
+    expect(find.text('密码已重置，请使用新密码登录。'), findsOneWidget);
+    final address = tester.widget<TextField>(
+      find.widgetWithText(TextField, '手机号或邮箱'),
+    );
+    expect(address.controller!.text, '13900139000');
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets(
     'login first asks for agreement and preserves the old login wire contract',
     (tester) async {

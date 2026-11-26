@@ -66,7 +66,7 @@ class _PasswordFormState extends State<_PasswordForm> {
   final _next = TextEditingController();
   final _confirm = TextEditingController();
   final _code = TextEditingController();
-  PasswordSetupChallenge? _challenge;
+  PasswordSmsChallenge? _challenge;
   bool _pending = false;
   ({String text, bool error})? _notice;
 

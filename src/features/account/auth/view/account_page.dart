@@ -9,6 +9,7 @@ import '../../settings/view/agreement_document_page.dart';
 import '../control/account_controller.dart';
 import '../model/password.dart';
 import '../model/session.dart';
+import 'password_recovery_dialog.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({
@@ -42,6 +43,7 @@ class _AccountPageState extends State<AccountPage> {
   bool _upgrade = false;
   bool _passwordVisible = false;
   String? _validation;
+  String? _recoveredPhone;
 
   AccountController get _account => widget.account;
 
@@ -267,6 +269,13 @@ class _AccountPageState extends State<AccountPage> {
         ),
       ],
       const SizedBox(height: 12),
+      if (!registering &&
+          !phoneCode &&
+          _recoveredPhone == parsed?.value &&
+          _recoveredPhone != null) ...[
+        Semantics(liveRegion: true, child: const Text('密码已重置，请使用新密码登录。')),
+        const SizedBox(height: 8),
+      ],
       if (_validation case final message?) ...[
         Semantics(
           liveRegion: true,
@@ -293,6 +302,11 @@ class _AccountPageState extends State<AccountPage> {
             onPressed: disabled ? null : () => _submit(AuthMethod.qq),
             child: const Text('QQ 登录'),
           ),
+          if (!registering && capabilities?.phoneCodesAvailable == true)
+            TextButton(
+              onPressed: disabled ? null : _openRecovery,
+              child: const Text('找回账号'),
+            ),
           if (!upgrading)
             TextButton(
               onPressed: disabled ? null : () => _submit(AuthMethod.guest),
@@ -379,6 +393,7 @@ class _AccountPageState extends State<AccountPage> {
     _aiAccepted = null;
     _challenge = null;
     _validation = null;
+    _recoveredPhone = null;
     _method = AuthMethod.password;
     _upgrade = false;
   });
@@ -403,11 +418,7 @@ class _AccountPageState extends State<AccountPage> {
       _show('协议暂时无法加载，请刷新后重试。');
       return;
     }
-    if (!identical(catalog, _accepted)) {
-      if (!await confirmAccountAgreements(context, catalog) || !mounted) return;
-      if (_account.busy || !identical(catalog, _account.catalog)) return;
-      setState(() => _accepted = catalog);
-    }
+    if (!await _acceptRequired(catalog) || !mounted) return;
     final capabilities = _account.capabilities;
     if (capabilities == null) {
       _show('账号服务暂时无法连接，请刷新后重试。');
@@ -482,5 +493,40 @@ class _AccountPageState extends State<AccountPage> {
         mounted) {
       _clearForm();
     }
+  }
+
+  Future<bool> _acceptRequired(AgreementCatalog catalog) async {
+    if (identical(catalog, _accepted)) return true;
+    if (!await confirmAccountAgreements(context, catalog) || !mounted)
+      return false;
+    if (_account.busy || !identical(catalog, _account.catalog)) return false;
+    setState(() => _accepted = catalog);
+    return true;
+  }
+
+  Future<void> _openRecovery() async {
+    final identifier = AccountIdentifier.parse(_address.text);
+    if (identifier == null || !identifier.isPhone) {
+      _show('请输入账号已绑定的手机号。');
+      return;
+    }
+    final catalog = _account.catalog;
+    if (catalog == null) {
+      _show('协议暂时无法加载，请刷新后重试。');
+      return;
+    }
+    if (!await _acceptRequired(catalog) || !mounted) return;
+    FocusScope.of(context).unfocus();
+    if (_validation != null) setState(() => _validation = null);
+    final phone = identifier.value;
+    final saved = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => PasswordRecoveryDialog(account: _account, phone: phone),
+    );
+    if (saved != true || !mounted) return;
+    _password.clear();
+    _selectMethod(AuthMethod.password);
+    setState(() => _recoveredPhone = phone);
   }
 }

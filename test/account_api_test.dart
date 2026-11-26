@@ -45,6 +45,60 @@ Map<String, Object?> _document(String id) => {
 
 void main() {
   test(
+    'password recovery passes a native guest only when completing',
+    () async {
+      const phone = '+8613900139000';
+      final guest = 'g' * 43;
+      final storage = _TestTokenStore()..token = guest;
+      final api = AccountApi(
+        JsonHttpClient(
+          base: Uri.parse('https://account.example.test'),
+          client: MockClient((request) async {
+            final action = request.url.pathSegments.last;
+            expect(request.headers['x-app-client'], 'native');
+            expect(
+              request.headers['authorization'],
+              action == 'complete' ? 'Bearer $guest' : null,
+            );
+            return switch (action) {
+              'code' => _json({'challengeId': 'sms'}),
+              'verify' => _json({'resetToken': 'r' * 43}),
+              'complete' => http.Response('', 204),
+              _ => fail('Unexpected request ${request.url.path}'),
+            };
+          }),
+        ),
+        nativeSession: storage,
+      );
+      addTearDown(api.close);
+      final cancel = Completer<void>().future;
+      final challenge = await api.issuePasswordRecovery(phone, cancel: cancel);
+      final token = await api.verifyPasswordRecovery(
+        phone,
+        challenge.id,
+        '012345',
+        cancel: cancel,
+      );
+      await api.completePasswordRecovery(
+        phone,
+        token,
+        'fixture-next',
+        keepGuest: true,
+        cancel: cancel,
+      );
+      expect(storage.token, guest);
+      await api.completePasswordRecovery(
+        phone,
+        token,
+        'fixture-next',
+        keepGuest: false,
+        cancel: cancel,
+      );
+      expect(storage.token, isNull);
+    },
+  );
+
+  test(
     'phone rebinding separates the two challenges and checks native owner',
     () async {
       const oldPhone = '+8613700137000';

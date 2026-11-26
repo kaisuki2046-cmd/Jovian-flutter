@@ -14,6 +14,7 @@ import '../model/password.dart';
 import '../model/session.dart';
 import '../requests/account_api.dart';
 import '../requests/phone_binding_api.dart';
+import 'password_recovery_controller.dart';
 
 class AccountController extends ChangeNotifier {
   AccountController(this._account, this._agreements);
@@ -53,6 +54,13 @@ class AccountController extends ChangeNotifier {
   PhoneBindingApi phoneBinding(String owner) =>
       PhoneBindingApi(_account, owner, () => memberId == owner);
 
+  PasswordRecoveryController passwordRecovery(String phone) =>
+      PasswordRecoveryController(
+        _account,
+        phone,
+        keepGuest: session?.kind == AccountKind.guest,
+      );
+
   Future<void> probeIdentityVerification(
     String memberId, {
     bool submit = false,
@@ -61,7 +69,7 @@ class AccountController extends ChangeNotifier {
     isCurrent: () => socialMemberId == memberId,
   );
 
-  Future<PasswordSetupChallenge> issuePasswordSetup(String owner) =>
+  Future<PasswordSmsChallenge> issuePasswordSetup(String owner) =>
       _account.issuePasswordSetup(owner, isCurrent: () => memberId == owner);
 
   Future<void> changePassword(String owner, String current, String next) =>
@@ -74,7 +82,7 @@ class AccountController extends ChangeNotifier {
 
   Future<void> setupPassword(
     String owner,
-    PasswordSetupChallenge challenge,
+    PasswordSmsChallenge challenge,
     String code,
     String next,
   ) async {

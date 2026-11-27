@@ -159,17 +159,24 @@ void main() {
 
         final card = find.bySemanticsLabel('选取第 41 张牌');
         final flight = find.byKey(const ValueKey('tarot-card-flight'));
+        final lights = find.byKey(const ValueKey('tarot-back-lights'));
         final fanTitle = find.text('选择三张塔罗牌');
         final revealTitle = find.text('翻开三张塔罗牌');
         final retry = find.text('重试仪式同步');
         double flightY() => tester.widget<Positioned>(flight).top!;
 
+        expect(lights, findsNWidgets(2));
+        expect(
+          find.descendant(of: find.byType(TarotRitualFan), matching: lights),
+          findsNothing,
+        );
         tester.widget<Semantics>(card).properties.onTap!();
         await tester.pump();
         final origin = flightY();
         expect(fanTitle, findsOneWidget);
         expect(revealTitle, findsNothing);
         expect(card, findsNothing);
+        expect(lights, findsNWidgets(2));
         await tester.pump(const Duration(milliseconds: 160));
         expect(flightY(), lessThan(origin - 20));
         expect(revealTitle, findsNothing);
@@ -211,6 +218,7 @@ void main() {
           expect(flight, findsNothing);
           expect(fanTitle, findsOneWidget);
           expect(find.text('已选 3 / 3 张'), findsOneWidget);
+          expect(lights, findsNWidgets(3));
           expect(revealTitle, findsNothing);
           await tester.pump(const Duration(milliseconds: 150));
           await tester.pumpAndSettle();
@@ -304,7 +312,16 @@ void main() {
     expect(faces, findsNWidgets(3));
     await tester.tap(find.text('继续六爻起卦'));
     await tester.pumpAndSettle();
-    expect(find.text('第 2 步 · 六爻起卦'), findsOneWidget);
+    expect(find.text('第 2 步 · 六爻起卦'), findsNothing);
+    final castTitle = find.text('投掷铜钱');
+    expect(tester.widget<Text>(castTitle).textAlign, TextAlign.center);
+    expect(
+      tester.getCenter(castTitle).dx,
+      closeTo(
+        tester.getCenter(find.byKey(const ValueKey('guide-ritual-dialog'))).dx,
+        0.1,
+      ),
+    );
     for (var index = 0; index < 6; index++) {
       await tester.ensureVisible(toss);
       await tester.tap(toss);

@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -8,36 +6,8 @@ import '../../../../ui/interface_language.dart';
 import 'coin_cast_scene.dart';
 import 'coin_feedback.dart'
     if (dart.library.js_interop) 'coin_feedback_web.dart';
+import 'coin_toss_button.dart';
 import 'coin_toss_motion.dart';
-
-const _lineNames = ['初爻', '二爻', '三爻', '四爻', '五爻', '上爻'];
-const _shakeX = [0.0, -5.0, 5.0, -5.0, 4.0, -4.0, 3.0, -3.0, 2.0, -1.0, 0.0];
-const _shakeY = [
-  0.0,
-  -2.0,
-  -4.0,
-  -2.0,
-  -4.0,
-  -2.0,
-  -3.0,
-  -1.0,
-  -2.0,
-  -1.0,
-  0.0,
-];
-const _shakeAngle = [
-  0.0,
-  -9.0,
-  9.0,
-  -8.0,
-  8.0,
-  -6.0,
-  6.0,
-  -4.0,
-  3.0,
-  -1.0,
-  0.0,
-];
 
 /// Presents coin tosses produced by the caller's existing casting flow.
 class CoinCastRitual extends StatefulWidget {
@@ -49,6 +19,7 @@ class CoinCastRitual extends StatefulWidget {
     this.pending = false,
     this.active = true,
     this.reducedMotion,
+    this.showFirstTossHint = true,
     this.stageHeightLimit = double.infinity,
   });
 
@@ -58,6 +29,7 @@ class CoinCastRitual extends StatefulWidget {
   final bool pending;
   final bool active;
   final bool? reducedMotion;
+  final bool showFirstTossHint;
   final double stageHeightLimit;
 
   @override
@@ -87,6 +59,7 @@ class _CoinCastRitualState extends State<CoinCastRitual>
   var _moving = false;
   var _landingPulses = 0;
   var _requestLatch = false;
+  var _tappedShell = false;
 
   bool get _available => widget.active && _foreground && _tickerEnabled;
   bool get _reduced => widget.reducedMotion ?? _systemReduced;
@@ -197,10 +170,11 @@ class _CoinCastRitualState extends State<CoinCastRitual>
         _moving ||
         _shake.isAnimating ||
         widget.pending ||
-        _recorded.length >= _lineNames.length)
+        _recorded.length >= coinCastLineNames.length)
       return;
     setState(() {
       _requestLatch = true;
+      _tappedShell = true;
     });
     _feedback.unlock();
     _feedback.pulse();
@@ -226,28 +200,30 @@ class _CoinCastRitualState extends State<CoinCastRitual>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final complete = _visibleTosses.length == _lineNames.length;
+    final complete = _visibleTosses.length == coinCastLineNames.length;
     final tossing = _moving || (widget.pending && !complete);
     final ready =
         _available &&
         !_requestLatch &&
         !tossing &&
         !_shake.isAnimating &&
-        _recorded.length < _lineNames.length;
+        _recorded.length < coinCastLineNames.length;
     final last = _visibleTosses.lastOrNull;
     final values = _visibleTosses.map(_lineValue).toList(growable: false);
+    final showHint =
+        widget.showFirstTossHint && !_tappedShell && _recorded.isEmpty;
     final buttonText = tossing
         ? context.uiLabel('正在投掷…')
         : complete
         ? context.uiLabel('六爻已成')
-        : values.isEmpty
+        : showHint
         ? context.uiLabel('点击龟壳开始投掷')
         : '${context.uiLabel('投掷第 ')}${values.length + 1}${context.uiLabel(' 次')}';
     final resultText = tossing
         ? context.uiLabel('铜钱翻转，静候落定…')
         : last == null
         ? ''
-        : '${context.uiLabel(_lineNames[values.length - 1])} · '
+        : '${context.uiLabel(coinCastLineNames[values.length - 1])} · '
               '${last.map((face) => context.uiLabel(face == 2 ? '字' : '背')).join(' / ')} · ${values.last}';
     final countText = context
         .uiLabel('已完成 {count} / 6 次')
@@ -263,23 +239,16 @@ class _CoinCastRitualState extends State<CoinCastRitual>
               container: true,
               header: true,
               child: UiText(
-                '六爻起卦',
+                '静心凝神，每次投掷时想着问题。',
                 style: theme.textTheme.titleMedium,
                 textAlign: TextAlign.center,
               ),
             ),
             const SizedBox(height: 6),
             UiText(
-              '静心凝神，每次投掷时想着问题。',
+              '六爻起卦',
               style: theme.textTheme.bodyMedium,
               textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 10),
-            Semantics(
-              container: true,
-              explicitChildNodes: true,
-              label: context.uiLabel('六次投掷'),
-              child: _LineProgress(values: values),
             ),
             const SizedBox(height: 10),
             CoinCastScene(
@@ -292,76 +261,15 @@ class _CoinCastRitualState extends State<CoinCastRitual>
               flowing: _canAnimate,
               stageHeightLimit: widget.stageHeightLimit,
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 12),
             Center(
-              child: Semantics(
-                container: true,
-                button: true,
-                enabled: ready,
+              child: CoinTossButton(
                 label: buttonText,
-                onTap: ready ? _startToss : null,
-                excludeSemantics: true,
-                child: InkWell(
-                  key: const ValueKey('coin-ritual-toss-button'),
-                  onTap: ready ? _startToss : null,
-                  borderRadius: BorderRadius.circular(16),
-                  splashFactory: NoSplash.splashFactory,
-                  overlayColor: WidgetStateProperty.resolveWith(
-                    (states) => states.contains(WidgetState.focused)
-                        ? theme.colorScheme.primaryContainer
-                        : Colors.transparent,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 4,
-                      horizontal: 10,
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        AnimatedBuilder(
-                          animation: _shake,
-                          child: Image.asset(
-                            coinShellAsset,
-                            fit: BoxFit.contain,
-                            width: 156,
-                            height: 88,
-                            excludeFromSemantics: true,
-                            errorBuilder: (_, _, _) => const SizedBox(
-                              width: 156,
-                              height: 88,
-                              child: Icon(Icons.toll_outlined, size: 48),
-                            ),
-                          ),
-                          builder: (context, image) => Transform.translate(
-                            offset: Offset(
-                              _frame(_shakeX, _shake.value),
-                              _frame(_shakeY, _shake.value),
-                            ),
-                            child: Transform.rotate(
-                              angle:
-                                  _frame(_shakeAngle, _shake.value) *
-                                  math.pi /
-                                  180,
-                              child: ready || tossing
-                                  ? image
-                                  : Opacity(opacity: 0.55, child: image),
-                            ),
-                          ),
-                        ),
-                        Text(
-                          buttonText,
-                          style: theme.textTheme.labelLarge?.copyWith(
-                            color: ready
-                                ? theme.colorScheme.primary
-                                : theme.colorScheme.onSurfaceVariant,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                onPressed: ready ? _startToss : null,
+                shake: _shake,
+                tossing: tossing,
+                showHint: showHint,
+                animateHint: _canAnimate,
               ),
             ),
             const SizedBox(height: 6),
@@ -404,7 +312,7 @@ bool _sameTosses(List<List<int>> incoming, List<List<int>> previous) {
 
 List<List<int>> _snapshot(List<List<int>> tosses) {
   assert(
-    tosses.length <= _lineNames.length &&
+    tosses.length <= coinCastLineNames.length &&
         tosses.every(
           (toss) =>
               toss.length == 3 && toss.every((face) => face == 2 || face == 3),
@@ -414,65 +322,3 @@ List<List<int>> _snapshot(List<List<int>> tosses) {
 }
 
 int _lineValue(List<int> toss) => toss.fold(0, (sum, face) => sum + face);
-
-double _frame(List<double> frames, double progress) {
-  final position = progress * (frames.length - 1);
-  final start = position.floor();
-  final end = math.min(start + 1, frames.length - 1);
-  return frames[start] + (frames[end] - frames[start]) * (position - start);
-}
-
-class _LineProgress extends StatelessWidget {
-  const _LineProgress({required this.values});
-  final List<int> values;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    const gap = 4.0;
-    final english = context.uiLanguage == InterfaceLanguage.english;
-    final minCell = MediaQuery.textScalerOf(context).scale(english ? 36 : 28);
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final count = ((constraints.maxWidth + gap) / (minCell + gap))
-            .floor()
-            .clamp(1, _lineNames.length);
-        final width = (constraints.maxWidth - gap * (count - 1)) / count;
-        return Wrap(
-          spacing: gap,
-          runSpacing: gap,
-          children: [
-            for (final (index, name) in _lineNames.indexed)
-              SizedBox(
-                width: width,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: index < values.length
-                        ? theme.colorScheme.primaryContainer
-                        : theme.colorScheme.surface,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: Column(
-                      children: [
-                        Text(
-                          context.uiLabel(name),
-                          textAlign: TextAlign.center,
-                          style: theme.textTheme.bodySmall,
-                        ),
-                        Text(
-                          index < values.length ? '${values[index]}' : '—',
-                          style: theme.textTheme.labelLarge,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        );
-      },
-    );
-  }
-}

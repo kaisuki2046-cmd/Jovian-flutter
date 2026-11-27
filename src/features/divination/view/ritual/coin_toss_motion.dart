@@ -11,6 +11,8 @@ const _restingPoints = [(119, 142), (201, 142), (160, 192)];
 const _drift = [0.10, -0.09, 0.055];
 const _zTurns = [120, -150, 175];
 const _degrees = math.pi / 180;
+const _gravityPerStageHeight = 11.25;
+const _restitution = 0.22;
 
 typedef CoinPose = ({
   double x,
@@ -67,15 +69,19 @@ CoinPose coinTossPose(
   final rest = coinRestingPosition(width, index, heightLimit: heightLimit);
   final release = 0.08 + index * 0.025;
   final landing = coinLandingTimes[index];
-  final flight = ((p - release) / (landing - release)).clamp(0.0, 1.0);
+  final airTime = landing - release;
+  final elapsed = (p - release).clamp(0.0, airTime);
+  final flight = elapsed / airTime;
   final settle = ((p - landing) / (0.96 - landing)).clamp(0.0, 1.0);
   final arc = math.sin(math.pi * flight);
-  final lift = p >= release && p < landing
-      ? arc * layout.height * (0.58 + index * 0.012)
-      : 0.0;
+  // Progress advances linearly in time. Both the throw and its smaller bounce
+  // use the same constant acceleration within the casting stage.
+  final gravity = layout.height * _gravityPerStageHeight;
+  final lift = gravity * elapsed * (airTime - elapsed) / 2;
+  final bounceTime = airTime * _restitution;
+  final bounced = (p - landing).clamp(0.0, bounceTime);
+  final rebound = gravity * bounced * (bounceTime - bounced) / 2;
   final decay = p >= landing ? math.exp(-3 * settle) * (1 - settle) : 0.0;
-  final rebound =
-      math.sin(settle * math.pi * 3).abs() * decay * layout.height * 0.055;
   final rocking = math.sin(settle * math.pi * 5) * decay;
   final initialFace = previous == 3 ? 180 : 0;
   final finalFace = face == 3 ? 180 : 0;

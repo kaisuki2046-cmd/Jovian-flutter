@@ -7,6 +7,8 @@ import '../src/features/divination/view/ritual/coin_toss_motion.dart';
 import '../src/ui/interface_language.dart';
 
 const _tossButton = ValueKey('coin-ritual-toss-button');
+const _tapGuide = ValueKey('coin-ritual-tap-guide');
+const _lines = ValueKey('coin-ritual-lines');
 const _audioChannel = MethodChannel('jovian/coin_audio');
 
 Widget _rig({
@@ -60,6 +62,38 @@ void main() {
           expect(flying.shadowOpacity, lessThan(landed.shadowOpacity));
         }
       }
+    },
+  );
+
+  test(
+    'coins slow on ascent and speed up on descent under the same gravity',
+    () {
+      const width = 360.0;
+      final accelerations = <double>[];
+      for (final (index, landing) in coinLandingTimes.indexed) {
+        double y(double time) => coinTossPose(time, index, 2, width).y;
+        final positions = [
+          for (var step = 0; step < 6; step++) y(0.16 + step * 0.1),
+        ];
+        final distances = [
+          for (var step = 1; step < positions.length; step++)
+            positions[step] - positions[step - 1],
+        ];
+        expect(distances.first, lessThan(-40));
+        expect(distances[1], lessThan(0));
+        expect(distances[3], greaterThan(0));
+        expect(distances.last, greaterThan(40));
+        accelerations.addAll([
+          for (var step = 1; step < distances.length; step++)
+            distances[step] - distances[step - 1],
+        ]);
+        final rest = coinRestingPosition(width, index).y;
+        expect(y(landing), closeTo(rest, 0.001));
+        expect(y(landing + 0.06), lessThan(rest));
+        expect(y(1), closeTo(rest, 0.001));
+      }
+      expect(accelerations.first, greaterThan(0));
+      expect(accelerations, everyElement(closeTo(accelerations.first, 0.001)));
     },
   );
 
@@ -134,6 +168,76 @@ void main() {
         findsOneWidget,
       );
       expect(tester.widget<InkWell>(find.byKey(_tossButton)).onTap, isNull);
+      final completedLines = _paintedLines(tester);
+      await tester.pump(const Duration(milliseconds: 600));
+      expect(_paintedLines(tester), completedLines);
+    },
+  );
+
+  testWidgets(
+    'only uncast lines pulse and the shell hint lasts until the first tap',
+    (tester) async {
+      final tosses = <List<int>>[];
+      var presses = 0;
+      Widget page() =>
+          _rig(tosses: tosses, toss: () => presses++, settled: (_) {});
+      await tester.pumpWidget(page());
+      final hint = find.byKey(_tapGuide);
+      expect(hint, findsOneWidget);
+      final restingHint = tester.getTopLeft(hint);
+      final dim = _paintedLines(tester);
+      expect(dim, hasLength(6));
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(tester.getTopLeft(hint).dy, lessThan(restingHint.dy - 4));
+      await tester.pump(const Duration(milliseconds: 500));
+      final bright = _paintedLines(tester);
+      for (final (index, line) in bright.indexed) {
+        expect(line.color, isNot(dim[index].color));
+        expect(line.end.dx - line.start.dx, greaterThan(42));
+      }
+      expect(hint, findsOneWidget);
+      expect(find.text('初爻'), findsNothing);
+
+      await tester.tap(find.byKey(_tossButton));
+      await tester.pump();
+      expect(presses, 1);
+      expect(hint, findsNothing);
+      expect(find.text('点击龟壳开始投掷'), findsNothing);
+
+      tosses.add([3, 2, 3]);
+      await tester.pumpWidget(page());
+      await tester.pump();
+      await tester.pump(coinTossDuration + const Duration(milliseconds: 50));
+      expect(find.text('已完成 1 / 6 次'), findsOneWidget);
+      final first = _paintedLines(tester);
+      expect(first, hasLength(7));
+      expect(first[5].start.dy, first[6].start.dy);
+      expect(first[5].end.dx, lessThan(first[6].start.dx));
+      expect(first[5].start.dy, greaterThan(first[4].start.dy));
+      final yin = first.skip(5).toList();
+      await tester.pump(const Duration(milliseconds: 800));
+      final later = _paintedLines(tester);
+      for (var index = 0; index < 5; index++) {
+        expect(later[index].color, isNot(first[index].color));
+      }
+      expect(later.skip(5), yin);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pump();
+      expect(presses, 2);
+      tosses.add([2, 2, 3]);
+      await tester.pumpWidget(page());
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 600));
+      expect(_paintedLines(tester).skip(5), yin);
+      await tester.pump(coinTossDuration);
+      final second = _paintedLines(tester);
+      expect(second.skip(5), yin);
+      expect(second[4].color, yin.first.color);
+      expect(second[4].start.dx, yin.first.start.dx);
+      expect(second[4].end.dx, yin.last.end.dx);
     },
   );
 
@@ -153,6 +257,10 @@ void main() {
       );
       await tester.pumpWidget(page(pending: true));
       expect(find.byKey(const ValueKey('coin-ritual-gold')), findsNothing);
+      final staticHint = find.byKey(_tapGuide);
+      final hintPosition = tester.getTopLeft(staticHint);
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(tester.getTopLeft(staticHint), hintPosition);
       expect(find.text('正在投掷…'), findsOneWidget);
       expect(tester.widget<InkWell>(find.byKey(_tossButton)).onTap, isNull);
       await tester.pumpWidget(page());
@@ -191,7 +299,7 @@ void main() {
       ),
       findsOneWidget,
     );
-    expect(find.text('Line 1'), findsOneWidget);
+    expect(find.text('Line 1'), findsNothing);
     expect(find.bySemanticsLabel('Six tosses'), findsOneWidget);
     expect(find.bySemanticsLabel('Three coins ready to toss'), findsOneWidget);
 
@@ -215,6 +323,10 @@ void main() {
     await tester.pump();
     expect(find.bySemanticsLabel('Toss 2'), findsOneWidget);
     expect(find.text('Completed 1 / 6'), findsOneWidget);
+    expect(
+      tester.getSemantics(find.bySemanticsLabel('Six tosses')).value,
+      'Line 1 8',
+    );
     expect(
       find.text('Line 1 · Reverse / Marked / Reverse · 8'),
       findsOneWidget,
@@ -334,3 +446,23 @@ List<int> _variants(List<MethodCall> calls) => [
   for (final call in calls)
     if (call.method == 'strike') call.arguments['variant'] as int,
 ];
+
+List<({Offset start, Offset end, Color color})> _paintedLines(
+  WidgetTester tester,
+) {
+  final lines = find.byKey(_lines);
+  final canvas = TestRecordingCanvas();
+  tester
+      .widget<CustomPaint>(lines)
+      .painter!
+      .paint(canvas, tester.getSize(lines));
+  return [
+    for (final call in canvas.invocations)
+      if (call.invocation.memberName == #drawLine)
+        (
+          start: call.invocation.positionalArguments[0] as Offset,
+          end: call.invocation.positionalArguments[1] as Offset,
+          color: (call.invocation.positionalArguments[2] as Paint).color,
+        ),
+  ];
+}

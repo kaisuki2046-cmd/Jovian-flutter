@@ -7,7 +7,8 @@ import '../../../../ui/interface_language.dart';
 
 const tarotAspectRatio = 0.58;
 const tarotDeckControlHeight = 48.0;
-const tarotBack = 'src/features/divination/assets/tarot/back.jpg';
+const _backAssets = 'src/features/divination/assets/tarot';
+const tarotBack = '$_backAssets/star-trail-static.webp';
 
 class TarotFanLayout {
   TarotFanLayout(this.width, this.slotCount)
@@ -46,16 +47,32 @@ class TarotFanLayout {
 }
 
 class TarotBackArt extends StatelessWidget {
-  const TarotBackArt({super.key});
+  const TarotBackArt({super.key, this.animated = false});
+
+  final bool animated;
 
   @override
   Widget build(BuildContext context) => ClipRRect(
     borderRadius: BorderRadius.circular(6),
-    child: Image.asset(
-      tarotBack,
-      fit: BoxFit.cover,
-      excludeFromSemantics: true,
-    ),
+    child: animated
+        ? Stack(
+            fit: StackFit.expand,
+            children: [
+              _image('$_backAssets/star-trail-base.webp'),
+              _image(
+                '$_backAssets/star-trail-lights.webp',
+                key: const ValueKey('tarot-back-lights'),
+              ),
+            ],
+          )
+        : _image(tarotBack),
+  );
+
+  Widget _image(String asset, {Key? key}) => Image.asset(
+    asset,
+    key: key,
+    fit: BoxFit.fill,
+    excludeFromSemantics: true,
   );
 }
 

@@ -13,6 +13,7 @@ class GuideRitualPresentation {
   final seed = math.Random().nextInt(1 << 30);
   final revealed = <int>{};
   double preparation = 0;
+  bool tappedShell = false;
 }
 
 class GuideRitualDialog extends StatefulWidget {
@@ -141,19 +142,19 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
             !cardInFlight &&
             snapshot?.stage == GuideStage.reading);
     final title = casting
-        ? '投三枚铜钱'
+        ? '投掷铜钱'
         : flipping
         ? '翻开三张塔罗牌'
         : '选择三张塔罗牌';
-    final step = flippingEarly
+    final step = casting
+        ? null
+        : flippingEarly
         ? '第 1 步 · 塔罗翻牌'
-        : switch ((tarotFirst, casting, flipping)) {
-            (true, true, _) => '第 2 步 · 六爻起卦',
-            (false, true, _) => '第 1 步 · 六爻起卦',
-            (true, _, true) => '仪式完成',
-            (false, _, true) => '第 2 步 · 塔罗翻牌',
-            (true, _, _) => '第 1 步 · 塔罗选牌',
-            (false, _, _) => '第 2 步 · 塔罗选牌',
+        : switch ((tarotFirst, flipping)) {
+            (true, true) => '仪式完成',
+            (false, true) => '第 2 步 · 塔罗翻牌',
+            (true, false) => '第 1 步 · 塔罗选牌',
+            (false, false) => '第 2 步 · 塔罗选牌',
           };
     final busy = widget.busy();
     final error = widget.error();
@@ -168,30 +169,44 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(18, 16, 10, 12),
+            padding: EdgeInsetsDirectional.fromSTEB(
+              casting ? 10 : 18,
+              16,
+              10,
+              12,
+            ),
             child: Row(
               children: [
+                if (casting) const SizedBox(width: 48),
                 Expanded(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: casting
+                        ? CrossAxisAlignment.stretch
+                        : CrossAxisAlignment.start,
                     children: [
-                      UiText(step, style: theme.textTheme.labelMedium),
-                      const SizedBox(height: 4),
+                      if (step != null) ...[
+                        UiText(step, style: theme.textTheme.labelMedium),
+                        const SizedBox(height: 4),
+                      ],
                       Semantics(
                         container: true,
                         header: true,
                         child: UiText(
                           title,
                           style: theme.textTheme.headlineSmall,
+                          textAlign: casting ? TextAlign.center : null,
                         ),
                       ),
                     ],
                   ),
                 ),
-                IconButton(
-                  tooltip: context.uiLabel('暂停仪式'),
-                  icon: const Icon(Icons.close),
-                  onPressed: widget.pause,
+                SizedBox(
+                  width: casting ? 48 : null,
+                  child: IconButton(
+                    tooltip: context.uiLabel('暂停仪式'),
+                    icon: const Icon(Icons.close),
+                    onPressed: widget.pause,
+                  ),
                 ),
               ],
             ),
@@ -227,11 +242,15 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
                       pending: busy,
                       active: _active,
                       reducedMotion: motionOff,
+                      showFirstTossHint: !presentation.tappedShell,
                       stageHeightLimit: math.max(
                         144,
                         MediaQuery.sizeOf(context).height * 0.37,
                       ),
-                      onToss: widget.toss,
+                      onToss: () {
+                        presentation.tappedShell = true;
+                        widget.toss();
+                      },
                       onSettled: _settle,
                     )
                   else

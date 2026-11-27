@@ -206,6 +206,7 @@ class _TarotRitualPanelState extends State<TarotRitualPanel>
                         revealed:
                             draw != null &&
                             widget.revealed.contains(draw.cards[index].slot),
+                        animateBack: widget.active && !widget.reducedMotion,
                         reducedMotion: widget.reducedMotion,
                         reveal: widget.reveal,
                       ),
@@ -333,6 +334,7 @@ class _TarotPosition extends StatelessWidget {
     required this.occupied,
     required this.card,
     required this.revealed,
+    required this.animateBack,
     required this.reducedMotion,
     required this.reveal,
   });
@@ -341,6 +343,7 @@ class _TarotPosition extends StatelessWidget {
   final bool occupied;
   final TarotDrawnCard? card;
   final bool revealed;
+  final bool animateBack;
   final bool reducedMotion;
   final ValueChanged<int> reveal;
 
@@ -400,7 +403,7 @@ class _TarotPosition extends StatelessWidget {
                             index: turned ? 1 : 0,
                             sizing: StackFit.expand,
                             children: [
-                              const TarotBackArt(),
+                              TarotBackArt(animated: animateBack && !revealed),
                               RotatedBox(
                                 quarterTurns:
                                     drawn.face.orientation ==
@@ -419,7 +422,7 @@ class _TarotPosition extends StatelessWidget {
                       },
                     )
                   else if (occupied)
-                    const TarotBackArt()
+                    TarotBackArt(animated: animateBack)
                   else
                     Center(
                       child: Icon(

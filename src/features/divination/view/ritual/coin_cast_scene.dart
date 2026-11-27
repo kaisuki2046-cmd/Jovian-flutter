@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../ui/interface_language.dart';
@@ -9,10 +10,11 @@ import 'coin_toss_motion.dart';
 const coinFrontAsset =
     'src/features/divination/assets/coins/qianlong-front.png';
 const coinBackAsset = 'src/features/divination/assets/coins/qianlong-back.png';
-const coinShellAsset =
-    'src/features/divination/assets/ritual/tortoise-shell-side.png';
+const coinCastLineNames = ['初爻', '二爻', '三爻', '四爻', '五爻', '上爻'];
 const _brass = Color(0xffb38b45);
 const _floorCenter = Offset(160, 160);
+const _lineHeight = 4.0;
+const _lineSpacing = 10.5;
 
 class CoinCastScene extends StatefulWidget {
   const CoinCastScene({
@@ -75,8 +77,17 @@ class _CoinCastSceneState extends State<CoinCastScene>
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final result = widget.faces;
+    final values = widget.values;
+    final pulse = widget.flowing && values.length < coinCastLineNames.length
+        ? _gold
+        : null;
+    final lineSummary = [
+      for (final (index, value) in values.indexed)
+        '${context.uiLabel(coinCastLineNames[index])} $value',
+    ].join(context.uiLabel('；'));
     return Semantics(
       container: true,
+      explicitChildNodes: true,
       label: widget.tossing
           ? context.uiLabel('正在投掷三枚铜钱')
           : result == null
@@ -91,7 +102,6 @@ class _CoinCastSceneState extends State<CoinCastScene>
                       context.uiLabel(face == 2 ? '字面' : '背面'),
                     ),
             ].join(context.uiLabel('；')),
-      excludeSemantics: true,
       child: LayoutBuilder(
         builder: (context, constraints) {
           final width = math.min(560.0, constraints.maxWidth);
@@ -127,6 +137,34 @@ class _CoinCastSceneState extends State<CoinCastScene>
                             ),
                           ),
                         ),
+                      Positioned(
+                        top: layout.height * 0.12 - _lineHeight / 2,
+                        left: 0,
+                        right: 0,
+                        child: Center(
+                          child: Semantics(
+                            container: true,
+                            label: context.uiLabel('六次投掷'),
+                            value: lineSummary,
+                            child: RepaintBoundary(
+                              child: CustomPaint(
+                                key: const ValueKey('coin-ritual-lines'),
+                                size: Size(
+                                  64,
+                                  (coinCastLineNames.length - 1) *
+                                          _lineSpacing +
+                                      _lineHeight,
+                                ),
+                                painter: _HexagramLines(
+                                  colors: colors,
+                                  values: values,
+                                  pulse: pulse,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                       RepaintBoundary(
                         child: AnimatedBuilder(
                           animation: widget.progress,
@@ -151,9 +189,7 @@ class _CoinCastSceneState extends State<CoinCastScene>
                                 CustomPaint(
                                   painter: _TossDetails(
                                     progress: time,
-                                    values: widget.values,
                                     poses: poses,
-                                    colors: colors,
                                     moving: widget.moving,
                                     coinSize: layout.coinSize,
                                   ),
@@ -432,70 +468,74 @@ class _CastingFlow extends CustomPainter {
       tossing != old.tossing || flow != old.flow;
 }
 
+class _HexagramLines extends CustomPainter {
+  _HexagramLines({
+    required this.colors,
+    required this.values,
+    required this.pulse,
+  }) : super(repaint: pulse);
+
+  final ColorScheme colors;
+  final List<int> values;
+  final Animation<double>? pulse;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final phase = pulse?.value;
+    final glow = phase == null ? 0.5 : (1 - math.cos(phase * 6 * math.pi)) / 2;
+    final recorded = Paint()
+      ..color = colors.primary
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = _lineHeight;
+    final empty = Paint()
+      ..color = Color.lerp(
+        colors.outlineVariant,
+        colors.primary,
+        0.10 + 0.48 * glow,
+      )!
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = 3;
+    final center = size.width / 2;
+    for (var index = 0; index < coinCastLineNames.length; index++) {
+      final y = _lineHeight / 2 + index * _lineSpacing;
+      final line = coinCastLineNames.length - 1 - index;
+      final left = Offset(_lineHeight / 2, y);
+      final right = Offset(size.width - _lineHeight / 2, y);
+      if (line >= values.length) {
+        canvas.drawLine(left, right, empty);
+      } else if (values[line].isEven) {
+        canvas.drawLine(left, Offset(center - 5, y), recorded);
+        canvas.drawLine(Offset(center + 5, y), right, recorded);
+      } else {
+        canvas.drawLine(left, right, recorded);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_HexagramLines old) =>
+      colors != old.colors ||
+      pulse != old.pulse ||
+      !listEquals(values, old.values);
+}
+
 class _TossDetails extends CustomPainter {
   const _TossDetails({
     required this.progress,
-    required this.values,
     required this.poses,
-    required this.colors,
     required this.moving,
     required this.coinSize,
   });
 
   final double progress;
-  final List<int> values;
   final List<CoinPose> poses;
-  final ColorScheme colors;
   final bool moving;
   final double coinSize;
 
   @override
   void paint(Canvas canvas, Size size) {
-    _hexagram(canvas, size);
     _shadows(canvas, size);
     if (moving && progress > 0.78) _sparks(canvas, size);
-  }
-
-  void _hexagram(Canvas canvas, Size size) {
-    final x = size.width / 2;
-    final opacity = moving ? ((progress - 0.72) / 0.24).clamp(0.22, 1.0) : 1.0;
-    final recorded = Paint()..color = colors.primary.withValues(alpha: opacity);
-    final empty = Paint()..color = colors.outlineVariant;
-    for (var index = 0; index < 6; index++) {
-      final y = size.height * 0.12 + index * 10.5;
-      final line = 5 - index;
-      if (line >= values.length) {
-        canvas.drawRRect(
-          RRect.fromRectAndRadius(
-            Rect.fromCenter(center: Offset(x, y), width: 25, height: 2),
-            const Radius.circular(1),
-          ),
-          empty,
-        );
-      } else if (values[line].isOdd) {
-        canvas.drawRRect(
-          RRect.fromRectAndRadius(
-            Rect.fromCenter(center: Offset(x, y), width: 42, height: 4),
-            const Radius.circular(1),
-          ),
-          recorded,
-        );
-      } else {
-        for (final offset in [-11.5, 11.5]) {
-          canvas.drawRRect(
-            RRect.fromRectAndRadius(
-              Rect.fromCenter(
-                center: Offset(x + offset, y),
-                width: 18,
-                height: 4,
-              ),
-              const Radius.circular(1),
-            ),
-            recorded,
-          );
-        }
-      }
-    }
   }
 
   void _shadows(Canvas canvas, Size size) {

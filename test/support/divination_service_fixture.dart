@@ -68,10 +68,12 @@ class DivinationRecoveryFixture
 class DivinationServiceFixture {
   String get _token => 'a' * 43;
   bool failReport = true;
+  bool supportsTarotFirst = true;
   bool denyUnderstandingPermission = false;
   bool expired = false;
   bool extendedFollowUp = false;
   bool longReport = false;
+  int? losePickResponseAtStep;
   Future<void>? understanding;
   Future<void>? followUpReply;
   Future<void>? pickReply;
@@ -139,6 +141,7 @@ class DivinationServiceFixture {
           question: body['question'] as String,
           focus: divinationFixtureFocus,
           automatic: automatic.last,
+          tarotFirst: supportsTarotFirst && body['tarotFirst'] == true,
           random: () => 0.3,
         );
         return _json({'token': _token, 'task': _state()});
@@ -166,6 +169,10 @@ class DivinationServiceFixture {
             clockSessionId: body['clockSessionId'] as String,
           ),
         );
+        if (losePickResponseAtStep == body['step']) {
+          losePickResponseAtStep = null;
+          return _json({'error': 'report_model_unavailable'}, status: 503);
+        }
         return _json(_state());
       case 'GET /reading':
         if (expired) return _json({'error': 'not_found'}, status: 404);

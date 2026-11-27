@@ -242,6 +242,7 @@ class _ReadingRouter {
         focus: focus,
         previousQuestion: input.previousQuestion,
         automatic: body['automatic'] == true,
+        tarotFirst: body['tarotFirst'] == true,
       );
     }
     return legacy.start(

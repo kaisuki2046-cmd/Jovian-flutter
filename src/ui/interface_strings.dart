@@ -504,10 +504,16 @@ const englishInterfaceStrings = <String, String>{
   "洗牌与切牌": "Shuffle and cut",
   "选择三张塔罗牌": "Choose three Tarot cards",
   "第 1 步 · 六爻起卦": "Step 1 · Liu Yao casting",
+  "第 1 步 · 塔罗选牌": "Step 1 · Tarot selection",
+  "第 1 步 · 塔罗翻牌": "Step 1 · Tarot reveal",
+  "第 2 步 · 六爻起卦": "Step 2 · Liu Yao casting",
   "第 2 步 · 塔罗翻牌": "Step 2 · Tarot reveal",
   "第 2 步 · 塔罗准备": "Step 2 · Tarot preparation",
   "第 2 步 · 塔罗选牌": "Step 2 · Tarot selection",
+  "仪式完成": "Ritual complete",
   "重试仪式同步": "Retry ritual sync",
+  "选牌记录与服务器进度不一致，请重试同步。":
+      "The saved Tarot picks differ from the server. Try syncing again.",
   "服务器未接受这次输入，请核对后重试。":
       "The service rejected the input. Check it and try again.",
   "当前账号会话无法验证，请重新登录后重试。":
@@ -519,7 +525,7 @@ const englishInterfaceStrings = <String, String>{
       "The chart is saved. Try again to get the complete reading.",
   "解读暂不可用，可以稍后重试。": "The reading is temporarily unavailable. Try again later.",
   "这次算事的进度暂时无法读取。": "Could not load the progress of this reading.",
-  "六爻卜卦结果：{result}": "Liu Yao casting result · {result}",
+  "继续六爻起卦": "Continue to Liu Yao casting",
   "轻触牌面逐张翻开，或一键全翻": "Tap each card to reveal it, or reveal all three",
   "一键翻牌": "Reveal all",
   "已选 {count} / 3 张": "Selected {count} / 3",

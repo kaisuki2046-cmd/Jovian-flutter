@@ -94,6 +94,13 @@ flutter build web --target src/app/main.dart --no-web-resources-cdn
 
 在线算事沿用现有 Node 账户和算事服务。启动这两个服务后，在 `app-flutter/` 下运行以下命令，并将 Web 来源加入它们各自的允许列表。登录或进入游客会话后，在个人中心的「隐私与授权」中开启算事授权。下文的 Dart 服务命令用于隔离环境中的历史原型对照。
 
+算事会先选择三张塔罗牌。现有 Node 接口会在六次投掷后返回牌面，Flutter 随后进入翻牌和解读。支持提前返回牌面的接口会让用户先翻牌，再进入六爻起卦。要给 Node 服务增加提前翻牌支持，在同级原项目 `app/` 的 Git 工作树中应用[算事服务补丁](tool/patches/divination-tarot-first.patch)，然后重启 Node 算事服务。补丁以原项目 `dev` 的 `7170624` 为基准。
+
+```sh
+git -C ../app apply --check "$(pwd)/tool/patches/divination-tarot-first.patch"
+git -C ../app apply "$(pwd)/tool/patches/divination-tarot-first.patch"
+```
+
 ```sh
 flutter run -d chrome --web-port 8114 --target src/app/main.dart --dart-define=ACCOUNT_API_URL=http://localhost:8787 --dart-define=DIVINATION_REPORT_URL=http://localhost:8115
 ```

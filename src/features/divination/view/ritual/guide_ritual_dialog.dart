@@ -27,6 +27,9 @@ class GuideRitualDialog extends StatefulWidget {
     required this.toss,
     required this.choose,
     required this.pause,
+    this.preparedTarot,
+    this.showingEarlyTarot,
+    this.finishTarot,
     this.onRevealChanged,
     this.openAiPermissions,
   });
@@ -34,6 +37,9 @@ class GuideRitualDialog extends StatefulWidget {
   final GuideRitualPresentation presentation;
   final Listenable changes;
   final GuideRitualSnapshot? Function() snapshot;
+  final List<int>? Function()? preparedTarot;
+  final bool Function()? showingEarlyTarot;
+  final VoidCallback? finishTarot;
   final bool Function() busy;
   final String? Function() error;
   final VoidCallback? Function() retry;
@@ -74,7 +80,15 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
   }
 
   void _settle(int count) {
-    if (mounted && _settled != count) setState(() => _settled = count);
+    if (!mounted || _settled == count) return;
+    setState(() => _settled = count);
+    final snapshot = widget.snapshot();
+    if (snapshot != null &&
+        snapshot.tarotFirst &&
+        snapshot.stage == GuideStage.reading &&
+        count == snapshot.tosses.length) {
+      widget.pause();
+    }
   }
 
   @override
@@ -88,35 +102,59 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
     final motionOff = MediaQuery.disableAnimationsOf(context);
     final snapshot = widget.snapshot();
     final presentation = widget.presentation;
-    if (motionOff && snapshot?.stage == GuideStage.draw) {
-      presentation.preparation = 1;
-    }
+    final preparedTarot = widget.preparedTarot?.call();
+    final serverTarotFirst = snapshot?.tarotFirst == true;
+    final tarotFirst = preparedTarot != null || serverTarotFirst;
+    final earlyTarot = widget.showingEarlyTarot?.call() == true;
+    final cardInFlight = _cardInFlight && !motionOff;
+    final pickingFirst =
+        preparedTarot != null &&
+        snapshot?.stage == GuideStage.cast &&
+        (preparedTarot.length < TarotPosition.values.length || cardInFlight);
     final casting =
         snapshot != null &&
+        !pickingFirst &&
+        !earlyTarot &&
         (snapshot.stage == GuideStage.cast ||
-            snapshot.tosses.length > _settled);
+            snapshot.tosses.length > _settled ||
+            (serverTarotFirst && snapshot.stage == GuideStage.reading) ||
+            (preparedTarot != null && snapshot.stage == GuideStage.draw));
+    final picking =
+        pickingFirst || (!casting && snapshot?.stage == GuideStage.draw);
+    final selected = pickingFirst
+        ? preparedTarot
+        : snapshot?.selectedSlots ?? const <int>[];
+    final slotCount = pickingFirst
+        ? tarotDeck.length
+        : snapshot?.slotCount ?? 0;
+    if (motionOff && picking) presentation.preparation = 1;
     final preparing =
-        !casting &&
         !motionOff &&
-        snapshot?.stage == GuideStage.draw &&
-        snapshot!.selectedSlots.isEmpty &&
+        picking &&
+        selected.isEmpty &&
         presentation.preparation < 1;
+    final flippingEarly = earlyTarot && !cardInFlight;
     final flipping =
-        !casting && !_cardInFlight && snapshot?.stage == GuideStage.reading;
+        flippingEarly ||
+        (!casting &&
+            !serverTarotFirst &&
+            !cardInFlight &&
+            snapshot?.stage == GuideStage.reading);
     final title = casting
         ? '投三枚铜钱'
         : flipping
         ? '翻开三张塔罗牌'
-        : preparing
-        ? '洗牌与切牌'
         : '选择三张塔罗牌';
-    final step = casting
-        ? '第 1 步 · 六爻起卦'
-        : flipping
-        ? '第 2 步 · 塔罗翻牌'
-        : preparing
-        ? '第 2 步 · 塔罗准备'
-        : '第 2 步 · 塔罗选牌';
+    final step = flippingEarly
+        ? '第 1 步 · 塔罗翻牌'
+        : switch ((tarotFirst, casting, flipping)) {
+            (true, true, _) => '第 2 步 · 六爻起卦',
+            (false, true, _) => '第 1 步 · 六爻起卦',
+            (true, _, true) => '仪式完成',
+            (false, _, true) => '第 2 步 · 塔罗翻牌',
+            (true, _, _) => '第 1 步 · 塔罗选牌',
+            (false, _, _) => '第 2 步 · 塔罗选牌',
+          };
     final busy = widget.busy();
     final error = widget.error();
     final retry = widget.retry();
@@ -161,18 +199,12 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
           const Divider(height: 1),
           Flexible(
             child: SingleChildScrollView(
-              key: ValueKey(
-                casting
-                    ? 'cast'
-                    : preparing
-                    ? 'prepare'
-                    : 'cards',
-              ),
+              key: ValueKey(casting ? 'cast' : 'cards'),
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  if (error != null && !flipping && !_cardInFlight)
+                  if (error != null && !flipping && !cardInFlight)
                     Semantics(
                       liveRegion: true,
                       child: UiText(
@@ -180,15 +212,12 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
                         style: TextStyle(color: theme.colorScheme.error),
                       ),
                     ),
-                  if (!busy &&
-                      permission != null &&
-                      !flipping &&
-                      !_cardInFlight)
+                  if (!busy && permission != null && !flipping && !cardInFlight)
                     OutlinedButton(
                       onPressed: permission,
                       child: const UiText('前往 AI 授权'),
                     ),
-                  if (!busy && retry != null && !flipping && !_cardInFlight)
+                  if (!busy && retry != null && !flipping && !cardInFlight)
                     TextButton(onPressed: retry, child: const UiText('重试仪式同步')),
                   if (snapshot == null)
                     const UiText('这次算事的进度暂时无法读取。')
@@ -205,16 +234,7 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
                       onToss: widget.toss,
                       onSettled: _settle,
                     )
-                  else ...[
-                    if (snapshot.castResult case final result?) ...[
-                      Text(
-                        context
-                            .uiLabel('六爻卜卦结果：{result}')
-                            .replaceFirst('{result}', result.base.primary.name),
-                        style: theme.textTheme.bodySmall,
-                      ),
-                      const SizedBox(height: 10),
-                    ],
+                  else
                     Material(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18),
@@ -225,59 +245,64 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
                       color: theme.colorScheme.surface,
                       child: Padding(
                         padding: const EdgeInsets.all(12),
-                        child: preparing
-                            ? TarotDeckPreparation(
-                                slotCount: snapshot.slotCount,
-                                cutIndex:
-                                    snapshot.tarotCutIndex ??
-                                    _presentationCut(
-                                      snapshot.slotCount,
-                                      presentation.seed,
-                                    ),
-                                initialProgress: presentation.preparation,
-                                seed: presentation.seed,
-                                active: _active,
-                                reducedMotion: motionOff,
-                                progress: (value) =>
-                                    presentation.preparation = value,
-                                finish: () => setState(
-                                  () => presentation.preparation = 1,
-                                ),
-                              )
-                            : TarotRitualPanel(
-                                slotCount: snapshot.slotCount,
-                                selectedSlots: snapshot.selectedSlots,
-                                draw: flipping ? snapshot.chart?.tarot : null,
-                                revealed: presentation.revealed,
-                                busy: busy,
-                                selectionBlocked: retry != null && !flipping,
-                                active: _active,
-                                reducedMotion: motionOff,
-                                choose: widget.choose,
-                                onFlightChanged: (moving) {
-                                  if (_cardInFlight != moving) {
-                                    setState(() => _cardInFlight = moving);
-                                  }
-                                },
-                                reveal: (slot) {
-                                  setState(() {
-                                    if (slot == null) {
-                                      presentation.revealed.addAll(
-                                        snapshot.selectedSlots,
-                                      );
-                                    } else {
-                                      presentation.revealed.add(slot);
-                                    }
-                                  });
-                                  widget.onRevealChanged?.call(
-                                    Set.unmodifiable(presentation.revealed),
-                                  );
-                                },
-                                finish: widget.pause,
-                              ),
+                        child: TarotRitualPanel(
+                          slotCount: slotCount,
+                          selectedSlots: selected,
+                          draw: flipping ? snapshot.tarotDraw : null,
+                          revealed: presentation.revealed,
+                          busy: busy,
+                          selectionBlocked: retry != null && !flipping,
+                          active: _active,
+                          reducedMotion: motionOff,
+                          choose: widget.choose,
+                          cardFlight: (flying) {
+                            if (_cardInFlight != flying) {
+                              setState(() => _cardInFlight = flying);
+                            }
+                          },
+                          preparation: preparing
+                              ? TarotDeckPreparation(
+                                  slotCount: slotCount,
+                                  cutIndex:
+                                      (pickingFirst
+                                          ? null
+                                          : snapshot.tarotCutIndex) ??
+                                      _presentationCut(
+                                        slotCount,
+                                        presentation.seed,
+                                      ),
+                                  initialProgress: presentation.preparation,
+                                  seed: presentation.seed,
+                                  active: _active,
+                                  reducedMotion: motionOff,
+                                  progress: (value) =>
+                                      presentation.preparation = value,
+                                  finish: () => setState(
+                                    () => presentation.preparation = 1,
+                                  ),
+                                )
+                              : null,
+                          reveal: (slot) {
+                            setState(() {
+                              if (slot == null) {
+                                presentation.revealed.addAll(
+                                  snapshot.selectedSlots,
+                                );
+                              } else {
+                                presentation.revealed.add(slot);
+                              }
+                            });
+                            widget.onRevealChanged?.call(
+                              Set.unmodifiable(presentation.revealed),
+                            );
+                          },
+                          finish: flippingEarly
+                              ? widget.finishTarot ?? widget.pause
+                              : widget.pause,
+                          finishLabel: flippingEarly ? '继续六爻起卦' : '查看解读',
+                        ),
                       ),
                     ),
-                  ],
                 ],
               ),
             ),

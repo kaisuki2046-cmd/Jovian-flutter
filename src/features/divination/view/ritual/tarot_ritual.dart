@@ -22,9 +22,11 @@ class TarotRitualPanel extends StatefulWidget {
     required this.active,
     required this.reducedMotion,
     required this.choose,
-    required this.onFlightChanged,
     required this.reveal,
     required this.finish,
+    this.finishLabel = '查看解读',
+    this.preparation,
+    this.cardFlight,
   });
 
   final int slotCount;
@@ -36,9 +38,11 @@ class TarotRitualPanel extends StatefulWidget {
   final bool active;
   final bool reducedMotion;
   final ValueChanged<int> choose;
-  final ValueChanged<bool> onFlightChanged;
   final ValueChanged<int?> reveal;
   final VoidCallback finish;
+  final String finishLabel;
+  final Widget? preparation;
+  final ValueChanged<bool>? cardFlight;
 
   @override
   State<TarotRitualPanel> createState() => _TarotRitualPanelState();
@@ -113,7 +117,7 @@ class _TarotRitualPanelState extends State<TarotRitualPanel>
     });
     // The controller can finish a transfer while this dialog is rebuilding.
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted && _flight == null) widget.onFlightChanged(false);
+      if (mounted && _flight == null) widget.cardFlight?.call(false);
     });
   }
 
@@ -148,7 +152,7 @@ class _TarotRitualPanelState extends State<TarotRitualPanel>
           opacity: origin.opacity,
         );
       });
-      widget.onFlightChanged(true);
+      widget.cardFlight?.call(true);
       _motion.animateTo(
         1,
         duration: const Duration(milliseconds: 460),
@@ -213,7 +217,7 @@ class _TarotRitualPanelState extends State<TarotRitualPanel>
             if (draw != null)
               FilledButton(
                 onPressed: revealed ? widget.finish : () => widget.reveal(null),
-                child: UiText(revealed ? '查看解读' : '一键翻牌'),
+                child: UiText(revealed ? widget.finishLabel : '一键翻牌'),
               )
             else ...[
               Semantics(
@@ -231,22 +235,23 @@ class _TarotRitualPanelState extends State<TarotRitualPanel>
                 style: theme.textTheme.titleMedium,
                 textAlign: TextAlign.center,
               ),
-              LayoutBuilder(
-                builder: (context, size) => TarotRitualFan(
-                  layout: TarotFanLayout(size.maxWidth, widget.slotCount),
-                  selectedSlots: {
-                    ...widget.selectedSlots,
-                    if (flight != null) flight.slot,
-                  },
-                  busy:
-                      widget.busy ||
-                      widget.selectionBlocked ||
-                      !widget.active ||
-                      flight != null,
-                  reducedMotion: widget.reducedMotion,
-                  choose: _choose,
-                ),
-              ),
+              widget.preparation ??
+                  LayoutBuilder(
+                    builder: (context, size) => TarotRitualFan(
+                      layout: TarotFanLayout(size.maxWidth, widget.slotCount),
+                      selectedSlots: {
+                        ...widget.selectedSlots,
+                        if (flight != null) flight.slot,
+                      },
+                      busy:
+                          widget.busy ||
+                          widget.selectionBlocked ||
+                          !widget.active ||
+                          flight != null,
+                      reducedMotion: widget.reducedMotion,
+                      choose: _choose,
+                    ),
+                  ),
             ],
           ],
         ),

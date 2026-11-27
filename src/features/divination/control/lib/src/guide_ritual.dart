@@ -210,6 +210,7 @@ class GuideRitualSnapshot {
     required this.question,
     required this.focus,
     required this.automatic,
+    required this.tarotFirst,
     required this.stage,
     required this.tosses,
     required this.slotCount,
@@ -218,6 +219,7 @@ class GuideRitualSnapshot {
     required this.castStartedAt,
     required this.castResult,
     required this.chart,
+    this.earlyDraw,
     this.tarotCutIndex,
     Map<String, Object?>? publishedCast,
   }) : _publishedCast = publishedCast;
@@ -225,6 +227,7 @@ class GuideRitualSnapshot {
   final String question;
   final String focus;
   final bool automatic;
+  final bool tarotFirst;
   final GuideStage stage;
   final List<List<int>> tosses;
   final int slotCount;
@@ -233,8 +236,11 @@ class GuideRitualSnapshot {
   final DateTime? castStartedAt;
   final JingfangReading? castResult;
   final GuideChart? chart;
+  final TarotDraw? earlyDraw;
   final int? tarotCutIndex;
   final Map<String, Object?>? _publishedCast;
+
+  TarotDraw? get tarotDraw => chart?.tarot ?? earlyDraw;
 
   Map<String, String> get calculationRules =>
       automatic ? _automaticGuideRules : _guideRules;
@@ -245,6 +251,7 @@ class GuideRitualSnapshot {
     'question': question,
     'focus': focus,
     'stage': stage.name,
+    if (tarotFirst) 'tarotFirst': true,
     'calculationRules': calculationRules,
     'tosses': tosses,
     'slotCount': slotCount,
@@ -257,8 +264,8 @@ class GuideRitualSnapshot {
       'automatic': true
     else
       'cardEvents': cardEvents.map((event) => event.toJson()).toList(),
+    if (tarotDraw case final draw?) 'draw': draw.toJson(),
     if (chart case final chart?) ...{
-      'draw': chart.tarot.toJson(),
       'results': chart.resultsToJson(),
       'chartHash': chart.chartHash,
       'resolvedAt': _wireDate(chart.resolvedAt),
@@ -271,6 +278,7 @@ class GuideRitual {
     required String question,
     required String focus,
     bool automatic = false,
+    bool tarotFirst = false,
     DateTime? automaticStartedAt,
     DateTime Function()? now,
     double Function()? random,
@@ -279,6 +287,7 @@ class GuideRitual {
       question.trim(),
       focus.trim(),
       automatic,
+      tarotFirst && !automatic,
       now,
       random,
     );
@@ -288,7 +297,9 @@ class GuideRitual {
     if (ritual.focus.isEmpty || ritual.focus.length > guideQuestionMaxLength) {
       throw const GuideRitualError(400, 'invalid_focus');
     }
-    if (automatic) {
+    if (ritual.tarotFirst) {
+      ritual._prepareTarot();
+    } else if (automatic) {
       ritual._castStartedAt = automaticStartedAt;
       for (var index = 0; index < 6; index++) {
         ritual._toss();
@@ -304,6 +315,7 @@ class GuideRitual {
     this.question,
     this.focus,
     this.automatic,
+    this.tarotFirst,
     DateTime Function()? now,
     double Function()? random,
   ) : _now = now ?? DateTime.now,
@@ -312,6 +324,7 @@ class GuideRitual {
   final String question;
   final String focus;
   final bool automatic;
+  final bool tarotFirst;
   final DateTime Function() _now;
   final double Function() _random;
   final _actions =
@@ -324,12 +337,14 @@ class GuideRitual {
   DateTime? _castStartedAt;
   JingfangReading? _castResult;
   TarotPicking? _picking;
+  TarotDraw? _earlyDraw;
   GuideChart? _chart;
 
   GuideRitualSnapshot get snapshot => GuideRitualSnapshot._(
     question: question,
     focus: focus,
     automatic: automatic,
+    tarotFirst: tarotFirst,
     stage: _stage,
     tosses: _tosses,
     slotCount: _picking?.slots.length ?? 0,
@@ -338,6 +353,7 @@ class GuideRitual {
     castStartedAt: _castStartedAt,
     castResult: _castResult,
     chart: _chart,
+    earlyDraw: _earlyDraw,
   );
 
   GuideRitualSnapshot toss(GuideCoinEvent event) {
@@ -393,13 +409,21 @@ class GuideRitual {
       ..._tosses,
       List<int>.unmodifiable(rollLiuYaoLine(random: _random)),
     ]);
-    if (tosses.length == 6) {
-      _castResult = readJingfang(tosses, castCalendar(started));
-      _picking = prepareFullTarotDeck(question, random: _random);
-      _stage = GuideStage.draw;
-    }
     _tosses = tosses;
     _castStartedAt = started;
+    if (tosses.length == lineCount) {
+      _castResult = readJingfang(tosses, castCalendar(started));
+      if (tarotFirst) {
+        _resolve(_earlyDraw!, _cardEvents);
+      } else {
+        _prepareTarot();
+      }
+    }
+  }
+
+  void _prepareTarot() {
+    _picking = prepareFullTarotDeck(question, random: _random);
+    _stage = GuideStage.draw;
   }
 
   void _select(int slot, [GuideCardEvent? event]) {
@@ -417,25 +441,34 @@ class GuideRitual {
         _picking = selection;
         _selectedSlots = selection.selectedSlots;
       case CompletedTarotSelection():
-        final meihua = automatic
-            ? readMeihuaNumbers(
-                List.generate(3, (_) => (_random() * 999).floor() + 1),
-              )
-            : readMeihuaClicks(events.map((event) => event.epochMs).toList());
-        _chart = GuideChart._(
-          tarot: selection.draw,
-          liuyao: _castResult!,
-          meihua: meihua,
-          meihuaInputSource: automatic
-              ? MeihuaInputSource.automaticNumbers
-              : MeihuaInputSource.tarotClick,
-          castStartedAt: _castStartedAt!,
-          cardEvents: events,
-          resolvedAt: _now(),
-        );
+        if (tarotFirst) {
+          _earlyDraw = selection.draw;
+          _stage = GuideStage.cast;
+        } else {
+          _resolve(selection.draw, events);
+        }
         _selectedSlots = selection.selectedSlots;
-        _stage = GuideStage.reading;
     }
     _cardEvents = events;
+  }
+
+  void _resolve(TarotDraw draw, List<GuideCardEvent> events) {
+    final meihua = automatic
+        ? readMeihuaNumbers(
+            List.generate(3, (_) => (_random() * 999).floor() + 1),
+          )
+        : readMeihuaClicks(events.map((event) => event.epochMs).toList());
+    _chart = GuideChart._(
+      tarot: draw,
+      liuyao: _castResult!,
+      meihua: meihua,
+      meihuaInputSource: automatic
+          ? MeihuaInputSource.automaticNumbers
+          : MeihuaInputSource.tarotClick,
+      castStartedAt: _castStartedAt!,
+      cardEvents: events,
+      resolvedAt: _now(),
+    );
+    _stage = GuideStage.reading;
   }
 }

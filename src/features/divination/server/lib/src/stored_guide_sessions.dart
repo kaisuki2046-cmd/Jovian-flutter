@@ -35,6 +35,7 @@ class StoredGuideSessions {
     required String focus,
     String? previousQuestion,
     bool automatic = false,
+    bool tarotFirst = false,
   }) {
     previousQuestion = previousQuestion?.trim();
     if (previousQuestion != null &&
@@ -46,6 +47,7 @@ class StoredGuideSessions {
       question: question,
       focus: focus,
       automatic: automatic,
+      tarotFirst: tarotFirst,
       random: _random,
       now: _now,
       automaticStartedAt: created,

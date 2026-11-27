@@ -50,6 +50,7 @@ class _MockGateway implements GuideGateway {
     String focus,
     String proof, {
     required bool automatic,
+    bool tarotFirst = false,
     String? previousQuestion,
   }) async {
     starts++;
@@ -57,6 +58,7 @@ class _MockGateway implements GuideGateway {
       question: question,
       focus: focus,
       automatic: automatic,
+      tarotFirst: tarotFirst,
       random: () => 0.3,
     );
     return (token: _token, reading: _snapshot());

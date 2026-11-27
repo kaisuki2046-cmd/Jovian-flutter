@@ -85,7 +85,7 @@ class _CoinCastRitualState extends State<CoinCastRitual>
   var _tickerEnabled = true;
   var _systemReduced = false;
   var _moving = false;
-  var _landingPulsed = false;
+  var _landingPulses = 0;
   var _requestLatch = false;
 
   bool get _available => widget.active && _foreground && _tickerEnabled;
@@ -148,7 +148,7 @@ class _CoinCastRitualState extends State<CoinCastRitual>
     final newCount = _recorded.length;
     if (newCount == previousCount + 1 && !wasMoving && _canAnimate) {
       _moving = true;
-      _landingPulsed = false;
+      _landingPulses = 0;
       _flight.forward(from: 0);
       _feedback.play(reducedMotion: false);
     } else {
@@ -161,10 +161,13 @@ class _CoinCastRitualState extends State<CoinCastRitual>
   }
 
   void _landingFeedback() {
-    if (!_moving || _landingPulsed || _flight.value < coinLandingTimes.first)
-      return;
-    _landingPulsed = true;
-    if (_canAnimate) _feedback.pulse();
+    if (!_moving || !_canAnimate) return;
+    final landed =
+        coinLandingTimes.lastIndexWhere((time) => time <= _flight.value) + 1;
+    if (landed <= _landingPulses) return;
+    final first = _landingPulses == 0;
+    _landingPulses = landed;
+    _feedback.land(first: first);
   }
 
   void _flightStatus(AnimationStatus status) {

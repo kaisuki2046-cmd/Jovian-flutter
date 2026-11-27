@@ -45,6 +45,7 @@ class HttpGuideGateway implements GuideGateway {
     String focus,
     String proof, {
     required bool automatic,
+    bool tarotFirst = false,
     String? previousQuestion,
   }) async {
     final response = await _request(
@@ -56,6 +57,7 @@ class HttpGuideGateway implements GuideGateway {
         'focus': focus,
         'proof': proof,
         if (automatic) 'automatic': true,
+        if (!automatic && tarotFirst) 'tarotFirst': true,
         if (previousQuestion != null) 'previousQuestion': previousQuestion,
       },
     );

@@ -263,7 +263,9 @@ class _JovianAppState extends State<JovianApp> {
         if (authorized != null && !welcome) return admitted!;
         if (welcome && account.memberId != null) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (context.mounted) _navigation.closeWelcome();
+            if (context.mounted) {
+              Router.neglect(context, _navigation.closeWelcome);
+            }
           });
           return admitted!;
         }
@@ -281,7 +283,9 @@ class _JovianAppState extends State<JovianApp> {
           standalone: true,
           themeMode: _themeMode,
           onThemeModeChanged: _changeAppearance,
-          onWelcomeExit: welcome ? _navigation.closeWelcome : null,
+          onWelcomeExit: welcome
+              ? () => Router.neglect(context, _navigation.closeWelcome)
+              : null,
         );
       },
     );
@@ -451,6 +455,7 @@ class _AppHomeState extends State<_AppHome> {
             account: account,
             active: active,
             openMessages: () => selectTab(JovianTab.messages),
+            openWelcome: widget.openWelcome,
             themeMode: widget.themeMode,
             onThemeModeChanged: widget.onThemeModeChanged,
           ),

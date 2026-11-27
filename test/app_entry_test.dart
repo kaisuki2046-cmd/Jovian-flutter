@@ -12,6 +12,59 @@ import '../src/features/account/settings/model/agreements.dart';
 import '../src/shared/http/json_client.dart';
 
 void main() {
+  testWidgets('profile login opens the welcome page and can return as guest', (
+    tester,
+  ) async {
+    final requests = <String>[];
+    final account = _account((request) async {
+      final route = '${request.method} ${request.url.path}';
+      requests.add(route);
+      return switch (route) {
+        'GET /account/session' => _json({}, 401),
+        'GET /account/auth/guest' => _json({
+          'id': 'profile-guest',
+          'expiresAt': 4102444800000,
+        }),
+        'GET /account/auth/capabilities' => _json({
+          'emailRegistrationAvailable': true,
+          'localSocialProviders': ['wechat', 'qq'],
+        }),
+        'GET /account/agreements/catalog' => _json(_catalog),
+        'GET /account/agreements' => _agreementState(true),
+        _ => _json({}, 404),
+      };
+    });
+    await tester.pumpWidget(
+      JovianApp(account: account, initialTab: JovianTab.account),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('我的报告'), findsOneWidget);
+    await _press(tester, '登录');
+    expect(find.text('在这里，慢慢认识自己'), findsOneWidget);
+    expect(find.byType(NavigationBar), findsNothing);
+    expect(find.text('登录或注册成功后会结束当前游客会话并删除游客档案。'), findsOneWidget);
+    await _press(tester, '其他登录方式');
+    expect(find.widgetWithText(ListTile, '微信登录'), findsOneWidget);
+    expect(find.widgetWithText(ListTile, 'QQ 登录'), findsOneWidget);
+    await _press(tester, '邮箱登录');
+    await _press(tester, '同意并继续');
+    expect(find.widgetWithText(TextField, '邮箱'), findsOneWidget);
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.text('其他登录方式'), findsOneWidget);
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.text('我的报告'), findsOneWidget);
+    expect(account.authorizedSession?.scope, 'guest:profile-guest');
+
+    await _press(tester, '登录');
+    await _press(tester, '返回游客资料');
+    expect(find.text('我的报告'), findsOneWidget);
+    expect(account.authorizedSession?.scope, 'guest:profile-guest');
+    expect(requests.where((route) => route.startsWith('POST')), isEmpty);
+  });
+
   testWidgets(
     'direct account security requires current consent and preserves the nested back stack',
     (tester) async {

@@ -451,6 +451,12 @@ class AccountAboutPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
+            ListenableBuilder(
+              listenable: account,
+              builder: (context, _) =>
+                  AgreementDirectory(catalog: account.catalog),
+            ),
+            const SizedBox(height: 12),
             _SettingsEntry(
               title: '协议与政策',
               icon: Icons.description_outlined,

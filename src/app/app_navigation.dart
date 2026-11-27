@@ -395,6 +395,7 @@ class JovianRouter extends RouterDelegate<JovianLocation>
   final Widget Function(String?, FortunePeriod?) fortune;
   final Widget Function() fortunePermissions;
 
+  static const _welcomeKey = ValueKey('jovian-welcome');
   static const _fortuneKey = ValueKey('jovian-fortune');
   static const _fortunePermissionsKey = ValueKey('jovian-fortune-permissions');
 
@@ -559,37 +560,50 @@ class JovianRouter extends RouterDelegate<JovianLocation>
   }
 
   @override
-  Widget build(BuildContext context) => Navigator(
-    key: navigatorKey,
-    pages: [
-      MaterialPage<void>(
-        key: const ValueKey('jovian-home'),
-        name: _location.tab.path,
-        child: shell(_location),
-      ),
-      if (_location.fortunePath case final path?)
+  Widget build(BuildContext context) {
+    final welcomeOrigin = _location.welcome ? _welcomeOrigin : null;
+    final underneath = welcomeOrigin ?? _location;
+    return Navigator(
+      key: navigatorKey,
+      pages: [
         MaterialPage<void>(
-          key: _fortuneKey,
-          name: path,
-          child: fortune(
-            _location.archiveId,
-            _location.fortunePermissionsPeriod,
+          key: const ValueKey('jovian-home'),
+          name: underneath.tab.path,
+          child: shell(underneath),
+        ),
+        if (underneath.fortunePath case final path?)
+          MaterialPage<void>(
+            key: _fortuneKey,
+            name: path,
+            child: fortune(
+              underneath.archiveId,
+              underneath.fortunePermissionsPeriod,
+            ),
           ),
-        ),
-      if (_location.fortunePermissionsPeriod != null)
-        MaterialPage<void>(
-          key: _fortunePermissionsKey,
-          child: fortunePermissions(),
-        ),
-    ],
-    onDidRemovePage: (page) {
-      if (page.key == _fortunePermissionsKey &&
-          _location.fortunePermissionsPeriod != null) {
-        Router.neglect(context, () => _setFortunePermissions(null));
-      }
-      if (page.key == _fortuneKey && _location.fortunePath != null) {
-        Router.neglect(context, () => selectTab(JovianTab.destiny));
-      }
-    },
-  );
+        if (underneath.fortunePermissionsPeriod != null)
+          MaterialPage<void>(
+            key: _fortunePermissionsKey,
+            child: fortunePermissions(),
+          ),
+        if (welcomeOrigin != null)
+          MaterialPage<void>(
+            key: _welcomeKey,
+            name: '/welcome',
+            child: shell(_location),
+          ),
+      ],
+      onDidRemovePage: (page) {
+        if (page.key == _welcomeKey && _location.welcome) {
+          Router.neglect(context, closeWelcome);
+        }
+        if (page.key == _fortunePermissionsKey &&
+            _location.fortunePermissionsPeriod != null) {
+          Router.neglect(context, () => _setFortunePermissions(null));
+        }
+        if (page.key == _fortuneKey && _location.fortunePath != null) {
+          Router.neglect(context, () => selectTab(JovianTab.destiny));
+        }
+      },
+    );
+  }
 }

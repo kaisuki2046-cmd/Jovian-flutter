@@ -26,13 +26,6 @@ class AccountAgreementsPage extends StatelessWidget {
           final catalog = account.catalog;
           final scope = account.sessionChanging ? null : account.session?.scope;
           final state = scope == null ? null : account.agreementState;
-          final versioned = <String, AgreementDocument>{
-            if (catalog != null) ...{
-              'terms': catalog.terms,
-              'privacy': catalog.privacy,
-              'ai': catalog.ai,
-            },
-          };
           return ListView(
             padding: jovianPagePadding,
             children: [
@@ -73,7 +66,7 @@ class AccountAgreementsPage extends StatelessWidget {
                       for (final confirmation in state.confirmations)
                         ListTile(
                           title: Text(
-                            _agreementTitle(confirmation.id, versioned),
+                            _agreementTitle(confirmation.id, catalog),
                           ),
                           subtitle: Text(
                             _confirmationLabel(context, confirmation),
@@ -92,26 +85,7 @@ class AccountAgreementsPage extends StatelessWidget {
                     ],
                   ),
                 ),
-              Card(
-                clipBehavior: Clip.antiAlias,
-                child: Column(
-                  children: [
-                    for (final id in agreementDirectoryOrder)
-                      if (versioned[id] case final document?)
-                        _DirectoryLink(
-                          reader: AgreementDocumentPage.versioned(document),
-                        )
-                      else if (bundledAgreementDrafts[id] case final draft?)
-                        _DirectoryLink(
-                          reader: AgreementDocumentPage(
-                            title: draft.title,
-                            sections: draft.sections,
-                            preview: true,
-                          ),
-                        ),
-                  ],
-                ),
-              ),
+              AgreementDirectory(catalog: catalog),
             ],
           );
         },
@@ -134,14 +108,50 @@ class AccountAgreementsPage extends StatelessWidget {
   }
 }
 
-String _agreementTitle(String id, Map<String, AgreementDocument> versioned) =>
-    versioned[id]?.title ?? (id == 'privacy' ? '隐私政策' : '用户服务协议');
+String _agreementTitle(String id, AgreementCatalog? catalog) => id == 'privacy'
+    ? catalog?.privacy.title ?? '隐私政策'
+    : catalog?.terms.title ?? '用户服务协议';
 
 String _confirmationLabel(BuildContext context, AgreementConfirmation record) {
   final date = MaterialLocalizations.of(
     context,
   ).formatMediumDate(record.decidedAt.toLocal());
   return '版本 ${record.version} · $date';
+}
+
+class AgreementDirectory extends StatelessWidget {
+  const AgreementDirectory({super.key, required this.catalog});
+
+  final AgreementCatalog? catalog;
+
+  @override
+  Widget build(BuildContext context) {
+    final documents = {
+      if (catalog case final current?) ...{
+        'terms': current.terms,
+        'privacy': current.privacy,
+        'ai': current.ai,
+      },
+    };
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          for (final id in agreementDirectoryOrder)
+            if (documents[id] case final document?)
+              _DirectoryLink(reader: AgreementDocumentPage.versioned(document))
+            else if (bundledAgreementDrafts[id] case final draft?)
+              _DirectoryLink(
+                reader: AgreementDocumentPage(
+                  title: draft.title,
+                  sections: draft.sections,
+                  preview: true,
+                ),
+              ),
+        ],
+      ),
+    );
+  }
 }
 
 class _DirectoryLink extends StatelessWidget {

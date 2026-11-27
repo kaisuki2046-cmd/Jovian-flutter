@@ -25,6 +25,7 @@ class AccountPage extends StatefulWidget {
     this.themeMode = ThemeMode.system,
     this.onThemeModeChanged,
     this.openMessages,
+    this.openWelcome,
     this.onWelcomeExit,
   });
 
@@ -34,6 +35,7 @@ class AccountPage extends StatefulWidget {
   final ThemeMode themeMode;
   final ValueChanged<ThemeMode>? onThemeModeChanged;
   final VoidCallback? openMessages;
+  final VoidCallback? openWelcome;
   final VoidCallback? onWelcomeExit;
 
   @override
@@ -155,12 +157,22 @@ class _AccountPageState extends State<AccountPage> {
                           openSettings: _openSettings,
                           openMessages: widget.openMessages,
                           active: widget.active,
-                          onUpgrade: _beginUpgrade,
+                          onUpgrade: widget.openWelcome ?? _beginUpgrade,
                         )
                       else if (widget.standalone && !innerWelcome)
                         ..._landing(session != null)
                       else
                         ..._form(session != null),
+                      if (widget.standalone &&
+                          session?.kind == AccountKind.guest &&
+                          !renewAgreement)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 12),
+                          child: UiText(
+                            '登录或注册成功后会结束当前游客会话并删除游客档案。',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ),
                     ],
                   ),
                 ),

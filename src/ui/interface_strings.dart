@@ -714,6 +714,8 @@ const englishInterfaceStrings = <String, String>{
       'Read and accept the current Terms of Service and Privacy Policy to continue.',
   '阅读并确认协议': 'Review and accept agreements',
   '返回游客资料': 'Back to guest profile',
+  '登录或注册成功后会结束当前游客会话并删除游客档案。':
+      'Signing in or signing up ends this guest session and deletes its saved records.',
   '未注册的手机号验证后会自动创建账号。': 'Verifying a new phone number creates an account.',
   '游客体验': 'Continue as guest',
   '《用户服务协议》和《隐私政策》': 'the Terms of Service and Privacy Policy',

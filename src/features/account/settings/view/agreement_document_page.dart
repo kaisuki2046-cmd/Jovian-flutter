@@ -65,31 +65,33 @@ class AgreementDocumentPage extends StatelessWidget {
           alignment: Alignment.topCenter,
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 640),
-            child: ListView(
-              padding: const EdgeInsets.all(20),
-              children: [
-                if (version case final current?)
-                  Text('版本 $current', style: theme.textTheme.bodySmall),
-                if (preview)
-                  UiText('内测草案，未发布生效。', style: theme.textTheme.bodySmall),
-                if (sections.isEmpty)
-                  const Padding(
-                    padding: EdgeInsets.only(top: 16),
-                    child: Text('暂无正文。'),
-                  ),
-                for (final section in sections) ...[
-                  const SizedBox(height: 16),
-                  Semantics(
-                    header: true,
-                    child: Text(
-                      section.title,
-                      style: theme.textTheme.titleMedium,
+            child: SelectionArea(
+              child: ListView(
+                padding: const EdgeInsets.all(20),
+                children: [
+                  if (version case final current?)
+                    Text('版本 $current', style: theme.textTheme.bodySmall),
+                  if (preview)
+                    UiText('内测草案，未发布生效。', style: theme.textTheme.bodySmall),
+                  if (sections.isEmpty)
+                    const Padding(
+                      padding: EdgeInsets.only(top: 16),
+                      child: Text('暂无正文。'),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  SelectableText(section.text),
+                  for (final section in sections) ...[
+                    const SizedBox(height: 16),
+                    Semantics(
+                      header: true,
+                      child: Text(
+                        section.title,
+                        style: theme.textTheme.titleMedium,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(section.text),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         ),

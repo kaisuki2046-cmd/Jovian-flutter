@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:jovian_destiny/jovian_destiny.dart'
     show RestoredBaZiRow, restoreArchivedBaZiRows;
 import 'package:material_ui/material_ui.dart';
@@ -11,8 +13,13 @@ import '../../auth/control/account_controller.dart';
 import '../model/archived_charts.dart';
 
 class ArchivedChartsPage extends StatelessWidget {
-  const ArchivedChartsPage({super.key, required this.account});
+  const ArchivedChartsPage({
+    super.key,
+    required this.account,
+    this.selectedArchive,
+  });
   final AccountController account;
+  final ({String id, String scope})? selectedArchive;
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -25,6 +32,10 @@ class ArchivedChartsPage extends StatelessWidget {
           final owner = account.sessionChanging
               ? null
               : account.authorizedSession;
+          final selection = selectedArchive;
+          if (selection != null && owner?.scope != selection.scope) {
+            return const Center(child: UiText('会话已变化，请返回后重新读取。'));
+          }
           if (owner == null) {
             return Center(
               child: Padding(
@@ -51,10 +62,11 @@ class ArchivedChartsPage extends StatelessWidget {
             );
           }
           return _ChartContent(
-            key: ValueKey(owner.scope),
+            key: ValueKey((account, owner.scope, selection?.id)),
             owner: owner.id,
             scope: owner.scope,
             account: account,
+            archiveId: selection?.id,
           );
         },
       ),
@@ -68,10 +80,12 @@ class _ChartContent extends StatefulWidget {
     required this.owner,
     required this.scope,
     required this.account,
+    required this.archiveId,
   });
   final String owner;
   final String scope;
   final AccountController account;
+  final String? archiveId;
 
   @override
   State<_ChartContent> createState() => _ChartContentState();
@@ -79,12 +93,24 @@ class _ChartContent extends StatefulWidget {
 
 class _ChartContentState extends State<_ChartContent> {
   var _method = ArchivedChartMethod.bazi;
+  final _closed = Completer<void>();
   late Future<ArchivedDestinyCharts?> _archive = _read();
+
+  @override
+  void dispose() {
+    _closed.complete();
+    super.dispose();
+  }
 
   Future<ArchivedDestinyCharts?> _read() async {
     try {
-      return await widget.account.reports.latestDestinyCharts(widget.owner);
+      return await widget.account.reports.latestDestinyCharts(
+        widget.owner,
+        archiveId: widget.archiveId,
+        cancel: _closed.future,
+      );
     } on JsonRequestError catch (error) {
+      if (error.status == 404 && widget.archiveId != null) return null;
       if (mounted && (error.status == 401 || error.status == 403)) {
         await widget.account.initialize();
       }
@@ -151,7 +177,9 @@ class _ChartContentState extends State<_ChartContent> {
             child: Padding(
               padding: const EdgeInsets.all(14),
               child: archive == null
-                  ? const _EmptyCharts()
+                  ? widget.archiveId == null
+                        ? const _EmptyCharts()
+                        : const UiText('找不到这次的命盘记录。')
                   : _ChartPanel(
                       archive: archive,
                       method: _method,

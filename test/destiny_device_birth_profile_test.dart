@@ -286,6 +286,7 @@ void main() {
       var birthUpdates = 0;
       var calculations = 0;
       var latestReads = 0;
+      var exactReads = 0;
       final api = AccountApi(
         JsonHttpClient(
           base: Uri.parse('https://fixture.invalid'),
@@ -333,6 +334,7 @@ void main() {
                 expect(request.url.queryParameters['expectedOwnerId'], _member);
                 return _json(archive);
               case 'GET /account/destiny-history/$_archiveId':
+                exactReads++;
                 expect(request.url.queryParameters['expectedOwnerId'], _member);
                 return _json(archive);
               case 'GET /account/destiny-history':
@@ -471,9 +473,13 @@ void main() {
       expect(find.text('上次解读'), findsOneWidget);
       expect(await readLocalDestinyBirthProfile(_member, _places), isNull);
       expect(archive, isNotNull);
+      final previousLatestReads = latestReads;
+      final previousExactReads = exactReads;
       await tester.tap(find.text('查看命盘记录'));
       await tester.pumpAndSettle();
       expect(find.byType(ArchivedChartsPage), findsOneWidget);
+      expect(exactReads, previousExactReads + 1);
+      expect(latestReads, previousLatestReads);
     },
   );
 }

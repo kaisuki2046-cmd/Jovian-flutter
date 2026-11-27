@@ -9,11 +9,13 @@ class ReportHistoryApi {
   Future<ArchivedDestinyCharts?> latestDestinyCharts(
     String owner, {
     String? archiveId,
+    Future<void>? cancel,
   }) async {
     final record = await _account.requestNullable(
       ['destiny-history', archiveId ?? 'latest'],
       authenticated: true,
       query: {'expectedOwnerId': owner},
+      cancel: cancel,
     );
     if (record == null) return null;
     if (archiveId != null && record['id'] != archiveId) {

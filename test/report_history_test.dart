@@ -384,6 +384,123 @@ void main() {
     },
   );
 
+  testWidgets('a previous report opens its saved charts without a new read', (
+    tester,
+  ) async {
+    final older = 'e' * 64;
+    final latest = 'f' * 64;
+    final calls = <String>[];
+    var owner = 'member-owner';
+    final account = _account((request) {
+      final path = request.url.path;
+      if (path == '/account/session') {
+        return _json({
+          'user': {'id': owner, 'displayName': '会员'},
+        });
+      }
+      calls.add(path);
+      expect(request.url.queryParameters['expectedOwnerId'], owner);
+      if (path == '/account/destiny-history') {
+        return _json({
+          'entries': owner == 'member-owner'
+              ? [_entry(latest, '新报告'), _entry(older, '较早的命理报告')]
+              : [],
+        });
+      }
+      expect(path, '/account/destiny-history/$older');
+      return _json({
+        ..._entry(older, '较早的命理报告'),
+        'report': {
+          'version': 1,
+          'overview': '较早的命理解读内容。',
+          'timeKnown': false,
+          'charts': [
+            {
+              'method': 'bazi',
+              'rows': [
+                {'label': '年柱', 'value': '乙丑'},
+              ],
+            },
+            {'method': 'ziwei', 'rows': []},
+            {'method': 'western', 'rows': []},
+          ],
+        },
+      });
+    });
+    addTearDown(account.dispose);
+    await account.initialize();
+    await tester.pumpWidget(MaterialApp(home: ReportsPage(account: account)));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('较早的命理报告'));
+    await tester.pumpAndSettle();
+    expect(find.text('较早的命理解读内容。'), findsOneWidget);
+    await tester.tap(find.text('查看命盘'));
+    await tester.pumpAndSettle();
+    expect(find.text('已保存的基础盘面'), findsOneWidget);
+    final oldPillar = find.byKey(const ValueKey(('destiny-pillar', '年柱')));
+    expect(
+      find.descendant(of: oldPillar, matching: find.text('乙')),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: oldPillar, matching: find.text('丑')),
+      findsOneWidget,
+    );
+    expect(calls, [
+      '/account/destiny-history',
+      '/account/destiny-history/$older',
+    ]);
+
+    owner = 'another-owner';
+    await account.initialize();
+    await tester.pumpAndSettle();
+    expect(oldPillar, findsNothing);
+    expect(find.text('会话已变化，请返回后重新读取。').hitTestable(), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('an unavailable selected archive is never replaced by latest', (
+    tester,
+  ) async {
+    final selected = 'c' * 64;
+    var owner = 'member-owner';
+    var requests = 0;
+    final account = _account((request) {
+      if (request.url.path == '/account/session') {
+        return _json({
+          'user': {'id': owner, 'displayName': '会员'},
+        });
+      }
+      requests++;
+      expect(request.url.path, '/account/destiny-history/$selected');
+      expect(request.url.queryParameters['expectedOwnerId'], 'member-owner');
+      return _json({}, 404);
+    });
+    addTearDown(account.dispose);
+    await account.initialize();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ArchivedChartsPage(
+          account: account,
+          selectedArchive: (
+            id: selected,
+            scope: account.authorizedSession!.scope,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('找不到这次的命盘记录。'), findsOneWidget);
+    await tester.tap(find.text('刷新盘面'));
+    await tester.pumpAndSettle();
+    expect(requests, 2);
+    owner = 'another-owner';
+    await account.initialize();
+    await tester.pumpAndSettle();
+    expect(find.text('会话已变化，请返回后重新读取。'), findsOneWidget);
+    expect(requests, 2);
+  });
+
   testWidgets('archived four pillars wrap and keep their saved details', (
     tester,
   ) async {

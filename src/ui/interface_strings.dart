@@ -748,6 +748,7 @@ const englishInterfaceStrings = <String, String>{
   '报告详情': 'Report details',
   '暂无已保存的报告。': 'No saved reports yet.',
   "还没有已保存的盘面。": "No saved charts yet.",
+  "找不到这次的命盘记录。": "This chart record could not be found.",
   "在命理页完成一次测算后，可在这里查看三套盘面的基础数据。":
       "Create a birth chart to see the three saved chart systems here.",
   "暂时无法读取命盘，点击重试": "Unable to load the chart. Tap to retry.",

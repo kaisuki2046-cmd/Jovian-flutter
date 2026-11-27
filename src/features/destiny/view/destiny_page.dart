@@ -528,12 +528,19 @@ class _DestinyPageState extends State<DestinyPage> {
             onTap: () => open(id),
           ),
         ),
-      if (widget.account case final account? when entry != null)
+      if ((widget.account, entry, _chartScope) case (
+        final account?,
+        final saved?,
+        final scope?,
+      ))
         TextButton(
           onPressed: () => Navigator.push(
             context,
             MaterialPageRoute<void>(
-              builder: (_) => ArchivedChartsPage(account: account),
+              builder: (_) => ArchivedChartsPage(
+                account: account,
+                selectedArchive: (id: saved.id, scope: scope),
+              ),
             ),
           ),
           child: const UiText('查看命盘记录'),

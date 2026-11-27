@@ -30,7 +30,7 @@ Web 底栏同步当前页面路径，支持刷新和浏览器前进、后退。�
 
 界面内置简体中文字体，关闭 Web CDN 时也能正常显示中文。[Noto Sans SC v2.004](https://github.com/notofonts/noto-cjk/blob/Sans2.004/Sans/SubsetOTF/SC/NotoSansSC-Regular.otf) · [字体许可证](src/ui/assets/NotoSansSC-OFL.txt)
 
-个人中心通过原账户服务恢复会话、显示 UID、关注与粉丝，并读取报告和命理档案。算事通过原 `/reading` 接口发送问题、起盘和追问。同一浏览器标签页可按当前账号恢复尚有效的算事会话。浏览器 Worker 的构建及对照见[本机计算说明](tool/legacy_compute/README.md)。
+个人中心通过原账户服务恢复会话、显示 UID、关注与粉丝，并读取报告和命理档案。打开一份命理报告后，可以查看该次保存的盘面。命理页的「查看命盘记录」也按该份解读的档案读取。算事通过原 `/reading` 接口发送问题、起盘和追问。同一浏览器标签页可按当前账号恢复尚有效的算事会话。浏览器 Worker 的构建及对照见[本机计算说明](tool/legacy_compute/README.md)。
 
 配置账户服务后，冷启动先恢复会话。未登录用户在独立欢迎页登录、注册或确认以游客体验。协议更新时核对当前版本后继续原页面，直接打开 `/fortune` 或 `/modules/fortune` 时也沿用这个流程。手机号注册需要验证时会进入现有短信登录流程，邮箱或免码注册会核对两次输入的密码。
 

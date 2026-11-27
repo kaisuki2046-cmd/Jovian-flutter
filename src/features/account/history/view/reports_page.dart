@@ -6,7 +6,8 @@ import '../../../../ui/interface_language.dart';
 
 import '../../../../ui/report_body.dart';
 import '../../../../ui/theme.dart';
-import '../../../destiny/destiny.dart' show DestinyReportText;
+import '../../../destiny/destiny.dart'
+    show DestinyCharts, DestinyReportText, showDestinyCharts;
 import '../../auth/control/account_controller.dart';
 import '../control/report_history_controller.dart';
 import '../model/report_history.dart';
@@ -322,6 +323,10 @@ class _ReportReader extends StatelessWidget {
                 return const Center(child: UiText('会话已变化，请返回后重新读取。'));
               }
               final report = history.report;
+              final charts =
+                  history.kind == ReportKind.destiny && report != null
+                  ? DestinyCharts.tryArchive(report.destiny)
+                  : null;
               final header = report?.entry ?? entry;
               return ListView(
                 padding: jovianPagePadding,
@@ -334,6 +339,24 @@ class _ReportReader extends StatelessWidget {
                     ),
                   ),
                   Text(_date(context, header.calculatedAt)),
+                  if (charts != null && charts.previews.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    OutlinedButton(
+                      onPressed: () => showDestinyCharts(
+                        context,
+                        charts,
+                        access: (
+                          listenable: Listenable.merge([account, history]),
+                          isCurrent: () =>
+                              !account.sessionChanging &&
+                              account.authorizedSession?.scope == scope &&
+                              !history.locked &&
+                              !history.disposed,
+                        ),
+                      ),
+                      child: const UiText('查看命盘'),
+                    ),
+                  ],
                   const SizedBox(height: 12),
                   if (report != null)
                     history.kind == ReportKind.destiny

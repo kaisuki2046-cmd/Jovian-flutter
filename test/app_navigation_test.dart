@@ -37,6 +37,36 @@ void main() {
     },
   );
 
+  test(
+    'chart archive history restores the private selection outside the URL',
+    () async {
+      const parser = JovianRouteParser();
+      final selection = (id: 'a' * 64, scope: 'member:test-user');
+      final charts = JovianLocation(
+        JovianTab.destiny,
+        selectedCharts: selection,
+      );
+      final route = parser.restoreRouteInformation(charts);
+      expect(route.uri.toString(), '/account/reading-profile');
+      expect(await parser.parseRouteInformation(route), charts);
+
+      for (final state in [
+        null,
+        {'chartArchiveId': 'invalid', 'scope': selection.scope},
+        {'chartArchiveId': selection.id, 'scope': 'anonymous'},
+      ]) {
+        final unselected = await parser.parseRouteInformation(
+          RouteInformation(uri: route.uri, state: state),
+        );
+        expect(unselected.tab, JovianTab.account);
+        expect(unselected.sections, [
+          accountDestination(AccountSection.charts),
+        ]);
+        expect(unselected.selectedCharts, isNull);
+      }
+    },
+  );
+
   test('legacy fortune bookmarks select exactly one account archive', () async {
     const parser = JovianRouteParser();
     Future<JovianLocation> parse(String path, {Object? state}) =>

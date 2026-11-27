@@ -10,7 +10,7 @@ export 'history/control/report_history_controller.dart'
 export 'history/model/report_history.dart'
     show ArchivedReport, ReportEntry, ReportHistoryPage, ReportKind;
 export 'history/model/archived_charts.dart'
-    show ArchivedChartMethod, ArchivedDestinyCharts;
+    show ArchivedChartMethod, ArchivedDestinyCharts, ChartArchiveSelection;
 export 'history/requests/report_history_api.dart' show ReportHistoryApi;
 export 'history/view/archived_charts_page.dart' show ArchivedChartsPage;
 export 'history/view/reports_page.dart' show ReportsPage;

@@ -14,6 +14,7 @@ class JovianLocation {
     this.fortunePath,
     this.archiveId,
     this.fortunePermissionsPeriod,
+    this.selectedCharts,
     this.legacyFortuneLink = false,
     this.welcome = false,
     this.sections = const [],
@@ -23,6 +24,7 @@ class JovianLocation {
   final String? fortunePath;
   final String? archiveId;
   final FortunePeriod? fortunePermissionsPeriod;
+  final ChartArchiveSelection? selectedCharts;
   final bool legacyFortuneLink;
   final bool welcome;
   final List<AccountDestination> sections;
@@ -34,6 +36,7 @@ class JovianLocation {
       fortunePath == other.fortunePath &&
       archiveId == other.archiveId &&
       fortunePermissionsPeriod == other.fortunePermissionsPeriod &&
+      selectedCharts == other.selectedCharts &&
       legacyFortuneLink == other.legacyFortuneLink &&
       welcome == other.welcome &&
       listEquals(sections, other.sections);
@@ -44,6 +47,7 @@ class JovianLocation {
     fortunePath,
     archiveId,
     fortunePermissionsPeriod,
+    selectedCharts,
     legacyFortuneLink,
     welcome,
     Object.hashAll(sections),
@@ -51,6 +55,7 @@ class JovianLocation {
 }
 
 const _fortunePaths = {'/fortune', '/modules/fortune'};
+const _chartsPath = '/account/reading-profile';
 const _tabAliases = {
   '/destiny': JovianTab.destiny,
   '/modules/destiny': JovianTab.destiny,
@@ -60,6 +65,7 @@ const _tabAliases = {
 };
 final _archiveId = RegExp(r'^[a-f0-9]{64}$');
 final _profileId = RegExp(r'^[A-Za-z0-9_-]{1,128}$');
+final _archiveScope = RegExp(r'^(member|guest):[A-Za-z0-9_-]{1,128}$');
 final _sections = {
   for (final section in AccountSection.values) section.slug: section,
 };
@@ -124,9 +130,10 @@ RouteInformation initialJovianRoute(JovianTab fallback) {
     WidgetsBinding.instance.platformDispatcher.defaultRouteName,
   );
   if (platformRoute != null && platformRoute.path != '/') {
+    final path = _routePath(platformRoute);
     return RouteInformation(
       uri: platformRoute,
-      state: _fortunePaths.contains(_routePath(platformRoute))
+      state: _fortunePaths.contains(path) || path == _chartsPath
           ? currentBrowserRouteState()
           : null,
     );
@@ -174,6 +181,16 @@ class JovianRouteParser extends RouteInformationParser<JovianLocation> {
         legacyFortuneLink: information.uri.queryParameters.containsKey(
           'snapshotId',
         ),
+      );
+    }
+    if (state
+        case {'chartArchiveId': final String id, 'scope': final String scope}
+        when path == _chartsPath &&
+            _archiveId.hasMatch(id) &&
+            _archiveScope.hasMatch(scope)) {
+      return JovianLocation(
+        JovianTab.destiny,
+        selectedCharts: (id: id, scope: scope),
       );
     }
     if (path == '/welcome')
@@ -239,6 +256,12 @@ class JovianRouteParser extends RouteInformationParser<JovianLocation> {
 
   @override
   RouteInformation restoreRouteInformation(JovianLocation configuration) {
+    if (configuration.selectedCharts case final selection?) {
+      return RouteInformation(
+        uri: Uri(path: _chartsPath),
+        state: {'chartArchiveId': selection.id, 'scope': selection.scope},
+      );
+    }
     final sections = configuration.sections;
     if (sections.isNotEmpty) {
       final target = sections.last;
@@ -390,14 +413,17 @@ class JovianRouter extends RouterDelegate<JovianLocation>
     required this.shell,
     required this.fortune,
     required this.fortunePermissions,
+    required this.archivedCharts,
   });
 
   final Widget Function(JovianLocation) shell;
   final Widget Function(String?, FortunePeriod?) fortune;
   final Widget Function() fortunePermissions;
+  final Widget Function(ChartArchiveSelection) archivedCharts;
 
   static const _welcomeKey = ValueKey('jovian-welcome');
   static const _fortuneKey = ValueKey('jovian-fortune');
+  static const _chartsKey = ValueKey('jovian-archived-charts');
   static const _fortunePermissionsKey = ValueKey('jovian-fortune-permissions');
 
   @override
@@ -456,6 +482,9 @@ class JovianRouter extends RouterDelegate<JovianLocation>
       archiveId: archiveId,
     ),
   );
+
+  void openChartArchive(ChartArchiveSelection selection) =>
+      _navigate(JovianLocation(JovianTab.destiny, selectedCharts: selection));
 
   void openFortunePermissions(FortunePeriod period) =>
       _setFortunePermissions(period);
@@ -581,6 +610,12 @@ class JovianRouter extends RouterDelegate<JovianLocation>
               underneath.fortunePermissionsPeriod,
             ),
           ),
+        if (underneath.selectedCharts case final selection?)
+          MaterialPage<void>(
+            key: _chartsKey,
+            name: _chartsPath,
+            child: archivedCharts(selection),
+          ),
         if (underneath.fortunePermissionsPeriod != null)
           MaterialPage<void>(
             key: _fortunePermissionsKey,
@@ -601,7 +636,8 @@ class JovianRouter extends RouterDelegate<JovianLocation>
             _location.fortunePermissionsPeriod != null) {
           Router.neglect(context, () => _setFortunePermissions(null));
         }
-        if (page.key == _fortuneKey && _location.fortunePath != null) {
+        if ((page.key == _fortuneKey && _location.fortunePath != null) ||
+            (page.key == _chartsKey && _location.selectedCharts != null)) {
           Router.neglect(context, () => selectTab(JovianTab.destiny));
         }
       },

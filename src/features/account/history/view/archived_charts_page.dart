@@ -19,7 +19,7 @@ class ArchivedChartsPage extends StatelessWidget {
     this.selectedArchive,
   });
   final AccountController account;
-  final ({String id, String scope})? selectedArchive;
+  final ChartArchiveSelection? selectedArchive;
 
   @override
   Widget build(BuildContext context) => Scaffold(

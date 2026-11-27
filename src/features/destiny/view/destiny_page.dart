@@ -25,6 +25,7 @@ class DestinyPage extends StatefulWidget {
     required this.calculateReading,
     this.requestReport,
     this.openFortune,
+    this.openArchivedCharts,
     this.account,
     this.active = true,
   });
@@ -39,6 +40,7 @@ class DestinyPage extends StatefulWidget {
   final Future<String> Function(Map<String, Object?>, Future<void>)?
   requestReport;
   final void Function(String? archiveId)? openFortune;
+  final ValueChanged<ChartArchiveSelection>? openArchivedCharts;
   final AccountController? account;
   final bool active;
 
@@ -534,15 +536,22 @@ class _DestinyPageState extends State<DestinyPage> {
         final scope?,
       ))
         TextButton(
-          onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute<void>(
-              builder: (_) => ArchivedChartsPage(
-                account: account,
-                selectedArchive: (id: saved.id, scope: scope),
-              ),
-            ),
-          ),
+          onPressed: () {
+            final selection = (id: saved.id, scope: scope);
+            if (widget.openArchivedCharts case final open?) {
+              open(selection);
+            } else {
+              Navigator.push<void>(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => ArchivedChartsPage(
+                    account: account,
+                    selectedArchive: selection,
+                  ),
+                ),
+              );
+            }
+          },
           child: const UiText('查看命盘记录'),
         ),
       Wrap(

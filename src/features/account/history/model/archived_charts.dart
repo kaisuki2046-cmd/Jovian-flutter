@@ -2,6 +2,8 @@ import 'package:jovian_destiny/jovian_destiny.dart' show ArchivedChartRow;
 
 import 'report_history.dart';
 
+typedef ChartArchiveSelection = ({String id, String scope});
+
 enum ArchivedChartMethod {
   bazi('八字'),
   ziwei('紫微斗数'),

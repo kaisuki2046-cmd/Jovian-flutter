@@ -71,6 +71,7 @@ class _JovianAppState extends State<JovianApp> with WidgetsBindingObserver {
     shell: _shellPage,
     fortune: _fortunePage,
     fortunePermissions: _fortunePermissionsPage,
+    archivedCharts: _archivedChartsPage,
   );
   late final _routeInformation = JovianRouteInformationProvider(
     initialRouteInformation: initialJovianRoute(widget.initialTab),
@@ -248,6 +249,7 @@ class _JovianAppState extends State<JovianApp> with WidgetsBindingObserver {
         tab: location.tab,
         onTabSelected: _navigation.selectTab,
         openFortune: _navigation.openFortune,
+        openArchivedCharts: _navigation.openChartArchive,
         openWelcome: _navigation.openWelcome,
         sectionsFor: _navigation.sectionsFor,
         onSectionPopped: _navigation.accountSectionPopped,
@@ -314,6 +316,19 @@ class _JovianAppState extends State<JovianApp> with WidgetsBindingObserver {
         ),
       );
 
+  Widget _archivedChartsPage(ChartArchiveSelection selection) {
+    final account = widget.account;
+    if (account == null) {
+      return const _ModuleStatusPage(
+        tab: JovianTab.account,
+        message: '账号服务暂不可用。',
+      );
+    }
+    return _accountEntry(
+      ArchivedChartsPage(account: account, selectedArchive: selection),
+    );
+  }
+
   Widget _fortunePermissionsPage() => _accountEntry(
     AccountSectionPage(
       account: widget.account,
@@ -333,6 +348,7 @@ class _AppHome extends StatefulWidget {
     required this.tab,
     required this.onTabSelected,
     required this.openFortune,
+    required this.openArchivedCharts,
     required this.openWelcome,
     required this.sectionsFor,
     required this.onSectionPopped,
@@ -345,6 +361,7 @@ class _AppHome extends StatefulWidget {
   final JovianTab tab;
   final ValueChanged<JovianTab> onTabSelected;
   final ValueChanged<String?> openFortune;
+  final ValueChanged<ChartArchiveSelection> openArchivedCharts;
   final VoidCallback openWelcome;
   final List<AccountDestination> Function(JovianTab) sectionsFor;
   final void Function(JovianTab, AccountDestination) onSectionPopped;
@@ -421,6 +438,7 @@ class _AppHomeState extends State<_AppHome> {
         account: widget.account,
         active: active,
         openFortune: widget.openFortune,
+        openArchivedCharts: widget.openArchivedCharts,
       ),
       JovianTab.synastry => SynastryPage(
         key: ValueKey(_scope),

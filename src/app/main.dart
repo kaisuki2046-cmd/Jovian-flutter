@@ -439,7 +439,7 @@ class _AppHomeState extends State<_AppHome> {
         child: SocialPage(
           account: widget.account,
           active: active,
-          openAccount: () => selectTab(JovianTab.account),
+          openAccount: widget.openWelcome,
         ),
       ),
       JovianTab.account => switch (widget.account) {

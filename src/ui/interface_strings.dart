@@ -824,6 +824,7 @@ const englishInterfaceStrings = <String, String>{
   '登录后可按 UID 或昵称找用户，并查看新增粉丝提醒。':
       'Sign in to find users by UID or nickname and see new follower alerts.',
   '登录后可按 UID 或昵称找用户。': 'Sign in to find users by UID or nickname.',
+  '登录后查看当前账户的消息': 'Sign in to see your account messages.',
   '当前账号无权访问此功能。': 'This account cannot access this feature.',
   '账号已退出或会话已过期，请重新登录。': 'Your session has ended. Sign in again.',
   '请在个人中心确认最新协议后重试。': 'Review the latest agreements in Profile and try again.',

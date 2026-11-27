@@ -59,7 +59,7 @@ class AccountSectionPage extends StatelessWidget {
         );
       case AccountSection.security:
         return account.memberId == null
-            ? _unavailable('登录后可管理账户安全。', openAccount)
+            ? _unavailable('登录后可管理账户安全。', signIn: openAccount)
             : AccountSecurityPage(account: account);
       case AccountSection.privacy:
         return AccountPrivacyPage(account: account);
@@ -82,7 +82,15 @@ class AccountSectionPage extends StatelessWidget {
         return ReportsPage(account: account);
       default:
         final owner = account.memberId;
-        if (owner == null) return _unavailable('登录后可查看此页面。', openAccount);
+        if (owner == null) {
+          final (title, message) = switch (target.section) {
+            AccountSection.findUser => ('找用户', '登录后可按 UID 或昵称找用户。'),
+            AccountSection.socialReports => ('我的举报', '登录后查看当前账户的消息'),
+            AccountSection.socialModeration => ('举报处理', '登录后查看当前账户的消息'),
+            _ => ('个人中心', '登录后可查看此页面。'),
+          };
+          return _unavailable(message, title: title, signIn: openAccount);
+        }
         return _memberSection(account, owner);
     }
   }
@@ -147,12 +155,16 @@ class AccountSectionPage extends StatelessWidget {
         ),
       };
 
-  Widget _unavailable(String message, [VoidCallback? signIn]) => Scaffold(
-    appBar: AppBar(title: const UiText('个人中心')),
+  Widget _unavailable(
+    String message, {
+    VoidCallback? signIn,
+    String title = '个人中心',
+  }) => Scaffold(
+    appBar: AppBar(title: UiText(title)),
     body: ListView(
       padding: jovianPagePadding,
       children: [
-        Text(message),
+        UiText(message),
         if (signIn != null)
           TextButton(onPressed: signIn, child: const UiText('前往登录')),
       ],

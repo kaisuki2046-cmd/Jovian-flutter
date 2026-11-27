@@ -189,6 +189,121 @@ void main() {
     expect(find.text('2 unread'), findsOneWidget);
     expect(find.text('Moderation queue'), findsNothing);
   });
+  for (final switchTabs in [true, false]) {
+    final reason = switchTabs ? 'switching tabs' : 'going back';
+    testWidgets('a late read does not open a profile after $reason', (
+      tester,
+    ) async {
+      final read = Completer<http.Response>();
+      var reads = 0;
+      var profileRequests = 0;
+      var unread = 1;
+      final account = _account(_Storage(), (request) async {
+        switch (request.url.path) {
+          case '/social/notifications/summary':
+            return _json({'unread': unread, 'canModerate': false});
+          case '/social/notifications':
+            return _json({
+              'unread': unread,
+              'items': [
+                {
+                  'id': _alertId,
+                  'actor': _profile,
+                  'createdAt': 1700000000000,
+                  'readAt': unread == 0 ? 1700000000001 : null,
+                },
+              ],
+            });
+          case '/social/notifications/read':
+            reads++;
+            return read.future;
+          case '/social/profiles/$_actorId':
+            profileRequests++;
+            return _json(_profile);
+          default:
+            fail('Unexpected social route ${request.url.path}');
+        }
+      });
+      addTearDown(account.dispose);
+      await account.initialize();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: JovianShell(
+            initialTab: JovianTab.messages,
+            buildPage: (_, tab, active, _) => tab == JovianTab.messages
+                ? SocialPage(account: account, active: active)
+                : const SizedBox.shrink(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('新增粉丝'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('查看主页'));
+      await tester.pump();
+      expect(reads, 1);
+
+      if (switchTabs) {
+        await tester.tap(find.byKey(const ValueKey(JovianTab.destiny)));
+        await tester.pumpAndSettle();
+      } else {
+        await tester.tap(find.byType(BackButton));
+        await tester.pump();
+      }
+      unread = 0;
+      read.complete(_json({'unread': unread}));
+      await tester.pumpAndSettle();
+      expect(profileRequests, 0);
+
+      if (switchTabs) {
+        await tester.tap(find.byKey(const ValueKey(JovianTab.messages)));
+      } else {
+        expect(find.text('1 条未读'), findsNothing);
+        await tester.tap(find.text('新增粉丝'));
+      }
+      await tester.pumpAndSettle();
+      expect(find.text('明月关注了你'), findsOneWidget);
+      expect(find.textContaining(' · 已读'), findsOneWidget);
+      await tester.tap(find.text('查看主页'));
+      await tester.pumpAndSettle();
+      expect(find.text('UID 12345678'), findsOneWidget);
+      expect(reads, 1);
+      expect(profileRequests, 1);
+    });
+  }
+
+  testWidgets('guest message shortcuts open sign-in prompts without requests', (
+    tester,
+  ) async {
+    var signIns = 0;
+    final account = _account(
+      _Storage(),
+      (request) async => fail('Guest requested ${request.url.path}'),
+      guest: true,
+    );
+    addTearDown(account.dispose);
+    await account.initialize();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: SocialPage(account: account, openAccount: () => signIns++),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    for (final destination in ['新增粉丝', '我的举报']) {
+      await tester.tap(find.text(destination));
+      await tester.pumpAndSettle();
+      expect(find.text(destination), findsOneWidget);
+      expect(find.text('登录后查看当前账户的消息'), findsOneWidget);
+      await tester.tap(find.text('前往登录'));
+      expect(find.byType(BackButton), findsOneWidget);
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      expect(find.text('消息'), findsOneWidget);
+    }
+    expect(signIns, 2);
+  });
+
   testWidgets('loads, reads and returns from a live follower alert', (
     tester,
   ) async {

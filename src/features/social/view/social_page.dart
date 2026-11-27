@@ -47,26 +47,44 @@ class SocialPage extends StatelessWidget {
         final needsAgreement =
             current.session?.kind.name == 'member' &&
             current.authorizedSession == null;
+        if (awaitingAccount || changingAccount) {
+          return const _UnavailableMessages('正在确认当前账号…');
+        }
+        if (needsAgreement) {
+          return _UnavailableMessages(
+            '请阅读并确认当前的《用户服务协议》和《隐私政策》后继续。',
+            openAccount: openAccount,
+            action: '阅读并确认协议',
+          );
+        }
+
+        Widget signInPage(String title, String message) => _UnavailableMessages(
+          message,
+          title: title,
+          openAccount: openAccount,
+        );
+
+        const memberMessages = '登录后查看当前账户的消息';
         return _UnavailableMessages(
-          awaitingAccount || changingAccount
-              ? '正在确认当前账号…'
-              : needsAgreement
-              ? '请先在个人中心确认协议。'
-              : '登录后可按 UID 或昵称找用户，并查看新增粉丝提醒。',
-          openAccount: awaitingAccount || changingAccount ? null : openAccount,
-          action: needsAgreement ? '前往个人中心' : '前往登录',
-          onFindUser: awaitingAccount || changingAccount || needsAgreement
-              ? null
-              : () => AccountSectionLinks.openPage(
-                  context,
-                  AccountSection.findUser,
-                  () => _UnavailableMessages(
-                    '登录后可按 UID 或昵称找用户。',
-                    title: '找用户',
-                    openAccount: openAccount,
-                    action: '前往登录',
-                  ),
-                ),
+          '登录后可按 UID 或昵称找用户，并查看新增粉丝提醒。',
+          openAccount: openAccount,
+          onFindUser: () => AccountSectionLinks.openPage(
+            context,
+            AccountSection.findUser,
+            () => signInPage('找用户', '登录后可按 UID 或昵称找用户。'),
+          ),
+          shortcuts: _MessageShortcuts(
+            openFollowers: () => Navigator.of(context).push<void>(
+              MaterialPageRoute(
+                builder: (_) => signInPage('新增粉丝', memberMessages),
+              ),
+            ),
+            openReports: () => AccountSectionLinks.openPage(
+              context,
+              AccountSection.socialReports,
+              () => signInPage('我的举报', memberMessages),
+            ),
+          ),
         );
       },
     );
@@ -78,15 +96,17 @@ class _UnavailableMessages extends StatelessWidget {
     this.message, {
     this.title = '消息',
     this.openAccount,
-    this.action,
+    this.action = '前往登录',
     this.onFindUser,
+    this.shortcuts,
   });
 
   final String message;
   final String title;
   final VoidCallback? openAccount;
-  final String? action;
+  final String action;
   final VoidCallback? onFindUser;
+  final Widget? shortcuts;
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -97,6 +117,7 @@ class _UnavailableMessages extends StatelessWidget {
     body: ListView(
       padding: const EdgeInsets.all(20),
       children: [
+        if (shortcuts case final entries?) entries,
         Card(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 20),
@@ -113,7 +134,7 @@ class _UnavailableMessages extends StatelessWidget {
                   const SizedBox(height: 12),
                   FilledButton.tonal(
                     onPressed: openAccount,
-                    child: UiText(action!),
+                    child: UiText(action),
                   ),
                 ],
               ],
@@ -248,6 +269,11 @@ class _MessagesHomeState extends State<_MessagesHome> {
     });
   }
 
+  void _refreshAfterRead() {
+    // The inbox can finish marking a notification after returning here.
+    if (mounted && _visible && widget.controller.isCurrentMember) _refresh();
+  }
+
   Future<void> _open(Widget Function() page, {AccountSection? section}) async {
     final before = _summary;
     if (section == null) {
@@ -283,53 +309,27 @@ class _MessagesHomeState extends State<_MessagesHome> {
           padding: const EdgeInsets.all(20),
           children: [
             if (loading) const LinearProgressIndicator(),
-            Card(
-              child: Column(
-                children: [
-                  ListTile(
-                    leading: const Icon(Icons.person_add_alt_1_outlined),
-                    title: const UiText('新增粉丝'),
-                    subtitle: unread > 0
-                        ? Text(
-                            context.uiLanguage == InterfaceLanguage.english
-                                ? '$unread unread'
-                                : '$unread 条未读',
-                          )
-                        : const UiText('查看关注提醒'),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () => _open(
-                      () => FollowerAlertsPage(controller: widget.controller),
-                    ),
-                  ),
-                  const Divider(height: 1, indent: 16, endIndent: 16),
-                  ListTile(
-                    leading: const Icon(Icons.flag_outlined),
-                    title: const UiText('我的举报'),
-                    subtitle: const UiText('查看举报处理进度'),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () => _open(
-                      () => SocialReportsPage(controller: widget.controller),
-                      section: AccountSection.socialReports,
-                    ),
-                  ),
-                  if (inbox?.canModerate == true) ...[
-                    const Divider(height: 1, indent: 16, endIndent: 16),
-                    ListTile(
-                      leading: const Icon(Icons.fact_check_outlined),
-                      title: const UiText('举报处理'),
-                      subtitle: const UiText('处理待办举报'),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () => _open(
-                        () => SocialReportsPage(
-                          controller: widget.controller,
-                          moderation: true,
-                        ),
-                        section: AccountSection.socialModeration,
-                      ),
-                    ),
-                  ],
-                ],
+            _MessageShortcuts(
+              unread: unread,
+              openFollowers: () => _open(
+                () => FollowerAlertsPage(
+                  controller: widget.controller,
+                  onRead: _refreshAfterRead,
+                ),
               ),
+              openReports: () => _open(
+                () => SocialReportsPage(controller: widget.controller),
+                section: AccountSection.socialReports,
+              ),
+              openModeration: inbox?.canModerate == true
+                  ? () => _open(
+                      () => SocialReportsPage(
+                        controller: widget.controller,
+                        moderation: true,
+                      ),
+                      section: AccountSection.socialModeration,
+                    )
+                  : null,
             ),
             if (!loading && snapshot.hasError)
               ListTile(
@@ -344,6 +344,59 @@ class _MessagesHomeState extends State<_MessagesHome> {
           ],
         );
       },
+    ),
+  );
+}
+
+class _MessageShortcuts extends StatelessWidget {
+  const _MessageShortcuts({
+    required this.openFollowers,
+    required this.openReports,
+    this.openModeration,
+    this.unread = 0,
+  });
+
+  final VoidCallback openFollowers;
+  final VoidCallback openReports;
+  final VoidCallback? openModeration;
+  final int unread;
+
+  @override
+  Widget build(BuildContext context) => Card(
+    child: Column(
+      children: [
+        ListTile(
+          leading: const Icon(Icons.person_add_alt_1_outlined),
+          title: const UiText('新增粉丝'),
+          subtitle: unread > 0
+              ? Text(
+                  context.uiLanguage == InterfaceLanguage.english
+                      ? '$unread unread'
+                      : '$unread 条未读',
+                )
+              : const UiText('查看关注提醒'),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: openFollowers,
+        ),
+        const Divider(height: 1, indent: 16, endIndent: 16),
+        ListTile(
+          leading: const Icon(Icons.flag_outlined),
+          title: const UiText('我的举报'),
+          subtitle: const UiText('查看举报处理进度'),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: openReports,
+        ),
+        if (openModeration != null) ...[
+          const Divider(height: 1, indent: 16, endIndent: 16),
+          ListTile(
+            leading: const Icon(Icons.fact_check_outlined),
+            title: const UiText('举报处理'),
+            subtitle: const UiText('处理待办举报'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: openModeration,
+          ),
+        ],
+      ],
     ),
   );
 }

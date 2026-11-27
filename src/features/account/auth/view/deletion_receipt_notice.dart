@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/interface_language.dart';
+
 import '../control/account_deletion_service.dart';
 import '../model/account_deletion.dart';
 
@@ -63,16 +65,16 @@ class _DeletionReceiptNoticeState extends State<DeletionReceiptNotice> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (receipt != null)
-              Text(receipt.completed ? '账号注销已完成。' : '账号已退出，关联数据正在清理。'),
-            if (receipt?.deviceCleared == false) const Text('本机记录清理未完成，请重试。'),
-            if (_failed) const Text('暂时无法读取或更新注销记录，请重试。'),
+              UiText(receipt.completed ? '账号注销已完成。' : '账号已退出，关联数据正在清理。'),
+            if (receipt?.deviceCleared == false) const UiText('本机记录清理未完成，请重试。'),
+            if (_failed) const UiText('暂时无法读取或更新注销记录，请重试。'),
             TextButton(
               onPressed: _busy
                   ? null
                   : dismissible
                   ? _dismiss
                   : _refresh,
-              child: Text(dismissible ? '知道了' : '刷新注销状态'),
+              child: UiText(dismissible ? '知道了' : '刷新注销状态'),
             ),
           ],
         ),

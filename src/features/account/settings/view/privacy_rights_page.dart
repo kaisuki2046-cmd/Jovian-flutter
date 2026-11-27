@@ -36,7 +36,7 @@ class PrivacyRightsPage extends StatelessWidget {
           if (account.memberId != owner || member == null) {
             return const Padding(
               padding: jovianPagePadding,
-              child: Text('登录并确认协议后可查看或提交申请。'),
+              child: UiText('登录并确认协议后可查看或提交申请。'),
             );
           }
           return _PrivacyRightsPanel(
@@ -125,29 +125,34 @@ class _PrivacyRightsPanelState extends State<_PrivacyRightsPanel> {
     if (mounted) setState(() => _copyNotice = message);
   }
 
-  Widget _form(String label, String submit) => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      TextField(
-        controller: _detail,
-        enabled: !_controller.busy,
-        maxLength: privacyRequestLimit,
-        minLines: 3,
-        maxLines: 5,
-        decoration: InputDecoration(labelText: label),
-      ),
-      const Text('请勿填写密码、验证码或完整身份证号码。'),
-      const SizedBox(height: 12),
-      FilledButton(
-        onPressed: _controller.busy ? null : _submit,
-        child: Text(_controller.saving ? '正在保存…' : submit),
-      ),
-      TextButton(
-        onPressed: _controller.saving ? null : _select,
-        child: const UiText('取消'),
-      ),
-    ],
-  );
+  Widget _form(String label, String submit, {required bool needsDetail}) =>
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          TextField(
+            controller: _detail,
+            enabled: !_controller.busy,
+            maxLength: privacyRequestLimit,
+            minLines: 3,
+            maxLines: 5,
+            onChanged: (_) => setState(() {}),
+            decoration: InputDecoration(labelText: context.uiLabel(label)),
+          ),
+          const UiText('请勿填写密码、验证码或完整身份证号码。'),
+          const SizedBox(height: 12),
+          FilledButton(
+            onPressed:
+                _controller.busy || (needsDetail && _detail.text.trim().isEmpty)
+                ? null
+                : _submit,
+            child: UiText(_controller.saving ? '正在保存…' : submit),
+          ),
+          TextButton(
+            onPressed: _controller.saving ? null : _select,
+            child: const UiText('取消'),
+          ),
+        ],
+      );
 
   Widget _receipt(PrivacyReceipt receipt) {
     final theme = Theme.of(context);
@@ -160,35 +165,39 @@ class _PrivacyRightsPanelState extends State<_PrivacyRightsPanel> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              '${receipt.kind.label} · ${receipt.reviewed ? '已处理' : '待处理'}',
+              '${context.uiLabel(receipt.kind.label)} · '
+              '${context.uiLabel(receipt.reviewed ? '已处理' : '待处理')}',
               style: theme.textTheme.titleSmall,
             ),
             const SizedBox(height: 4),
             Text(
-              '${date.year}年${date.month}月${date.day}日',
+              MaterialLocalizations.of(context).formatShortDate(date),
               style: theme.textTheme.bodySmall,
             ),
             if (receipt.ownerId case final id?)
-              Text('申请账户 $id', style: theme.textTheme.bodySmall),
+              Text(
+                '${context.uiLabel('申请账户')} $id',
+                style: theme.textTheme.bodySmall,
+              ),
             if (receipt.detail.isNotEmpty) ...[
               const SizedBox(height: 8),
               Text(receipt.detail),
             ],
             if (receipt.conclusion case final conclusion?) ...[
               const SizedBox(height: 8),
-              Text('处理结论', style: theme.textTheme.labelLarge),
+              UiText('处理结论', style: theme.textTheme.labelLarge),
               Text(conclusion),
             ],
             if (_controller.queue && receipt.ownerId != widget.member.id) ...[
               const SizedBox(height: 8),
               if (_reviewing?.id == receipt.id)
-                _form('处理说明（申请人可见）', '确认处理')
+                _form('处理说明（申请人可见）', '确认处理', needsDetail: true)
               else
                 OutlinedButton(
                   onPressed: _controller.busy || _reviewing != null
                       ? null
                       : () => _select(receipt: receipt),
-                  child: const Text('处理申请'),
+                  child: const UiText('处理申请'),
                 ),
             ],
           ],
@@ -209,15 +218,15 @@ class _PrivacyRightsPanelState extends State<_PrivacyRightsPanel> {
           if (_controller.queue)
             TextButton(
               onPressed: _controller.busy ? null : () => _showQueue(false),
-              child: const Text('返回我的申请'),
+              child: const UiText('返回我的申请'),
             )
           else ...[
             Card(
               margin: const EdgeInsets.only(bottom: 12),
               child: ListTile(
                 leading: const Icon(Icons.person_outline),
-                title: const Text('查看或更正基础资料'),
-                subtitle: const Text('昵称、简介和出生资料'),
+                title: const UiText('查看或更正基础资料'),
+                subtitle: const UiText('昵称、简介和出生资料'),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => AccountSectionLinks.openPage(
                   context,
@@ -238,7 +247,7 @@ class _PrivacyRightsPanelState extends State<_PrivacyRightsPanel> {
                   children: [
                     OutlinedButton(
                       onPressed: _copy,
-                      child: const Text('复制基础资料'),
+                      child: const UiText('复制基础资料'),
                     ),
                     for (final kind in PrivacyRequestKind.values) ...[
                       const SizedBox(height: 6),
@@ -246,7 +255,7 @@ class _PrivacyRightsPanelState extends State<_PrivacyRightsPanel> {
                         onPressed: _controller.busy
                             ? null
                             : () => _select(kind: kind),
-                        child: Text(kind.label),
+                        child: UiText(kind.label),
                       ),
                     ],
                     if (_applying case final kind?) ...[
@@ -256,6 +265,7 @@ class _PrivacyRightsPanelState extends State<_PrivacyRightsPanel> {
                             ? '说明需要更正的资料'
                             : '说明需要查阅或复制的资料（选填）',
                         '提交申请',
+                        needsDetail: kind == PrivacyRequestKind.correction,
                       ),
                     ],
                   ],
@@ -265,13 +275,13 @@ class _PrivacyRightsPanelState extends State<_PrivacyRightsPanel> {
             if (_controller.canReview)
               OutlinedButton(
                 onPressed: _controller.busy ? null : () => _showQueue(true),
-                child: const Text('处理用户申请'),
+                child: const UiText('处理用户申请'),
               ),
           ],
           const SizedBox(height: 12),
           Semantics(
             header: true,
-            child: Text(
+            child: UiText(
               _controller.queue ? '待处理申请' : '我的申请',
               style: theme.textTheme.titleMedium,
             ),
@@ -280,15 +290,15 @@ class _PrivacyRightsPanelState extends State<_PrivacyRightsPanel> {
           if (_controller.loading) const LinearProgressIndicator(),
           if (_controller.receipts case final receipts?)
             if (receipts.isEmpty)
-              const Text('暂无记录。')
+              const UiText('暂无记录。')
             else
               for (final receipt in receipts) _receipt(receipt),
           if (_copyNotice ?? _controller.notice case final notice?)
-            Semantics(liveRegion: true, child: Text(notice)),
+            Semantics(liveRegion: true, child: UiText(notice)),
           if (_controller.error case final error?)
             Semantics(
               liveRegion: true,
-              child: Text(
+              child: UiText(
                 error,
                 style: TextStyle(color: theme.colorScheme.error),
               ),
@@ -300,7 +310,7 @@ class _PrivacyRightsPanelState extends State<_PrivacyRightsPanel> {
             ),
           TextButton(
             onPressed: _controller.busy ? null : _controller.refresh,
-            child: const Text('刷新'),
+            child: const UiText('刷新'),
           ),
         ],
       );

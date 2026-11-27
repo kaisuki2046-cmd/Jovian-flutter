@@ -3,10 +3,11 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
-import '../../../../ui/interface_language.dart';
-
 import '../../../../shared/http/json_client.dart';
+import '../../../../ui/interface_language.dart';
 import '../../../../ui/theme.dart';
+import '../../../compliance/agreements.dart';
+import '../../settings/view/agreement_document_page.dart';
 import '../control/account_controller.dart';
 import '../model/account_deletion.dart';
 import '../model/password.dart';
@@ -113,22 +114,10 @@ class _AccountDeletionPageState extends State<AccountDeletionPage> {
     }
   }
 
-  Future<void> _readNotice() => showDialog<void>(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: const UiText('账号注销与数据删除说明'),
-      scrollable: true,
-      content: const Text(
-        '请在申请前核对账号、命理档案、API 报告、算事记录、第三方登录关联及剩余权益。\n\n'
-        '注销会撤销该账号的所有会话，并处理账号资料、已归档报告、命理档案、社交关系和当前设备上的记录。第三方平台账号及其记录按对应平台规则处理。\n\n'
-        '提交后可在登录页查看处理状态。关联记录仍在清理时，可刷新查询。',
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const UiText('关闭'),
-        ),
-      ],
+  Future<void> _readNotice() => Navigator.of(context).push<void>(
+    MaterialPageRoute(
+      builder: (_) =>
+          AgreementDocumentPage.bundled(bundledAgreementDrafts['deletion']!),
     ),
   );
 
@@ -149,17 +138,17 @@ class _AccountDeletionPageState extends State<AccountDeletionPage> {
             padding: jovianPagePadding,
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             children: [
-              const Text('注销会结束该账号在所有设备上的登录。注销完成后无法恢复。'),
+              const UiText('注销会结束该账号在所有设备上的登录。注销完成后无法恢复。'),
               Align(
                 alignment: Alignment.centerLeft,
                 child: TextButton(
                   onPressed: _readNotice,
-                  child: const Text('阅读《账号注销与数据删除说明》'),
+                  child: const UiText('阅读《账号注销与数据删除说明》'),
                 ),
               ),
               if (_busy) const LinearProgressIndicator(),
               if (changed)
-                const Text('登录状态已变更，请重新登录后重试。')
+                const UiText('登录状态已变更，请重新登录后重试。')
               else ...[
                 if (method == DeletionMethod.password)
                   TextField(
@@ -170,15 +159,17 @@ class _AccountDeletionPageState extends State<AccountDeletionPage> {
                     enableSuggestions: false,
                     autofillHints: const [AutofillHints.password],
                     onChanged: (_) => setState(() {}),
-                    decoration: const InputDecoration(labelText: '当前密码'),
+                    decoration: InputDecoration(
+                      labelText: context.uiLabel('当前密码'),
+                    ),
                   ),
                 if (method == DeletionMethod.phone) ...[
                   OutlinedButton(
                     onPressed: _busy ? null : _sendCode,
-                    child: const Text('向绑定手机号发送验证码'),
+                    child: const UiText('向绑定手机号发送验证码'),
                   ),
                   if (_challenge case final challenge?) ...[
-                    Text(
+                    UiText(
                       challenge.localInbox ? '请在本机虚拟服务商收件箱查看验证码。' : '验证码已发送。',
                     ),
                     TextField(
@@ -189,23 +180,23 @@ class _AccountDeletionPageState extends State<AccountDeletionPage> {
                       maxLength: 6,
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       onChanged: (_) => setState(() {}),
-                      decoration: const InputDecoration(
-                        labelText: '注销验证码',
+                      decoration: InputDecoration(
+                        labelText: context.uiLabel('注销验证码'),
                         counterText: '',
                       ),
                     ),
                   ],
                 ],
                 if (method == DeletionMethod.localSocial)
-                  const Text('本机第三方登录演示将在提交时再次验证身份。'),
+                  const UiText('本机第三方登录演示将在提交时再次验证身份。'),
                 if (method == DeletionMethod.unsupported)
-                  const Text('此登录方式的注销身份验证暂不可用。'),
+                  const UiText('此登录方式的注销身份验证暂不可用。'),
                 if (supported) ...[
                   CheckboxListTile(
                     value: _confirmed,
                     controlAffinity: ListTileControlAffinity.leading,
                     contentPadding: EdgeInsets.zero,
-                    title: const Text('我了解注销影响并确认申请'),
+                    title: const UiText('我了解注销影响并确认申请'),
                     onChanged: _busy
                         ? null
                         : (checked) =>
@@ -227,7 +218,7 @@ class _AccountDeletionPageState extends State<AccountDeletionPage> {
                 if (_error case final error?)
                   Semantics(
                     liveRegion: true,
-                    child: Text(error, style: TextStyle(color: colors.error)),
+                    child: UiText(error, style: TextStyle(color: colors.error)),
                   ),
               ],
             ],

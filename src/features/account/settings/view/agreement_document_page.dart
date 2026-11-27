@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../ui/interface_language.dart';
+import '../../../compliance/agreements.dart';
 
 import '../model/agreements.dart';
 
@@ -47,6 +48,13 @@ class AgreementDocumentPage extends StatelessWidget {
         sections: document.sections,
         version: document.version,
         preview: document.preview,
+      );
+
+  factory AgreementDocumentPage.bundled(BundledAgreementDraft draft) =>
+      AgreementDocumentPage(
+        title: draft.title,
+        sections: draft.sections,
+        preview: true,
       );
 
   final String title;

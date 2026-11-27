@@ -239,6 +239,13 @@ void main() {
     await tap(find.byTooltip('设置'));
     await tap(find.text('账户与安全'));
     await tap(find.text('注销账号'));
+    await tap(find.text('阅读《账号注销与数据删除说明》'));
+    expect(find.text('内测草案，未发布生效。'), findsOneWidget);
+    expect(find.text('注销请求'), findsOneWidget);
+    expect(find.text('数据处理范围'), findsOneWidget);
+    await tap(find.byType(BackButton));
+    await tester.pumpAndSettle();
+    expect(attempts, 0);
     final password = find.widgetWithText(TextField, '当前密码');
     final submit = find.widgetWithText(FilledButton, '确认注销账号');
     await tester.enterText(password, 'wrong');

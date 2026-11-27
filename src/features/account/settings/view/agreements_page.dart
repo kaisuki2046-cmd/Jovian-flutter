@@ -141,13 +141,7 @@ class AgreementDirectory extends StatelessWidget {
             if (documents[id] case final document?)
               _DirectoryLink(reader: AgreementDocumentPage.versioned(document))
             else if (bundledAgreementDrafts[id] case final draft?)
-              _DirectoryLink(
-                reader: AgreementDocumentPage(
-                  title: draft.title,
-                  sections: draft.sections,
-                  preview: true,
-                ),
-              ),
+              _DirectoryLink(reader: AgreementDocumentPage.bundled(draft)),
         ],
       ),
     );

@@ -4,18 +4,19 @@ Flutter 版沿用项目的[目录分工](../app/FRAMEWORK.md)、[协作协议](.
 
 ## 启动 Flutter Web 前端
 
-将 Flutter 客户端与原项目检出为同级目录。`app-flutter/` 是 Flutter 客户端的 Git 工作树和项目根目录，`app/` 提供原 RN 应用、TypeScript 计算和 Node 服务。Flutter 编辑、Git 提交、测试和构建均在 `app-flutter/` 下进行。本文指向原项目的链接使用该同级布局。
+从 Flutter 独立仓库的根目录启动。同级 `app/` 提供原 TypeScript 计算源码和可选的本机 Node 服务。原项目也可以放在任意目录，通过环境变量 `JOVIAN_LEGACY_SOURCE_ROOT` 指定绝对路径。运行中的 Node 服务可以直接通过 API 地址接入。本文指向原项目的相对链接以同级布局为例。
 
-在 Flutter 项目根目录运行 `node tool/legacy_compute/build.mjs`，由原 TypeScript 生成 Web 和原生端共用的计算资源。原项目的 Node 依赖位于另一工作树时，按[本机计算说明](tool/legacy_compute/README.md)设置 `JOVIAN_LEGACY_NODE_ROOT`。然后运行以下命令，将服务地址和 Web 来源设为已有服务允许的值。若使用 Flutter 项目 `.local` 下的本地 SDK，在 PowerShell 中把 `flutter` 换成 `& '.\.local\flutter-toolchain\flutter\bin\flutter.bat'`。
+原项目的 Node 依赖位于另一工作树时，设置 `JOVIAN_LEGACY_NODE_ROOT` 指向依赖所在的项目根目录。按以下顺序生成计算资源、准备 Flutter 依赖并启动，将服务地址和 Web 来源设为已有服务允许的值。更多说明见[本机计算](tool/legacy_compute/README.md)。若使用 Flutter 项目 `.local` 下的本地 SDK，在 PowerShell 中把 `flutter` 换成 `& '.\.local\flutter-toolchain\flutter\bin\flutter.bat'`。
 
 ```sh
+node tool/legacy_compute/build.mjs
 flutter pub get
 flutter run -d chrome --web-port 8081 --target src/app/main.dart --dart-define-from-file=config/local-web.example.json
 ```
 
-Windows 下双击根目录的 [Start-web.cmd](Start-web.cmd)，会一并启动账户、算事、命理、运势和合盘的原 Node 服务，再打开 Flutter 的 Chrome 预览。服务优先使用原项目的端口，端口被占用时使用备选端口，Flutter 会读取实际分配的地址。启动器按原项目方式加载本机虚拟认证服务商与 DeepSeek 配置。保持启动窗口打开，按 Ctrl+C 或关窗时，这次启动的服务会退出。日志位于 `.local/start-web/`。
+Windows 下双击根目录的 [Start-web.cmd](Start-web.cmd)，会一并启动账户、算事、命理、运势和合盘的原 Node 服务，再打开 Flutter 的 Chrome 预览。服务优先使用原项目的端口和备选端口。预设端口都被占用时由系统分配临时端口，Flutter 会读取实际地址。启动器按原项目方式加载本机虚拟认证服务商与 DeepSeek 配置。保持启动窗口打开，按 Ctrl+C 或关窗时，这次启动的服务会退出。日志位于 `.local/start-web/`。
 
-在 PowerShell 中也可运行 `& '.\Start-web.cmd' -CheckServices`，只检查五个本机服务能否启动。已有独立运行的服务时，可传 `-ServiceConfig` 指定地址文件，并用 `-WebPort` 匹配后端允许的 Web 来源。
+在 PowerShell 中也可运行 `& '.\Start-web.cmd' -CheckServices`，只检查五个本机服务能否启动。已有独立运行的服务时，可传 `-ServiceConfig` 指定地址文件，并用 `-WebPort` 匹配后端允许的 Web 来源。两种启动方式都会在缺少计算资源时从指定源码生成，并由 Flutter 自动准备项目依赖。 预览的渲染资源由本机提供。
 
 示例文件使用原 `Start-app.cmd` 的主树首选端口，其中合盘为 `8812`。预览树或端口被占用时，以已启动服务的实际地址为准，通过自己的 `--dart-define-from-file` 文件或逐项 `--dart-define` 传入。Flutter Web 监听来源也要与 Node 服务允许的 `APP_WEB_ORIGIN` 一致。构建配置只填客户端可见的 URL。
 
@@ -80,9 +81,10 @@ app-flutter/
 
 ## 组件测试和开发用服务
 
-在 `app-flutter/` 下执行以下命令。
+在 Flutter 仓库根目录执行以下命令。
 
 ```sh
+node tool/legacy_compute/build.mjs
 flutter pub get
 flutter run -d chrome --target src/app/main.dart
 flutter analyze

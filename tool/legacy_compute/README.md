@@ -1,6 +1,6 @@
 # Flutter 本机计算
 
-从 Flutter 根目录运行 `node tool/legacy_compute/build.mjs`，再启动或构建 Flutter。脚本从外层 `app` 仓库或旁边的 `app/` 目录读取原 TypeScript 源码。依赖在其他工作树时，通过 `JOVIAN_LEGACY_NODE_ROOT` 指向其根目录。当计算源码更新时，先重建本机计算资源。
+从 Flutter 根目录运行 `node tool/legacy_compute/build.mjs`，再启动或构建 Flutter。默认从外层或同级 `app/` 读取原 TypeScript 源码。独立检出时可以设置 `JOVIAN_LEGACY_SOURCE_ROOT` 指定原版源码根目录。先在原版项目安装 npm 依赖，如果依赖已安装在其他工作树，通过 `JOVIAN_LEGACY_NODE_ROOT` 指向那个项目根目录。当原版计算源码更新时，重新运行构建命令。
 
 `LocalCompute` 在浏览器或系统 WebView 的 Worker 里运行同一个 TypeScript 产物。Web 加载 `web/legacy-compute.js`，原生端加载 `tool/legacy_compute/native_assets/legacy-compute.html`，两个文件均由构建脚本生成。原生页面从应用资源加载，跳转受限，计算 Worker 可离线运行。出生资料通过消息传递，结果分段返回。用户取消或计算超时会终止 Worker。归档及在线解读由 Flutter 业务模块通过现有接口发起。命盘归档重开时，完整出生时刻的快照通过同一个 Worker 格式化，直接展示保存时的计算结果。更早或无法展开的档案显示其原有摘要。[Flutter WebView 插件](https://pub.dev/packages/webview_flutter)
 

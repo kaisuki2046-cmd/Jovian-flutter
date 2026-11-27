@@ -48,11 +48,22 @@ $project = Split-Path -Parent $env:JOVIAN_START_FILE
 $started = @()
 $exitCode = 0
 
-function Find-FreePort([int[]]$candidates, [string]$name) {
+function Find-FreePort([int[]]$candidates, [string]$name, [int[]]$reserved = @(), [switch]$allowEphemeral) {
     $listeners = [Net.NetworkInformation.IPGlobalProperties]::GetIPGlobalProperties().GetActiveTcpListeners()
-    $taken = @($listeners | ForEach-Object { $_.Port })
+    $taken = @($listeners | ForEach-Object { $_.Port }) + $reserved
     foreach ($candidate in $candidates) {
         if ($candidate -notin $taken) { return $candidate }
+    }
+    if ($allowEphemeral) {
+        $listener = [Net.Sockets.TcpListener]::new([Net.IPAddress]::Loopback, 0)
+        try {
+            do {
+                $listener.Start()
+                $port = $listener.LocalEndpoint.Port
+                $listener.Stop()
+            } while ($port -in $reserved)
+            return $port
+        } finally { $listener.Stop() }
     }
     throw "All ports for $name are in use ($($candidates -join ', '))."
 }
@@ -77,6 +88,27 @@ function Wait-JovianService($service, $process) {
     throw "$($service.Name) did not start. See $($service.ErrorLog)."
 }
 
+function Get-NodeRuntime {
+    $node = Get-Command node.exe -CommandType Application -ErrorAction Stop | Select-Object -First 1 -ExpandProperty Source
+    $versionOutput = & $node --version
+    if ($LASTEXITCODE -ne 0 -or $versionOutput -notmatch '^v(\d+\.\d+\.\d+)') {
+        throw 'Could not determine the installed Node.js version.'
+    }
+    $nodeVersion = [version]$Matches[1]
+    if ($nodeVersion -lt [version]'22.13.0') { throw 'Node.js 22.13 or newer is required.' }
+    @{ Path = $node; Version = $nodeVersion }
+}
+
+function Initialize-LocalCompute([string]$node) {
+    if ((Test-Path -LiteralPath 'web/legacy-compute.js' -PathType Leaf) -and
+        (Test-Path -LiteralPath 'tool/legacy_compute/native_assets/legacy-compute.html' -PathType Leaf)) {
+        return
+    }
+    if (!$node) { $node = (Get-NodeRuntime).Path }
+    & $node 'tool/legacy_compute/build.mjs'
+    if ($LASTEXITCODE -ne 0) { throw 'Could not prepare the original TypeScript chart assets.' }
+}
+
 Push-Location -LiteralPath $project
 try {
     $flutter = Join-Path $project '.local\flutter-toolchain\flutter\bin\flutter.bat'
@@ -89,21 +121,22 @@ try {
     $picked = if ($PSBoundParameters.ContainsKey('WebPort') -or $ServiceConfig) {
         Find-FreePort @($WebPort) 'Flutter Web'
     } else {
-        Find-FreePort @(8081, 8082, 8083, 8084, 8085) 'Flutter Web'
+        Find-FreePort @(8081, 8082, 8083, 8084, 8085) 'Flutter Web' -AllowEphemeral
     }
     $webOrigin = "http://localhost:$picked"
 
     if ($ServiceConfig) {
         $config = (Resolve-Path -LiteralPath $ServiceConfig).Path
+        Initialize-LocalCompute
     } else {
-        $legacy = (Resolve-Path -LiteralPath (Join-Path $project '..\app')).Path
-        $node = Get-Command node.exe -CommandType Application -ErrorAction Stop | Select-Object -First 1 -ExpandProperty Source
-        $versionOutput = & $node --version
-        if ($LASTEXITCODE -ne 0 -or $versionOutput -notmatch '^v(\d+\.\d+\.\d+)') {
-            throw 'Could not determine the installed Node.js version.'
+        $legacySource = ([string]$env:JOVIAN_LEGACY_SOURCE_ROOT).Trim()
+        if (!$legacySource) { $legacySource = Join-Path $project '..\app' }
+        if (!(Test-Path -LiteralPath $legacySource -PathType Container)) {
+            throw 'Set JOVIAN_LEGACY_SOURCE_ROOT to a checkout of the original Jovian source.'
         }
-        $nodeVersion = [version]$Matches[1]
-        if ($nodeVersion -lt [version]'22.13.0') { throw 'Node.js 22.13 or newer is required.' }
+        $legacy = (Resolve-Path -LiteralPath $legacySource).Path
+        $nodeRuntime = Get-NodeRuntime
+        $node = $nodeRuntime.Path
 
         $nodeRoot = $env:JOVIAN_LEGACY_NODE_ROOT
         if (!$nodeRoot) {
@@ -115,7 +148,7 @@ try {
             throw 'Install the original Node dependencies or set JOVIAN_LEGACY_NODE_ROOT to their checkout.'
         }
         $nodeRoot = (Resolve-Path -LiteralPath $nodeRoot).Path
-        if ($nodeRoot -ne $legacy -and $nodeVersion -lt [version]'22.15.0') {
+        if ($nodeRoot -ne $legacy -and $nodeRuntime.Version -lt [version]'22.15.0') {
             throw 'Node.js 22.15 or newer is required to use dependencies from another checkout.'
         }
 
@@ -134,8 +167,10 @@ try {
         $runDirectory = Join-Path $project ('.local\start-web\' + [guid]::NewGuid().ToString('N'))
         $null = New-Item -ItemType Directory -Path $runDirectory
         $defines = @{}
+        $reserved = @($picked)
         foreach ($service in $services) {
-            $service.Port = Find-FreePort $service.Ports $service.Name
+            $service.Port = Find-FreePort $service.Ports $service.Name -Reserved $reserved -AllowEphemeral
+            $reserved += $service.Port
             if (!(Test-Path -LiteralPath (Join-Path $legacy $service.File) -PathType Leaf)) {
                 throw "The original $($service.Name) entry is missing in $legacy."
             }
@@ -178,7 +213,9 @@ try {
             Write-Warning 'DeepSeek is unconfigured. Online reports need an existing key or key file.'
         }
 
+        $env:JOVIAN_LEGACY_SOURCE_ROOT = $legacy
         $env:JOVIAN_LEGACY_NODE_ROOT = $nodeRoot
+        if (!$CheckServices) { Initialize-LocalCompute $node }
         $env:JOVIAN_WEB_NODE_FALLBACK = if ($nodeRoot -ne $legacy) { $nodeRoot } else { $null }
         $watchdog = @'
 import * as nodeModule from 'node:module';
@@ -234,15 +271,11 @@ setInterval(() => {
 
         $config = Join-Path $runDirectory 'services.json'
         [IO.File]::WriteAllText($config, ($defines | ConvertTo-Json))
-        if (!$CheckServices -and !(Test-Path -LiteralPath 'web/legacy-compute.js' -PathType Leaf)) {
-            & $node 'tool/legacy_compute/build.mjs'
-            if ($LASTEXITCODE -ne 0) { throw 'Could not prepare the original TypeScript chart assets.' }
-        }
     }
 
     if (!$CheckServices) {
         Write-Host "Starting Flutter Web at $webOrigin. Keep this window open."
-        & $flutter run -d chrome --release --no-pub --web-hostname localhost --web-port $picked --target src/app/main.dart "--dart-define-from-file=$config"
+        & $flutter run -d chrome --release --no-web-resources-cdn --web-hostname localhost --web-port $picked --target src/app/main.dart "--dart-define-from-file=$config"
         $exitCode = $LASTEXITCODE
     }
 } catch {

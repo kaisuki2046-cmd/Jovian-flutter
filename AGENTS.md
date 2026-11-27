@@ -1,6 +1,6 @@
 # Flutter 前端开工规范
 
-Flutter 工作从 `app-flutter/` 根目录执行。独立检出时，从同级 `app/` 阅读[协作协议](../app/COLLABORATION.md)与[框架图](../app/FRAMEWORK.md)。`src/` 是统一的客户端源码。页面交互、样式与公共组件应在 Android 和 Web 使用同一套实现。现有 TypeScript 计算与 Node API 通过公开契约接入。
+Flutter 工作从独立 Git 仓库的项目根目录执行。原项目在同级 `app/` 或 `JOVIAN_LEGACY_SOURCE_ROOT` 指定的路径，项目协作协议和框架图分别见该仓库的 `COLLABORATION.md` 与 `FRAMEWORK.md`。`src/` 是统一的客户端源码。页面交互、样式与公共组件应在 Android 和 Web 使用同一套实现。现有 TypeScript 计算与 Node API 通过公开契约接入。
 
 ## 跨平台界面
 

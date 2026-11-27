@@ -13,6 +13,7 @@ import '../src/features/account/settings/model/agreements.dart';
 import '../src/features/destiny/destiny.dart';
 import '../src/features/destiny/frontend/control/destiny_device_birth_profile.dart';
 import '../src/shared/http/json_client.dart';
+import 'support/birth_picker_fixture.dart';
 
 const _member = 'device-fixture-member';
 const _other = 'another-member';
@@ -280,7 +281,7 @@ void main() {
         'savedAt': 1754740800000,
         'chartSnapshotSaved': true,
       };
-      var remoteBirth = _birthFields();
+      var remoteBirth = {..._birthFields(), 'birthTime': '12:??'};
       Map<String, Object?>? archive;
       var birthUpdates = 0;
       var calculations = 0;
@@ -394,20 +395,15 @@ void main() {
       await mount('new-reading');
       await tester.tap(find.text('核对资料'));
       await tester.pumpAndSettle();
-      final minute = find.byWidgetPredicate(
-        (widget) =>
-            widget is TextField &&
-            widget.decoration?.labelText?.startsWith('出生分钟') == true,
-      );
-      await tester.enterText(minute, '');
+      expect(find.text('12 时 · 分钟未知'), findsOneWidget);
       await tester.tap(find.text('核对出生资料'));
       await tester.pumpAndSettle();
       expect(find.text('请填写并核对出生小时和分钟。'), findsOneWidget);
       expect(find.text('确认并同步测算'), findsNothing);
       expect(birthUpdates, 0);
       expect(calculations, 0);
-      expect(remoteBirth['birthTime'], '12:30');
-      await tester.enterText(minute, '30');
+      expect(remoteBirth['birthTime'], '12:??');
+      await selectBirthTime(tester, 12, 30);
       await tester.tap(find.text('核对出生资料'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('确认并同步测算'));
@@ -441,19 +437,18 @@ void main() {
       expect(find.text('本机出生资料'), findsOneWidget);
       await tester.tap(find.text('重新测算'));
       await tester.pumpAndSettle();
-      final dateField = find.widgetWithText(TextField, '出生日期');
       expect(
-        tester.widget<TextField>(dateField).controller!.text,
-        '1998-08-09',
+        find.widgetWithText(OutlinedButton, '1998 年 8 月 9 日'),
+        findsOneWidget,
       );
 
-      await tester.enterText(dateField, '1999-06-30');
+      await selectBirthDate(tester, '1999-06-30');
       await mount('restore-device-and-report', active: false);
       await mount('restore-device-and-report');
       expect(latestReads, beforeReturn + 1);
       expect(
-        tester.widget<TextField>(dateField).controller!.text,
-        '1999-06-30',
+        find.widgetWithText(OutlinedButton, '1999 年 6 月 30 日'),
+        findsOneWidget,
       );
 
       remoteBirth = _birthFields('2000-01-02');
@@ -461,8 +456,8 @@ void main() {
       await tester.tap(find.text('重新测算'));
       await tester.pumpAndSettle();
       expect(
-        tester.widget<TextField>(dateField).controller!.text,
-        '2000-01-02',
+        find.widgetWithText(OutlinedButton, '2000 年 1 月 2 日'),
+        findsOneWidget,
       );
       await tester.tap(find.text('返回入口'));
       await tester.pumpAndSettle();

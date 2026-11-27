@@ -15,6 +15,7 @@ import '../src/features/synastry/control/synastry_page_controller.dart';
 import '../src/features/synastry/synastry.dart';
 import '../src/shared/http/json_client.dart';
 import '../src/ui/interface_language.dart';
+import 'support/birth_picker_fixture.dart';
 
 const _place = BirthPlace(
   id: 'sample',
@@ -169,26 +170,26 @@ void main() {
       await _fillProfile(tester, '1992-07-02');
       await _tap(tester, '确认B 方资料');
       await _tap(tester, '修改 B 方资料');
-      expect(_input(tester, '出生日期').controller?.text, '1992-07-02');
-      expect(_input(tester, '出生小时').controller?.text, '09');
-      expect(_input(tester, '出生地').controller?.text, '杭州市');
+      expect(
+        find.widgetWithText(OutlinedButton, '1992 年 7 月 2 日'),
+        findsOneWidget,
+      );
+      expect(find.widgetWithText(OutlinedButton, '09:20'), findsOneWidget);
+      expect(find.widgetWithText(OutlinedButton, '杭州市'), findsOneWidget);
       expect(
         tester
             .widget<ChoiceChip>(find.widgetWithText(ChoiceChip, '女'))
             .selected,
         isTrue,
       );
-      await tester.enterText(
-        find.widgetWithText(TextField, '出生日期'),
-        '1992-07-03',
-      );
+      await selectBirthDate(tester, '1992-07-03');
       await _tap(tester, '确认B 方资料');
       expect(find.text('排盘失败，请核对出生资料后重试。'), findsOneWidget);
-      expect(_input(tester, '出生日期').controller?.text, '1992-07-03');
-      await tester.enterText(
-        find.widgetWithText(TextField, '出生日期'),
-        '1992-07-04',
+      expect(
+        find.widgetWithText(OutlinedButton, '1992 年 7 月 3 日'),
+        findsOneWidget,
       );
+      await selectBirthDate(tester, '1992-07-04');
       await _tap(tester, '确认B 方资料');
       expect(find.text('1992-07-04 09:20 · 杭州市'), findsOneWidget);
 
@@ -208,10 +209,7 @@ void main() {
       expect(onlineCalls, 0);
 
       await _tap(tester, '修改 A 方资料');
-      await tester.enterText(
-        find.widgetWithText(TextField, '出生日期'),
-        '1990-06-05',
-      );
+      await selectBirthDate(tester, '1990-06-05');
       final confirm = find.text('确认A 方资料');
       await tester.ensureVisible(confirm);
       await tester.pump();
@@ -231,7 +229,7 @@ void main() {
       expect(find.text('双人盘面对照'), findsNothing);
       await _tap(tester, '我已获准使用 B 方资料进行本次合盘');
       await _tap(tester, '手动填写 B 方资料');
-      expect(_input(tester, '出生日期').controller?.text, '');
+      expect(find.widgetWithText(OutlinedButton, '选择出生年月日'), findsOneWidget);
       expect(tester.takeException(), isNull);
     },
   );
@@ -735,20 +733,18 @@ http.Response _json(Object? value, [int status = 200]) => http.Response.bytes(
   headers: {'Content-Type': 'application/json; charset=utf-8'},
 );
 
-TextField _input(WidgetTester tester, String label) =>
-    tester.widget<TextField>(find.widgetWithText(TextField, label));
-
 Future<void> _fillProfile(WidgetTester tester, String date) async {
-  final context = tester.element(find.byType(TextField).first);
-  Finder input(String label) =>
-      find.widgetWithText(TextField, context.uiLabel(label));
-  await tester.enterText(input('出生日期'), date);
-  await tester.enterText(input('出生小时'), '09');
-  await tester.enterText(input('出生分钟'), '20');
-  await tester.enterText(input('出生地'), '杭州');
+  await selectBirthDate(tester, date);
+  await selectBirthTime(tester, 9, 20);
+  await openBirthPicker(tester, '选择出生地点');
+  final context = tester.element(find.byType(TextField));
+  final search = find.widgetWithText(TextField, context.uiLabel('搜索城市或区县'));
+  await tester.enterText(search, '杭州');
   await tester.pumpAndSettle();
   await _tap(tester, '杭州市');
-  await _tap(tester, context.uiLabel('女'));
+  final gender = context.uiLabel('女');
+  await confirmBirthPicker(tester);
+  await _tap(tester, gender);
 }
 
 Future<void> _tap(WidgetTester tester, String label) async {

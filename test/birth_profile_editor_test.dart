@@ -1,11 +1,14 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jovian_destiny/jovian_destiny.dart'
-    show BirthPlace, BirthProfile;
+    show BirthDate, BirthPlace, BirthProfile;
 import 'package:material_ui/material_ui.dart';
 
 import '../src/features/destiny/view/birth_place_picker.dart';
 import '../src/features/destiny/view/birth_profile_editor.dart';
+import '../src/features/destiny/view/birth_time_date_picker.dart';
 import '../src/ui/theme.dart';
+import 'support/birth_picker_fixture.dart';
 
 const _district = BirthPlace(
   id: 'test-gongshu',
@@ -81,6 +84,50 @@ void main() {
     },
   );
 
+  testWidgets('the date wheel clamps leap days and supports the keyboard', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (context) => Scaffold(
+            body: FilledButton(
+              onPressed: () async {
+                final result = await pickBirthDate(
+                  context,
+                  const BirthDate(2000, 1, 31),
+                );
+                expect(result?.year, 2000);
+                expect(result?.month, 2);
+                expect(result?.day, 29);
+              },
+              child: const Text('打开日期'),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('打开日期'));
+    await tester.pumpAndSettle();
+
+    // First focus goes to year, then month. Down selects the next month.
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<ListWheelScrollView>(find.byType(ListWheelScrollView).at(2))
+          .childDelegate
+          .estimatedChildCount,
+      29,
+    );
+    await tester.tap(find.widgetWithText(FilledButton, '确认'));
+    await tester.pumpAndSettle();
+    expect(find.byType(BottomSheet), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('narrow birth form offers date, time and directory pickers', (
     tester,
   ) async {
@@ -110,20 +157,22 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byTooltip('选择出生日期'));
+    await openBirthPicker(tester, '选择出生日期');
+    expect(find.byType(ListWheelScrollView), findsNWidgets(3));
+    await tester.tap(find.text('2日'));
     await tester.pumpAndSettle();
-    expect(find.byType(DatePickerDialog), findsOneWidget);
-    await tester.tap(find.text('OK'));
-    await tester.pumpAndSettle();
+    await confirmBirthPicker(tester);
+    expect(find.text('2000 年 1 月 2 日'), findsOneWidget);
 
-    await tester.tap(find.byTooltip('选择出生时间'));
+    await openBirthPicker(tester, '选择出生时间');
+    expect(find.byType(ListWheelScrollView), findsNWidgets(2));
+    expect(find.text('请核对实际出生的小时和分钟，再确认。'), findsOneWidget);
+    await tester.tap(find.text('1分'));
     await tester.pumpAndSettle();
-    expect(find.byType(TimePickerDialog), findsOneWidget);
-    await tester.tap(find.text('OK'));
-    await tester.pumpAndSettle();
+    await confirmBirthPicker(tester);
+    expect(find.text('12:01'), findsOneWidget);
 
-    await tester.tap(find.byTooltip('选择出生地点'));
-    await tester.pumpAndSettle();
+    await openBirthPicker(tester, '选择出生地点');
     for (final label in ['中国', '浙江省', '杭州市', '拱墅区']) {
       await tester.tap(find.text(label).last);
       await tester.pumpAndSettle();
@@ -132,8 +181,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Searching for a normalized location and cancelling leaves the saved choice.
-    await tester.tap(find.byTooltip('选择出生地点'));
-    await tester.pumpAndSettle();
+    await openBirthPicker(tester, '选择出生地点');
     await tester.enterText(
       find.widgetWithText(TextField, '搜索城市或区县'),
       '杭州市 · 拱墅',
@@ -143,21 +191,15 @@ void main() {
     await tester.tap(find.text('取消'));
     await tester.pumpAndSettle();
 
-    expect(
-      tester
-          .widget<TextField>(find.widgetWithText(TextField, '出生地'))
-          .controller
-          ?.text,
-      _district.name,
-    );
+    expect(find.widgetWithText(OutlinedButton, _district.name), findsOneWidget);
     await tester.tap(find.text('女'));
     await tester.tap(find.widgetWithText(FilledButton, '核对出生资料'));
     await tester.pumpAndSettle();
     expect(profile?.date.year, 2000);
     expect(profile?.date.month, 1);
-    expect(profile?.date.day, 1);
+    expect(profile?.date.day, 2);
     expect(profile?.time.hour, 12);
-    expect(profile?.time.minute, 0);
+    expect(profile?.time.minute, 1);
     expect(profile?.place.id, _district.id);
     expect(tester.takeException(), isNull);
   });

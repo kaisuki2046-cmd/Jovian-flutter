@@ -11,6 +11,7 @@ import '../src/ui/interface_language.dart';
 import '../src/ui/tab_dock.dart';
 import '../src/ui/tab_lens.dart';
 import '../src/ui/theme.dart';
+import 'support/birth_picker_fixture.dart';
 
 Finder _tab(JovianTab value) => find.byKey(ValueKey(value));
 
@@ -145,8 +146,8 @@ void main() {
     );
     await tester.tap(find.widgetWithText(FilledButton, '开始解读'));
     await tester.pump();
-    final date = find.widgetWithText(TextField, '出生日期');
-    await tester.enterText(date, '2000-01-01');
+    final date = find.widgetWithText(OutlinedButton, '2000 年 1 月 1 日');
+    await selectBirthDate(tester, '2000-01-01');
     for (final tab in JovianTab.values.skip(1)) {
       await tester.tap(_tab(tab));
       await tester.pumpAndSettle();
@@ -161,7 +162,7 @@ void main() {
     }
     await tester.tap(_tab(JovianTab.destiny));
     await tester.pump(const Duration(milliseconds: 250));
-    expect(tester.widget<TextField>(date).controller!.text, '2000-01-01');
+    expect(date, findsOneWidget);
     expect(find.widgetWithText(ListTile, '周期运势'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });

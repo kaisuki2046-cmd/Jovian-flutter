@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../ui/choice_wheel.dart';
 import '../../../../ui/interface_language.dart';
 
 import '../model/account_reading_profile.dart';
@@ -100,19 +101,19 @@ class _DateSelectionState extends State<_DateSelection> {
   @override
   Widget build(BuildContext context) => _SelectionArea(
     wheels: [
-      _ChoiceWheel(
+      ChoiceWheel(
         label: '年',
         values: [for (final year in _years) '$year年'],
         selected: _years.indexOf(_year),
         onSelected: (index) => _changeDate(year: _years[index]),
       ),
-      _ChoiceWheel(
+      ChoiceWheel(
         label: '月',
         values: [for (var month = 1; month <= 12; month++) '$month月'],
         selected: _month - 1,
         onSelected: (index) => _changeDate(month: index + 1),
       ),
-      _ChoiceWheel(
+      ChoiceWheel(
         key: ValueKey(_days),
         label: '日',
         values: [for (var day = 1; day <= _days; day++) '$day日'],
@@ -155,13 +156,13 @@ class _TimeSelectionState extends State<_TimeSelection> {
   @override
   Widget build(BuildContext context) => _SelectionArea(
     wheels: [
-      _ChoiceWheel(
+      ChoiceWheel(
         label: '时',
         values: [for (var value = 0; value < 24; value++) '$value时', '未知'],
         selected: _hour,
         onSelected: (index) => setState(() => _hour = index),
       ),
-      _ChoiceWheel(
+      ChoiceWheel(
         label: '分',
         values: [for (var value = 0; value < 60; value++) '$value分', '未知'],
         selected: _minute,
@@ -301,7 +302,7 @@ class _PlaceSelectionState extends State<_PlaceSelection> {
       final districts = ['', ...divisions[location.province]![location.city]!];
       return _SelectionArea(
         wheels: [
-          _ChoiceWheel(
+          ChoiceWheel(
             label: '省级地区',
             values: provinces,
             selected: provinces.indexOf(location.province),
@@ -314,7 +315,7 @@ class _PlaceSelectionState extends State<_PlaceSelection> {
               );
             }),
           ),
-          _ChoiceWheel(
+          ChoiceWheel(
             key: ValueKey(location.province),
             label: '市',
             values: cities,
@@ -327,7 +328,7 @@ class _PlaceSelectionState extends State<_PlaceSelection> {
               ),
             ),
           ),
-          _ChoiceWheel(
+          ChoiceWheel(
             key: ValueKey((location.province, location.city)),
             label: '区县',
             values: ['不填区县', ...districts.skip(1)],
@@ -385,102 +386,4 @@ class _SelectionArea extends StatelessWidget {
       FilledButton(onPressed: onSubmit, child: Text(submit)),
     ],
   );
-}
-
-class _ChoiceWheel extends StatefulWidget {
-  const _ChoiceWheel({
-    super.key,
-    required this.label,
-    required this.values,
-    required this.selected,
-    required this.onSelected,
-  });
-  final String label;
-  final List<String> values;
-  final int selected;
-  final ValueChanged<int> onSelected;
-  @override
-  State<_ChoiceWheel> createState() => _ChoiceWheelState();
-}
-
-class _ChoiceWheelState extends State<_ChoiceWheel> {
-  late final _scroll = FixedExtentScrollController(
-    initialItem: widget.selected,
-    keepScrollOffset: false,
-  );
-  @override
-  void dispose() {
-    _scroll.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    return Column(
-      children: [
-        Text(widget.label, style: Theme.of(context).textTheme.labelMedium),
-        SizedBox(
-          height: 158,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Positioned(
-                left: 0,
-                right: 0,
-                height: 42,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: colors.primaryContainer,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              ListWheelScrollView.useDelegate(
-                controller: _scroll,
-                physics: const FixedExtentScrollPhysics(),
-                itemExtent: 42,
-                overAndUnderCenterOpacity: 0.62,
-                onSelectedItemChanged: widget.onSelected,
-                childDelegate: ListWheelChildBuilderDelegate(
-                  childCount: widget.values.length,
-                  builder: (context, index) {
-                    final value = widget.values[index];
-                    return Semantics(
-                      selected: index == widget.selected,
-                      button: true,
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: () => _scroll.animateToItem(
-                          index,
-                          duration: const Duration(milliseconds: 130),
-                          curve: Curves.easeOut,
-                        ),
-                        child: Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(2),
-                            child: Text(
-                              value,
-                              textAlign: TextAlign.center,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontWeight: index == widget.selected
-                                    ? FontWeight.w600
-                                    : FontWeight.w400,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
 }

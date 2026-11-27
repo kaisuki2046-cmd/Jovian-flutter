@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import '../src/app/app_navigation.dart';
 import '../src/app/main.dart';
 import '../src/features/account/account.dart';
+import 'support/birth_picker_fixture.dart';
 
 void main() {
   test(
@@ -211,8 +212,8 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
       await tester.tap(find.widgetWithText(FilledButton, '开始解读'));
       await tester.pump();
-      final birthDate = find.widgetWithText(TextField, '出生日期');
-      await tester.enterText(birthDate, '2000-01-01');
+      final birthDate = find.widgetWithText(OutlinedButton, '2000 年 1 月 1 日');
+      await selectBirthDate(tester, '2000-01-01');
       await tester.binding.handlePushRoute('/messages');
       await tester.pumpAndSettle();
       expect(_selection(tester), JovianTab.messages.index);
@@ -222,10 +223,7 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
       expect(_selection(tester), JovianTab.destiny.index);
-      expect(
-        tester.widget<TextField>(birthDate).controller?.text,
-        '2000-01-01',
-      );
+      expect(birthDate, findsOneWidget);
       expect(tester.takeException(), isNull);
     },
   );

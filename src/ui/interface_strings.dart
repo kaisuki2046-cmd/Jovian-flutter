@@ -882,6 +882,11 @@ const englishInterfaceStrings = <String, String>{
   '查看主页': 'View profile',
   '标为已读': 'Mark as read',
   '处理举报': 'Review report',
+  "选择出生年月日": "Select a date of birth",
+  "选择出生城市或区县": "Select a city or district of birth",
+  "关闭选择面板": "Close picker",
+  "请核对实际出生的小时和分钟，再确认。":
+      "Check the actual hour and minute of birth before confirming.",
   "选择出生日期": "Select date of birth",
   "选择出生时间": "Select time of birth",
   "选择出生地点": "Select place of birth",

@@ -64,7 +64,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Step 2 · Tarot selection'), findsOneWidget);
     expect(find.text('Choose three Tarot cards'), findsOneWidget);
-    expect(find.text('Swipe sideways and choose your cards'), findsOneWidget);
+    expect(find.text('Swipe sideways and choose the cards that feel right'), findsOneWidget);
     expect(find.byTooltip('Browse left'), findsOneWidget);
     expect(find.byTooltip('Browse right'), findsOneWidget);
     expect(find.byTooltip('Pause ritual').hitTestable(), findsOneWidget);

@@ -154,7 +154,7 @@ class _TarotRitualPanelState extends State<TarotRitualPanel> {
               ),
               const SizedBox(height: 10),
               UiText(
-                '左右滑动，选择你的牌',
+                '左右滑动，凭感觉选出你的牌',
                 style: theme.textTheme.titleMedium,
                 textAlign: TextAlign.center,
               ),
@@ -275,20 +275,25 @@ class _TarotPosition extends StatelessWidget {
                             ..rotateY(
                               (turned ? progress - 1 : progress) * math.pi,
                             ),
-                          child: turned
-                              ? RotatedBox(
-                                  quarterTurns:
-                                      drawn.face.orientation ==
-                                          TarotOrientation.reversed
-                                      ? 2
-                                      : 0,
-                                  child: Image.asset(
-                                    'src/features/divination/assets/tarot/${drawn.face.card.id}.jpg',
-                                    fit: BoxFit.cover,
-                                    excludeFromSemantics: true,
-                                  ),
-                                )
-                              : const TarotBackArt(),
+                          child: IndexedStack(
+                            index: turned ? 1 : 0,
+                            sizing: StackFit.expand,
+                            children: [
+                              const TarotBackArt(),
+                              RotatedBox(
+                                quarterTurns:
+                                    drawn.face.orientation ==
+                                        TarotOrientation.reversed
+                                    ? 2
+                                    : 0,
+                                child: Image.asset(
+                                  'src/features/divination/assets/tarot/${drawn.face.card.id}.jpg',
+                                  fit: BoxFit.cover,
+                                  excludeFromSemantics: true,
+                                ),
+                              ),
+                            ],
+                          ),
                         );
                       },
                     )

@@ -28,19 +28,25 @@ typedef CoinPose = ({
 });
 
 ({double height, double coinSize, double thickness}) coinStageLayout(
-  double width,
-) {
-  final coinSize = math.min(76.0, width * 0.22);
+  double width, {
+  double heightLimit = double.infinity,
+}) {
+  final height = math.min((width * 1.24).clamp(300.0, 420.0), heightLimit);
+  final coinSize = math.min(math.min(76.0, width * 0.22), height * 0.24);
   return (
-    height: (width * 1.24).clamp(300.0, 420.0),
+    height: height,
     coinSize: coinSize,
     thickness: (coinSize * 0.037).clamp(1.8, 2.8),
   );
 }
 
-({double x, double y}) coinRestingPosition(double width, int index) {
+({double x, double y}) coinRestingPosition(
+  double width,
+  int index, {
+  double heightLimit = double.infinity,
+}) {
   final (horizontal, vertical) = _restingPoints[index];
-  final height = coinStageLayout(width).height;
+  final height = coinStageLayout(width, heightLimit: heightLimit).height;
   return (
     x: horizontal / 320 * width,
     y: height * (0.50 + 0.48 * vertical / 320),
@@ -54,10 +60,11 @@ CoinPose coinTossPose(
   int face,
   double width, {
   int previous = 2,
+  double heightLimit = double.infinity,
 }) {
   final p = progress.clamp(0.0, 1.0);
-  final layout = coinStageLayout(width);
-  final rest = coinRestingPosition(width, index);
+  final layout = coinStageLayout(width, heightLimit: heightLimit);
+  final rest = coinRestingPosition(width, index, heightLimit: heightLimit);
   final release = 0.08 + index * 0.025;
   final landing = coinLandingTimes[index];
   final flight = ((p - release) / (landing - release)).clamp(0.0, 1.0);

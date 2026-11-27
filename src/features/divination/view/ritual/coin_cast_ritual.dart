@@ -49,6 +49,7 @@ class CoinCastRitual extends StatefulWidget {
     this.pending = false,
     this.active = true,
     this.reducedMotion,
+    this.stageHeightLimit = double.infinity,
   });
 
   final List<List<int>> tosses;
@@ -57,6 +58,7 @@ class CoinCastRitual extends StatefulWidget {
   final bool pending;
   final bool active;
   final bool? reducedMotion;
+  final double stageHeightLimit;
 
   @override
   State<CoinCastRitual> createState() => _CoinCastRitualState();
@@ -68,11 +70,14 @@ class _CoinCastRitualState extends State<CoinCastRitual>
       AnimationController(vsync: this, duration: coinTossDuration, value: 1)
         ..addStatusListener(_flightStatus)
         ..addListener(_landingFeedback);
-  late final AnimationController _shake = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 900),
-    value: 1,
-  );
+  late final AnimationController _shake =
+      AnimationController(
+        vsync: this,
+        duration: const Duration(milliseconds: 900),
+        value: 1,
+      )..addStatusListener((status) {
+        if (status == AnimationStatus.completed && mounted) setState(() {});
+      });
   late final CoinFeedback _feedback;
   late List<List<int>> _recorded;
   late List<List<int>> _visibleTosses;
@@ -187,6 +192,7 @@ class _CoinCastRitualState extends State<CoinCastRitual>
     if (!_available ||
         _requestLatch ||
         _moving ||
+        _shake.isAnimating ||
         widget.pending ||
         _recorded.length >= _lineNames.length)
       return;
@@ -217,33 +223,32 @@ class _CoinCastRitualState extends State<CoinCastRitual>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final complete = _visibleTosses.length == _lineNames.length;
+    final tossing = _moving || (widget.pending && !complete);
     final ready =
         _available &&
         !_requestLatch &&
-        !widget.pending &&
-        !_moving &&
+        !tossing &&
+        !_shake.isAnimating &&
         _recorded.length < _lineNames.length;
-    final complete = _visibleTosses.length == _lineNames.length;
     final last = _visibleTosses.lastOrNull;
     final values = _visibleTosses.map(_lineValue).toList(growable: false);
-    final buttonText = _moving
+    final buttonText = tossing
         ? context.uiLabel('正在投掷…')
-        : widget.pending && !complete
-        ? context.uiLabel('等待投掷结果…')
         : complete
         ? context.uiLabel('六爻已成')
         : values.isEmpty
-        ? context.uiLabel('投三枚铜钱')
+        ? context.uiLabel('点击龟壳开始投掷')
         : '${context.uiLabel('投掷第 ')}${values.length + 1}${context.uiLabel(' 次')}';
-    final resultText = _moving
+    final resultText = tossing
         ? context.uiLabel('铜钱翻转，静候落定…')
         : last == null
-        ? context.uiLabel('字面记 2，背面记 3')
+        ? ''
         : '${context.uiLabel(_lineNames[values.length - 1])} · '
               '${last.map((face) => context.uiLabel(face == 2 ? '字' : '背')).join(' / ')} · ${values.last}';
-    final countText =
-        '${context.uiLabel('已投 ')}${values.length} / '
-        '${_lineNames.length}${context.uiLabel(' 次')}';
+    final countText = context
+        .uiLabel('已完成 {count} / 6 次')
+        .replaceFirst('{count}', values.length.toString());
     return Card(
       margin: EdgeInsets.zero,
       child: Padding(
@@ -251,6 +256,22 @@ class _CoinCastRitualState extends State<CoinCastRitual>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Semantics(
+              container: true,
+              header: true,
+              child: UiText(
+                '六爻起卦',
+                style: theme.textTheme.titleMedium,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 6),
+            UiText(
+              '静心凝神，每次投掷时想着问题。',
+              style: theme.textTheme.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 10),
             Semantics(
               container: true,
               explicitChildNodes: true,
@@ -264,7 +285,9 @@ class _CoinCastRitualState extends State<CoinCastRitual>
               previous: last,
               values: values,
               moving: _moving,
-              reducedMotion: _reduced,
+              tossing: tossing,
+              flowing: _canAnimate,
+              stageHeightLimit: widget.stageHeightLimit,
             ),
             const SizedBox(height: 6),
             Center(
@@ -279,6 +302,12 @@ class _CoinCastRitualState extends State<CoinCastRitual>
                   key: const ValueKey('coin-ritual-toss-button'),
                   onTap: ready ? _startToss : null,
                   borderRadius: BorderRadius.circular(16),
+                  splashFactory: NoSplash.splashFactory,
+                  overlayColor: WidgetStateProperty.resolveWith(
+                    (states) => states.contains(WidgetState.focused)
+                        ? theme.colorScheme.primaryContainer
+                        : Colors.transparent,
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       vertical: 4,
@@ -293,11 +322,11 @@ class _CoinCastRitualState extends State<CoinCastRitual>
                             coinShellAsset,
                             fit: BoxFit.contain,
                             width: 156,
-                            height: 82,
+                            height: 88,
                             excludeFromSemantics: true,
                             errorBuilder: (_, _, _) => const SizedBox(
                               width: 156,
-                              height: 82,
+                              height: 88,
                               child: Icon(Icons.toll_outlined, size: 48),
                             ),
                           ),
@@ -311,7 +340,9 @@ class _CoinCastRitualState extends State<CoinCastRitual>
                                   _frame(_shakeAngle, _shake.value) *
                                   math.pi /
                                   180,
-                              child: image,
+                              child: ready || tossing
+                                  ? image
+                                  : Opacity(opacity: 0.55, child: image),
                             ),
                           ),
                         ),
@@ -334,10 +365,13 @@ class _CoinCastRitualState extends State<CoinCastRitual>
             Semantics(
               container: true,
               liveRegion: true,
-              child: Text(
-                resultText,
-                textAlign: TextAlign.center,
-                style: theme.textTheme.bodySmall,
+              child: SizedBox(
+                height: last == null && !tossing ? 18 : null,
+                child: Text(
+                  resultText,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodySmall,
+                ),
               ),
             ),
             const SizedBox(height: 4),
@@ -392,13 +426,14 @@ class _LineProgress extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final gap = 4.0;
+    const gap = 4.0;
+    final english = context.uiLanguage == InterfaceLanguage.english;
+    final minCell = MediaQuery.textScalerOf(context).scale(english ? 36 : 28);
     return LayoutBuilder(
       builder: (context, constraints) {
-        final count = (constraints.maxWidth / 42).floor().clamp(
-          1,
-          _lineNames.length,
-        );
+        final count = ((constraints.maxWidth + gap) / (minCell + gap))
+            .floor()
+            .clamp(1, _lineNames.length);
         final width = (constraints.maxWidth - gap * (count - 1)) / count;
         return Wrap(
           spacing: gap,

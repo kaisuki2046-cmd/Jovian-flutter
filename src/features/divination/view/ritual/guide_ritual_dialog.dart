@@ -106,7 +106,7 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
         : flipping
         ? '翻开三张塔罗牌'
         : preparing
-        ? (snapshot.tarotCutIndex == null ? '准备塔罗牌' : '洗牌与切牌')
+        ? '洗牌与切牌'
         : '选择三张塔罗牌';
     final step = casting
         ? '第 1 步 · 六爻起卦'
@@ -193,6 +193,10 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
                       pending: busy,
                       active: _active,
                       reducedMotion: motionOff,
+                      stageHeightLimit: math.max(
+                        144,
+                        MediaQuery.sizeOf(context).height * 0.37,
+                      ),
                       onToss: widget.toss,
                       onSettled: _settle,
                     )
@@ -219,7 +223,12 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
                         child: preparing
                             ? TarotDeckPreparation(
                                 slotCount: snapshot.slotCount,
-                                cutIndex: snapshot.tarotCutIndex,
+                                cutIndex:
+                                    snapshot.tarotCutIndex ??
+                                    _presentationCut(
+                                      snapshot.slotCount,
+                                      presentation.seed,
+                                    ),
                                 initialProgress: presentation.preparation,
                                 seed: presentation.seed,
                                 active: _active,
@@ -275,4 +284,12 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
       ),
     );
   }
+}
+
+// For older snapshots the cut is visual only. Keep the same marker when resuming.
+int? _presentationCut(int slotCount, int seed) {
+  if (slotCount < 2) return null;
+  final first = (slotCount * 0.45).ceil().clamp(1, slotCount - 1);
+  final last = (slotCount * 0.55).floor().clamp(first, slotCount - 1);
+  return first + (seed / (1 << 30) * (last - first + 1)).floor();
 }

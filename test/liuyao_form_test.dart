@@ -23,14 +23,17 @@ void main() {
     await tester.ensureVisible(toss);
     await tester.tap(toss);
     await tester.pumpAndSettle();
-    expect(find.text('已投 1 / 6 次'), findsOneWidget);
+    expect(find.text('已完成 1 / 6 次'), findsOneWidget);
     expect(find.text('六爻结果'), findsNothing);
 
     for (var count = 2; count <= 6; count++) {
       await tester.ensureVisible(toss);
       await tester.tap(toss);
       await tester.pumpAndSettle();
-      expect(find.text('已投 $count / 6 次'), findsOneWidget);
+      expect(
+        find.text(count == 6 ? '已投 6 / 6 次' : '已完成 $count / 6 次'),
+        findsOneWidget,
+      );
     }
     expect(toss, findsNothing);
     expect(find.text('六爻结果'), findsOneWidget);
@@ -46,7 +49,7 @@ void main() {
     await tester.ensureVisible(restart);
     await tester.tap(restart);
     await tester.pumpAndSettle();
-    expect(find.text('已投 0 / 6 次'), findsOneWidget);
+    expect(find.text('已完成 0 / 6 次'), findsOneWidget);
     expect(find.text('六爻结果'), findsNothing);
     expect(toss, findsOneWidget);
     expect(tester.takeException(), isNull);

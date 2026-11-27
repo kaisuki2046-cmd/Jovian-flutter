@@ -49,7 +49,7 @@ void main() {
       await tester.ensureVisible(toss);
       await tester.tap(toss);
       await tester.pumpAndSettle();
-      expect(find.text('已投 1 / 6 次'), findsOneWidget);
+      expect(find.text('已完成 1 / 6 次'), findsOneWidget);
       expect(service.calls, [
         'POST /reading/understand',
         'POST /reading',
@@ -62,7 +62,7 @@ void main() {
       await tester.ensureVisible(resume);
       await tester.tap(resume);
       await tester.pumpAndSettle();
-      expect(find.text('已投 1 / 6 次'), findsOneWidget);
+      expect(find.text('已完成 1 / 6 次'), findsOneWidget);
 
       await tester.tap(find.byTooltip('暂停仪式'));
       await tester.pumpAndSettle();

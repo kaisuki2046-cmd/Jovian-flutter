@@ -93,24 +93,34 @@ void main() {
           },
         ),
       );
-      await tester.pumpAndSettle();
+      await tester.pump(coinTossDuration);
       expect(settled, isEmpty);
-      expect(find.text('已投 5 / 6 次'), findsOneWidget);
+      expect(find.text('静心凝神，每次投掷时想着问题。'), findsOneWidget);
+      expect(find.byKey(const ValueKey('coin-ritual-gold')), findsOneWidget);
+      final firstCoin = find.byKey(const ValueKey('coin-ritual-coin-0'));
+      final restingY = tester.widget<Positioned>(firstCoin).top!;
+      expect(find.text('已完成 5 / 6 次'), findsOneWidget);
       await tester.tap(find.byKey(_tossButton));
       await tester.pump();
       expect(find.text('正在投掷…'), findsOneWidget);
-      expect(find.text('已投 5 / 6 次'), findsOneWidget);
-      expect(find.text('已投 6 / 6 次'), findsNothing);
+      expect(find.text('已完成 5 / 6 次'), findsOneWidget);
+      expect(find.text('已完成 6 / 6 次'), findsNothing);
       expect(tester.widget<InkWell>(find.byKey(_tossButton)).onTap, isNull);
-      await tester.pump(const Duration(milliseconds: 1600));
+      await tester.pump(const Duration(milliseconds: 1200));
+      expect(
+        tester.widget<Positioned>(firstCoin).top!,
+        lessThan(restingY - 90),
+      );
+      await tester.pump(const Duration(milliseconds: 400));
       expect(settled, isEmpty);
       await tester.pump(const Duration(milliseconds: 1300));
-      await tester.pumpAndSettle();
+      await tester.pump(coinTossDuration);
       expect(attempts, 1);
       expect(settled, [6]);
       expect(find.text('六爻已成'), findsOneWidget);
+      expect(tester.widget<Positioned>(firstCoin).top, closeTo(restingY, 1));
       expect(find.text('上爻 · 背 / 字 / 背 · 8'), findsOneWidget);
-      expect(find.text('已投 6 / 6 次'), findsOneWidget);
+      expect(find.text('已完成 6 / 6 次'), findsOneWidget);
       expect(
         find.byKey(const ValueKey('coin-ritual-face-0-3')),
         findsOneWidget,
@@ -142,7 +152,8 @@ void main() {
         width: 250,
       );
       await tester.pumpWidget(page(pending: true));
-      expect(find.text('等待投掷结果…'), findsOneWidget);
+      expect(find.byKey(const ValueKey('coin-ritual-gold')), findsNothing);
+      expect(find.text('正在投掷…'), findsOneWidget);
       expect(tester.widget<InkWell>(find.byKey(_tossButton)).onTap, isNull);
       await tester.pumpWidget(page());
       await tester.tap(find.byKey(_tossButton));
@@ -154,7 +165,7 @@ void main() {
       expect(find.text('初爻 · 背 / 字 / 字 · 7'), findsOneWidget);
       expect(find.text('正在投掷…'), findsNothing);
       await tester.pumpWidget(page());
-      await tester.pumpAndSettle();
+      await tester.pump(coinTossDuration);
       expect(settled, [1]);
       expect(tester.takeException(), isNull);
     },
@@ -173,17 +184,19 @@ void main() {
     );
 
     await tester.pumpWidget(page([]));
-    expect(find.text('Toss three coins'), findsOneWidget);
-    expect(find.text('Marked side = 2, reverse side = 3'), findsOneWidget);
+    expect(find.text('Tap the shell to start tossing'), findsOneWidget);
+    expect(
+      find.text(
+        'Clear your mind and hold your question in mind with each toss.',
+      ),
+      findsOneWidget,
+    );
     expect(find.text('Line 1'), findsOneWidget);
     expect(find.bySemanticsLabel('Six tosses'), findsOneWidget);
     expect(find.bySemanticsLabel('Three coins ready to toss'), findsOneWidget);
 
     await tester.pumpWidget(page([], pending: true));
-    expect(
-      find.bySemanticsLabel('Waiting for the toss result…'),
-      findsOneWidget,
-    );
+    expect(find.bySemanticsLabel('Tossing…'), findsOneWidget);
 
     const first = [
       [3, 2, 3],
@@ -195,10 +208,13 @@ void main() {
       findsOneWidget,
     );
     expect(find.bySemanticsLabel('Tossing three coins'), findsOneWidget);
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(coinTossDuration + const Duration(milliseconds: 50));
 
+    await tester.ensureVisible(find.byKey(_tossButton));
+    await tester.pump();
     expect(find.bySemanticsLabel('Toss 2'), findsOneWidget);
-    expect(find.text('Tossed 1 / 6'), findsOneWidget);
+    expect(find.text('Completed 1 / 6'), findsOneWidget);
     expect(
       find.text('Line 1 · Reverse / Marked / Reverse · 8'),
       findsOneWidget,
@@ -211,9 +227,9 @@ void main() {
     );
 
     await tester.pumpWidget(page(List.filled(6, first.single)));
-    await tester.pumpAndSettle();
+    await tester.pump(coinTossDuration);
     expect(find.text('Six lines complete'), findsOneWidget);
-    expect(find.text('Tossed 6 / 6'), findsOneWidget);
+    expect(find.text('Completed 6 / 6'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -235,7 +251,7 @@ void main() {
     expect(find.text('初爻 · 字 / 背 / 字 · 7'), findsOneWidget);
     expect(tester.widget<InkWell>(find.byKey(_tossButton)).onTap, isNull);
     await tester.pumpWidget(page(result));
-    await tester.pumpAndSettle();
+    await tester.pump(coinTossDuration);
     expect(settled, [1]);
     expect(find.text('正在投掷…'), findsNothing);
   });
@@ -260,7 +276,7 @@ void main() {
     expect(_variants(audio), [0, 1, 2, 0]);
     await tester.pumpWidget(page(result, active: false));
     expect(audio.last.method, 'stop');
-    await tester.pumpAndSettle();
+    await tester.pump(coinTossDuration);
     await tester.pump(coinTossDuration);
     expect(_variants(audio), [0, 1, 2, 0]);
   });

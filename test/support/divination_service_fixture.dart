@@ -68,6 +68,7 @@ class DivinationRecoveryFixture
 class DivinationServiceFixture {
   String get _token => 'a' * 43;
   bool failReport = true;
+  bool supportsTarotFirst = true;
   bool denyUnderstandingPermission = false;
   bool expired = false;
   bool extendedFollowUp = false;
@@ -138,6 +139,7 @@ class DivinationServiceFixture {
           question: body['question'] as String,
           focus: divinationFixtureFocus,
           automatic: automatic.last,
+          tarotFirst: supportsTarotFirst && body['tarotFirst'] == true,
           random: () => 0.3,
         );
         return _json({'token': _token, 'task': _state()});

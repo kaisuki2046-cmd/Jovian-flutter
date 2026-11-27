@@ -1,0 +1,128 @@
+--- a/src/features/divination/server/reading-tasks.mjs
++++ b/src/features/divination/server/reading-tasks.mjs
+@@ -50,6 +50,7 @@
+     return task.method === 'tarot' ? tarot : {
+       ...tarot, calculationRules: task.calculationRules, tosses: task.tosses, results: task.results,
+       ...(task.ruleVersion === guideVersion ? { castStartedAt: task.castStartedAt, castResult: task.castResult,
++        ...(task.tarotFirst ? { tarotFirst: true } : {}),
+         ...(task.automatic ? { automatic: true } : { cardEvents: task.cardEvents }), chartHash: task.chartHash,
+         proReport: savedProReport(task) } : {}),
+     };
+@@ -184,6 +185,7 @@
+     const method = input?.method;
+     const guide = method === 'combined' && input?.profile === guideVersion;
+     const automatic = guide && input.automatic === true;
++    const tarotFirst = guide && !automatic && input.tarotFirst === true;
+     const question = guide ? readGuideQuestion(input.question) : readQuestion(input);
+     const previousQuestion = guide && input.previousQuestion !== undefined ? readGuideQuestion(input.previousQuestion) : undefined;
+     if (!guide && understandLocally(question).clarification) throw new ReadingTaskError(400, 'needs_clarification');
+@@ -209,11 +211,14 @@
+         ...(previousQuestion === undefined ? {} : { previousQuestion }),
+         stage: 'cast', cardEvents: [], coinEvents: [], actions: {} } : {}),
+     };
+-    if (automatic) {
++    if (tarotFirst) {
++      task.tarotFirst = true;
++      prepareGuideTarot(task);
++    } else if (automatic) {
+       task.automatic = true;
+       task.castStartedAt = task.createdAt;
+       task.tosses = Array.from({ length: 6 }, () => rollLiuYaoLine(random));
+-      prepareGuideTarot(task);
++      finishGuideCast(task);
+       // The full deck is already shuffled and each card has an independently sampled orientation.
+       for (const slot of [0, 1, 2]) selectCard(task, slot);
+     }
+@@ -295,7 +300,8 @@
+       const inputs = Array.from({ length: 3 }, () => Math.floor(random() * 999) + 1);
+       resolveCombined(task, task.castResult, readMeihuaNumbers(inputs), automaticMeihuaSource);
+     } else if (event) {
+-      resolveCombined(task, task.castResult, readMeihuaClicks(task.cardEvents.map(({ epochMs }) => epochMs)), clickMeihuaSource);
++      if (task.tarotFirst) task.stage = 'cast';
++      else resolveGuideClicks(task);
+     } else if (task.method === 'combined') {
+       task.stage = 'cast';
+     } else {
+@@ -347,9 +353,18 @@
+   }
+
+   function prepareGuideTarot(task) {
+-    task.castResult = readJingfang(task.tosses, castCalendar(Date.parse(task.castStartedAt)));
+     task.picking = prepareFullTarotDeck(random, task.question);
+     task.stage = 'draw';
++  }
++
++  function resolveGuideClicks(task) {
++    resolveCombined(task, task.castResult, readMeihuaClicks(task.cardEvents.map(({ epochMs }) => epochMs)), clickMeihuaSource);
++  }
++
++  function finishGuideCast(task) {
++    task.castResult = readJingfang(task.tosses, castCalendar(Date.parse(task.castStartedAt)));
++    if (task.tarotFirst) resolveGuideClicks(task);
++    else prepareGuideTarot(task);
+   }
+
+   function toss(token, input) {
+@@ -365,7 +380,7 @@
+       if (event) task.coinEvents.push({ ...event, coins });
+       if (task.tosses.length === 6) {
+         if (event) {
+-          prepareGuideTarot(task);
++          finishGuideCast(task);
+           return true;
+         }
+         const liuyao = readLiuYao(task.tosses);
+--- a/src/features/divination/server/guide-workflow.test.mjs
++++ b/src/features/divination/server/guide-workflow.test.mjs
+@@ -24,6 +24,51 @@
+ const wire = (value) => JSON.parse(JSON.stringify(value));
+ const times = ['1794528000002', '1794528001003', '1794528002008'];
+ const coins = [[2, 2, 2], [3, 2, 2], [3, 3, 2], [3, 3, 3]];
++
++test('a Tarot-first guide keeps the revealed draw for the final chart and report', async () => {
++  const question = '这次面试后续会怎样？';
++  const focus = '面试后续';
++  let reportDraw;
++  const service = createReadingTaskService(':memory:', {
++    understand: async () => ({ focus, clarification: '', source: 'model' }),
++    generatePro: async (task) => {
++      reportDraw = task.draw;
++      return { tarot: '塔罗解读。', meihua: '梅花易数解读。', liuyao: '六爻解读。' };
++    },
++  });
++  try {
++    const { proof } = await service.understandQuestion({ question, requireModel: true });
++    const { token, task } = service.start({
++      method: 'combined', profile: 'three-methods-v1', question, focus, proof, tarotFirst: true,
++    });
++    assert.equal(task.tarotFirst, true);
++    assert.equal(task.stage, 'draw');
++    assert.equal(task.slotCount, 78);
++    assert.equal(task.draw, undefined);
++    assert.throws(() => service.toss(token, { actionId: randomUUID(), step: 0 }), /toss_out_of_order/);
++    const picks = [4, 17, 31].map((slot, step) => ({
++      actionId: randomUUID(), step, slot, epochMs: times[step], monotonicMs: step, clockSessionId: randomUUID(),
++    }));
++    for (const pick of picks) service.pick(token, pick);
++    const early = wire(service.get(token));
++    assert.equal(early.stage, 'cast');
++    assert.equal(early.tosses.length, 0);
++    assert.equal(early.castResult, undefined);
++    assert.deepEqual(early.draw.cards.map(({ slot }) => slot), [4, 17, 31]);
++    assert.deepEqual(wire(service.pick(token, picks[2])), early);
++    await assert.rejects(service.report(token), /report_not_ready/);
++    for (let step = 0; step < 6; step++) service.toss(token, { actionId: randomUUID(), step });
++    const complete = wire(service.get(token));
++    assert.equal(complete.stage, 'reading');
++    assert.deepEqual(complete.draw, early.draw);
++    assert.deepEqual(complete.results.meihua.timestamps, times);
++    assert.equal(complete.tosses.length, 6);
++    assert.ok((await service.report(token)).proReport);
++    assert.deepEqual(wire(reportDraw), early.draw);
++  } finally {
++    service.close();
++  }
++});
+
+ test('a chat question creates one complete automatic chart without manual ritual events', async () => {
+   const question = '这次面试后续会怎样？';

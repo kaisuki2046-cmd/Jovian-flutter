@@ -100,7 +100,7 @@ List<GuideReadingAttachment> _readLocalAttachments(Object? raw, int followUps) {
 }
 
 Set<int>? _readRevealedSlots(GuideRitualSnapshot snapshot, Object? value) {
-  if (snapshot.chart == null ||
+  if (snapshot.tarotDraw == null ||
       snapshot.automatic ||
       value is! List ||
       value.length > snapshot.selectedSlots.length ||

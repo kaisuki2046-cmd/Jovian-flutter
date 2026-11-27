@@ -533,14 +533,14 @@ void main() {
         tester.widget<Semantics>(card).properties.onTap!();
         await tester.pumpAndSettle();
       }
+      await _tap(tester, '一键翻牌');
+      await _tap(tester, '继续六爻起卦');
       final toss = find.byKey(const ValueKey('coin-ritual-toss-button'));
       for (var index = 0; index < 6; index++) {
         await tester.ensureVisible(toss);
         await tester.tap(toss);
         await tester.pumpAndSettle();
       }
-      await _tap(tester, '一键翻牌');
-      await _tap(tester, '查看解读');
       expect(find.text('确认的关注点'), findsOneWidget);
       expect(find.text(divinationFixtureFocus), findsOneWidget);
       expect(find.text('解读暂不可用，可以稍后重试。'), findsOneWidget);
@@ -667,10 +667,7 @@ void main() {
     expect(service.transmitted.last, firstStart);
     expect(online.activeTranscript, hasLength(2));
     expect(online.activeTranscript.last.question, divinationFixtureDetails);
-    expect(
-      find.text('第 1 步 · 塔罗选牌'),
-      findsOneWidget,
-    );
+    expect(find.text('第 1 步 · 塔罗选牌'), findsOneWidget);
   });
 
   testWidgets(
@@ -759,10 +756,7 @@ void main() {
       'POST /reading',
     ]);
     expect(online.activeTranscript, hasLength(1));
-    expect(
-      find.text('第 1 步 · 塔罗选牌'),
-      findsOneWidget,
-    );
+    expect(find.text('第 1 步 · 塔罗选牌'), findsOneWidget);
   });
 
   testWidgets('stopping question analysis restores the original draft', (

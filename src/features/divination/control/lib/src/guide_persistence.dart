@@ -32,6 +32,7 @@ GuideRitual restoreGuideRitual(
       payload['question'] as String,
       payload['focus'] as String,
       payload['automatic'] == true,
+      (payload['tarotFirst'] as bool?) ?? false,
       now,
       random,
     );
@@ -48,7 +49,7 @@ GuideRitual restoreGuideRitual(
     if ((ritual._castStartedAt == null) != ritual._tosses.isEmpty)
       throw invalid;
 
-    if (ritual._stage == GuideStage.cast) {
+    if (!ritual.tarotFirst && ritual._stage == GuideStage.cast) {
       if (ritual._tosses.length >= 6 || ritual.automatic) throw invalid;
       return ritual;
     }
@@ -68,6 +69,17 @@ GuideRitual restoreGuideRitual(
       ritual._selectedSlots,
     )) {
       throw invalid;
+    }
+    if (ritual.tarotFirst && ritual._stage != GuideStage.reading) {
+      final snapshot = parseGuideSnapshot({
+        ...payload,
+        'slotCount': picking.slots.length,
+        'selectedSlots': ritual._selectedSlots,
+      });
+      if (snapshot.tarotDraw != null) {
+        ritual._earlyDraw = _verifiedDraw(payload['draw'], picking);
+      }
+      return ritual;
     }
     final savedCalendar = _savedMap(
       _savedMap(payload['castResult'])['calendar'],
@@ -89,18 +101,7 @@ GuideRitual restoreGuideRitual(
       }
       return ritual;
     }
-    final draw = TarotDraw.fromJson(_savedMap(payload['draw']));
-    if (draw.spread != TarotSpread.situationInfluenceTrend ||
-        draw.cards.length != ritual._selectedSlots.length)
-      throw invalid;
-    for (final (index, card) in draw.cards.indexed) {
-      final slot = ritual._selectedSlots[index];
-      final face = picking.slots[slot];
-      if (card.slot != slot ||
-          card.face.card.id != face.card.id ||
-          card.face.orientation != face.orientation)
-        throw invalid;
-    }
+    final draw = _verifiedDraw(payload['draw'], picking);
     final results = _savedMap(payload['results']);
     final source = ritual.automatic
         ? MeihuaInputSource.automaticNumbers
@@ -132,6 +133,25 @@ GuideRitual restoreGuideRitual(
   } on StateError {
     throw invalid;
   }
+}
+
+TarotDraw _verifiedDraw(Object? value, TarotPicking picking) {
+  const invalid = FormatException('Invalid saved Tarot draw.');
+  final draw = TarotDraw.fromJson(_savedMap(value));
+  if (draw.spread != TarotSpread.situationInfluenceTrend ||
+      draw.cards.length != picking.selectedSlots.length) {
+    throw invalid;
+  }
+  for (final (index, card) in draw.cards.indexed) {
+    final slot = picking.selectedSlots[index];
+    final face = picking.slots[slot];
+    if (card.slot != slot ||
+        card.face.card.id != face.card.id ||
+        card.face.orientation != face.orientation) {
+      throw invalid;
+    }
+  }
+  return draw;
 }
 
 Map<String, Object?> _savedMap(Object? value) =>

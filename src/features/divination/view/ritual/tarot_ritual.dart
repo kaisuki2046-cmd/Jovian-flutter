@@ -22,6 +22,7 @@ class TarotRitualPanel extends StatefulWidget {
     required this.choose,
     required this.reveal,
     required this.finish,
+    this.finishLabel = '查看解读',
     this.preparation,
     this.cardFlight,
   });
@@ -37,6 +38,7 @@ class TarotRitualPanel extends StatefulWidget {
   final ValueChanged<int> choose;
   final ValueChanged<int?> reveal;
   final VoidCallback finish;
+  final String finishLabel;
   final Widget? preparation;
   final ValueChanged<bool>? cardFlight;
 
@@ -153,7 +155,7 @@ class _TarotRitualPanelState extends State<TarotRitualPanel> {
             if (draw != null)
               FilledButton(
                 onPressed: revealed ? widget.finish : () => widget.reveal(null),
-                child: UiText(revealed ? '查看解读' : '一键翻牌'),
+                child: UiText(revealed ? widget.finishLabel : '一键翻牌'),
               )
             else ...[
               Semantics(

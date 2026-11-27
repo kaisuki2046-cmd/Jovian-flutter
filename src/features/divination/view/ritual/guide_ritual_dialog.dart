@@ -28,6 +28,8 @@ class GuideRitualDialog extends StatefulWidget {
     required this.choose,
     required this.pause,
     this.preparedTarot,
+    this.showingEarlyTarot,
+    this.finishTarot,
     this.onRevealChanged,
     this.openAiPermissions,
   });
@@ -36,6 +38,8 @@ class GuideRitualDialog extends StatefulWidget {
   final Listenable changes;
   final GuideRitualSnapshot? Function() snapshot;
   final List<int>? Function()? preparedTarot;
+  final bool Function()? showingEarlyTarot;
+  final VoidCallback? finishTarot;
   final bool Function() busy;
   final String? Function() error;
   final VoidCallback? Function() retry;
@@ -76,7 +80,15 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
   }
 
   void _settle(int count) {
-    if (mounted && _settled != count) setState(() => _settled = count);
+    if (!mounted || _settled == count) return;
+    setState(() => _settled = count);
+    final snapshot = widget.snapshot();
+    if (snapshot != null &&
+        snapshot.tarotFirst &&
+        snapshot.stage == GuideStage.reading &&
+        count == snapshot.tosses.length) {
+      widget.pause();
+    }
   }
 
   @override
@@ -91,18 +103,22 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
     final snapshot = widget.snapshot();
     final presentation = widget.presentation;
     final preparedTarot = widget.preparedTarot?.call();
-    final tarotFirst = preparedTarot != null;
+    final serverTarotFirst = snapshot?.tarotFirst == true;
+    final tarotFirst = preparedTarot != null || serverTarotFirst;
+    final earlyTarot = widget.showingEarlyTarot?.call() == true;
+    final cardInFlight = _cardInFlight && !motionOff;
     final pickingFirst =
-        tarotFirst &&
+        preparedTarot != null &&
         snapshot?.stage == GuideStage.cast &&
-        (preparedTarot.length < TarotPosition.values.length ||
-            (_cardInFlight && !motionOff));
+        (preparedTarot.length < TarotPosition.values.length || cardInFlight);
     final casting =
         snapshot != null &&
         !pickingFirst &&
+        !earlyTarot &&
         (snapshot.stage == GuideStage.cast ||
             snapshot.tosses.length > _settled ||
-            (tarotFirst && snapshot.stage == GuideStage.draw));
+            (serverTarotFirst && snapshot.stage == GuideStage.reading) ||
+            (preparedTarot != null && snapshot.stage == GuideStage.draw));
     final picking =
         pickingFirst || (!casting && snapshot?.stage == GuideStage.draw);
     final selected = pickingFirst
@@ -117,20 +133,27 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
         picking &&
         selected.isEmpty &&
         presentation.preparation < 1;
-    final flipping = !casting && snapshot?.stage == GuideStage.reading;
+    final flippingEarly = earlyTarot && !cardInFlight;
+    final flipping =
+        flippingEarly ||
+        (!casting &&
+            !serverTarotFirst &&
+            snapshot?.stage == GuideStage.reading);
     final title = casting
         ? '投三枚铜钱'
         : flipping
         ? '翻开三张塔罗牌'
         : '选择三张塔罗牌';
-    final step = switch ((tarotFirst, casting, flipping)) {
-      (true, true, _) => '第 2 步 · 六爻起卦',
-      (false, true, _) => '第 1 步 · 六爻起卦',
-      (true, _, true) => '仪式完成',
-      (false, _, true) => '第 2 步 · 塔罗翻牌',
-      (true, _, _) => '第 1 步 · 塔罗选牌',
-      (false, _, _) => '第 2 步 · 塔罗选牌',
-    };
+    final step = flippingEarly
+        ? '第 1 步 · 塔罗翻牌'
+        : switch ((tarotFirst, casting, flipping)) {
+            (true, true, _) => '第 2 步 · 六爻起卦',
+            (false, true, _) => '第 1 步 · 六爻起卦',
+            (true, _, true) => '仪式完成',
+            (false, _, true) => '第 2 步 · 塔罗翻牌',
+            (true, _, _) => '第 1 步 · 塔罗选牌',
+            (false, _, _) => '第 2 步 · 塔罗选牌',
+          };
     final busy = widget.busy();
     final error = widget.error();
     final retry = widget.retry();
@@ -210,16 +233,7 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
                       onToss: widget.toss,
                       onSettled: _settle,
                     )
-                  else ...[
-                    if (snapshot.castResult case final result?) ...[
-                      Text(
-                        context
-                            .uiLabel('六爻卜卦结果：{result}')
-                            .replaceFirst('{result}', result.base.primary.name),
-                        style: theme.textTheme.bodySmall,
-                      ),
-                      const SizedBox(height: 10),
-                    ],
+                  else
                     Material(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18),
@@ -233,14 +247,14 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
                         child: TarotRitualPanel(
                           slotCount: slotCount,
                           selectedSlots: selected,
-                          draw: snapshot.chart?.tarot,
+                          draw: flipping ? snapshot.tarotDraw : null,
                           revealed: presentation.revealed,
                           busy: busy,
                           selectionBlocked: retry != null && !flipping,
                           active: _active,
                           reducedMotion: motionOff,
                           choose: widget.choose,
-                          cardFlight: pickingFirst
+                          cardFlight: pickingFirst || serverTarotFirst
                               ? (flying) =>
                                     setState(() => _cardInFlight = flying)
                               : null,
@@ -280,11 +294,13 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
                               Set.unmodifiable(presentation.revealed),
                             );
                           },
-                          finish: widget.pause,
+                          finish: flippingEarly
+                              ? widget.finishTarot ?? widget.pause
+                              : widget.pause,
+                          finishLabel: flippingEarly ? '继续六爻起卦' : '查看解读',
                         ),
                       ),
                     ),
-                  ],
                 ],
               ),
             ),

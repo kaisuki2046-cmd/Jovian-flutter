@@ -51,6 +51,10 @@ void main() {
         tester.widget<Semantics>(card).properties.onTap!();
         await tester.pumpAndSettle();
       }
+      await tester.tap(find.text('一键翻牌'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('继续六爻起卦'));
+      await tester.pumpAndSettle();
       final toss = find.byKey(const ValueKey('coin-ritual-toss-button'));
       await tester.ensureVisible(toss);
       await tester.tap(toss);
@@ -59,6 +63,7 @@ void main() {
       expect(service.calls, [
         'POST /reading/understand',
         'POST /reading',
+        for (var index = 0; index < 3; index++) 'POST /reading/pick',
         'POST /reading/toss',
       ]);
 

@@ -173,7 +173,9 @@ class _GuideFormState extends State<GuideForm>
         final files = _acceptQuestion();
         if (turn != null) _messageFiles[turn.id] = files;
       });
-      if (_snapshot?.stage == GuideStage.cast) _openRitual();
+      if (_snapshot?.stage case GuideStage.cast || GuideStage.draw) {
+        _openRitual();
+      }
     } else if (online.canRetry || online.questionStopped) {
       setState(() {
         if (_question.text.isEmpty) _question.value = pending.draft;
@@ -303,6 +305,8 @@ class _GuideFormState extends State<GuideForm>
         changes: _ritualChanges,
         snapshot: () => mounted ? _snapshot : null,
         preparedTarot: () => mounted ? online.preparedTarotSlots : null,
+        showingEarlyTarot: () => mounted && online.showingEarlyTarot,
+        finishTarot: () => unawaited(online.finishEarlyTarot()),
         busy: () => mounted && (widget.online?.busy ?? false),
         error: () => mounted ? widget.online?.message : null,
         openAiPermissions: () {

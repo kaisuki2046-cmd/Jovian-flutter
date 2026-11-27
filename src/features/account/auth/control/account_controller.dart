@@ -368,6 +368,7 @@ class AccountController extends ChangeNotifier {
     Map<String, Object?> input,
     AgreementCatalog accepted, {
     bool grantAi = false,
+    VoidCallback? onCodeInvalidated,
   }) async {
     var signedIn = false;
     await _run(
@@ -376,6 +377,21 @@ class AccountController extends ChangeNotifier {
         try {
           session = await _account.signIn(method, input, accepted);
         } on JsonRequestError catch (error) {
+          if (input.containsKey('challengeId')) {
+            switch (error.status) {
+              case 410:
+                _notice = '这个验证码已失效，请重新获取。';
+                onCodeInvalidated?.call();
+                return;
+              case 422:
+                _notice = '验证码不正确，请检查后重试。';
+                return;
+              case 409 when method == AuthMethod.register:
+                _notice = '昵称或邮箱已被使用。更换后请重新获取邮箱验证码。';
+                onCodeInvalidated?.call();
+                return;
+            }
+          }
           if (error.status != 412 && error.status != 428) rethrow;
           await _reloadUpdatedAgreements();
           return;

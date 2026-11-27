@@ -150,6 +150,79 @@ void main() {
   );
 
   testWidgets(
+    'email registration retains a usable code when resend is throttled',
+    (tester) async {
+      final service =
+          _AuthService({
+              'emailRegistrationAvailable': true,
+              'emailRegistrationCodeRequired': true,
+            })
+            ..emailCodeStatuses.addAll([200, 429, 200])
+            ..registrationStatuses.addAll([422, 410, 201]);
+      await _open(tester, service);
+      await _tap(tester, '注册');
+      await _enter(tester, '手机号或邮箱', '13800138000');
+      expect(find.text('当前暂不支持手机号注册，请使用邮箱。'), findsOneWidget);
+      expect(_field('昵称'), findsNothing);
+      expect(
+        tester
+            .widget<FilledButton>(find.widgetWithText(FilledButton, '创建账号'))
+            .onPressed,
+        isNull,
+      );
+
+      await _enter(tester, '手机号或邮箱', 'tester@example.test');
+      await _enter(tester, '昵称', '邮箱测试');
+      await _enter(tester, '密码', 'fixture1');
+      await _enter(tester, '确认密码', 'fixture1');
+      await _tap(tester, '发送验证码');
+      expect(service.submitted, isEmpty);
+      await _tap(tester, '同意并继续');
+      await _enter(tester, '验证码', '654321');
+      await _tap(tester, '重新发送');
+      expect(
+        tester.widget<TextField>(_field('验证码')).controller!.text,
+        '654321',
+      );
+      expect(find.text('操作太频繁，请稍后重试。'), findsOneWidget);
+      await _tap(tester, '创建账号');
+      expect(find.text('验证码不正确，请检查后重试。'), findsOneWidget);
+      expect(find.text('重新发送'), findsOneWidget);
+
+      await _enter(tester, '验证码', '123456');
+      await _tap(tester, '创建账号');
+      expect(find.text('这个验证码已失效，请重新获取。'), findsOneWidget);
+      expect(tester.widget<TextField>(_field('验证码')).controller!.text, isEmpty);
+      expect(find.text('发送验证码'), findsOneWidget);
+      await _tap(tester, '发送验证码');
+      await _enter(tester, '验证码', '223344');
+      await _tap(tester, '创建账号');
+
+      expect(service.submitted['/account/auth/register/code'], [
+        for (var index = 0; index < 3; index++)
+          {'email': 'tester@example.test'},
+      ]);
+      expect(service.submitted['/account/auth/register'], [
+        for (final (id, code) in [
+          ('email-challenge-1', '654321'),
+          ('email-challenge-1', '123456'),
+          ('email-challenge-3', '223344'),
+        ])
+          {
+            'email': 'tester@example.test',
+            'displayName': '邮箱测试',
+            'password': 'fixture1',
+            'challengeId': id,
+            'code': code,
+            'acceptance': _acceptance('v1'),
+          },
+      ]);
+      expect(service.account.session?.id, 'fixture-member');
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
     'simulated WeChat prompts again when the service updates agreements',
     (tester) async {
       final service = _AuthService({
@@ -282,6 +355,8 @@ class _AuthService {
   final Map<String, Object?> capabilities;
   late final AccountController account;
   final submitted = <String, List<Object?>>{};
+  final emailCodeStatuses = <int>[];
+  final registrationStatuses = <int>[];
   bool updateAgreements = false;
   bool pendingAgreement = false;
   int catalogReads = 0;
@@ -308,6 +383,13 @@ class _AuthService {
             _document('ai', 'AI 数据共享告知'),
           ],
         });
+      case 'POST /account/auth/register/code':
+        final status = emailCodeStatuses.removeAt(0);
+        return status == 200
+            ? _json({
+                'challengeId': 'email-challenge-${submitted[path]!.length}',
+              })
+            : _json({}, status);
       case 'POST /account/auth/phone/login/code':
         return _json({
           'challengeId': 'fixture-challenge',
@@ -320,8 +402,13 @@ class _AuthService {
           return _json({}, 412);
         }
         return _member(provider: 'wechat');
-      case 'POST /account/auth/phone/login':
       case 'POST /account/auth/register':
+        if (registrationStatuses.isNotEmpty) {
+          final status = registrationStatuses.removeAt(0);
+          if (status != 201) return _json({}, status);
+        }
+        return _member();
+      case 'POST /account/auth/phone/login':
         return _member();
       case 'POST /account/agreements/confirmation':
         if (updateAgreements) {

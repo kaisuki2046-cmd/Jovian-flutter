@@ -733,6 +733,13 @@ const englishInterfaceStrings = <String, String>{
   '重新发送': 'Resend code',
   '创建账号': 'Create account',
   '验证码已发送，请查收。': 'Check your inbox for the verification code.',
+  '这个验证码已失效，请重新获取。': 'This code has expired. Request a new one.',
+  '验证码不正确，请检查后重试。':
+      'The verification code is incorrect. Check it and try again.',
+  '昵称或邮箱已被使用。更换后请重新获取邮箱验证码。':
+      'The nickname or email is already in use. Update it and request a new email code.',
+  '当前邮箱注册服务暂不可用。': 'Email registration is currently unavailable.',
+  '当前暂不支持手机号注册，请使用邮箱。': 'Phone registration is unavailable. Use email instead.',
   '请在本机 virtual-auth-provider/inbox 查找最新 TXT。':
       'Check virtual-auth-provider/inbox on this device for the latest text file.',
   '协议与政策': 'Agreements and policies',

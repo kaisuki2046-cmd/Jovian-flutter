@@ -93,6 +93,10 @@ class _AccountPageState extends State<AccountPage> {
           : EdgeInsets.zero;
       final innerWelcome =
           widget.standalone && !renewAgreement && _pane != _WelcomePane.landing;
+      final showForm =
+          !showDashboard &&
+          !renewAgreement &&
+          (!widget.standalone || innerWelcome);
       return PopScope<void>(
         canPop: !innerWelcome,
         onPopInvokedWithResult: (didPop, _) {
@@ -122,7 +126,7 @@ class _AccountPageState extends State<AccountPage> {
                       if (widget.standalone && !innerWelcome)
                         const _WelcomeBrand(),
                       if (_account.busy) const LinearProgressIndicator(),
-                      if (_account.notice case final message?)
+                      if (_account.notice case final message? when !showForm)
                         Padding(
                           padding: statusPadding,
                           child: Semantics(
@@ -243,6 +247,8 @@ class _AccountPageState extends State<AccountPage> {
     final phoneCode = _method == AuthMethod.phoneCode;
     final parsed = AccountIdentifier.parse(_address.text);
     final verifyPhone = registering && _phoneRegistrationNeedsCode(parsed);
+    final unavailable = registering ? _unavailableRegistration(parsed) : null;
+    final showCredentials = !verifyPhone && unavailable == null;
     final codeDisabled = phoneCode && capabilities?.phoneCodesAvailable != true;
     final needsCode =
         phoneCode ||
@@ -344,6 +350,8 @@ class _AccountPageState extends State<AccountPage> {
         onSubmitted: verifyPhone && !disabled ? (_) => _submit(_method) : null,
         keyboardType: phoneEntry
             ? TextInputType.phone
+            : registering
+            ? TextInputType.text
             : TextInputType.emailAddress,
         decoration: InputDecoration(
           labelText: context.uiLabel(
@@ -365,7 +373,11 @@ class _AccountPageState extends State<AccountPage> {
         UiText('未注册的手机号验证后会自动创建账号。', style: small),
         const SizedBox(height: 8),
       ],
-      if (registering && !verifyPhone) ...[
+      if (unavailable != null) ...[
+        Semantics(liveRegion: true, child: UiText(unavailable, style: small)),
+        const SizedBox(height: 8),
+      ],
+      if (registering && showCredentials) ...[
         TextField(
           controller: _name,
           enabled: !disabled,
@@ -376,7 +388,7 @@ class _AccountPageState extends State<AccountPage> {
         ),
         const SizedBox(height: 8),
       ],
-      if (!phoneCode && !verifyPhone)
+      if (!phoneCode && showCredentials)
         TextField(
           controller: _password,
           enabled: !disabled,
@@ -410,7 +422,7 @@ class _AccountPageState extends State<AccountPage> {
             ),
           ),
         ),
-      if (registering && !verifyPhone) ...[
+      if (registering && showCredentials) ...[
         const SizedBox(height: 8),
         TextField(
           controller: _confirmation,
@@ -470,7 +482,8 @@ class _AccountPageState extends State<AccountPage> {
         Semantics(liveRegion: true, child: const UiText('密码已重置，请使用新密码登录。')),
         const SizedBox(height: 8),
       ],
-      if (_validation case final message?) ...[
+      if ((_validation ?? _account.notice) case final message?
+          when message != unavailable) ...[
         Semantics(
           liveRegion: true,
           child: UiText(
@@ -481,7 +494,9 @@ class _AccountPageState extends State<AccountPage> {
         const SizedBox(height: 8),
       ],
       FilledButton(
-        onPressed: disabled || codeDisabled ? null : () => _submit(_method),
+        onPressed: disabled || codeDisabled || unavailable != null
+            ? null
+            : () => _submit(_method),
         child: UiText(
           verifyPhone
               ? '继续验证手机号'
@@ -804,10 +819,13 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   Future<void> _sendCode() async {
+    final account = _account;
+    final method = _method;
+    final pane = _pane;
     final identifier = AccountIdentifier.parse(_address.text);
     if (identifier == null ||
-        identifier.isPhone != (_method == AuthMethod.phoneCode)) {
-      _show(_method == AuthMethod.phoneCode ? '请输入有效的手机号。' : '请输入有效的邮箱。');
+        identifier.isPhone != (method == AuthMethod.phoneCode)) {
+      _show(method == AuthMethod.phoneCode ? '请输入有效的手机号。' : '请输入有效的邮箱。');
       return;
     }
     final catalog = _account.catalog;
@@ -815,15 +833,20 @@ class _AccountPageState extends State<AccountPage> {
       _show('协议暂时无法加载，请刷新后重试。');
       return;
     }
-    if (!await _acceptRequired(catalog) || !mounted) return;
+    bool isCurrent() =>
+        mounted &&
+        identical(account, _account) &&
+        _method == method &&
+        _pane == pane &&
+        AccountIdentifier.parse(_address.text)?.value == identifier.value;
+    if (!await _acceptRequired(catalog) || !isCurrent()) return;
+    setState(() => _validation = null);
+    final challenge = await account.sendCode(identifier);
+    if (challenge == null || !isCurrent()) return;
     setState(() {
-      _validation = null;
-      _challenge = null;
+      _challenge = (address: identifier.value, issued: challenge);
       _code.clear();
     });
-    final challenge = await _account.sendCode(identifier);
-    if (!mounted || challenge == null) return;
-    setState(() => _challenge = (address: identifier.value, issued: challenge));
   }
 
   Future<void> _submit(AuthMethod method) async {
@@ -864,23 +887,17 @@ class _AccountPageState extends State<AccountPage> {
         );
         return;
       }
-      if (registering &&
-          identifier.isPhone &&
-          !capabilities.phoneRegistrationWithoutCode) {
-        if (!capabilities.phoneCodesAvailable) {
-          _show('当前暂不支持手机号注册，请使用邮箱。');
+      if (registering) {
+        if (_unavailableRegistration(identifier) case final message?) {
+          _show(message);
           return;
         }
-        FocusManager.instance.primaryFocus?.unfocus();
-        if (widget.standalone) _pane = _WelcomePane.phone;
-        _selectMethod(AuthMethod.phoneCode);
-        return;
-      }
-      if (registering &&
-          !identifier.isPhone &&
-          !capabilities.emailRegistrationAvailable) {
-        _show('当前邮箱注册服务暂不可用。');
-        return;
+        if (_phoneRegistrationNeedsCode(identifier)) {
+          FocusManager.instance.primaryFocus?.unfocus();
+          if (widget.standalone) _pane = _WelcomePane.phone;
+          _selectMethod(AuthMethod.phoneCode);
+          return;
+        }
       }
       input[identifier.field] = identifier.value;
       if (!phoneCode) {
@@ -924,16 +941,36 @@ class _AccountPageState extends State<AccountPage> {
       }
     }
     FocusManager.instance.primaryFocus?.unfocus();
+    final submittedChallenge = _challenge;
     if (await _account.signIn(
           method,
           input,
           catalog,
           grantAi: identical(_aiAccepted, catalog.ai),
+          onCodeInvalidated: () {
+            if (!mounted || _challenge != submittedChallenge) return;
+            setState(() {
+              _challenge = null;
+              _code.clear();
+            });
+          },
         ) &&
         mounted) {
       _clearForm();
       widget.onWelcomeExit?.call();
     }
+  }
+
+  String? _unavailableRegistration(AccountIdentifier? identifier) {
+    final capabilities = _account.capabilities;
+    if (identifier == null || capabilities == null) return null;
+    if (!identifier.isPhone) {
+      return capabilities.emailRegistrationAvailable ? null : '当前邮箱注册服务暂不可用。';
+    }
+    return capabilities.phoneRegistrationWithoutCode ||
+            capabilities.phoneCodesAvailable
+        ? null
+        : '当前暂不支持手机号注册，请使用邮箱。';
   }
 
   bool _phoneRegistrationNeedsCode(AccountIdentifier? identifier) =>

@@ -53,10 +53,13 @@ class SynastryPageController extends ChangeNotifier {
   final SynastryComparisonReader? compare;
   final SynastrySummaryReader? summarize;
   var _work = Completer<void>();
+  Completer<void>? _latestRestore;
   var _disposed = false;
 
   bool allowed = false;
   bool busy = false;
+  bool latestRestoreFailed = false;
+  bool get restoringLatest => _latestRestore != null;
   String? message;
   Map<String, Object?>? a;
   Map<String, Object?>? b;
@@ -104,6 +107,7 @@ class SynastryPageController extends ChangeNotifier {
   }
 
   void _clearResult() {
+    _cancelLatestRestore();
     result = null;
     report = null;
     savedAt = null;
@@ -123,6 +127,7 @@ class SynastryPageController extends ChangeNotifier {
 
   @override
   void dispose() {
+    _cancelLatestRestore();
     _history?.dispose();
     _work.complete();
     _disposed = true;
@@ -175,6 +180,7 @@ class SynastryPageController extends ChangeNotifier {
   Future<void> readOwnChart() async {
     final session = account?.authorizedSession;
     if (session == null || !member || busy) return;
+    _cancelLatestRestore();
     final previousStatus = aFromArchive
         ? OwnSynastryChartStatus.idle
         : ownChartStatus;
@@ -227,22 +233,43 @@ class SynastryPageController extends ChangeNotifier {
   }
 
   Future<void> restoreLatest() async {
-    final session = account?.authorizedSession;
-    if (session == null || busy) return;
-    final job = _start();
+    final client = account;
+    final session = client?.authorizedSession;
+    if (client == null ||
+        session == null ||
+        _disposed ||
+        !_scope(session.scope) ||
+        restoringLatest ||
+        busy) {
+      return;
+    }
+    latestRestoreFailed = false;
+    final restore = _latestRestore = Completer<void>();
+    bool isCurrent() =>
+        identical(_latestRestore, restore) && _scope(session.scope);
+
+    notifyListeners();
     try {
-      final archive = await account!.reports.latest(
+      final archive = await client.reports.latest(
         session.id,
         ReportKind.synastry,
+        cancel: restore.future,
       );
-      if (_current(job) && _scope(session.scope) && archive != null) {
-        _showSaved(archive);
-      }
+      if (isCurrent() && archive != null) _showSaved(archive);
     } catch (_) {
-      if (_current(job)) message = '暂时无法读取已存合盘。';
+      if (isCurrent()) latestRestoreFailed = true;
     } finally {
-      _finish(job);
+      if (identical(_latestRestore, restore)) {
+        _latestRestore = null;
+        notifyListeners();
+      }
     }
+  }
+
+  void _cancelLatestRestore() {
+    _latestRestore?.complete();
+    _latestRestore = null;
+    latestRestoreFailed = false;
   }
 
   void openHistory() {
@@ -269,6 +296,7 @@ class SynastryPageController extends ChangeNotifier {
   Future<void> openSaved(String id) async {
     final session = account?.authorizedSession;
     if (session == null || busy || !_scope(session.scope)) return;
+    _cancelLatestRestore();
     final job = _start();
     try {
       final archive = await account!.reports.detail(

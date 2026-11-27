@@ -797,6 +797,7 @@ const englishInterfaceStrings = <String, String>{
       "Both birth times are required. Check the details and recalculate.",
   "排盘失败，请核对出生资料后重试。":
       "Unable to calculate the chart. Check the birth details and try again.",
+  "正在读取合盘存档…": "Loading the saved compatibility reading…",
   "暂时无法读取已存合盘。": "Unable to load the saved compatibility reading.",
   "暂时无法读取这次合盘存档，请重试。": "Unable to load this saved comparison. Try again.",
   "盘面比较失败，请核对双方资料。":

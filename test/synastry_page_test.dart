@@ -30,6 +30,78 @@ const _place = BirthPlace(
 );
 
 void main() {
+  testWidgets('a slow archive read does not block a fresh local comparison', (
+    tester,
+  ) async {
+    final pending = Completer<http.Response>();
+    var latestReads = 0;
+    var comparisons = 0;
+    final account = await _fixtureAccount((request) {
+      expect(request.url.path, '/account/reading-history/latest');
+      latestReads++;
+      return pending.future;
+    });
+    await tester.pumpWidget(
+      MaterialApp(
+        home: SynastryPage(
+          loadPlaces: () async => [_place],
+          account: account,
+          calculate: (profile, _) async =>
+              _chart(profile.date.utcMidnight.toIso8601String()),
+          compare: (_, _, _) async {
+            comparisons++;
+            return _comparison;
+          },
+        ),
+      ),
+    );
+    await tester.pump();
+    expect(latestReads, 1);
+    final start = find.widgetWithText(OutlinedButton, '手动填写 A 方资料');
+    expect(tester.widget<OutlinedButton>(start).onPressed, isNotNull);
+    await tester.tap(start);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    await _fillProfile(tester, '1990-06-01');
+    await _tap(tester, '确认A 方资料');
+
+    pending.complete(_json(_archived('a' * 64, '过期返回')));
+    await tester.pumpAndSettle();
+    expect(find.text('过期返回亲情正文'), findsNothing);
+    expect(find.text('1990-06-01 09:20 · 杭州市'), findsOneWidget);
+
+    await _tap(tester, '我已获准使用 B 方资料进行本次合盘');
+    await _tap(tester, '手动填写 B 方资料');
+    await _fillProfile(tester, '1992-07-02');
+    await _tap(tester, '确认B 方资料');
+    await _tap(tester, '比较盘面');
+    expect(find.text('双人盘面对照'), findsOneWidget);
+    expect(comparisons, 1);
+  });
+
+  testWidgets('can retry the latest report without entering birth details', (
+    tester,
+  ) async {
+    var latestReads = 0;
+    final account = await _fixtureAccount((request) {
+      expect(request.url.path, '/account/reading-history/latest');
+      return ++latestReads == 1
+          ? _json({'error': 'unavailable'}, 503)
+          : _json(_archived('a' * 64, '恢复后'));
+    });
+    await tester.pumpWidget(
+      MaterialApp(
+        home: SynastryPage(loadPlaces: () async => [_place], account: account),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('暂时无法读取已存合盘。'), findsOneWidget);
+    await _tap(tester, '重试读取');
+    expect(find.text('恢复后亲情正文'), findsOneWidget);
+    expect(find.text('暂时无法读取已存合盘。'), findsNothing);
+    expect(latestReads, 2);
+  });
+
   testWidgets(
     'English comparison and a long report keep their layout on a narrow page',
     (tester) async {
@@ -591,7 +663,7 @@ const _permission = 'synastry.cloud_interpretation';
 class _LoopbackHttpOverrides extends HttpOverrides {}
 
 Future<AccountController> _fixtureAccount(
-  http.Response Function(http.Request) readArchives, {
+  FutureOr<http.Response> Function(http.Request) readArchives, {
   bool share = false,
   bool member = false,
 }) async {

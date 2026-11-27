@@ -69,6 +69,7 @@ class ReportHistoryApi {
     String owner,
     ReportKind kind, {
     String? contextKey,
+    Future<void>? cancel,
   }) async {
     final record = await _account.requestNullable(
       [_history(kind), 'latest'],
@@ -77,6 +78,7 @@ class ReportHistoryApi {
         ..._owner(owner, kind),
         if (contextKey != null) 'contextKey': contextKey,
       },
+      cancel: cancel,
     );
     return record == null ? null : ArchivedReport.fromJson(record, kind);
   }

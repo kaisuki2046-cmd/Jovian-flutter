@@ -220,6 +220,30 @@ class _SynastryPageState extends State<SynastryPage> {
                 const SizedBox(height: 12),
                 _report(context, report),
               ],
+              if (_synastry.restoringLatest)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Semantics(
+                    liveRegion: true,
+                    child: const UiText('正在读取合盘存档…'),
+                  ),
+                ),
+              if (_synastry.latestRestoreFailed)
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Semantics(
+                      liveRegion: true,
+                      child: const UiText('暂时无法读取已存合盘。'),
+                    ),
+                    TextButton(
+                      onPressed: _synastry.busy
+                          ? null
+                          : _synastry.restoreLatest,
+                      child: const UiText('重试读取'),
+                    ),
+                  ],
+                ),
               if (_synastry.hasSession) ...[
                 const SizedBox(height: 12),
                 _savedReports(),

@@ -1,9 +1,9 @@
-import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../ui/interface_language.dart';
 
 import '../../../ui/theme.dart';
+import '../../../ui/uid_copy_button.dart';
 import '../control/social_controller.dart';
 import '../model/social.dart';
 
@@ -63,7 +63,7 @@ class _SocialPrivacyPageState extends State<SocialPrivacyPage> {
                 return ListView(
                   padding: jovianPagePadding,
                   children: [
-                    const Text('暂时无法加载社交隐私设置。'),
+                    const UiText('暂时无法加载社交隐私设置。'),
                     TextButton(
                       onPressed: () => setState(
                         () => _privacy = widget.controller.privacy(),
@@ -78,7 +78,7 @@ class _SocialPrivacyPageState extends State<SocialPrivacyPage> {
                   Card(
                     child: SwitchListTile(
                       title: const UiText('允许其他用户找到我'),
-                      subtitle: const Text(
+                      subtitle: const UiText(
                         '开启后，其他登录用户可按 UID 找到你。昵称设为公开时，也可按昵称搜索。',
                       ),
                       value: state.discoverable,
@@ -114,28 +114,9 @@ class _SocialPrivacyPageState extends State<SocialPrivacyPage> {
                           for (final item in state.blocks)
                             ListTile(
                               contentPadding: EdgeInsets.zero,
-                              title: GestureDetector(
-                                onLongPress: item.uid == null
-                                    ? null
-                                    : () async {
-                                        await Clipboard.setData(
-                                          ClipboardData(text: item.uid!),
-                                        );
-                                        if (context.mounted)
-                                          ScaffoldMessenger.of(
-                                            context,
-                                          ).showSnackBar(
-                                            const SnackBar(
-                                              content: Text('UID 已复制'),
-                                            ),
-                                          );
-                                      },
-                                child: Text(
-                                  item.uid == null
-                                      ? '已拉黑用户'
-                                      : 'UID ${item.uid}',
-                                ),
-                              ),
+                              title: item.uid == null
+                                  ? const UiText('已拉黑用户')
+                                  : UidCopyButton(uid: item.uid!),
                               trailing: TextButton(
                                 onPressed: _saving
                                     ? null
@@ -160,7 +141,7 @@ class _SocialPrivacyPageState extends State<SocialPrivacyPage> {
                     ),
                   ),
                   if (_notice case final message?)
-                    Semantics(liveRegion: true, child: Text(message)),
+                    Semantics(liveRegion: true, child: UiText(message)),
                 ],
               );
             },

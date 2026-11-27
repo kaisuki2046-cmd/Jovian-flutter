@@ -176,7 +176,7 @@ class SocialConnectionsPage extends StatelessWidget {
       if (memberId == null) {
         return Scaffold(
           appBar: AppBar(
-            title: Text(direction == SocialList.followers ? '粉丝' : '关注'),
+            title: UiText(direction == SocialList.followers ? '粉丝' : '关注'),
           ),
           body: const Center(child: UiText('登录后可以查看关注与粉丝。')),
         );

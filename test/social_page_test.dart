@@ -240,7 +240,7 @@ void main() {
     await tester.tap(find.text('查看主页'));
     await tester.pumpAndSettle();
     expect(find.text('明月'), findsOneWidget);
-    expect(find.text('UID 12345678 · 长按复制'), findsOneWidget);
+    expect(find.text('UID 12345678'), findsOneWidget);
     await tester.tap(find.text('回关'));
     await tester.pumpAndSettle();
     expect(find.text('互相关注'), findsOneWidget);
@@ -335,6 +335,99 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('明月'), findsNothing);
       expect(find.text('登录后可按 UID 或昵称找用户，并查看新增粉丝提醒。'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox.shrink());
+      account.dispose();
+    },
+  );
+
+  testWidgets(
+    'follows in the list, preserves failed rows and removes unfollows',
+    (tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(320, 700);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final firstFollow = Completer<http.Response>();
+      final mutations = <bool>[];
+      var follows = false;
+      var followerReads = 0;
+      final account = _account(_Storage(), (request) async {
+        final profile = {..._profile, 'follows': follows};
+        switch (request.url.path) {
+          case '/social/followers':
+            followerReads++;
+            return _json({
+              'items': [profile],
+            });
+          case '/social/following':
+            return _json({
+              'items': [if (follows) profile],
+            });
+          case '/social/follows':
+            expect(request.method, 'POST');
+            final body = jsonDecode(request.body) as Map<String, dynamic>;
+            expect(body['id'], _actorId);
+            final active = body['active'] as bool;
+            mutations.add(active);
+            if (mutations.length == 1) return firstFollow.future;
+            follows = active;
+            return _json({...profile, 'follows': follows});
+          default:
+            fail('Unexpected social request ${request.url}');
+        }
+      });
+      await account.initialize();
+      Widget list(SocialList direction) => MaterialApp(
+        locale: const Locale('en'),
+        localizationsDelegates: const [interfaceStringsDelegate],
+        home: SocialConnectionsPage(account: account, direction: direction),
+      );
+
+      await tester.pumpWidget(list(SocialList.followers));
+      await tester.pumpAndSettle();
+      expect(find.text('明月'), findsOneWidget);
+      await tester.tap(find.widgetWithText(FilledButton, 'Follow back'));
+      await tester.pump();
+      final follow = tester.widget<FilledButton>(
+        find.widgetWithText(FilledButton, 'Follow back'),
+      );
+      expect(follow.onPressed, isNull);
+      expect(
+        tester
+            .widget<IconButton>(
+              find.byWidgetPredicate(
+                (widget) => widget is IconButton && widget.tooltip == 'Refresh',
+              ),
+            )
+            .onPressed,
+        isNull,
+      );
+      firstFollow.complete(_json({'error': 'temporary'}, 503));
+      await tester.pumpAndSettle();
+      expect(
+        find.text('Could not update the follow status. Try again.'),
+        findsOneWidget,
+      );
+      expect(find.text('明月'), findsOneWidget);
+      await tester.tap(find.widgetWithText(FilledButton, 'Follow back'));
+      await tester.pumpAndSettle();
+      expect(find.text('Following each other'), findsOneWidget);
+      expect(find.text('明月'), findsOneWidget);
+      await tester.tap(find.byTooltip('Refresh'));
+      await tester.pumpAndSettle();
+      expect(followerReads, 2);
+
+      await tester.pumpWidget(list(SocialList.following));
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.widgetWithText(FilledButton, 'Following each other'),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('明月'), findsNothing);
+      expect(find.text('You are not following anyone yet.'), findsOneWidget);
+      expect(mutations, [true, true, false]);
+      expect(tester.takeException(), isNull);
+
       await tester.pumpWidget(const SizedBox.shrink());
       account.dispose();
     },

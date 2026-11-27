@@ -86,12 +86,17 @@ class _FollowerAlertsPageState extends State<FollowerAlertsPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${actor?.displayName ?? '一位木星环用户'}关注了你',
+                  context
+                      .uiLabel('{name}关注了你')
+                      .replaceFirst(
+                        '{name}',
+                        actor?.displayName ?? context.uiLabel('一位木星环用户'),
+                      ),
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  '${_timestamp(context, alert.createdAt)} · ${unread ? '未读' : '已读'}',
+                  '${_timestamp(context, alert.createdAt)} · ${context.uiLabel(unread ? '未读' : '已读')}',
                 ),
                 if (actor != null || unread)
                   Wrap(
@@ -186,7 +191,7 @@ class _SocialReportsPageState extends State<SocialReportsPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text(widget.moderation ? '举报处理' : '我的举报')),
+    appBar: AppBar(title: UiText(widget.moderation ? '举报处理' : '我的举报')),
     body: _PagedList(
       paginator: _reports,
       empty: widget.moderation ? '暂无待处理举报。' : '暂无举报记录。',
@@ -199,15 +204,27 @@ class _SocialReportsPageState extends State<SocialReportsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '${item.reason.label} · ${item.status.label}',
+                '${context.uiLabel(item.reason.label)} · ${context.uiLabel(item.status.label)}',
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 6),
-              Text('提交于 ${_timestamp(context, item.createdAt)}'),
+              Text(
+                context
+                    .uiLabel('提交于 {date}')
+                    .replaceFirst(
+                      '{date}',
+                      _timestamp(context, item.createdAt),
+                    ),
+              ),
               if (item.reviewedAt case final date?)
-                Text('处理于 ${_timestamp(context, date)}'),
+                Text(
+                  context
+                      .uiLabel('处理于 {date}')
+                      .replaceFirst('{date}', _timestamp(context, date)),
+                ),
               if (item.conclusion?.isNotEmpty == true) Text(item.conclusion!),
-              if (item.targetId case final id?) Text('被举报账户 $id'),
+              if (item.targetId case final id?)
+                Text('${context.uiLabel('被举报账户')} $id'),
               if (item.detail?.isNotEmpty == true) Text(item.detail!),
               if (widget.moderation)
                 TextButton(
@@ -238,7 +255,7 @@ class _ReviewDialogState extends State<_ReviewDialog> {
   Widget build(BuildContext context) => AlertDialog(
     title: const UiText('处理举报'),
     content: TextField(
-      decoration: const InputDecoration(labelText: '处理结论（举报者可见）'),
+      decoration: InputDecoration(labelText: context.uiLabel('处理结论（举报者可见）')),
       maxLength: 400,
       maxLines: 4,
       onChanged: (value) => setState(() => _conclusion = value.trim()),
@@ -259,7 +276,7 @@ class _ReviewDialogState extends State<_ReviewDialog> {
                   status: status,
                   conclusion: _conclusion,
                 )),
-          child: Text(status.label),
+          child: UiText(status.label),
         ),
     ],
   );
@@ -283,6 +300,11 @@ class SocialConnectionsPanel extends StatefulWidget {
 
 class _SocialConnectionsPanelState extends State<SocialConnectionsPanel> {
   late final SocialPaginator<SocialProfile> _people;
+  bool _updatingFollow = false;
+  bool _openingProfile = false;
+  String? _notice;
+
+  bool get _busy => _updatingFollow || _openingProfile || _people.loading;
 
   @override
   void initState() {
@@ -296,33 +318,92 @@ class _SocialConnectionsPanelState extends State<SocialConnectionsPanel> {
     super.dispose();
   }
 
+  Future<void> _open(SocialProfile person) async {
+    if (_busy || !widget.controller.isCurrentMember) return;
+    setState(() => _openingProfile = true);
+    try {
+      await AccountSectionLinks.openPage(
+        context,
+        AccountSection.socialProfile,
+        () => SocialProfilePage(controller: widget.controller, id: person.id),
+        profileId: person.id,
+      );
+      if (mounted && widget.controller.isCurrentMember) await _reload();
+    } finally {
+      if (mounted) setState(() => _openingProfile = false);
+    }
+  }
+
+  Future<void> _toggle(SocialProfile person) async {
+    if (_busy || !widget.controller.isCurrentMember) return;
+    setState(() {
+      _updatingFollow = true;
+      _notice = null;
+    });
+    try {
+      final updated = await widget.controller.toggleFollow(person);
+      if (!mounted || !widget.controller.isCurrentMember) return;
+      final remove =
+          widget.direction == SocialList.following && !updated.relation.follows;
+      _people.updateItems(
+        (items) => [
+          for (final item in items)
+            if (item.id != updated.id) item else if (!remove) updated,
+        ],
+      );
+    } catch (error) {
+      if (mounted && widget.controller.isCurrentMember) {
+        setState(
+          () => _notice = describeSocialError(
+            error,
+            '关注状态更新失败，请重试。',
+            missing: '此用户当前不可操作。',
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _updatingFollow = false);
+    }
+  }
+
+  Future<void> _reload() {
+    if (_notice != null) setState(() => _notice = null);
+    return _people.load();
+  }
+
   @override
   Widget build(BuildContext context) {
     final followers = widget.direction == SocialList.followers;
     return Scaffold(
       appBar: AppBar(
-        title: Text(followers ? '粉丝' : '关注'),
+        title: UiText(followers ? '粉丝' : '关注'),
         leading: widget.onBack == null
             ? null
             : BackButton(onPressed: widget.onBack),
+        actions: [
+          ListenableBuilder(
+            listenable: _people,
+            builder: (context, _) => IconButton(
+              tooltip: context.uiLabel('刷新'),
+              onPressed: _busy ? null : _reload,
+              icon: const Icon(Icons.refresh),
+            ),
+          ),
+        ],
       ),
       body: _PagedList(
         paginator: _people,
         empty: followers ? '暂无粉丝。' : '暂无关注。',
+        busy: _updatingFollow || _openingProfile,
+        onRefresh: _reload,
+        before: () => [if (_notice case final message?) _LiveStatus(message)],
         itemBuilder: (context, person) => SocialProfileTile(
           profile: person,
-          onTap: () async {
-            await AccountSectionLinks.openPage(
-              context,
-              AccountSection.socialProfile,
-              () => SocialProfilePage(
-                controller: widget.controller,
-                id: person.id,
-              ),
-              profileId: person.id,
-            );
-            if (mounted) await _people.load();
-          },
+          onTap: _busy ? null : () => _open(person),
+          followAction: SocialFollowButton(
+            relation: person.relation,
+            onPressed: _busy ? null : () => _toggle(person),
+          ),
         ),
       ),
     );
@@ -335,6 +416,7 @@ class _PagedList<T> extends StatelessWidget {
     required this.empty,
     required this.itemBuilder,
     this.before,
+    this.onRefresh,
     this.busy = false,
   });
 
@@ -342,6 +424,7 @@ class _PagedList<T> extends StatelessWidget {
   final String empty;
   final Widget Function(BuildContext, T) itemBuilder;
   final List<Widget> Function()? before;
+  final Future<void> Function()? onRefresh;
   final bool busy;
 
   @override
@@ -351,7 +434,8 @@ class _PagedList<T> extends StatelessWidget {
       final page = paginator.page;
       final disabled = busy || paginator.loading;
       return RefreshIndicator(
-        onRefresh: () => disabled ? Future.value() : paginator.load(),
+        onRefresh: () =>
+            disabled ? Future.value() : (onRefresh ?? paginator.load)(),
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.all(20),
@@ -361,7 +445,7 @@ class _PagedList<T> extends StatelessWidget {
             if (paginator.error case final error?) ...[
               _LiveStatus(describeSocialError(error, '加载失败，请重试。')),
               TextButton(
-                onPressed: disabled ? null : paginator.load,
+                onPressed: disabled ? null : (onRefresh ?? paginator.load),
                 child: const UiText('重试'),
               ),
             ],
@@ -396,6 +480,6 @@ class _LiveStatus extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 8),
-    child: Semantics(liveRegion: true, child: Text(message)),
+    child: Semantics(liveRegion: true, child: UiText(message)),
   );
 }

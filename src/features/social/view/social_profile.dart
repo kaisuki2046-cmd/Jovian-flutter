@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../ui/interface_language.dart';
+import '../../../ui/uid_copy_button.dart';
 
 import '../../account/account.dart';
 import '../control/social_controller.dart';
@@ -108,7 +108,7 @@ class _SocialSearchPageState extends State<SocialSearchPage> {
               (SocialSearchMode.nickname, '按昵称搜索'),
             ])
               ChoiceChip(
-                label: Text(title),
+                label: UiText(title),
                 selected: _mode == mode,
                 onSelected: _mode == mode
                     ? null
@@ -129,11 +129,15 @@ class _SocialSearchPageState extends State<SocialSearchPage> {
               ? TextInputType.number
               : TextInputType.text,
           decoration: InputDecoration(
-            labelText: _mode == SocialSearchMode.uid ? 'UID' : '昵称',
-            helperText: _mode == SocialSearchMode.uid
-                ? '输入完整的 8 位 UID'
-                : '仅显示公开昵称',
-            errorText: _error,
+            labelText: _mode == SocialSearchMode.uid
+                ? 'UID'
+                : context.uiLabel('昵称'),
+            helperText: context.uiLabel(
+              _mode == SocialSearchMode.uid ? '输入完整的 8 位 UID' : '仅显示公开昵称',
+            ),
+            helperMaxLines: 2,
+            errorText: _error == null ? null : context.uiLabel(_error!),
+            errorMaxLines: 2,
           ),
           onChanged: (_) => setState(_clearResults),
           onSubmitted: (_) => _search(),
@@ -141,7 +145,7 @@ class _SocialSearchPageState extends State<SocialSearchPage> {
         const SizedBox(height: 12),
         FilledButton(
           onPressed: _loading || _input.text.trim().isEmpty ? null : _search,
-          child: Text(_loading && _results == null ? '正在搜索…' : '搜索'),
+          child: UiText(_loading && _results == null ? '正在搜索…' : '搜索'),
         ),
         if (_loading && _results != null)
           Padding(
@@ -174,21 +178,73 @@ class SocialProfileTile extends StatelessWidget {
     super.key,
     required this.profile,
     required this.onTap,
+    this.followAction,
   });
 
   final SocialProfile profile;
   final VoidCallback? onTap;
+  final Widget? followAction;
 
   @override
   Widget build(BuildContext context) => Card(
-    child: ListTile(
-      leading: const CircleAvatar(child: Icon(Icons.person_outline)),
-      title: Text(profile.name),
-      subtitle: profile.uid == null ? null : Text('UID ${profile.uid}'),
-      trailing: const Icon(Icons.chevron_right),
-      onTap: onTap,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ListTile(
+          leading: const CircleAvatar(child: Icon(Icons.person_outline)),
+          title: _ProfileName(profile),
+          subtitle: profile.uid == null ? null : Text('UID ${profile.uid}'),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: onTap,
+        ),
+        if (followAction case final action?)
+          Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 8),
+            child: Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: action,
+            ),
+          ),
+      ],
     ),
   );
+}
+
+class SocialFollowButton extends StatelessWidget {
+  const SocialFollowButton({
+    super.key,
+    required this.relation,
+    required this.onPressed,
+  });
+
+  final SocialRelation relation;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final label = relation.followLabel;
+    final child = Text(
+      label == '关注' && context.uiLanguage == InterfaceLanguage.english
+          ? 'Follow'
+          : context.uiLabel(label),
+      textAlign: TextAlign.center,
+    );
+    return relation.follows
+        ? FilledButton.tonal(onPressed: onPressed, child: child)
+        : FilledButton(onPressed: onPressed, child: child);
+  }
+}
+
+class _ProfileName extends StatelessWidget {
+  const _ProfileName(this.profile, {this.style});
+
+  final SocialProfile profile;
+  final TextStyle? style;
+
+  @override
+  Widget build(BuildContext context) => profile.displayName?.isNotEmpty == true
+      ? Text(profile.name, style: style)
+      : UiText(profile.name, style: style);
 }
 
 class SocialProfilePage extends StatefulWidget {
@@ -209,6 +265,7 @@ class _SocialProfilePageState extends State<SocialProfilePage> {
   late Future<SocialProfile> _profile = widget.controller.profile(widget.id);
   bool _busy = false;
   String? _notice;
+  SocialReportStatus? _reportStatus;
   bool get _own => widget.controller.memberId == widget.id;
 
   void _reload() {
@@ -226,6 +283,7 @@ class _SocialProfilePageState extends State<SocialProfilePage> {
     setState(() {
       _busy = true;
       _notice = null;
+      _reportStatus = null;
     });
     try {
       await operation();
@@ -249,8 +307,8 @@ class _SocialProfilePageState extends State<SocialProfilePage> {
       context: context,
       useRootNavigator: false,
       builder: (context) => AlertDialog(
-        title: const Text('拉黑该用户'),
-        content: const Text('拉黑会解除双方已有的关注，并限制互相查看和关注。'),
+        title: const UiText('拉黑该用户'),
+        content: const UiText('拉黑会解除双方已有的关注，并限制互相查看和关注。'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -258,7 +316,7 @@ class _SocialProfilePageState extends State<SocialProfilePage> {
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('确认拉黑'),
+            child: const UiText('确认拉黑'),
           ),
         ],
       ),
@@ -284,7 +342,7 @@ class _SocialProfilePageState extends State<SocialProfilePage> {
         input.reason,
         input.detail,
       );
-      if (mounted) setState(() => _notice = '举报已受理 · ${receipt.status.label}');
+      if (mounted) setState(() => _reportStatus = receipt.status);
     }, '举报未提交，请重试。');
   }
 
@@ -309,7 +367,7 @@ class _SocialProfilePageState extends State<SocialProfilePage> {
         return ListView(
           padding: const EdgeInsets.all(20),
           children: [
-            Text(
+            UiText(
               describeSocialError(
                 snapshot.error!,
                 '暂时无法加载用户资料。',
@@ -338,56 +396,41 @@ class _SocialProfilePageState extends State<SocialProfilePage> {
                       ),
                       const SizedBox(width: 14),
                       Expanded(
-                        child: Text(
-                          profile.name,
+                        child: _ProfileName(
+                          profile,
                           style: Theme.of(context).textTheme.titleLarge,
                         ),
                       ),
                       if (!_own)
                         PopupMenuButton<String>(
                           enabled: !_busy,
-                          tooltip: '更多操作',
+                          tooltip: context.uiLabel('更多操作'),
                           onSelected: (action) =>
                               action == 'block' ? _block() : _report(),
                           itemBuilder: (context) => const [
-                            PopupMenuItem(value: 'block', child: Text('拉黑')),
-                            PopupMenuItem(value: 'report', child: Text('举报')),
+                            PopupMenuItem(value: 'block', child: UiText('拉黑')),
+                            PopupMenuItem(value: 'report', child: UiText('举报')),
                           ],
                         ),
                     ],
                   ),
-                  if (profile.uid case final uid?)
-                    Semantics(
-                      button: true,
-                      child: GestureDetector(
-                        onLongPress: () async {
-                          await Clipboard.setData(ClipboardData(text: uid));
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('UID 已复制')),
-                            );
-                          }
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: Text('UID $uid · 长按复制'),
-                        ),
-                      ),
-                    ),
+                  if (profile.uid case final uid?) UidCopyButton(uid: uid),
                   if (profile.bio?.isNotEmpty == true) Text(profile.bio!),
                   const SizedBox(height: 12),
                   Wrap(
                     spacing: 16,
                     runSpacing: 6,
                     children: [
-                      for (final (direction, label) in [
+                      for (final (direction, title, count) in [
                         (
                           SocialList.following,
-                          '关注 ${profile.relation.following}',
+                          '关注',
+                          profile.relation.following,
                         ),
                         (
                           SocialList.followers,
-                          '粉丝 ${profile.relation.followers}',
+                          '粉丝',
+                          profile.relation.followers,
                         ),
                       ])
                         if (_own)
@@ -403,15 +446,16 @@ class _SocialProfilePageState extends State<SocialProfilePage> {
                               );
                               if (mounted) _reload();
                             },
-                            child: Text(label),
+                            child: Text('${context.uiLabel(title)} $count'),
                           )
                         else
-                          Text(label),
+                          Text('${context.uiLabel(title)} $count'),
                     ],
                   ),
                   if (!_own) ...[
                     const SizedBox(height: 14),
-                    FilledButton.tonal(
+                    SocialFollowButton(
+                      relation: profile.relation,
                       onPressed: _busy
                           ? null
                           : () => _perform(() async {
@@ -423,7 +467,6 @@ class _SocialProfilePageState extends State<SocialProfilePage> {
                                 });
                               }
                             }, '关注状态更新失败，请重试。'),
-                      child: Text(profile.relation.followLabel),
                     ),
                   ],
                 ],
@@ -434,7 +477,17 @@ class _SocialProfilePageState extends State<SocialProfilePage> {
           if (_notice != null)
             Padding(
               padding: const EdgeInsets.only(top: 12),
-              child: Semantics(liveRegion: true, child: Text(_notice!)),
+              child: Semantics(liveRegion: true, child: UiText(_notice!)),
+            ),
+          if (_reportStatus case final status?)
+            Padding(
+              padding: const EdgeInsets.only(top: 12),
+              child: Semantics(
+                liveRegion: true,
+                child: Text(
+                  '${context.uiLabel('举报已受理')} · ${context.uiLabel(status.label)}',
+                ),
+              ),
             ),
         ],
       );
@@ -477,7 +530,7 @@ class _PublicBirthPreviewState extends State<_PublicBirthPreview> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            UiText(
               describeSocialError(
                 snapshot.error!,
                 '暂时无法读取公开出生资料。',
@@ -491,7 +544,7 @@ class _PublicBirthPreviewState extends State<_PublicBirthPreview> {
                   _result = request;
                 });
               },
-              child: const Text('重试读取公开资料'),
+              child: const UiText('重试读取公开资料'),
             ),
           ],
         ),
@@ -519,16 +572,17 @@ class _ReportDialogState extends State<_ReportDialog> {
         mainAxisSize: MainAxisSize.min,
         children: [
           DropdownButtonFormField<SocialReportReason>(
-            decoration: const InputDecoration(labelText: '举报原因'),
+            isExpanded: true,
+            decoration: InputDecoration(labelText: context.uiLabel('举报原因')),
             items: [
               for (final reason in SocialReportReason.values)
-                DropdownMenuItem(value: reason, child: Text(reason.label)),
+                DropdownMenuItem(value: reason, child: UiText(reason.label)),
             ],
             onChanged: (value) => setState(() => _reason = value),
           ),
           const SizedBox(height: 12),
           TextField(
-            decoration: const InputDecoration(labelText: '补充说明（选填）'),
+            decoration: InputDecoration(labelText: context.uiLabel('补充说明（选填）')),
             maxLines: 3,
             maxLength: 400,
             onChanged: (value) => _detail = value,

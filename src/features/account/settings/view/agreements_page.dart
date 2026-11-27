@@ -8,7 +8,7 @@ import '../../../../ui/theme.dart';
 import '../../../compliance/agreements.dart';
 import '../../auth/control/account_controller.dart';
 import '../model/agreements.dart';
-import 'agreement_document_page.dart';
+import 'agreement_confirmation_dialog.dart';
 
 class AccountAgreementsPage extends StatelessWidget {
   const AccountAgreementsPage({super.key, required this.account});

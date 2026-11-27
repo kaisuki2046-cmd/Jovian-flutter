@@ -1,18 +1,23 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../ui/interface_language.dart';
-import '../../../compliance/agreements.dart';
-
-import '../model/agreements.dart';
+import '../model/agreement_document.dart';
+import '../model/bundled_agreements.dart';
 
 class AgreementLink extends StatelessWidget {
-  const AgreementLink({
+  AgreementLink({
     super.key,
-    required this.document,
+    required AgreementDocument document,
     this.compact = false,
-  });
+  }) : _reader = AgreementDocumentPage.versioned(document);
 
-  final AgreementDocument document;
+  AgreementLink.bundled({
+    super.key,
+    required BundledAgreementDraft draft,
+    this.compact = false,
+  }) : _reader = AgreementDocumentPage.bundled(draft);
+
+  final AgreementDocumentPage _reader;
   final bool compact;
 
   @override
@@ -24,12 +29,10 @@ class AgreementLink extends StatelessWidget {
             textStyle: Theme.of(context).textTheme.bodySmall,
           )
         : null,
-    onPressed: () => Navigator.of(context).push<void>(
-      MaterialPageRoute(
-        builder: (_) => AgreementDocumentPage.versioned(document),
-      ),
-    ),
-    child: Text('《${document.title}》'),
+    onPressed: () => Navigator.of(
+      context,
+    ).push<void>(MaterialPageRoute(builder: (_) => _reader)),
+    child: Text('《${_reader.title}》'),
   );
 }
 
@@ -58,7 +61,7 @@ class AgreementDocumentPage extends StatelessWidget {
       );
 
   final String title;
-  final List<({String title, String text})> sections;
+  final List<AgreementSection> sections;
   final bool preview;
   final String? version;
 
@@ -78,13 +81,16 @@ class AgreementDocumentPage extends StatelessWidget {
                 padding: const EdgeInsets.all(20),
                 children: [
                   if (version case final current?)
-                    Text('版本 $current', style: theme.textTheme.bodySmall),
+                    Text(
+                      '${context.uiLabel('版本')} $current',
+                      style: theme.textTheme.bodySmall,
+                    ),
                   if (preview)
                     UiText('内测草案，未发布生效。', style: theme.textTheme.bodySmall),
                   if (sections.isEmpty)
                     const Padding(
                       padding: EdgeInsets.only(top: 16),
-                      child: Text('暂无正文。'),
+                      child: UiText('暂无正文。'),
                     ),
                   for (final section in sections) ...[
                     const SizedBox(height: 16),
@@ -107,36 +113,3 @@ class AgreementDocumentPage extends StatelessWidget {
     );
   }
 }
-
-Future<bool> confirmAccountAgreements(
-  BuildContext context,
-  AgreementCatalog catalog,
-) async =>
-    await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('请确认登录协议'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('请阅读并同意以下协议后继续。'),
-              AgreementLink(document: catalog.terms),
-              AgreementLink(document: catalog.privacy),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const UiText('取消'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const UiText('同意并继续'),
-          ),
-        ],
-      ),
-    ) ==
-    true;

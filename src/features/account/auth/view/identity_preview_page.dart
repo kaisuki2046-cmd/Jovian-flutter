@@ -8,41 +8,11 @@ import '../../view/account_section_links.dart';
 
 import '../../../../shared/http/json_client.dart';
 import '../../../../ui/theme.dart';
-import '../../settings/model/agreements.dart';
-import '../../settings/view/agreement_document_page.dart';
+import '../../../compliance/agreements.dart';
 import '../control/account_controller.dart';
 import 'account_deletion_page.dart';
 import 'password_security_page.dart';
 import 'phone_security_page.dart';
-
-const _identityTerms = AgreementDocument(
-  id: 'identity',
-  version: '内测草案',
-  hash: '',
-  title: '实名认证服务协议',
-  preview: true,
-  sections: [
-    (
-      title: '实名认证用途',
-      text:
-          '实名功能拟用于本人主动核对姓名与居民身份证号码是否一致。适用场景为【待填：实际接入的实名用途】。具体采集信息为本人姓名和身份证号码。当前内测仅预览表单，提交不发送姓名或证件号。',
-    ),
-    (
-      title: '独立同意与当前预览',
-      text:
-          '正式核验由你在了解信息接收方和处理方式后主动发起。本次预览中的勾选只用于体验提交流程。输入的姓名和身份证号码在本页暂存，提交或离开页面时清除。',
-    ),
-    (
-      title: '服务商和核验结果',
-      text:
-          '接收方与处理地区为【待填：核验供应商法定名称、隐私政策地址、处理地区】。核验结果、保存字段和期限为【待填：核验结果口径、保留记录和删除安排】。服务异常或未通过时，应按实际返回结果说明可用的重试或申诉方式。',
-    ),
-    (
-      title: '撤回与联系',
-      text: '正式服务的撤回、结果查询、更正或删除由【待填：实际入口、联系方式及回复期限】受理。实名核验相关资料及结果按核定的必要范围保存。',
-    ),
-  ],
-);
 
 class IdentityPreviewPage extends StatefulWidget {
   const IdentityPreviewPage({
@@ -143,13 +113,13 @@ class _IdentityPreviewPageState extends State<IdentityPreviewPage> {
                     keyboardDismissBehavior:
                         ScrollViewKeyboardDismissBehavior.onDrag,
                     children: [
-                      Text(
+                      UiText(
                         '请输入真实姓名及身份证号码',
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       const SizedBox(height: 10),
-                      Text(
-                        '内测预览，输入内容仅用于本页提交流程。',
+                      UiText(
+                        '内测预览，输入内容不会上传或保存。',
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       const SizedBox(height: 16),
@@ -160,8 +130,8 @@ class _IdentityPreviewPageState extends State<IdentityPreviewPage> {
                         autocorrect: false,
                         enableSuggestions: false,
                         onChanged: (_) => setState(() => _feedback = null),
-                        decoration: const InputDecoration(
-                          labelText: '真实姓名',
+                        decoration: InputDecoration(
+                          labelText: context.uiLabel('真实姓名'),
                           counterText: '',
                         ),
                       ),
@@ -177,9 +147,9 @@ class _IdentityPreviewPageState extends State<IdentityPreviewPage> {
                           FilteringTextInputFormatter.allow(RegExp(r'[0-9Xx]')),
                         ],
                         onChanged: (_) => setState(() => _feedback = null),
-                        decoration: const InputDecoration(
-                          labelText: '身份证号码',
-                          hintText: '18 位，末位可为 X',
+                        decoration: InputDecoration(
+                          labelText: context.uiLabel('身份证号码'),
+                          hintText: context.uiLabel('18 位，末位可为 X'),
                           counterText: '',
                         ),
                       ),
@@ -187,13 +157,13 @@ class _IdentityPreviewPageState extends State<IdentityPreviewPage> {
                   ),
                 ),
                 if (_feedback case final notice?)
-                  Semantics(liveRegion: true, child: Text(notice)),
+                  Semantics(liveRegion: true, child: UiText(notice)),
                 Row(
                   children: [
                     Checkbox(
                       shape: const CircleBorder(),
                       value: _agreed,
-                      semanticLabel: '我已知悉并同意',
+                      semanticLabel: context.uiLabel('我已知悉并同意'),
                       onChanged: _busy
                           ? null
                           : (value) => setState(() => _agreed = value == true),
@@ -206,8 +176,8 @@ class _IdentityPreviewPageState extends State<IdentityPreviewPage> {
                             '我已知悉并同意',
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
-                          const AgreementLink(
-                            document: _identityTerms,
+                          AgreementLink.bundled(
+                            draft: bundledAgreementDrafts['identity']!,
                             compact: true,
                           ),
                         ],
@@ -217,7 +187,7 @@ class _IdentityPreviewPageState extends State<IdentityPreviewPage> {
                 ),
                 FilledButton(
                   onPressed: _ready ? _submit : null,
-                  child: Text(_busy ? '提交中…' : '提交'),
+                  child: UiText(_busy ? '提交中…' : '提交'),
                 ),
               ],
             ),

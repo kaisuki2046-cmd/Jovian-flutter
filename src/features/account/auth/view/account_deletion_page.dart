@@ -7,7 +7,6 @@ import '../../../../shared/http/json_client.dart';
 import '../../../../ui/interface_language.dart';
 import '../../../../ui/theme.dart';
 import '../../../compliance/agreements.dart';
-import '../../settings/view/agreement_document_page.dart';
 import '../control/account_controller.dart';
 import '../model/account_deletion.dart';
 import '../model/password.dart';

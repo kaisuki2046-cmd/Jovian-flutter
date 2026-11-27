@@ -152,6 +152,12 @@ const englishInterfaceStrings = <String, String>{
   "关注": "Following",
   "粉丝": "Followers",
   "实名认证": "Identity verification",
+  "暂无正文。": "No document text is available.",
+  "请确认登录协议": "Review the sign-in agreements",
+  "请阅读并同意以下协议后继续。": "Read and accept these agreements to continue.",
+  "请输入真实姓名及身份证号码": "Enter your legal name and ID number",
+  "内测预览，输入内容不会上传或保存。":
+      "Test preview. These entries are never uploaded or saved.",
   "真实姓名": "Legal name",
   "身份证号码": "ID number",
   "18 位，末位可为 X": "18 characters, with X allowed at the end",

@@ -565,7 +565,14 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('实名认证'));
       await tester.pumpAndSettle();
-      expect(find.text('《实名认证服务协议》'), findsOneWidget);
+      await tester.tap(find.text('《实名认证服务协议》'));
+      await tester.pumpAndSettle();
+      expect(find.text('内测草案，未发布生效。'), findsOneWidget);
+      expect(find.text('实名认证用途'), findsOneWidget);
+      expect(find.textContaining('【待填：实际接入的实名用途】'), findsOneWidget);
+      expect(identityRequests, isEmpty);
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
       final name = find.widgetWithText(TextField, '真实姓名');
       final number = find.widgetWithText(TextField, '身份证号码');
       final submit = find.widgetWithText(FilledButton, '提交');

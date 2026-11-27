@@ -4,7 +4,8 @@ import '../../../../ui/interface_language.dart';
 
 import '../../auth/control/account_controller.dart';
 import '../model/agreements.dart';
-import 'agreement_document_page.dart';
+import '../../../compliance/agreements.dart';
+import 'agreement_confirmation_dialog.dart';
 
 class AccountPermissions extends StatelessWidget {
   const AccountPermissions({super.key, required this.account});

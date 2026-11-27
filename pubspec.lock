@@ -327,14 +327,14 @@ packages:
   jovian_destiny:
     dependency: "direct main"
     description:
-      path: "src/features/destiny/control"
+      path: "src/features/destiny/control/calculation"
       relative: true
     source: path
     version: "0.1.0"
   jovian_destiny_model:
     dependency: transitive
     description:
-      path: "src/features/destiny/model"
+      path: "src/features/destiny/model/contracts"
       relative: true
     source: path
     version: "0.1.0"

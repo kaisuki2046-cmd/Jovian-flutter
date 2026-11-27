@@ -1,4 +1,4 @@
-import '../../../../shared/local_compute/local_compute.dart';
+import '../../../shared/local_compute/local_compute.dart';
 
 typedef RestoreDestinyPresentation =
     Future<Map<String, Object?>> Function(

@@ -7,7 +7,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../ui/interface_language.dart';
 
-import '../frontend/control/destiny_chart_presentation.dart';
+import '../control/destiny_chart_presentation.dart';
 import '../model/destiny_reading.dart';
 
 const _chartSymbols = 'JovianChartSymbols';

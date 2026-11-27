@@ -173,7 +173,7 @@ dart run test/knowledge_contract.dart
 
 在 `src/features/fortune/control/calculation/` 下运行 `dart run test/facts_parity.dart`，对照旧档案的立春、晚子、交运、海外出生时钟与候选隔离。对照使用本仓库的 Node 实现和 npm 依赖。资料库测试同时核对旧档案的寒露节令月能命中对应解读规则。
 
-在 `src/features/destiny/control/` 下运行 `dart pub get`、`dart run test/birth_clock_parity.dart` 和 `dart run test/bazi_parity.dart`。出生时刻对照覆盖时分缺失采样、历史时区和夏令时边界。八字对照覆盖节气前后、23 点换日和大运。运行对照需 Node.js，八字对照还需要 本仓库的 npm 依赖。Dart 时钟使用内置 IANA 转换规则，新时钟版本标识为 `gregory-iana-tzdb-v1`。
+在 `src/features/destiny/control/calculation/` 下运行 `dart pub get`、`dart run test/birth_clock_parity.dart` 和 `dart run test/bazi_parity.dart`。出生时刻对照覆盖时分缺失采样、历史时区和夏令时边界。八字对照覆盖节气前后、23 点换日和大运。运行对照需 Node.js，八字对照还需要 本仓库的 npm 依赖。Dart 时钟使用内置 IANA 转换规则，新时钟版本标识为 `gregory-iana-tzdb-v1`。
 
 Flutter 的「命理」沿用原版出生资料核对流程，通过本机计算桥调用原 TypeScript 排八字、紫微和西方星盘。盘面可在同一弹窗切换，时分缺失时显示原计算给出的稳定结果和时辰情景。出生地沿用旧版 2,941 条目录。配置 `DESTINY_REPORT_URL` 后，报告沿用原 Node 解读和账户归档服务。重新进入可回看上次报告和已归档盘面，完整快照可直接用于周期运势。
 

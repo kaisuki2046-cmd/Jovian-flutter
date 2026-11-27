@@ -6,7 +6,7 @@ environment:
   sdk: ^3.10.0
 dependencies:
   jovian_destiny_model:
-    path: ../model
+    path: ../../model/contracts
   jovian_civil_time:
-    path: ../../../shared/time
+    path: ../../../../shared/time
   lunar: 1.7.9

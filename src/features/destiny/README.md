@@ -111,3 +111,7 @@
 资料库第二十三批新增紫微6条可查询记录，生年天干／地支、天马夫妻宫及廉贞申宫分级共26个备选接通SQLite和报告取材；擎羊另8个原列备选与当前安星法不相容，仍保留待办。见 [生年与等级接线](server/knowledge/ZIWEI_NATAL_YEARS.md)。本批无页面或公共UI改动，未提交或合入。
 
 资料库第二十四批新增西占15条、35个条件备选，星座类别按实际宫头、宫主、金星定位星和职业指征分别核对；多个对象不互相替代，未知及伪造派生标记不作证据。见 [星座类别接线](server/knowledge/LILLY_SIGN_CLASSES.md)。本批无页面或公共UI改动，未提交或合入。
+
+## Flutter 与 Node
+
+`control/` 包含 Flutter 页面控制器及 TypeScript 命理算法。纯 Dart 排盘与时间计算在 `control/calculation/`，其数据契约在 `model/contracts/`。`view/` 通过控制器触发业务流程，`requests/` 和 `server/` 分别负责报告客户端和本仓库的 Node 接口。

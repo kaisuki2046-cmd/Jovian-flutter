@@ -11,7 +11,7 @@ import 'package:material_ui/material_ui.dart';
 import '../src/features/account/account.dart';
 import '../src/features/account/settings/model/agreements.dart';
 import '../src/features/destiny/destiny.dart';
-import '../src/features/destiny/frontend/control/destiny_device_birth_profile.dart';
+import '../src/features/destiny/control/destiny_device_birth_profile.dart';
 import '../src/shared/http/json_client.dart';
 import 'support/birth_picker_fixture.dart';
 

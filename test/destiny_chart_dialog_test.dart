@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../src/features/account/account.dart';
-import '../src/features/destiny/frontend/control/destiny_chart_presentation.dart';
+import '../src/features/destiny/control/destiny_chart_presentation.dart';
 import '../src/features/destiny/model/destiny_reading.dart';
 import '../src/features/destiny/view/birth_profile_confirmation.dart';
 import '../src/features/destiny/view/destiny_chart_dialog.dart';

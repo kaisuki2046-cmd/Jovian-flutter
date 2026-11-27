@@ -14,7 +14,7 @@ dependencies:
   jovian_civil_time:
     path: src/shared/time
   jovian_destiny:
-    path: src/features/destiny/control
+    path: src/features/destiny/control/calculation
   jovian_divination:
     path: src/features/divination/control
   jovian_fortune:

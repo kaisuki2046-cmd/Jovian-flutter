@@ -7,8 +7,8 @@ import '../../../ui/interface_language.dart';
 
 import '../../../ui/theme.dart';
 import '../../account/account.dart';
-import '../frontend/control/destiny_birth_controller.dart';
-import '../frontend/control/destiny_page_controller.dart';
+import '../control/destiny_birth_controller.dart';
+import '../control/destiny_page_controller.dart';
 import '../model/birth_profile_draft.dart';
 import '../model/destiny_reading.dart';
 import 'birth_display_labels.dart';

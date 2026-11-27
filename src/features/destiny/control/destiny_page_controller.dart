@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:jovian_destiny/jovian_destiny.dart';
 
-import '../../../../shared/http/json_client.dart';
-import '../../../account/account.dart';
-import '../../model/destiny_reading.dart';
+import '../../../shared/http/json_client.dart';
+import '../../account/account.dart';
+import '../model/destiny_reading.dart';
 
 class DestinyPageController extends ChangeNotifier {
   DestinyPageController({

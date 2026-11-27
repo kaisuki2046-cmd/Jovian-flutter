@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:jovian_destiny/jovian_destiny.dart';
 
-import '../../../../shared/http/json_client.dart';
-import '../../../account/account.dart';
-import '../../model/birth_profile_draft.dart';
+import '../../../shared/http/json_client.dart';
+import '../../account/account.dart';
+import '../model/birth_profile_draft.dart';
 import 'destiny_device_birth_profile.dart';
 
 typedef SavedBirthDraft = ({

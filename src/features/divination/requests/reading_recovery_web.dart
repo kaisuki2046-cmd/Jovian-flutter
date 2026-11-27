@@ -11,6 +11,11 @@ const _activePrefix = 'jovian.divination.active.v2.';
 const _historyPrefix = 'jovian.divination.flutter-history.v1.';
 const _legacyRecoveryPrefix = 'jovian.divination.recovery.v2.';
 const _legacyPendingPrefix = 'jovian.divination.pending-ritual.v2.';
+const _loopbackHosts = {'localhost', '127.0.0.1', '::1'};
+
+Uri _historyEndpoint(Uri base) => _loopbackHosts.contains(base.host)
+    ? base.replace(port: base.scheme == 'https' ? 443 : 80)
+    : base;
 
 List<String> _storageKeys(web.Storage storage) => [
   for (var index = 0; index < storage.length; index++)
@@ -78,12 +83,12 @@ class _BrowserReadingRecovery
       _key = ownerScope == null
           ? 'jovian.divination.active.v1.$base'
           : '$_activePrefix$base.$ownerScope',
-      _historyKey = '$_historyPrefix$base.$ownerScope.',
+      _historyBase = _historyEndpoint(base),
       _legacyOwner = legacyGuideOwner(ownerScope);
 
   final String? _ownerScope;
   final String _key;
-  final String _historyKey;
+  final Uri _historyBase;
   final String? _legacyOwner;
   GuideRecovery? _memory;
   GuideTranscriptPosition? _memoryPosition;
@@ -121,20 +126,44 @@ class _BrowserReadingRecovery
     }
   }
 
+  String get _historyKey => '$_historyPrefix$_historyBase.$_ownerScope.';
+
+  String? _historySuffix(String key) {
+    if (key.startsWith(_historyKey)) return key.substring(_historyKey.length);
+    if (!_loopbackHosts.contains(_historyBase.host) ||
+        !key.startsWith(_historyPrefix)) {
+      return null;
+    }
+    // Existing local history included the dynamically allocated service port.
+    final ownerMarker = '.$_ownerScope.';
+    final ownerIndex = key.lastIndexOf(ownerMarker);
+    if (ownerIndex < _historyPrefix.length) return null;
+    final previous = Uri.tryParse(
+      key.substring(_historyPrefix.length, ownerIndex),
+    );
+    if (previous == null || _historyEndpoint(previous) != _historyBase) {
+      return null;
+    }
+    return key.substring(ownerIndex + ownerMarker.length);
+  }
+
   @override
   Future<List<GuideHistoryEntry>> readHistory() async {
     if (_ownerScope == null) return const [];
     final entries = <String, GuideHistoryEntry>{};
     try {
       final storage = web.window.localStorage;
-      for (var index = 0; index < storage.length; index++) {
-        final key = storage.key(index);
-        if (key != null &&
-            key.startsWith(_historyKey) &&
-            isGuideThreadId(key.substring(_historyKey.length))) {
-          final entry = decodeGuideHistory(storage.getItem(key));
-          if (entry != null && key == '$_historyKey${entry.id}')
-            entries[entry.id] = entry;
+      for (final key in _storageKeys(storage)) {
+        final id = _historySuffix(key);
+        if (id == null || !isGuideThreadId(id)) continue;
+        final entry = decodeGuideHistory(storage.getItem(key));
+        if (entry == null || entry.id != id) continue;
+        final current = entries[id];
+        if (current == null ||
+            entry.updatedAt.isAfter(current.updatedAt) ||
+            (entry.updatedAt == current.updatedAt &&
+                key.startsWith(_historyKey))) {
+          entries[id] = entry;
         }
       }
     } catch (_) {
@@ -193,21 +222,26 @@ class _BrowserReadingRecovery
   @override
   Future<List<GuideTranscriptTurn>> readTranscriptTurns() async {
     if (_ownerScope == null) return const [];
-    final prefix = '$_historyKey$guideTranscriptTurnPrefix';
-    final turns = <GuideTranscriptTurn>[];
+    final turns = <String, GuideTranscriptTurn>{};
     try {
       final storage = web.window.localStorage;
       for (final key in _storageKeys(storage)) {
-        if (!key.startsWith(prefix)) continue;
+        final suffix = _historySuffix(key);
+        if (!isGuideTranscriptKey(suffix)) continue;
         final turn = decodeGuideTranscriptTurn(storage.getItem(key));
-        if (turn != null && key == '$prefix${turn.id}') {
-          turns.add(turn);
+        if (turn == null || suffix != '$guideTranscriptTurnPrefix${turn.id}') {
+          continue;
+        }
+        if (key.startsWith(_historyKey)) {
+          turns[turn.id] = turn;
+        } else {
+          turns.putIfAbsent(turn.id, () => turn);
         }
       }
     } catch (_) {
       // Keep the active conversation available in memory.
     }
-    return turns;
+    return turns.values.toList();
   }
 
   @override

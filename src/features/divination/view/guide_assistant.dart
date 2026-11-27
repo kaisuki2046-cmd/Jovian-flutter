@@ -4,12 +4,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../ui/interface_language.dart';
 
-const _portrait = 'src/features/divination/assets/assistant/portrait.png';
-
-bool _canMove(BuildContext context) =>
-    TickerMode.valuesOf(context).enabled &&
-    !MediaQuery.disableAnimationsOf(context) &&
-    !MediaQuery.accessibleNavigationOf(context);
+import 'guide_assistant_sprite.dart';
 
 class GuideAssistantWelcomePortrait extends StatefulWidget {
   const GuideAssistantWelcomePortrait({super.key});
@@ -22,6 +17,7 @@ class GuideAssistantWelcomePortrait extends StatefulWidget {
 class _GuideAssistantWelcomePortraitState
     extends State<GuideAssistantWelcomePortrait>
     with SingleTickerProviderStateMixin {
+  int _tapCount = 0;
   late final _reaction = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 420),
@@ -30,7 +26,8 @@ class _GuideAssistantWelcomePortraitState
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (!_canMove(context) && _reaction.isAnimating) _reaction.reset();
+    if (!guideMotionEnabled(context) && _reaction.isAnimating)
+      _reaction.reset();
   }
 
   @override
@@ -48,12 +45,22 @@ class _GuideAssistantWelcomePortraitState
       child: InkWell(
         key: const ValueKey('guide-assistant-welcome'),
         borderRadius: BorderRadius.circular(90),
+        hoverColor: Colors.transparent,
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
         onTap: () {
-          if (_canMove(context)) _reaction.forward(from: 0);
+          if (guideMotionEnabled(context)) {
+            setState(() => _tapCount++);
+            _reaction.forward(from: 0);
+          }
         },
         child: AnimatedBuilder(
           animation: _reaction,
-          child: const _AssistantPortrait(),
+          child: GuideAssistantSprite(
+            key: _AssistantAnchors.of(context)?.actor,
+            playIntro: true,
+            tapCount: _tapCount,
+          ),
           builder: (context, child) => Transform.scale(
             key: const ValueKey('guide-assistant-response'),
             scale: 1 + 0.075 * math.sin(math.pi * _reaction.value),
@@ -66,7 +73,14 @@ class _GuideAssistantWelcomePortraitState
 }
 
 class GuideAssistantComposerPortrait extends StatelessWidget {
-  const GuideAssistantComposerPortrait({super.key});
+  const GuideAssistantComposerPortrait({
+    super.key,
+    this.listening = false,
+    this.dimmed = false,
+  });
+
+  final bool listening;
+  final bool dimmed;
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +88,13 @@ class GuideAssistantComposerPortrait extends StatelessWidget {
     final portrait = SizedBox.square(
       key: anchors?.composer,
       dimension: 48,
-      child: const _AssistantPortrait(),
+      child: anchors?.flying == true
+          ? null
+          : GuideAssistantSprite(
+              key: anchors?.actor,
+              playIntro: anchors?.playIntro ?? false,
+              listening: listening,
+            ),
     );
     return anchors == null
         ? portrait
@@ -82,7 +102,11 @@ class GuideAssistantComposerPortrait extends StatelessWidget {
             link: anchors.link,
             child: Opacity(
               key: const ValueKey('guide-assistant-composer'),
-              opacity: anchors.flying ? 0 : 1,
+              opacity: anchors.flying
+                  ? 0
+                  : dimmed
+                  ? .45
+                  : 1,
               child: portrait,
             ),
           );
@@ -110,6 +134,8 @@ class _GuideAssistantFlightState extends State<GuideAssistantFlight>
   final _welcome = GlobalKey();
   final _composer = GlobalKey();
   final _link = LayerLink();
+  GlobalKey _actor = GlobalKey();
+  late bool _playedWelcome = widget.welcoming;
   Rect? _source;
   Rect? _sourceInStage;
   Rect? _destination;
@@ -124,13 +150,17 @@ class _GuideAssistantFlightState extends State<GuideAssistantFlight>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (!_canMove(context) && _source != null) _finish();
+    if (!guideMotionEnabled(context) && _source != null) _finish();
   }
 
   @override
   void didUpdateWidget(covariant GuideAssistantFlight oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.welcoming || !_canMove(context)) {
+    if (widget.welcoming && !oldWidget.welcoming) {
+      _actor = GlobalKey();
+      _playedWelcome = true;
+    }
+    if (widget.welcoming || !guideMotionEnabled(context)) {
       if (_source != null) _finish();
       return;
     }
@@ -144,7 +174,7 @@ class _GuideAssistantFlightState extends State<GuideAssistantFlight>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || !identical(_source, from)) return;
       final to = _measure(_composer);
-      if (to == null || !_canMove(context)) {
+      if (to == null || !guideMotionEnabled(context)) {
         setState(_finish);
         return;
       }
@@ -184,6 +214,8 @@ class _GuideAssistantFlightState extends State<GuideAssistantFlight>
         welcome: _welcome,
         composer: _composer,
         link: _link,
+        actor: _actor,
+        playIntro: _playedWelcome,
         flying: _source != null,
         child: widget.child,
       ),
@@ -195,25 +227,50 @@ class _GuideAssistantFlightState extends State<GuideAssistantFlight>
             child: IgnorePointer(
               child: AnimatedBuilder(
                 animation: _flight,
-                child: const _AssistantPortrait(),
+                child: GuideAssistantSprite(
+                  key: _actor,
+                  playIntro: _playedWelcome,
+                ),
                 builder: (context, child) {
-                  final remaining =
-                      1 - Curves.easeInOutSine.transform(_flight.value);
-                  final lift = math.sin(math.pi * _flight.value);
+                  final progress = Curves.easeInOutSine.transform(
+                    _flight.value,
+                  );
                   final distance = source.center - destination.center;
+                  final lift = math.min(10.0, distance.dy.abs() * .1);
+                  final settle = math.min(4.0, distance.dy.abs() * .04);
+                  final size = source.width / destination.width;
+                  final tilt = -7 * math.pi / 180 * distance.dx.sign;
                   return CompositedTransformFollower(
                     key: const ValueKey('guide-assistant-flight'),
                     link: _link,
                     showWhenUnlinked: false,
                     targetAnchor: Alignment.center,
                     followerAnchor: Alignment.center,
-                    offset: distance * remaining - Offset(0, 8 * lift),
+                    offset: Offset(
+                      distance.dx *
+                          _flightBlend(progress, const [1, 1, .78, .22, 0, 0]),
+                      _flightBlend(progress, [
+                        distance.dy,
+                        distance.dy - lift,
+                        distance.dy * .85,
+                        distance.dy * .28,
+                        settle,
+                        0,
+                      ]),
+                    ),
                     child: Transform.rotate(
-                      angle: -0.11 * lift * distance.dx.sign,
+                      angle:
+                          tilt *
+                          _flightBlend(progress, const [0, .5, 1, 1 / 3, 0, 0]),
                       child: Transform.scale(
-                        scale:
-                            1 +
-                            (source.width / destination.width - 1) * remaining,
+                        scale: _flightBlend(progress, [
+                          size,
+                          size * 1.02,
+                          size * .72 + .28,
+                          size * .26 + .74,
+                          .95,
+                          1,
+                        ]),
                         child: child,
                       ),
                     ),
@@ -225,7 +282,12 @@ class _GuideAssistantFlightState extends State<GuideAssistantFlight>
         else
           Positioned.fromRect(
             rect: _sourceInStage!,
-            child: const IgnorePointer(child: _AssistantPortrait()),
+            child: IgnorePointer(
+              child: GuideAssistantSprite(
+                key: _actor,
+                playIntro: _playedWelcome,
+              ),
+            ),
           ),
     ],
   );
@@ -236,6 +298,8 @@ class _AssistantAnchors extends InheritedWidget {
     required this.welcome,
     required this.composer,
     required this.link,
+    required this.actor,
+    required this.playIntro,
     required this.flying,
     required super.child,
   });
@@ -243,6 +307,8 @@ class _AssistantAnchors extends InheritedWidget {
   final GlobalKey welcome;
   final GlobalKey composer;
   final LayerLink link;
+  final GlobalKey actor;
+  final bool playIntro;
   final bool flying;
 
   static _AssistantAnchors? of(BuildContext context) =>
@@ -250,19 +316,15 @@ class _AssistantAnchors extends InheritedWidget {
 
   @override
   bool updateShouldNotify(_AssistantAnchors oldWidget) =>
-      flying != oldWidget.flying;
+      flying != oldWidget.flying ||
+      actor != oldWidget.actor ||
+      playIntro != oldWidget.playIntro;
 }
 
-class _AssistantPortrait extends StatelessWidget {
-  const _AssistantPortrait();
-
-  @override
-  Widget build(BuildContext context) => AspectRatio(
-    aspectRatio: 1,
-    child: Image.asset(
-      _portrait,
-      fit: BoxFit.contain,
-      excludeFromSemantics: true,
-    ),
-  );
+double _flightBlend(double progress, List<double> values) {
+  const stops = [0.0, .13, .38, .72, .9, 1.0];
+  final end = stops.indexWhere((stop) => stop >= progress, 1);
+  final start = end - 1;
+  final mix = (progress - stops[start]) / (stops[end] - stops[start]);
+  return values[start] + (values[end] - values[start]) * mix;
 }

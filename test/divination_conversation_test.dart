@@ -28,6 +28,14 @@ import '../src/ui/interface_language.dart';
 import 'support/divination_service_fixture.dart';
 
 void main() {
+  final dispatcher =
+      TestWidgetsFlutterBinding.ensureInitialized().platformDispatcher;
+  setUp(() {
+    dispatcher.accessibilityFeaturesTestValue = const FakeAccessibilityFeatures(
+      disableAnimations: true,
+    );
+  });
+  tearDown(dispatcher.clearAccessibilityFeaturesTestValue);
   test(
     'a stored reading preserves the published chart and its server hash',
     () async {

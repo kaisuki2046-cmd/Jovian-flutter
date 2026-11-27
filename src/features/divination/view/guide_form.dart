@@ -9,6 +9,7 @@ import '../../../ui/report_body.dart';
 
 import 'composer_attachment.dart';
 import 'guide_composer.dart';
+import 'guide_ambient_motion.dart';
 import 'guide_conversation.dart';
 import 'legacy_reading_archive_view.dart';
 import 'liuyao_form.dart';
@@ -290,9 +291,7 @@ class _GuideFormState extends State<GuideForm>
       ..addAll(online.revealedTarotSlots ?? const <int>{});
     final historyId = online.activeHistoryId;
     final navigator = Navigator.of(context, rootNavigator: true);
-    final motionOff =
-        MediaQuery.disableAnimationsOf(context) ||
-        MediaQuery.accessibleNavigationOf(context);
+    final motionOff = MediaQuery.disableAnimationsOf(context);
     late final DialogRoute<void> route;
     route = DialogRoute<void>(
       context: context,
@@ -500,14 +499,7 @@ class _GuideFormState extends State<GuideForm>
       body: Stack(
         fit: StackFit.expand,
         children: [
-          IgnorePointer(
-            child: Image.asset(
-              'src/features/divination/assets/assistant/antique-gold-dust.png',
-              fit: BoxFit.fill,
-              opacity: const AlwaysStoppedAnimation(0.1),
-              excludeFromSemantics: true,
-            ),
-          ),
+          const GuideDivinationAtmosphere(),
           SafeArea(top: false, child: _conversationBody(context)),
         ],
       ),

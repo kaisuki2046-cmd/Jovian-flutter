@@ -9,6 +9,7 @@ import '../../../ui/interface_language.dart';
 import 'composer_attachment.dart';
 import 'composer_attachment_view.dart';
 import 'guide_assistant.dart';
+import 'guide_ambient_motion.dart';
 
 const guideSuggestedQuestions = ['这次面试会顺利吗？', '这段感情接下来会怎么发展？', '最近什么时候适合搬家？'];
 
@@ -36,38 +37,48 @@ class GuideWelcome extends StatelessWidget {
       padding: EdgeInsets.only(top: welcomeInset, bottom: 12),
       child: Column(
         children: [
-          DecoratedBox(
-            decoration: ShapeDecoration(
-              color: bubbleColor,
-              shape: const StadiumBorder(side: BorderSide(color: bubbleLine)),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-              child: UiText(
-                '有什么事情想知道吗？',
-                textAlign: TextAlign.center,
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: const Color(0xff292824),
-                  fontSize: 18,
-                ),
-              ),
-            ),
-          ),
-          Transform.translate(
-            offset: const Offset(0, -5),
-            child: Transform.rotate(
-              angle: math.pi / 4,
-              child: Container(
-                width: 10,
-                height: 10,
-                decoration: BoxDecoration(
-                  color: bubbleColor,
-                  border: const Border(
-                    right: BorderSide(color: bubbleLine),
-                    bottom: BorderSide(color: bubbleLine),
+          GuideSpeechDrift(
+            child: Column(
+              children: [
+                DecoratedBox(
+                  decoration: ShapeDecoration(
+                    color: bubbleColor,
+                    shape: const StadiumBorder(
+                      side: BorderSide(color: bubbleLine),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 18,
+                      vertical: 10,
+                    ),
+                    child: GuideAssistantGreeting(
+                      text: context.uiLabel('有什么事情想知道吗？'),
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: const Color(0xff292824),
+                        fontSize: 18,
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                Transform.translate(
+                  offset: const Offset(0, -5),
+                  child: Transform.rotate(
+                    angle: math.pi / 4,
+                    child: Container(
+                      width: 10,
+                      height: 10,
+                      decoration: BoxDecoration(
+                        color: bubbleColor,
+                        border: const Border(
+                          right: BorderSide(color: bubbleLine),
+                          bottom: BorderSide(color: bubbleLine),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           SizedBox(
@@ -209,6 +220,8 @@ class GuideComposer extends StatelessWidget {
               _GuideComposerMenu(
                 busy: busy,
                 showAssistant: showAssistant,
+                text: text,
+                inputFocus: focus,
                 addAttachment: addAttachment,
                 startQuestion: startQuestion,
                 openSynastry: openSynastry,
@@ -310,6 +323,8 @@ class _GuideComposerMenu extends StatefulWidget {
   const _GuideComposerMenu({
     required this.busy,
     required this.showAssistant,
+    required this.text,
+    required this.inputFocus,
     required this.addAttachment,
     required this.startQuestion,
     required this.openSynastry,
@@ -318,6 +333,8 @@ class _GuideComposerMenu extends StatefulWidget {
 
   final bool busy;
   final bool showAssistant;
+  final TextEditingController text;
+  final FocusNode? inputFocus;
   final ValueChanged<ComposerAttachmentKind> addAttachment;
   final VoidCallback startQuestion;
   final VoidCallback? openSynastry;
@@ -396,7 +413,16 @@ class _GuideComposerMenuState extends State<_GuideComposerMenu> {
           foregroundColor: colors.onSurface,
         ),
         icon: widget.showAssistant
-            ? const GuideAssistantComposerPortrait()
+            ? ListenableBuilder(
+                listenable: Listenable.merge([widget.text, widget.inputFocus]),
+                builder: (context, _) => GuideAssistantComposerPortrait(
+                  listening:
+                      !widget.busy &&
+                      widget.inputFocus?.hasFocus == true &&
+                      widget.text.text.isNotEmpty,
+                  dimmed: widget.busy,
+                ),
+              )
             : const Icon(Icons.add_rounded),
       ),
     );

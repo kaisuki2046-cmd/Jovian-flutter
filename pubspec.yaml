@@ -47,4 +47,5 @@ flutter:
     - src/features/divination/assets/coins/collision/
     - src/features/divination/assets/ritual/
     - src/features/divination/assets/assistant/
+    - src/features/divination/assets/assistant/motion/
     - tool/legacy_compute/native_assets/

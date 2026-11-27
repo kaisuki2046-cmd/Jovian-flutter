@@ -37,7 +37,7 @@ void main() {
         ),
       ),
     );
-    final greeting = find.text('有什么事情想知道吗？');
+    final greeting = find.bySemanticsLabel('有什么事情想知道吗？');
     await tester.pumpWidget(screen('initial'));
     expect(greeting.hitTestable(), findsOneWidget);
 
@@ -128,6 +128,7 @@ void main() {
     tester.view.physicalSize = const Size(1280, 820);
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
+    _disableContinuousGuideMotion(tester);
     await tester.pumpWidget(const JovianApp());
     await tester.pump();
 
@@ -173,6 +174,7 @@ void main() {
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
       addTearDown(tester.view.resetViewInsets);
+      _disableContinuousGuideMotion(tester);
       await tester.pumpWidget(
         const JovianApp(
           initialTab: JovianTab.divination,
@@ -398,4 +400,12 @@ void main() {
     );
     expect(tester.takeException(), isNull);
   });
+}
+
+void _disableContinuousGuideMotion(WidgetTester tester) {
+  final dispatcher = tester.binding.platformDispatcher;
+  dispatcher.accessibilityFeaturesTestValue = const FakeAccessibilityFeatures(
+    disableAnimations: true,
+  );
+  addTearDown(dispatcher.clearAccessibilityFeaturesTestValue);
 }

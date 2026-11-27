@@ -84,9 +84,7 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
 
   Widget _dialog(BuildContext context) {
     final theme = Theme.of(context);
-    final motionOff =
-        MediaQuery.disableAnimationsOf(context) ||
-        MediaQuery.accessibleNavigationOf(context);
+    final motionOff = MediaQuery.disableAnimationsOf(context);
     final snapshot = widget.snapshot();
     final presentation = widget.presentation;
     if (motionOff && snapshot?.stage == GuideStage.draw) {

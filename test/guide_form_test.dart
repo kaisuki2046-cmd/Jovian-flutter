@@ -5,6 +5,14 @@ import '../src/app/main.dart';
 import 'support/divination_service_fixture.dart';
 
 void main() {
+  final dispatcher =
+      TestWidgetsFlutterBinding.ensureInitialized().platformDispatcher;
+  setUp(() {
+    dispatcher.accessibilityFeaturesTestValue = const FakeAccessibilityFeatures(
+      disableAnimations: true,
+    );
+  });
+  tearDown(dispatcher.clearAccessibilityFeaturesTestValue);
   testWidgets(
     'sends a question directly into the one ritual and can pause or start a new chat',
     (tester) async {

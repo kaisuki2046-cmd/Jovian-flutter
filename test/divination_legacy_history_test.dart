@@ -74,6 +74,14 @@ class _LegacyRecovery extends DivinationRecoveryFixture
 }
 
 void main() {
+  final dispatcher =
+      TestWidgetsFlutterBinding.ensureInitialized().platformDispatcher;
+  setUp(() {
+    dispatcher.accessibilityFeaturesTestValue = const FakeAccessibilityFeatures(
+      disableAnimations: true,
+    );
+  });
+  tearDown(dispatcher.clearAccessibilityFeaturesTestValue);
   testWidgets(
     'reads original text and mixed RN Web conversations without resuming them',
     (tester) async {

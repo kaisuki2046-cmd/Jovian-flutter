@@ -2,6 +2,9 @@
   "name": "jovian-flutter",
   "version": "0.1.0",
   "private": true,
+  "scripts": {
+    "test:account": "node --experimental-strip-types --test \"src/features/account/**/*.test.mjs\""
+  },
   "engines": {
     "node": "^22.13.0 || ^24.3.0 || >=26.0.0"
   },

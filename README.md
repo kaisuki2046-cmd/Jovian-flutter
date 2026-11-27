@@ -1,12 +1,12 @@
 # 木星环 Flutter 版
 
-Flutter 版沿用项目的[目录分工](FRAMEWORK.md)、[协作协议](COLLABORATION.md)和 [Flutter 前端开工规范](AGENTS.md)。迁移分支从 `b47e061a` 开始，算事界面对照 `YA` 的 `d12e3f0c`。前端通过现有 API 接入 Node 服务。命理、合盘和运势的本机计算复用原 TypeScript 资源。下文的 Dart 服务和计算对照命令仅用于独立原型，启动 Flutter 前端时使用原 Node 服务。
+Flutter 版沿用项目的[目录分工](FRAMEWORK.md)、[协作协议](COLLABORATION.md)和 [Flutter 前端开工规范](AGENTS.md)。迁移分支从 `b47e061a` 开始，算事界面对照 `YA` 的 `d12e3f0c`。Flutter 前端通过现有 API 接入本仓库自带的 Node 服务。命理、合盘和运势使用本仓库的 TypeScript 计算源码。下文的 Dart 服务用于历史原型对照。
 
 ## 启动 Flutter Web 前端
 
 检出本仓库的 `flutter` 分支后，从根目录启动。Flutter 页面、TypeScript 计算和 Node 服务按业务组织在 `src/features/`。Flutter 依赖与 Node 依赖分别通过根目录的锁文件安装。
 
-准备 Flutter SDK、Chrome 和带 npm 的 Node.js（22.13+ 的 22.x、24.3+ 的 24.x，或 26+）。Windows 下可双击 [Start-web.cmd](Start-web.cmd)。启动器首次会安装 Node 依赖、生成计算资源、启动五个服务并打开 Flutter Web。Flutter SDK 可以在 PATH 中，也可以放在 `.local/flutter-toolchain/flutter/`。
+准备 Flutter SDK、Chrome 和带 npm 的 Node.js（22.13+ 的 22.x、24.3+ 的 24.x，或 26+）。Windows 下可双击 [Start-web.cmd](Start-web.cmd)。启动器首次安装 Node 依赖。打开预览时，从当前源码重新生成计算资源，启动本仓库的五个服务，再打开 Flutter Web。Flutter SDK 可以在 PATH 中，也可以放在 `.local/flutter-toolchain/flutter/`。
 
 单独准备前端资源及连接已运行的 API 时，可以在根目录执行以下命令。
 
@@ -21,7 +21,7 @@ flutter run -d chrome --web-port 8081 --target src/app/main.dart --dart-define-f
 
 本地开发模式内置模拟微信、QQ 和短信适配器，验证码写入 `src/features/account/server/dev-auth/inbox/`。真实在线解读需要配置 DeepSeek，可以复制 [.env.example](.env.example) 为 `.env`，再设置 `DEEPSEEK_API_KEY` 或 `DEEPSEEK_API_KEY_FILE`。正式短信、邮件与登录渠道按 [Node 后端说明](src/bootstrap/README.md) 单独配置。
 
-在 PowerShell 中也可运行 `& '.\Start-web.cmd' -CheckServices`，只检查五个本机服务能否启动。已有独立运行的服务时，可传 `-ServiceConfig` 指定地址文件，并用 `-WebPort` 匹配后端允许的 Web 来源。两种启动方式都会在缺少计算资源时从指定源码生成，并由 Flutter 自动准备项目依赖。 预览的渲染资源由本机提供。
+在 PowerShell 中也可运行 `& '.\Start-web.cmd' -CheckServices`，只检查五个本机服务能否启动。已有独立运行的服务时，可传 `-ServiceConfig` 指定地址文件，并用 `-WebPort` 匹配后端允许的 Web 来源。预览使用当前源码生成的计算资源，由 Flutter 自动准备项目依赖，渲染资源由本机提供。
 
 示例文件使用原 `Start-app.cmd` 的主树首选端口，其中合盘为 `8812`。预览树或端口被占用时，以已启动服务的实际地址为准，通过自己的 `--dart-define-from-file` 文件或逐项 `--dart-define` 传入。Flutter Web 监听来源也要与 Node 服务允许的 `APP_WEB_ORIGIN` 一致。构建配置只填客户端可见的 URL。
 
@@ -96,6 +96,7 @@ flutter pub get
 flutter run -d chrome --target src/app/main.dart
 flutter analyze
 flutter test
+npm run test:account
 flutter build web --target src/app/main.dart --no-web-resources-cdn
 ```
 

@@ -21,7 +21,7 @@
 | `listDestinyHistory(expectedOwnerId, before?, signal?)` | 返回最多 20 条及 `nextCursor`。下一页把该游标作为 `before` 传入。 |
 | `requestDestinyHistoryRecord(expectedOwnerId, id, signal?)` | 按 ID 返回当前身份的完整 `HistoryRecord`。 |
 
-`HistoryEntry` 包含 `id`、毫秒时间戳 `savedAt`、`calculatedAt` 和 `title`。详情与最近报告另有 `report: DestinyArchive`，保留展示摘要、章节及已保存的 `chartSnapshot`。快照随报告保存在同一条 SQLite 记录里，原始候选盘和数值精度随档保留。归档 POST 的 JSON 请求上限为 512 KiB。缺少快照的旧报告和客户端仍可正常读写。
+`HistoryEntry` 包含 `id`、毫秒时间戳 `savedAt`、`calculatedAt` 和 `title`。详情与最近报告另有 `report: DestinyArchive`，包含 `overview` 报告正文、盘面展示摘要及已保存的 `chartSnapshot`。快照随报告保存在同一条 SQLite 记录里，原始候选盘和数值精度随档保留。归档 POST 的 JSON 请求上限为 16 MiB。缺少快照的旧报告和客户端仍可正常读写。
 
 命理发起读写时传当前身份 ID 和 AbortSignal。身份变化或页面离开时中止在途请求，并按 `kind + ':' + id` 清理旧显示状态。渲染结果前再次确认结果仍对应发起请求时的身份。服务端按凭证确认归属，`expectedOwnerId` 用来拒绝与当前凭证身份不符的请求。读取最近报告只读数据库。
 
@@ -34,9 +34,9 @@
 | `400` 或 `413` | 参数、报告格式或载荷长度不符合约定 |
 | `network`、`timeout` 等请求错误 | 显示读取失败，保存失败时保留当前报告供重试 |
 
-游客明确进入后签发固定 7 天的临时凭证。网页使用 HttpOnly Cookie，原生端使用 SecureStore；同一设备能恢复凭证时可重新读取归档。离线仍可游客浏览，归档状态显示不可用。游客在「个人中心」确认结束体验，或成功登录、注册转为会员时，服务端销毁该游客凭证和对应档案。到期档案立即失去访问权限，账户服务启动、新建游客时以及运行中每小时清理。会员归档随账户保存，连接同一账户服务时可跨设备读取。
+游客明确进入后签发固定 7 天的临时凭证。网页使用 HttpOnly Cookie，Flutter 原生端使用系统安全存储；同一设备能恢复凭证时可重新读取归档。离线仍可游客浏览，归档状态显示不可用。游客在「个人中心」确认结束体验，或成功登录、注册转为会员时，服务端销毁该游客凭证和对应档案。到期档案立即失去访问权限，账户服务启动、新建游客时以及运行中每小时清理。会员归档随账户保存，连接同一账户服务时可跨设备读取。
 
-「个人中心 → 我的报告」可用当前会员或游客身份查看命理解读历史。「个人中心 → 命理档案」显示最新一次归档的八字、紫微斗数和西方星盘基础数据。命理首页自动恢复最近一次报告、保存失败重试和主动重算入口由命理侧接入。
+「个人中心 → 我的报告」按命理、运势、合盘分类展示当前会员或游客的已存解读。Flutter 页面通过 [账户入口](../account.dart) 的 `AccountController.reports` 调用 `ReportHistoryApi`，使用 `authorizedSession` 确认当前归档身份。「个人中心 → 命理档案」显示最新一次归档的八字、紫微斗数和西方星盘基础数据。命理首页自动恢复最近一次报告、保存失败重试和主动重算入口由命理侧接入。
 
 ## 读取完整命盘
 

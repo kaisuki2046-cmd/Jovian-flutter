@@ -186,6 +186,16 @@ test('Lilly’s annual pair uses two actual solar roots even without a specified
   assert.equal(buildLillyReturnContext(window, baseChart, [{ ...real, returnEnd: real.returnEnd + 6 }]).contexts.length, 0);
 });
 
+test('accepts a computed Shanghai solar return at the ephemeris precision boundary', () => {
+  const snapshot = chart(Date.parse('1998-08-09T04:30:00Z'), 146.42871153986817, 31.222);
+  const returnAt = lillyReturnLocationTarget(window, snapshot);
+  assert.ok(Number.isSafeInteger(returnAt));
+  const events = buildLillySolarReturnPositions(window, snapshot);
+  const location = { returnAt, latitude: 31.23, longitude: 121.47 };
+  const located = buildLillyLocatedReturn(window, snapshot, events, location);
+  assert.equal(located?.returnAt, returnAt);
+});
+
 test('printed-minute ties use the verified return and do not confuse a sign boundary or a broad conjunction with an exact place', () => {
   const boundary = 29 + 59.5 / 60;
   assert.equal(lillyRadicalPlaceMinute(boundary, [boundary - 1e-7, boundary + 1e-7]), 'minute_boundary');

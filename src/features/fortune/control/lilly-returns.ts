@@ -50,7 +50,10 @@ function uniqueReturnInWindow(window: Window, returns: SolarReturns) {
 function containsSolarReturnRoot(returnAt: number, natalSunLongitude: number) {
   const tolerance = westernSearchPolicy.aspectToleranceMs;
   const offset = (instant: number) => ((readTransitLongitude('Sun', instant) - natalSunLongitude + 540) % 360) - 180;
-  return offset(returnAt - tolerance) <= 0 && offset(returnAt + tolerance) >= 0;
+  // Astronomy Engine reuses nutation for nearby times. Allow its sub-millisecond angular drift.
+  const longitudeToleranceDegrees = 1e-9;
+  return offset(returnAt - tolerance) <= longitudeToleranceDegrees
+    && offset(returnAt + tolerance) >= -longitudeToleranceDegrees;
 }
 
 export function buildLillySolarReturnPositions(window: Window, chart: DestinyChartSnapshot | undefined) {

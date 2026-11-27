@@ -111,10 +111,6 @@ function Initialize-NodeDependencies {
 }
 
 function Initialize-LocalCompute([string]$node) {
-    if ((Test-Path -LiteralPath 'web/legacy-compute.js' -PathType Leaf) -and
-        (Test-Path -LiteralPath 'tool/legacy_compute/native_assets/legacy-compute.html' -PathType Leaf)) {
-        return
-    }
     & $node 'tool/legacy_compute/build.mjs'
     if ($LASTEXITCODE -ne 0) { throw 'Could not prepare the TypeScript chart assets.' }
 }

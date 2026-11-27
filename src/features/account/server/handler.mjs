@@ -63,7 +63,7 @@ function requestToken(request, mode, cookieName) {
 
 export function createAccountHandler({ store, webOrigin, authProvider, deliverPhoneCode, deliverEmailCode, phoneCodesEnabled = true,
   isolateLocalSession = false, allowUnverifiedRegistration = false, publishedAgreements, eraseReadings = () => {},
-  moderatorIds = [], privacyReviewerIds = [], now = Date.now }) {
+  moderatorIds = [], privacyReviewerIds = [], readAndroidRelease = () => ({ release: null }), now = Date.now }) {
   const origin = new URL(webOrigin);
   const secure = origin.protocol === 'https:';
   const localPort = isolateLocalSession && !secure && origin.hostname === 'localhost' && origin.port;
@@ -141,6 +141,12 @@ export function createAccountHandler({ store, webOrigin, authProvider, deliverPh
         return send(outcome);
       }
 
+      if (route === 'GET /app-updates/android/latest') {
+        const manifest = await readAndroidRelease();
+        return manifest
+          ? reply(response, 200, manifest)
+          : reply(response, 503, { code: 'APP_RELEASE_UNAVAILABLE' });
+      }
       if (route === 'GET /account/auth/capabilities') {
         return reply(response, 200, {
           localSocialProviders, emailRegistrationCodeRequired: !localRegistration, phoneRegistrationWithoutCode: localRegistration,

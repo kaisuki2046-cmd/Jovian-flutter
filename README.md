@@ -117,7 +117,7 @@ Web 会话使用账户服务的 HttpOnly Cookie，浏览器同一标签页按已
 
 先生成本机计算资源。Flutter 命令加 `--target src/app/main.dart`，并继续用上面的五项 `--dart-define` 指定原服务地址。Android 模拟器访问宿主机时用 `10.0.2.2`，使用 `adb reverse` 的设备可用 `127.0.0.1`。Android 主清单声明网络访问，调试清单为本机地址提供 HTTP 例外。iOS 原生会话保存在应用自己的 Keychain 中。[Flutter 移动端网络配置](https://docs.flutter.dev/release/breaking-changes/network-policy-ios-android)
 
-Android 的「关于木星环」显示安装包版本。配置 `ANDROID_UPDATE_DOWNLOAD_ORIGIN` 为发布下载的 HTTPS 来源后，应用从 `APP_UPDATE_API_URL` 的 `/app-updates/android/latest` 读取现有发布清单。清单和账户共用网关时可沿用 `ACCOUNT_API_URL`。应用启动、回到前台或手动点「检查更新」可看到同包名的较新版本。点击「下载新版」会在系统浏览器打开受信链接。
+Android 的「关于木星环」显示安装包版本。配置 `ANDROID_UPDATE_DOWNLOAD_ORIGIN` 为发布下载的 HTTPS 来源后，应用从 `APP_UPDATE_API_URL` 的 `/app-updates/android/latest` 读取现有发布清单。清单和账户共用网关时可沿用 `ACCOUNT_API_URL`。 自带的 Node 账户服务提供该路由，读取 `.env` 中的 `APP_ANDROID_RELEASE_FILE`。发布格式见[账户设置接口](src/features/account/settings/README.md#android-版本更新)。应用启动、回到前台或手动点「检查更新」可看到同包名的较新版本。点击「下载新版」会在系统浏览器打开受信链接。
 
 在 `app-flutter/` 中用 `flutter build bundle --debug --target src/app/main.dart` 检查 Flutter 入口和资源。Android、iOS 的系统启动、WebView 运行和后端连接仍需分别在对应设备验收。签名由发布流程配置。
 

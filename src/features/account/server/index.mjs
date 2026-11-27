@@ -4,6 +4,7 @@ import { dirname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { openAccountStore } from '../storage/account-store.mjs';
 import { createAccountHandler } from './handler.mjs';
+import { createAndroidReleaseReader } from './android-release.mjs';
 import { loadEmailDelivery, loadLocalAuthProvider, loadTencentSmsDelivery } from './auth-provider.mjs';
 import { eraseDivinationAccount } from '../../divination/server-entry.mjs';
 import { eraseFortuneAccount } from '../../fortune/server-entry.mjs';
@@ -35,6 +36,10 @@ store.purgeGuests(Date.now());
 const handler = createAccountHandler({
   store, webOrigin,
   publishedAgreements,
+  readAndroidRelease: createAndroidReleaseReader({
+    file: process.env.APP_ANDROID_RELEASE_FILE?.trim(),
+    downloadOrigin: process.env.ANDROID_UPDATE_DOWNLOAD_ORIGIN,
+  }),
   eraseReadings(userId, legacyTokens) {
     eraseDivinationAccount(userId, legacyTokens);
     eraseFortuneAccount(userId);

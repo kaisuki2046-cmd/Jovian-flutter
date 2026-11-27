@@ -72,6 +72,7 @@ class FortunePageController extends ChangeNotifier {
   bool _closed = false;
   int _timeRevision = 0;
   int _archiveRevision = 0;
+  int _archiveSaveRevision = 0;
   int _reportRevision = 0;
   String? _reportKey;
 
@@ -92,6 +93,7 @@ class FortunePageController extends ChangeNotifier {
   bool get hasChart => archive?.snapshot != null;
   bool get busy => loadingReport || generating || loadingAdvice || saving;
   bool get needsSave => _draft != null && !reportSaved;
+  int get archiveSaveRevision => _archiveSaveRevision;
 
   void initialize() {
     unawaited(refreshTime());
@@ -536,9 +538,14 @@ class FortunePageController extends ChangeNotifier {
     _emit();
     try {
       await account!.reports.save(ownerId!, ReportKind.fortune, draft);
-      if (_current(job) && _sessionMatches) {
+      if (_closed || !_sessionMatches) return;
+      _archiveSaveRevision++;
+      if (_current(job)) {
         _draft = null;
         reportSaved = true;
+      } else {
+        // A save can finish after the user switches periods.
+        _emit();
       }
     } catch (error) {
       if (_current(job)) _recoverIdentity(error);

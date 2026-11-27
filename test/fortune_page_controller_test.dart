@@ -5,17 +5,150 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:jovian_fortune/jovian_fortune.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../src/features/account/account.dart';
+import '../src/features/account/settings/model/agreements.dart';
 import '../src/features/fortune/control/fortune_local.dart';
 import '../src/features/fortune/control/fortune_online.dart';
 import '../src/features/fortune/control/fortune_page_controller.dart';
 import '../src/features/fortune/model/online_fortune.dart';
 import '../src/features/fortune/requests/fortune_report_api.dart';
+import '../src/features/fortune/view/fortune_report_history.dart';
 import '../src/shared/http/json_client.dart';
 import 'support/fortune_local_fixture.dart';
 
 void main() {
+  testWidgets('an open history refreshes only after the archive is saved', (
+    tester,
+  ) async {
+    const owner = 'fortune-live-history-owner';
+    final save = Completer<void>();
+    var saved = false;
+    var writes = 0;
+    var listReads = 0;
+    final archived = _saved(FortunePeriod.day);
+    final accountApi = AccountApi(
+      JsonHttpClient(
+        base: Uri.https('account.example.test'),
+        client: MockClient((request) async {
+          switch (request.url.path) {
+            case '/account/session':
+              return _response({
+                'user': {'id': owner, 'displayName': '报告验收'},
+              });
+            case '/account/auth/capabilities':
+              return _response({});
+            case '/account/agreements':
+              return _response({
+                'requiredAccepted': true,
+                'permissions': {
+                  for (final purpose in aiPurposes.keys) purpose: true,
+                },
+              });
+            case '/account/agreements/catalog':
+              return _response({
+                'documents': [
+                  for (final id in ['terms', 'privacy', 'ai'])
+                    {
+                      'id': id,
+                      'title': id,
+                      'version': 'v1',
+                      'hash': id,
+                      'state': 'published',
+                      'sections': [],
+                    },
+                ],
+              });
+            case '/account/destiny-history/latest':
+              return _response({
+                ..._entry(_snapshot, '已保存的命盘'),
+                'report': {
+                  'version': 1,
+                  'timeKnown': true,
+                  'chartSnapshot': {'version': 1, 'timeKnown': true},
+                  'charts': [
+                    for (final method in ['bazi', 'ziwei', 'western'])
+                      {'method': method, 'rows': []},
+                  ],
+                },
+              });
+            case '/account/reading-history/latest':
+              return _response(null);
+            case '/account/reading-history':
+              if (request.method == 'POST') {
+                writes++;
+                await save.future;
+                saved = true;
+                return _response(archived);
+              }
+              listReads++;
+              expect(request.url.queryParameters['expectedOwnerId'], owner);
+              return _response({
+                'entries': [if (saved) archived],
+              });
+            default:
+              fail('Unexpected request ${request.url.path}');
+          }
+        }),
+      ),
+    );
+    final account = AccountController(accountApi, AgreementsApi(accountApi));
+    addTearDown(account.dispose);
+    await account.initialize();
+    expect(account.authorizedSession?.id, owner);
+    final controller = FortunePageController(
+      loadDisplay: () async => (zone: 'UTC', clock: (int time) => time),
+      readServerTime: () async => _today,
+      account: account,
+      ownerId: owner,
+      archiveId: null,
+      local: const FortuneLocalFixture(),
+      online: _FortuneWindowFixture(
+        FortuneReportApi(
+          JsonHttpClient(
+            base: Uri.https('fortune.example.test'),
+            client: MockClient(
+              (_) async => _response(_published(FortunePeriod.day)),
+            ),
+          ),
+        ),
+      ),
+    )..initialize();
+    addTearDown(controller.dispose);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ListenableBuilder(
+            listenable: controller,
+            builder: (_, _) => FortuneReportHistory(
+              account: account,
+              owner: owner,
+              scope: account.authorizedSession!.scope,
+              fortune: controller,
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(writes, 1);
+    expect(controller.saving, isTrue);
+    expect(listReads, 0);
+
+    await tester.tap(find.text('查看已存解读'));
+    await tester.pumpAndSettle();
+    expect(find.text('暂无已保存的运势报告。'), findsOneWidget);
+    expect(listReads, 1);
+
+    save.complete();
+    await tester.pumpAndSettle();
+    expect(controller.reportSaved, isTrue);
+    expect(find.text('已归档运势'), findsOneWidget);
+    expect(find.text('暂无已保存的运势报告。'), findsNothing);
+    expect(listReads, 2);
+  });
+
   for (final (description, previous, selection) in [
     (
       'automatically reopens the previous weekly report',
@@ -388,6 +521,14 @@ class _FortuneWindowFixture extends FortuneOnline {
   _FortuneWindowFixture(FortuneReportApi api) : super(api, () async => _today);
 
   @override
+  Future<Map<String, Object?>> archive(
+    PublishedFortune report,
+    Map<String, Object?> input,
+    int at,
+    Future<void> cancel,
+  ) async => _saved(report.period)['report']! as Map<String, Object?>;
+
+  @override
   Future<PreparedFortunePeriod> prepare(
     Map<String, Object?> input,
     int at,
@@ -453,5 +594,5 @@ Map<String, Object?> _report(String id, String title) => {
   },
 };
 
-http.Response _response(Map<String, Object?> value) =>
+http.Response _response(Object? value) =>
     http.Response.bytes(utf8.encode(jsonEncode(value)), 200);

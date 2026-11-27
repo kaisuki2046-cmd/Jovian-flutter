@@ -33,20 +33,45 @@ class _FortuneReportHistoryState extends State<FortuneReportHistory> {
   ReportHistoryController? _history;
   bool _expanded = false;
   bool _readerOpen = false;
+  int? _loadedRevision;
 
   bool get _hasScope => _ownsScope(widget.account, widget.scope);
 
+  @override
+  void didUpdateWidget(covariant FortuneReportHistory oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _refreshAfterSave();
+  }
+
   void _toggleHistory() => setState(() {
     _expanded = !_expanded;
-    if (_expanded) {
-      _history ??= ReportHistoryController(
+    if (!_expanded) return;
+    if (_history == null) {
+      _loadedRevision = widget.fortune.archiveSaveRevision;
+      _history = ReportHistoryController(
         widget.account.reports,
         widget.owner,
         ReportKind.fortune,
         widget.account.initialize,
       );
+    } else {
+      _refreshAfterSave();
     }
   });
+
+  void _refreshAfterSave() {
+    final history = _history;
+    final revision = widget.fortune.archiveSaveRevision;
+    if (!_expanded ||
+        _readerOpen ||
+        history == null ||
+        !_hasScope ||
+        _loadedRevision == revision) {
+      return;
+    }
+    _loadedRevision = revision;
+    unawaited(history.refresh());
+  }
 
   Future<void> _open(ReportEntry entry, ReportHistoryController history) async {
     if (!_hasScope || history.locked || _readerOpen) return;
@@ -60,6 +85,7 @@ class _FortuneReportHistoryState extends State<FortuneReportHistory> {
     _readerOpen = false;
     if (mounted) {
       history.closeDetail();
+      _refreshAfterSave();
     } else {
       history.dispose();
     }

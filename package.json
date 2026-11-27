@@ -1,0 +1,21 @@
+{
+  "name": "jovian-flutter",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": "^22.13.0 || ^24.3.0 || >=26.0.0"
+  },
+  "dependencies": {
+    "astronomy-engine": "2.1.19",
+    "iztro": "2.6.5",
+    "lunar-javascript": "1.7.8",
+    "tencentcloud-sdk-nodejs-sms": "4.1.353"
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-typescript": "7.29.9",
+    "metro": "0.87.1",
+    "metro-babel-transformer": "0.87.1",
+    "metro-config": "0.87.1",
+    "playwright-core": "1.65.1"
+  }
+}

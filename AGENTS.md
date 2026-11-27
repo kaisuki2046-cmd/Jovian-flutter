@@ -1,6 +1,6 @@
 # Flutter 前端开工规范
 
-Flutter 工作从独立 Git 仓库的项目根目录执行。Node 服务和原版计算源码随仓库放在 `backend/`，原项目协作协议和框架参考见 [backend/COLLABORATION.md](backend/COLLABORATION.md) 和 [backend/FRAMEWORK.md](backend/FRAMEWORK.md)。`src/` 是统一的客户端源码。页面交互、样式与公共组件应在 Android 和 Web 使用同一套实现。现有 TypeScript 计算与 Node API 通过公开契约接入。
+Flutter 工作从独立 Git 仓库的项目根目录执行。先读 [协作协议](COLLABORATION.md)、[框架图](FRAMEWORK.md) 和涉及模块的 AGENTS.md。各业务在 `src/features/<模块>/` 维护 model、view、control 和 requests。Node 服务与业务存储位于所属模块的 server 和 storage。Flutter 与 Node 的依赖均在仓库根目录声明。页面交互、样式与公共组件应在 Android 和 Web 使用同一套实现。现有 TypeScript 计算与 Node API 通过公开契约接入。
 
 ## 跨平台界面
 

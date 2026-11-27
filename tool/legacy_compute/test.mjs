@@ -5,19 +5,18 @@ import { createServer } from 'node:http';
 import { createRequire, registerHooks } from 'node:module';
 import { extname, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { frontendRoot, legacyRoot } from './paths.mjs';
+import { projectRoot } from './paths.mjs';
 
-const dependencies = legacyRoot;
-const browserDependencies = resolve(process.env.JOVIAN_BROWSER_TEST_ROOT ?? dependencies);
+const browserDependencies = resolve(process.env.JOVIAN_BROWSER_TEST_ROOT ?? projectRoot);
 const { chromium } = createRequire(join(browserDependencies, 'package.json'))('playwright-core');
-const worker = await readFile(join(frontendRoot, 'web', 'legacy-compute.js'));
-const nativeRunner = pathToFileURL(join(frontendRoot, 'tool', 'legacy_compute', 'native_assets', 'legacy-compute.html')).href;
-const testOutput = join(frontendRoot, '.dart_tool', 'legacy_compute');
+const worker = await readFile(join(projectRoot, 'web', 'legacy-compute.js'));
+const nativeRunner = pathToFileURL(join(projectRoot, 'tool', 'legacy_compute', 'native_assets', 'legacy-compute.html')).href;
+const testOutput = join(projectRoot, '.dart_tool', 'legacy_compute');
 await mkdir(testOutput, { recursive: true });
 const testBridgePath = join(testOutput, 'bridge-test.js');
 execFileSync(process.env.JOVIAN_DART_EXECUTABLE ?? 'dart', [
   'compile', 'js', 'tool/legacy_compute/bridge_test.dart', '-o', testBridgePath,
-], { cwd: frontendRoot, stdio: 'inherit' });
+], { cwd: projectRoot, stdio: 'inherit' });
 const testBridge = await readFile(testBridgePath);
 
 registerHooks({ resolve(specifier, context, next) {
@@ -27,13 +26,13 @@ registerHooks({ resolve(specifier, context, next) {
       return next(specifier + '.ts', context);
     }
     if (error.code === 'ERR_MODULE_NOT_FOUND' && /^(lunar-javascript|astronomy-engine|iztro)(?:\/|$)/u.test(specifier)) {
-      return next(specifier, { ...context, parentURL: pathToFileURL(join(dependencies, 'package.json')).href });
+      return next(specifier, { ...context, parentURL: pathToFileURL(join(projectRoot, 'package.json')).href });
     }
     throw error;
   }
 } });
 
-const source = (path) => import(pathToFileURL(join(legacyRoot, 'src', 'features', path)));
+const source = (path) => import(pathToFileURL(join(projectRoot, 'src', 'features', path)));
 const { runReading } = await source('destiny/control/local-reading.ts');
 const { toDestinyArchiveWithSnapshot } = await source('destiny/control/account-report.ts');
 const { buildReportRequest } = await source('destiny/requests/report.ts');

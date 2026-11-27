@@ -294,7 +294,7 @@ Future<List<FortuneJson>> _node(List<FortuneJson> fixtures) async {
     'node',
     ['--input-type=module', '--eval', _legacy],
     workingDirectory: Platform.script
-        .resolve('../../../../../../backend/')
+        .resolve('../../../../../../')
         .toFilePath(),
   );
   final output = utf8.decoder.bind(process.stdout).join();

@@ -4,9 +4,9 @@ import { createRequire, registerHooks } from 'node:module';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-import { legacyRoot } from './legacy_compute/paths.mjs';
-const sceneRoot = pathToFileURL(resolve(legacyRoot, 'src/ui/ai-assistant')).href + '/';
-const browserRoot = resolve(process.env.JOVIAN_BROWSER_TEST_ROOT ?? legacyRoot);
+import { projectRoot } from './legacy_compute/paths.mjs';
+const sceneRoot = pathToFileURL(resolve(projectRoot, 'src/ui/ai-assistant')).href + '/';
+const browserRoot = resolve(process.env.JOVIAN_BROWSER_TEST_ROOT ?? projectRoot);
 const require = createRequire(resolve(browserRoot, 'package.json'));
 const { chromium } = require('playwright-core');
 registerHooks({

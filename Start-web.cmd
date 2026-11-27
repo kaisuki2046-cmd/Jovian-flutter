@@ -45,7 +45,6 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $project = Split-Path -Parent $env:JOVIAN_START_FILE
-$backend = Join-Path $project 'backend'
 $started = @()
 $exitCode = 0
 
@@ -103,12 +102,12 @@ function Get-NodeRuntime {
     throw 'Install Node.js 22.13+, 24.3+ (within the 24.x series), or 26+ with npm.'
 }
 
-function Initialize-Backend {
-    if (Test-Path -LiteralPath (Join-Path $backend 'node_modules/.package-lock.json') -PathType Leaf) { return }
+function Initialize-NodeDependencies {
+    if (Test-Path -LiteralPath (Join-Path $project 'node_modules/.package-lock.json') -PathType Leaf) { return }
     $npm = Get-Command npm.cmd -CommandType Application -ErrorAction Stop | Select-Object -First 1 -ExpandProperty Source
     Write-Host 'Installing the bundled Node dependencies.'
-    & $npm ci --prefix $backend --no-audit --no-fund
-    if ($LASTEXITCODE -ne 0) { throw 'Could not install backend dependencies.' }
+    & $npm ci --include=dev --no-audit --no-fund
+    if ($LASTEXITCODE -ne 0) { throw 'Could not install the project Node dependencies.' }
 }
 
 function Initialize-LocalCompute([string]$node) {
@@ -137,7 +136,7 @@ try {
     $webOrigin = "http://localhost:$picked"
 
     $node = (Get-NodeRuntime).Path
-    Initialize-Backend
+    Initialize-NodeDependencies
     if (!$CheckServices) { Initialize-LocalCompute $node }
 
     if ($ServiceConfig) {
@@ -162,8 +161,8 @@ try {
         foreach ($service in $services) {
             $service.Port = Find-FreePort $service.Ports $service.Name -Reserved $reserved -AllowEphemeral
             $reserved += $service.Port
-            if (!(Test-Path -LiteralPath (Join-Path $backend $service.File) -PathType Leaf)) {
-                throw "The $($service.Name) entry is missing in $backend."
+            if (!(Test-Path -LiteralPath (Join-Path $project $service.File) -PathType Leaf)) {
+                throw "The $($service.Name) entry is missing in $project."
             }
             $service.ErrorLog = Join-Path $runDirectory "$($service.Name).stderr.log"
             [Environment]::SetEnvironmentVariable($service.Env, [string]$service.Port, 'Process')
@@ -180,7 +179,7 @@ try {
         $env:DESTINY_ALLOWED_ORIGINS = $webOrigin
         $env:FORTUNE_ACCOUNT_BASE_URL = "http://127.0.0.1:$env:APP_ACCOUNT_PORT"
         if (!$env:FORTUNE_FACT_DIRECTORY) {
-            $env:FORTUNE_FACT_DIRECTORY = Join-Path $backend '.local\fortune'
+            $env:FORTUNE_FACT_DIRECTORY = Join-Path $project '.local\fortune'
         }
 
         $watchdog = @'
@@ -198,7 +197,7 @@ setInterval(() => {
             $processOptions = @{
                 FilePath = $node
                 ArgumentList = @("--import=data:text/javascript;base64,$preload", '--env-file-if-exists=.env', '--experimental-strip-types', $service.File)
-                WorkingDirectory = $backend
+                WorkingDirectory = $project
                 WindowStyle = 'Hidden'
                 RedirectStandardOutput = Join-Path $runDirectory "$($service.Name).stdout.log"
                 RedirectStandardError = $service.ErrorLog

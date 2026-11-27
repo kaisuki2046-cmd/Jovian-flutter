@@ -18,17 +18,9 @@ const _natalFixtures = {
 };
 
 void main() async {
-  final root = Platform.script.resolve('../../../../../../backend/');
-  final legacyManifest = File.fromUri(
-    root.resolve('src/features/fortune/model/knowledge/fortune_knowledge.json'),
-  );
+  final root = Platform.script.resolve('../../../../../../');
   final manifest = File.fromUri(
     Platform.script.resolve('../../../model/knowledge/fortune_knowledge.json'),
-  );
-  _check(
-    sha256.convert(manifest.readAsBytesSync()) ==
-        sha256.convert(legacyManifest.readAsBytesSync()),
-    'The copied knowledge source differs from the original',
   );
   final temporary = Directory.systemTemp.createTempSync(
     'jovian-fortune-contract-',

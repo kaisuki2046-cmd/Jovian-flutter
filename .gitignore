@@ -5,9 +5,9 @@
 /web/legacy-compute.js
 /tool/legacy_compute/native_assets/legacy-compute.html
 
-/backend/node_modules/
-/backend/**/.local/
-/backend/**/.env
-/backend/**/.env.*
-!/backend/.env.example
-/backend/dev-auth/inbox/
+/node_modules/
+/.env
+/.env.*
+!/.env.example
+**/.local/
+/src/features/account/server/dev-auth/inbox/

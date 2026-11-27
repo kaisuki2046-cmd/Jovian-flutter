@@ -2,21 +2,20 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { frontendRoot, legacyRoot } from './paths.mjs';
+import { projectRoot } from './paths.mjs';
 
-const dependencyRoot = legacyRoot;
-const modules = join(dependencyRoot, 'node_modules');
-const require = createRequire(join(dependencyRoot, 'package.json'));
+const modules = join(projectRoot, 'node_modules');
+const require = createRequire(join(projectRoot, 'package.json'));
 const { runBuild } = require('metro');
 const { getDefaultConfig, mergeConfig } = require('metro-config');
 
 const entry = fileURLToPath(new URL('./worker.ts', import.meta.url));
-const output = join(frontendRoot, 'web', 'legacy-compute.js');
+const output = join(projectRoot, 'web', 'legacy-compute.js');
 const nativeOutput = fileURLToPath(new URL('./native_assets/legacy-compute.html', import.meta.url));
 await mkdir(dirname(output), { recursive: true });
-const defaults = await getDefaultConfig(legacyRoot);
+const defaults = await getDefaultConfig(projectRoot);
 const config = mergeConfig(defaults, {
-  watchFolders: [join(legacyRoot, 'src'), dirname(entry), modules],
+  watchFolders: [join(projectRoot, 'src'), dirname(entry), modules],
   resolver: {
     nodeModulesPaths: [modules],
     sourceExts: [...defaults.resolver.sourceExts, 'mjs'],
@@ -24,7 +23,7 @@ const config = mergeConfig(defaults, {
     resolveRequest(context, specifier, platform) {
       const prefix = 'jovian-legacy/';
       const target = specifier.startsWith(prefix)
-        ? join(legacyRoot, 'src', specifier.slice(prefix.length))
+        ? join(projectRoot, 'src', specifier.slice(prefix.length))
         : specifier;
       return context.resolveRequest(context, target, platform);
     },

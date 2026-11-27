@@ -106,7 +106,7 @@ void main() async {
     ], rule: _rule(queries: [_anchor, _support], unless: [_guard])),
   ];
 
-  final root = Platform.script.resolve('../../../../../../backend/');
+  final root = Platform.script.resolve('../../../../../../');
   final node = await Process.start('node', [
     '--input-type=module',
     '--eval',

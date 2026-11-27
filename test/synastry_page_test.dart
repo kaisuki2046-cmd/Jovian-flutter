@@ -392,10 +392,7 @@ void main() {
       await _tap(tester, '查看此组合已存解读');
       expect(find.text('从合盘存档读取'), findsOneWidget);
       expect(find.text('匹配亲情正文'), findsOneWidget);
-      expect(contexts, [
-        null,
-        '["1990-06-01T00:00:00.000Z","1992-07-02T00:00:00.000Z"]',
-      ]);
+      expect(contexts, [null, matches(RegExp(r'^synastry:v2:[a-f0-9]{64}$'))]);
       expect(tester.takeException(), isNull);
     },
   );
@@ -636,6 +633,42 @@ void main() {
     },
   );
 
+  test('recalculation restores the report for the same pair only', () async {
+    final contexts = <String>[];
+    String? savedContext;
+    final account = await _fixtureAccount((request) {
+      expect(request.url.path, '/account/reading-history/latest');
+      final context = request.url.queryParameters['contextKey']!;
+      contexts.add(context);
+      return _json(context == savedContext ? _archived('a' * 64, '匹配') : null);
+    });
+    var calculation = 0;
+    final controller = SynastryPageController(
+      account: account,
+      calculate: (_, _) async => _chart(
+        DateTime.utc(2026, 10, 20, 9, calculation++).toIso8601String(),
+      ),
+      compare: (_, _, _) async => _comparison,
+    );
+    addTearDown(controller.dispose);
+
+    await _prepareComparison(controller);
+    await controller.restoreComparedReport();
+    savedContext = contexts.single;
+    final firstCalculation = controller.b?['calculatedAt'];
+
+    await _prepareComparison(controller);
+    expect(controller.b?['calculatedAt'], isNot(firstCalculation));
+    await controller.restoreComparedReport();
+    expect(contexts.last, savedContext);
+    expect(controller.report, contains('匹配亲情正文'));
+
+    await _prepareComparison(controller, dayB: 3);
+    await controller.restoreComparedReport();
+    expect(contexts.last, isNot(savedContext));
+    expect(controller.report, isNull);
+  });
+
   test('an unknown chart version cannot open or generate a report', () async {
     final account = await _fixtureAccount(
       (request) => throw StateError('Unexpected archive request'),
@@ -724,6 +757,7 @@ Future<AccountController> _fixtureAccount(
 Future<void> _prepareComparison(
   SynastryPageController controller, {
   bool archiveA = false,
+  int dayB = 2,
 }) async {
   BirthProfile profile(int day) => BirthProfile(
     date: BirthDate(1990, 6, day),
@@ -738,7 +772,7 @@ Future<void> _prepareComparison(
   } else {
     expect(await controller.setManual(SynastrySide.a, profile(1)), isTrue);
   }
-  expect(await controller.setManual(SynastrySide.b, profile(2)), isTrue);
+  expect(await controller.setManual(SynastrySide.b, profile(dayB)), isTrue);
   await controller.compareCharts();
   expect(controller.result, _comparison);
 }

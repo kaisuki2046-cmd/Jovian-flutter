@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:jovian_destiny/jovian_destiny.dart';
 
@@ -341,7 +342,18 @@ class SynastryPageController extends ChangeNotifier {
         DateTime.tryParse(to) == null) {
       return null;
     }
-    return jsonEncode([from, to]);
+    final request = result?['summaryRequest'];
+    final subjectA = aFromArchive
+        ? (a?['snapshotId'])
+        : _manualProfiles[SynastrySide.a]?.toJson();
+    final subjectB = _manualProfiles[SynastrySide.b]?.toJson();
+    if (request is! Map<String, Object?> ||
+        subjectA == null ||
+        subjectB == null) {
+      return null;
+    }
+    final input = jsonEncode([subjectA, subjectB, request]);
+    return 'synastry:v2:${sha256.convert(utf8.encode(input))}';
   }
 
   Future<void> restoreComparedReport() async {

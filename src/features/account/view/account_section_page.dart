@@ -88,7 +88,9 @@ class AccountSectionPage extends StatelessWidget {
       case AccountSection.reports:
         return ReportsPage(account: account);
       default:
-        final owner = account.memberId;
+        final owner = target.section == AccountSection.deletion
+            ? account.deletionPageOwner
+            : account.memberId;
         if (owner == null) {
           final (title, message) = switch (target.section) {
             AccountSection.findUser => ('找用户', '登录后可按 UID 或昵称找用户。'),

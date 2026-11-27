@@ -142,7 +142,7 @@ class _AccountDeletionPageState extends State<AccountDeletionPage> {
               Align(
                 alignment: Alignment.centerLeft,
                 child: TextButton(
-                  onPressed: _readNotice,
+                  onPressed: _busy ? null : _readNotice,
                   child: const UiText('阅读《账号注销与数据删除说明》'),
                 ),
               ),

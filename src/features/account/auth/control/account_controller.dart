@@ -53,6 +53,7 @@ class AccountController extends ChangeNotifier {
   bool _restored = false;
   bool _busy = false;
   bool _sessionChanging = false;
+  String? _deletingOwner;
   bool _closed = false;
   String? _notice;
 
@@ -74,6 +75,7 @@ class AccountController extends ChangeNotifier {
   bool get restored => _restored;
   bool get busy => _busy;
   bool get sessionChanging => _sessionChanging;
+  String? get deletionPageOwner => _deletingOwner ?? memberId;
   String? get notice => _notice;
 
   Future<String?> readNativeSession() => _account.readNativeSession();
@@ -108,6 +110,7 @@ class AccountController extends ChangeNotifier {
     }
     _busy = true;
     _sessionChanging = true;
+    _deletingOwner = owner;
     _notice = null;
     notifyListeners();
     try {
@@ -126,6 +129,7 @@ class AccountController extends ChangeNotifier {
       }
       await service.clearDevice(request);
     } finally {
+      _deletingOwner = null;
       _sessionChanging = false;
       _busy = false;
       if (!_closed) notifyListeners();

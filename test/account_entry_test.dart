@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -145,6 +146,7 @@ void main() {
     final receipt = 'r' * 43;
     final token = 't' * 43;
     final storage = _DeletionStorage();
+    final verification = Completer<http.Response>();
     var accepted = false;
     var completed = false;
     var attempts = 0;
@@ -190,7 +192,7 @@ void main() {
               expect(input['legacyReadingTokens'], [token]);
               expect(input['receipt'], receipt);
               attempts++;
-              if (input['password'] == 'wrong') return _json({}, 422);
+              if (input['password'] == 'wrong') return verification.future;
               expect(input['password'], 'fixture-password');
               accepted = true;
               return _json({}, 503);
@@ -253,8 +255,18 @@ void main() {
     expect(tester.widget<FilledButton>(submit).onPressed, isNull);
     expect(attempts, 0);
     await tap(find.text('我了解注销影响并确认申请'));
-    await tap(submit);
+    await tester.ensureVisible(submit);
+    await tester.tap(submit);
+    await tester.pump();
+    expect(attempts, 1);
+    expect(account.memberId, isNull);
+    expect(tester.widget<TextField>(password).controller?.text, 'wrong');
+    expect(tester.widget<FilledButton>(submit).onPressed, isNull);
+    verification.complete(_json({}, 422));
+    await tester.pumpAndSettle();
     expect(find.text('身份验证失败，请核对密码或验证码。'), findsOneWidget);
+    expect(account.memberId, owner);
+    expect(tester.widget<FilledButton>(submit).onPressed, isNotNull);
     expect(cleanup, 0);
     await tester.enterText(password, 'fixture-password');
     await tap(submit);

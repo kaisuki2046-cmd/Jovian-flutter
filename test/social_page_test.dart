@@ -120,6 +120,43 @@ AccountController _account(
 }
 
 void main() {
+  testWidgets('only your own social profile opens account editing', (
+    tester,
+  ) async {
+    final account = _account(_Storage(), (request) async {
+      final id = request.url.pathSegments.last;
+      return _json({..._profile, 'id': id});
+    });
+    addTearDown(account.dispose);
+    await account.initialize();
+    AccountDestination? edited;
+    Future<void> openProfile(String id) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: AccountSectionLinks(
+            open: (target) async => edited = target,
+            child: SocialProfilePage(
+              key: ValueKey(id),
+              controller: SocialController.forMember(account, _memberId),
+              id: id,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    await openProfile(_actorId);
+    expect(find.text('编辑资料'), findsNothing);
+    await openProfile(_memberId);
+    final edit = find.text('编辑资料');
+    expect(edit, findsOneWidget);
+    await tester.ensureVisible(edit);
+    await tester.tap(edit);
+    await tester.pumpAndSettle();
+    expect(edited, accountDestination(AccountSection.profile));
+  });
+
   testWidgets('inbox pagination retries the same cursor and can refresh', (
     tester,
   ) async {

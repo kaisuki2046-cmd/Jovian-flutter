@@ -145,6 +145,7 @@ const englishInterfaceStrings = <String, String>{
   "群聊": "Group chats",
   "账户与资料": "Account and profile",
   "基础个人资料": "Personal details",
+  '编辑资料': 'Edit profile',
   "命理档案": "Birth chart profile",
   "设置": "Settings",
   "隐私设置": "Privacy settings",

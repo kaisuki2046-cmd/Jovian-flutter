@@ -379,6 +379,8 @@ class _SocialProfilePageState extends State<SocialProfilePage> {
         );
       }
       final profile = snapshot.data!;
+      final accountLinks = context
+          .getInheritedWidgetOfExactType<AccountSectionLinks>();
       return ListView(
         padding: const EdgeInsets.all(20),
         children: [
@@ -452,7 +454,19 @@ class _SocialProfilePageState extends State<SocialProfilePage> {
                           Text('${context.uiLabel(title)} $count'),
                     ],
                   ),
-                  if (!_own) ...[
+                  if (_own && accountLinks != null) ...[
+                    const SizedBox(height: 14),
+                    OutlinedButton(
+                      onPressed: () async {
+                        await accountLinks.open(
+                          accountDestination(AccountSection.profile),
+                        );
+                        if (mounted && widget.controller.isCurrentMember)
+                          _reload();
+                      },
+                      child: const UiText('编辑资料'),
+                    ),
+                  ] else if (!_own) ...[
                     const SizedBox(height: 14),
                     SocialFollowButton(
                       relation: profile.relation,

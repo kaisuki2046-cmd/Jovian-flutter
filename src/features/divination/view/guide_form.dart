@@ -51,17 +51,15 @@ class _GuideFormState extends State<GuideForm>
   DialogRoute<void>? _ritualRoute;
   GuideRitualPresentation? _presentation;
   LegacyGuideConversation? _openLegacyConversation;
-  final _clarificationAttachments = <String, List<ComposerAttachment>>{};
+  final _messageFiles = <String, List<ComposerAttachment>>{};
   ({String text, TextEditingValue draft, List<ComposerAttachment> attachments})?
   _pendingQuestion;
   int _sentRevision = 0;
   bool _showCharts = false;
   final _ownedAttachments = <ComposerAttachment>{};
   final _draftAttachments = <ComposerAttachment>[];
-  final _localQuestionTurns = <ComposerAttachmentTurn>[];
-  final _localFollowUpTurns = <ComposerAttachmentTurn>[];
+  final _offlineAttachments = <List<ComposerAttachment>>[];
   final _sentFollowUpAttachments = <int, List<ComposerAttachment>>{};
-  List<ComposerAttachment> _readingAttachments = const [];
   ({int index, String question, List<ComposerAttachment> attachments})?
   _sendingFollowUp;
   Object? _attachmentSelection;
@@ -133,10 +131,7 @@ class _GuideFormState extends State<GuideForm>
     if (_attachmentSelection != null || widget.online?.busy == true) return;
     final question = _question.text.trim();
     if (question.isEmpty && _draftAttachments.isNotEmpty) {
-      _sendLocalAttachments(
-        _localQuestionTurns,
-        widget.online?.activeTranscript.length ?? 0,
-      );
+      unawaited(_sendAttachments());
       return;
     }
     final online = widget.online;
@@ -159,16 +154,22 @@ class _GuideFormState extends State<GuideForm>
     OnlineGuideController online,
     String question,
   ) async {
-    await online.start(question, automatic: false);
+    await online.start(
+      question,
+      automatic: false,
+      attachmentNames: _attachmentNames(_pendingQuestion!.attachments),
+    );
     _finishQuestion(online);
   }
 
   void _finishQuestion(OnlineGuideController online) {
     final pending = _pendingQuestion;
     if (!mounted || widget.online != online || pending == null) return;
+    final turn = online.activeTranscript.lastOrNull;
     if (online.reading != null) {
       setState(() {
-        _readingAttachments = _acceptQuestion();
+        final files = _acceptQuestion();
+        if (turn != null) _messageFiles[turn.id] = files;
       });
       if (_snapshot?.stage == GuideStage.cast) _openRitual();
     } else if (online.canRetry || online.questionStopped) {
@@ -181,11 +182,10 @@ class _GuideFormState extends State<GuideForm>
         }
         if (online.questionStopped) _pendingQuestion = null;
       });
-    } else if (online.activeTranscript.lastOrNull case final turn?
-        when turn.reply != null && turn.question == pending.text) {
-      setState(() {
-        _clarificationAttachments[turn.id] = _acceptQuestion();
-      });
+    } else if (turn != null &&
+        turn.reply != null &&
+        turn.question == pending.text) {
+      setState(() => _messageFiles[turn.id] = _acceptQuestion());
     }
   }
 
@@ -204,12 +204,26 @@ class _GuideFormState extends State<GuideForm>
     return pending.attachments;
   }
 
-  void _sendLocalAttachments(List<ComposerAttachmentTurn> turns, int after) {
+  List<String> _attachmentNames(List<ComposerAttachment> attachments) => [
+    for (final attachment in attachments) attachment.name,
+  ];
+
+  Future<void> _sendAttachments() async {
+    final online = widget.online;
     FocusScope.of(context).unfocus();
+    final attachments = _takeDraftAttachments();
     setState(() {
-      turns.add((after: after, attachments: _takeDraftAttachments()));
+      if (online == null) _offlineAttachments.add(attachments);
       _sentRevision++;
     });
+    if (online == null) return;
+    final id = await online.addAttachments(_attachmentNames(attachments));
+    if (id != null &&
+        mounted &&
+        widget.online == online &&
+        attachments.every(_ownedAttachments.contains)) {
+      setState(() => _messageFiles[id] = attachments);
+    }
   }
 
   Future<void> _addAttachment(ComposerAttachmentKind kind) async {
@@ -397,13 +411,11 @@ class _GuideFormState extends State<GuideForm>
     _followUp.clear();
     _pendingQuestion = null;
     _openLegacyConversation = null;
-    _clarificationAttachments.clear();
+    _messageFiles.clear();
     _releaseAttachments();
     _draftAttachments.clear();
-    _localQuestionTurns.clear();
-    _localFollowUpTurns.clear();
+    _offlineAttachments.clear();
     _sentFollowUpAttachments.clear();
-    _readingAttachments = const [];
     _sendingFollowUp = null;
     _attachmentError = null;
     _showCharts = false;
@@ -431,8 +443,8 @@ class _GuideFormState extends State<GuideForm>
 
   Object get _latestMessage => (
     widget.online?.activeTranscript.lastOrNull?.id,
-    _localQuestionTurns.length,
-    _localFollowUpTurns.length,
+    _offlineAttachments.length,
+    widget.online?.activeHistoryEntry?.localAttachments.length,
     _pendingQuestion?.text,
     widget.online?.busy,
     widget.online?.message,
@@ -522,7 +534,7 @@ class _GuideFormState extends State<GuideForm>
           previousQuestion == null &&
           _pendingQuestion == null &&
           transcript.isEmpty &&
-          _localQuestionTurns.isEmpty &&
+          _offlineAttachments.isEmpty &&
           online?.questionStopped != true;
       return GuideThread(
         key: const ValueKey('guide-question'),
@@ -616,27 +628,22 @@ class _GuideFormState extends State<GuideForm>
         ? turns.length - 1
         : -1;
     return [
-      for (var index = 0; index <= turns.length; index++) ...[
-        for (final turn in _localQuestionTurns.where(
-          (turn) => turn.after == index,
-        )) ...[
-          GuideQuestionBubble('', attachments: turn.attachments),
-          const SizedBox(height: 12),
-        ],
-        if (index < turns.length &&
-            index != activeIndex &&
-            index != pendingIndex) ...[
+      for (final files in _offlineAttachments) ...[
+        GuideQuestionBubble('', attachments: files),
+        const SizedBox(height: 12),
+      ],
+      for (var index = 0; index < turns.length; index++)
+        if (index != activeIndex && index != pendingIndex) ...[
           if (stamps[index] case final sentAt?) ChatTimeLabel(sentAt: sentAt),
           ..._transcriptTurn(turns[index], online),
         ],
-      ],
       if (ritual != null) ...[
         if (activeIndex >= 0)
           if (stamps[activeIndex] case final sentAt?)
             ChatTimeLabel(sentAt: sentAt),
         ..._questionContext(
           ritual,
-          activeIndex >= 0 ? turns[activeIndex].question : ritual.question,
+          activeIndex >= 0 ? turns[activeIndex] : null,
         ),
       ],
       if (pending != null) ...[
@@ -653,13 +660,15 @@ class _GuideFormState extends State<GuideForm>
     GuideTranscriptTurn turn,
     OnlineGuideController? online,
   ) {
-    final previous = turn.readingId == null
+    final saved = turn.readingId == null
         ? null
-        : online?.archivedReading(turn.readingId!);
+        : online?.archivedHistoryEntry(turn.readingId!);
+    final previous = saved?.reading;
     return [
       GuideQuestionBubble(
         turn.question,
-        attachments: _clarificationAttachments[turn.id] ?? const [],
+        attachmentNames: turn.attachmentNames,
+        attachments: _messageFiles[turn.id] ?? const [],
       ),
       const SizedBox(height: 8),
       if (turn.reply case final reply?) GuideConversationReply(body: reply),
@@ -672,6 +681,7 @@ class _GuideFormState extends State<GuideForm>
             GuideFollowUpList(
               followUps: previous!.followUps,
               evidence: previous.evidence,
+              history: saved,
             ),
           ],
         ),
@@ -681,9 +691,13 @@ class _GuideFormState extends State<GuideForm>
 
   List<Widget> _questionContext(
     GuideRitualSnapshot ritual,
-    String question,
+    GuideTranscriptTurn? turn,
   ) => [
-    GuideQuestionBubble(question, attachments: _readingAttachments),
+    GuideQuestionBubble(
+      turn?.question ?? ritual.question,
+      attachmentNames: turn?.attachmentNames ?? const [],
+      attachments: _messageFiles[turn?.id] ?? const [],
+    ),
     if (ritual.focus.trim().isNotEmpty && ritual.focus != ritual.question) ...[
       const SizedBox(height: 8),
       GuideConversationReply(heading: '确认的关注点', body: ritual.focus),
@@ -765,7 +779,8 @@ class _GuideFormState extends State<GuideForm>
             followUps: reading!.followUps,
             evidence: reading.evidence,
             attachments: _sentFollowUpAttachments,
-            localTurns: _localFollowUpTurns,
+            history: online?.activeHistoryEntry,
+            noteFiles: _messageFiles,
           ),
           ..._feedback(),
           if (live && !canFollowUp) const UiText('这次算事的追问已达上限，可以另问一件事。'),
@@ -904,7 +919,7 @@ class _GuideFormState extends State<GuideForm>
     final question = _followUp.text.trim();
     final index = reading.followUps.length;
     if (question.isEmpty && _draftAttachments.isNotEmpty) {
-      _sendLocalAttachments(_localFollowUpTurns, index);
+      await _sendAttachments();
       return;
     }
     if (_followUpForm.currentState?.validate() != true) return;
@@ -915,6 +930,9 @@ class _GuideFormState extends State<GuideForm>
       attachments: List.of(_draftAttachments),
     );
     _sentRevision++;
-    await online.followUp(question);
+    await online.followUp(
+      question,
+      attachmentNames: _attachmentNames(_sendingFollowUp!.attachments),
+    );
   }
 }

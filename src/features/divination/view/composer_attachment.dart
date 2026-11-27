@@ -29,11 +29,6 @@ class ComposerAttachment {
 
 typedef ComposerAttachmentPicker =
     Future<List<ComposerAttachment>> Function(ComposerAttachmentKind kind);
-typedef ComposerAttachmentTurn = ({
-  int after,
-  List<ComposerAttachment> attachments,
-});
-
 final _imageExtension = RegExp(
   r'\.(?:jpe?g|png|gif|webp|bmp|avif|heic|heif)$',
   caseSensitive: false,

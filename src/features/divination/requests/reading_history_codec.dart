@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:jovian_divination/jovian_divination.dart';
 
+import 'reading_transcript_codec.dart';
+
 String? memberReadingKeySuffix(String key, String prefix, String owner) {
   if (!key.startsWith(prefix)) return null;
   final member = '.member:$owner';
@@ -31,6 +33,14 @@ GuideHistoryEntry? decodeGuideHistory(String? text) {
           saved.snapshot,
           value['revealedTarotSlots'],
         ),
+        followUpAttachmentNames: _readFollowUpAttachments(
+          value['followUpAttachments'],
+          saved.followUps.length,
+        ),
+        localAttachments: _readLocalAttachments(
+          value['localAttachments'],
+          saved.followUps.length,
+        ),
       );
     }
   } on FormatException {
@@ -49,7 +59,45 @@ String encodeGuideHistory(GuideHistoryEntry entry) => jsonEncode({
   'reading': entry.reading.toJson(),
   if (entry.revealedTarotSlots case final slots?)
     'revealedTarotSlots': slots.toList(),
+  if (entry.followUpAttachmentNames.isNotEmpty)
+    'followUpAttachments': {
+      for (final item in entry.followUpAttachmentNames.entries)
+        '${item.key}': item.value,
+    },
+  if (entry.localAttachments.isNotEmpty)
+    'localAttachments': [
+      for (final note in entry.localAttachments)
+        {'id': note.id, 'after': note.after, 'names': note.names},
+    ],
 });
+
+Map<int, List<String>> _readFollowUpAttachments(Object? raw, int followUps) {
+  if (raw is! Map<String, Object?>) return const {};
+  final namesByStep = <int, List<String>>{};
+  for (final item in raw.entries) {
+    final step = int.tryParse(item.key);
+    if (step == null || step < 0 || step >= followUps) continue;
+    final names = decodeGuideAttachmentNames(item.value);
+    if (names.isNotEmpty) namesByStep[step] = names;
+  }
+  return Map.unmodifiable(namesByStep);
+}
+
+List<GuideReadingAttachment> _readLocalAttachments(Object? raw, int followUps) {
+  if (raw is! List) return const [];
+  final notes = <GuideReadingAttachment>[];
+  for (final item in raw) {
+    if (item case {
+      'id': final String id,
+      'after': final int after,
+      'names': final rawNames,
+    } when isGuideThreadId(id) && after >= 0 && after <= followUps) {
+      final names = decodeGuideAttachmentNames(rawNames);
+      if (names.isNotEmpty) notes.add((id: id, after: after, names: names));
+    }
+  }
+  return List.unmodifiable(notes);
+}
 
 Set<int>? _readRevealedSlots(GuideRitualSnapshot snapshot, Object? value) {
   if (snapshot.chart == null ||

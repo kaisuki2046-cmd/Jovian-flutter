@@ -51,14 +51,15 @@ class GuideQuestionBubble extends StatelessWidget {
                       height: 1.45,
                     ),
                   ),
-                for (final name in attachmentNames)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4),
-                    child: Text(
-                      name,
-                      style: const TextStyle(color: Colors.white),
+                if (attachments.isEmpty)
+                  for (final name in attachmentNames)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        name,
+                        style: const TextStyle(color: Colors.white),
+                      ),
                     ),
-                  ),
                 for (final attachment in attachments)
                   Padding(
                     padding: EdgeInsets.only(
@@ -108,27 +109,37 @@ class GuideFollowUpList extends StatelessWidget {
     required this.followUps,
     required this.evidence,
     this.attachments = const {},
-    this.localTurns = const [],
+    this.history,
+    this.noteFiles = const {},
   });
 
   final List<ReadingFollowUp> followUps;
   final List<ReadingEvidence> evidence;
   final Map<int, List<ComposerAttachment>> attachments;
-  final List<ComposerAttachmentTurn> localTurns;
+  final GuideHistoryEntry? history;
+  final Map<String, List<ComposerAttachment>> noteFiles;
 
   @override
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
       for (var index = 0; index <= followUps.length; index++) ...[
-        for (final turn in localTurns.where((turn) => turn.after == index))
-          Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: GuideQuestionBubble('', attachments: turn.attachments),
-          ),
+        for (final note
+            in history?.localAttachments ?? const <GuideReadingAttachment>[])
+          if (note.after == index)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: GuideQuestionBubble(
+                '',
+                attachmentNames: note.names,
+                attachments: noteFiles[note.id] ?? const [],
+              ),
+            ),
         if (index < followUps.length) ...[
           GuideQuestionBubble(
             followUps[index].question,
+            attachmentNames:
+                history?.followUpAttachmentNames[index] ?? const [],
             attachments: attachments[index] ?? const [],
           ),
           const SizedBox(height: 8),
@@ -215,7 +226,7 @@ class _GuideConversationHistoryState extends State<GuideConversationHistory> {
         if (_matchesTranscript(transcript, readings))
           (
             id: transcript.id,
-            question: transcript.turns.first.question,
+            question: _historyTitle(transcript.turns.first),
             updatedAt: _latestActivity(transcript, readings),
             open: widget.openConversation == null
                 ? null
@@ -223,11 +234,12 @@ class _GuideConversationHistoryState extends State<GuideConversationHistory> {
           ),
       for (final entry in widget.entries)
         if (!linkedIds.contains(entry.id) &&
-            _matches(
-              entry.reading.snapshot.question,
-              entry.reading.snapshot.focus,
-              entry.reading.followUps,
-            ))
+            (_matches(
+                  entry.reading.snapshot.question,
+                  entry.reading.snapshot.focus,
+                  entry.reading.followUps,
+                ) ||
+                _matchesReadingAttachments(entry)))
           (
             id: entry.id,
             question: entry.reading.snapshot.question,
@@ -382,15 +394,24 @@ class _GuideConversationHistoryState extends State<GuideConversationHistory> {
     GuideTranscript transcript,
     Map<String, GuideHistoryEntry> readings,
   ) => transcript.turns.any((turn) {
-    final reading = readings[turn.readingId]?.reading;
-    return _contains(turn.reply) ||
+    final saved = readings[turn.readingId];
+    final reading = saved?.reading;
+    return turn.attachmentNames.any(_contains) ||
+        _contains(turn.reply) ||
         _contains(turn.clarificationQuestion) ||
+        (saved != null && _matchesReadingAttachments(saved)) ||
         _matches(
           turn.question,
           reading?.snapshot.focus ?? '',
           reading?.followUps ?? const [],
         );
   });
+
+  bool _matchesReadingAttachments(GuideHistoryEntry entry) =>
+      entry.followUpAttachmentNames.values.any(
+        (names) => names.any(_contains),
+      ) ||
+      entry.localAttachments.any((note) => note.names.any(_contains));
 
   bool _contains(String? text) => text?.toLowerCase().contains(_query) ?? false;
 
@@ -406,6 +427,9 @@ class _GuideConversationHistoryState extends State<GuideConversationHistory> {
         (turn) => _contains(turn.question) || _contains(turn.answer),
       );
 }
+
+String _historyTitle(GuideTranscriptTurn first) =>
+    first.question.isEmpty ? first.attachmentNames.first : first.question;
 
 DateTime _latestActivity(
   GuideTranscript transcript,

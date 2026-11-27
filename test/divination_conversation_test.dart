@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io' show Platform;
 import 'dart:typed_data';
 
 import 'package:file_selector/file_selector.dart';
@@ -138,11 +139,17 @@ void main() {
     },
   );
 
-  testWidgets('composer keeps selected files local and sends only the caption', (
+  testWidgets('composer sends only the caption and restores attachment names', (
     tester,
   ) async {
+    FlutterSecureStorage.setMockInitialValues({});
+    addTearDown(() => FlutterSecureStorage.setMockInitialValues({}));
     final service = DivinationServiceFixture();
-    final online = service.connect(DivinationRecoveryFixture());
+    GuideRecoveryStore store() => createReadingRecovery(
+      Uri.https('fixture.invalid'),
+      ownerScope: 'member:attachment-owner',
+    );
+    final online = service.connect(store());
     addTearDown(online.dispose);
     final picked = <ComposerAttachmentKind>[];
     final image = ComposerAttachment(
@@ -220,6 +227,28 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('local-image.png'), findsNothing);
     expect(find.text('local-document.txt'), findsNothing);
+
+    final stored = (await const FlutterSecureStorage().readAll()).values.join();
+    expect(stored, contains('local-image.png'));
+    expect(stored, contains('local-document.txt'));
+    expect(stored, isNot(contains('contents must stay local')));
+    expect(stored, isNot(contains('iVBORw0KGgo')));
+    final restored = service.connect(store());
+    addTearDown(restored.dispose);
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pumpWidget(MaterialApp(home: GuideForm(online: restored)));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('会话历史'));
+    await tester.pumpAndSettle();
+    final search = find.widgetWithText(TextField, '搜索对话');
+    await tester.enterText(search, 'local-document');
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(ListTile, 'local-image.png'));
+    await tester.pumpAndSettle();
+    expect(find.text('local-image.png'), findsOneWidget);
+    expect(find.text('local-document.txt'), findsOneWidget);
+    expect(find.byType(ComposerAttachmentTile), findsNothing);
+    expect(service.calls, ['POST /reading/understand']);
     expect(tester.takeException(), isNull);
   });
 
@@ -325,56 +354,89 @@ void main() {
     expect(tester.takeException(), isNull);
   }, variant: const TargetPlatformVariant({TargetPlatform.windows}));
 
-  testWidgets('follow-up keeps the attachment out of the reading request', (
-    tester,
-  ) async {
-    final service = DivinationServiceFixture()..failReport = false;
-    final recovery = DivinationRecoveryFixture();
-    final initial = service.connect(recovery);
-    await initial.start(divinationFixtureDetails, automatic: true);
-    initial.dispose();
-    service.calls.clear();
-    service.transmitted.clear();
-    final online = service.connect(recovery);
-    addTearDown(online.dispose);
-    await tester.pumpWidget(
-      MaterialApp(
-        home: GuideForm(
-          online: online,
-          attachmentPicker: (_) async => [
-            ComposerAttachment(
-              file: XFile.fromData(
-                Uint8List(1),
-                path: 'follow-up-only.txt',
-                name: 'follow-up-only.txt',
-              ),
-              kind: ComposerAttachmentKind.file,
-            ),
-          ],
+  testWidgets(
+    'follow-ups restore local names without adding them to requests',
+    (tester) async {
+      FlutterSecureStorage.setMockInitialValues({});
+      addTearDown(() => FlutterSecureStorage.setMockInitialValues({}));
+      final service = DivinationServiceFixture()..failReport = false;
+      GuideRecoveryStore store() => createReadingRecovery(
+        Uri.https('fixture.invalid'),
+        ownerScope: 'member:follow-up-owner',
+      );
+      final initial = service.connect(store());
+      await initial.start(divinationFixtureDetails, automatic: true);
+      initial.dispose();
+      service.calls.clear();
+      service.transmitted.clear();
+      final online = service.connect(store());
+      addTearDown(online.dispose);
+      var picks = 0;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: GuideForm(
+            online: online,
+            attachmentPicker: (_) async {
+              final name = picks++ == 0
+                  ? 'follow-up-only.txt'
+                  : 'follow-up-context.txt';
+              return [
+                ComposerAttachment(
+                  file: XFile.fromData(
+                    Uint8List(1),
+                    path: 'local-only-path${Platform.pathSeparator}$name',
+                    name: name,
+                  ),
+                  kind: ComposerAttachmentKind.file,
+                ),
+              ];
+            },
+          ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
-    expect(service.calls, ['GET /reading']);
-    await _openAttachmentMenu(tester, '添加文件');
-    await _send(tester, label: '发送追问');
-    expect(service.calls, ['GET /reading']);
-    expect(find.text('follow-up-only.txt'), findsOneWidget);
-    await _openAttachmentMenu(tester, '添加文件');
-    await tester.enterText(
-      find.byType(TextFormField),
-      divinationFixtureFollowUp,
-    );
-    await _send(tester, label: '发送追问');
-    expect(service.calls, ['GET /reading', 'POST /reading/follow-up']);
-    expect(service.transmitted, [
-      {},
-      {'step': 0, 'question': divinationFixtureFollowUp},
-    ]);
-    expect(find.text('follow-up-only.txt'), findsNWidgets(2));
-    expect(find.text('先确认后续时间。'), findsOneWidget);
-    expect(tester.takeException(), isNull);
-  });
+      );
+      await tester.pumpAndSettle();
+      expect(service.calls, ['GET /reading']);
+      await _openAttachmentMenu(tester, '添加文件');
+      await _send(tester, label: '发送追问');
+      expect(service.calls, ['GET /reading']);
+      expect(find.text('follow-up-only.txt'), findsOneWidget);
+      await _openAttachmentMenu(tester, '添加文件');
+      await tester.enterText(
+        find.byType(TextFormField),
+        divinationFixtureFollowUp,
+      );
+      await _send(tester, label: '发送追问');
+      expect(service.calls, ['GET /reading', 'POST /reading/follow-up']);
+      expect(service.transmitted, [
+        {},
+        {'step': 0, 'question': divinationFixtureFollowUp},
+      ]);
+      expect(find.text('follow-up-only.txt'), findsOneWidget);
+      expect(find.text('follow-up-context.txt'), findsOneWidget);
+      expect(find.text('先确认后续时间。'), findsOneWidget);
+      final cached = (await const FlutterSecureStorage().readAll()).values
+          .join();
+      expect(cached, isNot(contains('local-only-path')));
+
+      final restored = service.connect(store());
+      addTearDown(restored.dispose);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpWidget(MaterialApp(home: GuideForm(online: restored)));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('会话历史'));
+      await tester.pumpAndSettle();
+      final search = find.widgetWithText(TextField, '搜索对话');
+      await tester.enterText(search, 'follow-up-context.txt');
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(ListTile, divinationFixtureDetails));
+      await tester.pumpAndSettle();
+      expect(find.text('follow-up-only.txt'), findsOneWidget);
+      expect(find.text('follow-up-context.txt'), findsOneWidget);
+      expect(find.byType(ComposerAttachmentTile), findsNothing);
+      expect(find.text('先确认后续时间。'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   test('only clears the deleted member’s native reading storage', () async {
     const prefix = 'jovian.divination.flutter.v1.https://fixture.invalid.';
@@ -850,6 +912,7 @@ void main() {
           reply: id == 'active-chat' ? '前面的助手回复' : null,
           clarificationQuestion: id == 'active-chat' ? '请补充具体事件' : null,
           previousQuestion: null,
+          attachmentNames: const [],
           readingId: null,
         ));
       }
@@ -862,6 +925,7 @@ void main() {
         reply: null,
         clarificationQuestion: null,
         previousQuestion: null,
+        attachmentNames: const [],
         readingId: 'old-reading',
       ));
 
@@ -1016,6 +1080,7 @@ void main() {
           conversationId: turn.conversationId,
           sentAt: started.add(Duration(minutes: index * 2)),
           question: turn.question,
+          attachmentNames: turn.attachmentNames,
           reply: turn.reply,
           clarificationQuestion: turn.clarificationQuestion,
           previousQuestion: turn.previousQuestion,

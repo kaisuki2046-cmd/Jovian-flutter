@@ -14,6 +14,7 @@ String encodeGuideTranscriptTurn(GuideTranscriptTurn turn) => jsonEncode({
   'conversationId': turn.conversationId,
   'sentAt': turn.sentAt.microsecondsSinceEpoch,
   'question': turn.question,
+  if (turn.attachmentNames.isNotEmpty) 'attachmentNames': turn.attachmentNames,
   if (turn.reply != null) 'reply': turn.reply,
   if (turn.clarificationQuestion != null)
     'clarificationQuestion': turn.clarificationQuestion,
@@ -23,16 +24,12 @@ String encodeGuideTranscriptTurn(GuideTranscriptTurn turn) => jsonEncode({
 
 GuideTranscriptTurn? decodeGuideTranscriptTurn(String? raw) {
   final data = _object(raw);
-  if (data
-      case {
-        'id': final String id,
-        'conversationId': final String conversationId,
-        'sentAt': final int micros,
-        'question': final String question,
-      }
-      when isGuideThreadId(id) &&
-          isGuideThreadId(conversationId) &&
-          question.trim().isNotEmpty) {
+  if (data case {
+    'id': final String id,
+    'conversationId': final String conversationId,
+    'sentAt': final int micros,
+    'question': final String question,
+  } when isGuideThreadId(id) && isGuideThreadId(conversationId)) {
     final rawReply = data['reply'];
     final rawReadingId = data['readingId'];
     final pending = data['clarificationQuestion'];
@@ -40,13 +37,18 @@ GuideTranscriptTurn? decodeGuideTranscriptTurn(String? raw) {
     final readingId = rawReadingId is String && isGuideThreadId(rawReadingId)
         ? rawReadingId
         : null;
-    if (reply != null && readingId != null) return null;
+    final names = decodeGuideAttachmentNames(data['attachmentNames']);
+    if ((reply != null && readingId != null) ||
+        (question.trim().isEmpty &&
+            (names.isEmpty || reply != null || readingId != null)))
+      return null;
     try {
       return (
         id: id,
         conversationId: conversationId,
         sentAt: DateTime.fromMicrosecondsSinceEpoch(micros),
         question: question,
+        attachmentNames: names,
         reply: reply,
         clarificationQuestion: readingId == null && pending is String
             ? pending
@@ -81,6 +83,12 @@ GuideTranscriptPosition? decodeGuideTranscriptPosition(String? raw) {
   }
   return null;
 }
+
+List<String> decodeGuideAttachmentNames(Object? raw) => raw is List
+    ? List.unmodifiable(
+        raw.whereType<String>().where((name) => name.isNotEmpty),
+      )
+    : const [];
 
 String? _optionalText(Object? value) =>
     value is String && value.isNotEmpty ? value : null;

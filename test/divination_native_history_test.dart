@@ -260,6 +260,7 @@ void main() {
         conversationId: 'conversation-one',
         sentAt: DateTime.utc(2026, 11, 27),
         question: question,
+        attachmentNames: ['$id.txt'],
         reply: '请补充问题。',
         clarificationQuestion: question,
         previousQuestion: null,

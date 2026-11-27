@@ -248,12 +248,16 @@ class GuideHistoryEntry {
     required this.updatedAt,
     required this.reading,
     this.revealedTarotSlots,
+    this.followUpAttachmentNames = const {},
+    this.localAttachments = const [],
   });
 
   final String id;
   final DateTime updatedAt;
   final OnlineReading reading;
   final Set<int>? revealedTarotSlots;
+  final Map<int, List<String>> followUpAttachmentNames;
+  final List<GuideReadingAttachment> localAttachments;
 }
 
 abstract interface class GuideHistoryStore implements GuideRecoveryStore {
@@ -332,7 +336,8 @@ class OnlineGuideController {
     ];
   }
 
-  OnlineReading? archivedReading(String id) => _history[id]?.reading;
+  GuideHistoryEntry? get activeHistoryEntry => _history[_threadId];
+  GuideHistoryEntry? archivedHistoryEntry(String id) => _history[id];
   bool get canContinue => _token != null;
   Set<int>? get revealedTarotSlots => _revealsFor(_reading?.snapshot);
 
@@ -510,7 +515,11 @@ class OnlineGuideController {
     }
   }
 
-  Future<void> start(String text, {required bool automatic}) {
+  Future<void> start(
+    String text, {
+    required bool automatic,
+    List<String> attachmentNames = const [],
+  }) {
     final combined = _clarificationQuestion == null
         ? text
         : '$_clarificationQuestion；补充：$text';
@@ -521,7 +530,10 @@ class OnlineGuideController {
     GuideTranscriptTurn? pendingTurn;
 
     Future<void> understandAndStart() async {
-      final turn = pendingTurn ??= await _recordTurn(text);
+      final turn = pendingTurn ??= await _recordTurn(
+        text,
+        attachmentNames: attachmentNames,
+      );
       if (_changes.isClosed) return;
       final understood = await _understand(question, previous);
       if (understood == null) {
@@ -658,14 +670,55 @@ class OnlineGuideController {
 
   Future<void> requestReport() => _run(_reportIfReady);
 
-  Future<void> followUp(String question) {
+  Future<void> followUp(
+    String question, {
+    List<String> attachmentNames = const [],
+  }) {
     final step = _reading?.followUps.length;
     final token = _token;
     if (token == null || step == null || _reading?.report == null)
       return Future.value();
     return _run(() async {
-      _reading = await _gateway.followUp(token, step, question);
+      final updated = await _gateway.followUp(token, step, question);
+      if (_changes.isClosed) return;
+      _reading = updated;
+      if (attachmentNames.isNotEmpty &&
+          updated.followUps.length > step &&
+          updated.followUps[step].question == question) {
+        await _writeReadingHistory(
+          revisiting: false,
+          followUpAttachmentNames: Map<int, List<String>>.unmodifiable({
+            ...?activeHistoryEntry?.followUpAttachmentNames,
+            step: List<String>.unmodifiable(attachmentNames),
+          }),
+        );
+      }
     });
+  }
+
+  Future<String?> addAttachments(List<String> names) async {
+    if (_busy || _changes.isClosed || names.isEmpty) return null;
+    final reading = _reading;
+    final String id;
+    if (reading == null) {
+      final turn = await _recordTurn('', attachmentNames: names);
+      id = turn.id;
+    } else {
+      id = guideEventId();
+      await _writeReadingHistory(
+        revisiting: false,
+        localAttachments: List<GuideReadingAttachment>.unmodifiable([
+          ...?activeHistoryEntry?.localAttachments,
+          (
+            id: id,
+            after: reading.followUps.length,
+            names: List<String>.unmodifiable(names),
+          ),
+        ]),
+      );
+    }
+    _emit();
+    return id;
   }
 
   Future<void> nextQuestion({
@@ -705,25 +758,28 @@ class OnlineGuideController {
   Future<GuideTranscriptTurn> _recordTurn(
     String question, {
     String? readingId,
+    List<String> attachmentNames = const [],
   }) async {
     final prior = activeTranscript.lastOrNull;
-    if (readingId == null &&
+    final retrying =
+        question.isNotEmpty &&
+        readingId == null &&
         prior != null &&
         prior.reply == null &&
         prior.readingId == null &&
-        prior.question == question) {
-      return prior;
-    }
+        prior.question == question;
     final id = _conversationId ??= guideEventId();
     final previousTime = prior?.sentAt;
     final now = DateTime.now();
+    final sentAt = previousTime != null && !now.isAfter(previousTime)
+        ? previousTime.add(const Duration(microseconds: 1))
+        : now;
     final turn = (
-      id: guideEventId(),
+      id: retrying ? prior.id : guideEventId(),
       conversationId: id,
-      sentAt: previousTime != null && !now.isAfter(previousTime)
-          ? previousTime.add(const Duration(microseconds: 1))
-          : now,
+      sentAt: retrying ? prior.sentAt : sentAt,
       question: question,
+      attachmentNames: List<String>.unmodifiable(attachmentNames),
       reply: null,
       clarificationQuestion: readingId == null ? _clarificationQuestion : null,
       previousQuestion: _previousQuestion,
@@ -742,6 +798,7 @@ class OnlineGuideController {
     conversationId: turn.conversationId,
     sentAt: turn.sentAt,
     question: turn.question,
+    attachmentNames: turn.attachmentNames,
     reply: reply,
     clarificationQuestion: readingId == null ? _clarificationQuestion : null,
     previousQuestion: turn.previousQuestion,
@@ -837,6 +894,8 @@ class OnlineGuideController {
   Future<void> _writeReadingHistory({
     required bool revisiting,
     Set<int>? revealed,
+    Map<int, List<String>>? followUpAttachmentNames,
+    List<GuideReadingAttachment>? localAttachments,
   }) async {
     final id = _threadId;
     final reading = _reading;
@@ -844,7 +903,9 @@ class OnlineGuideController {
     final previous = _history[id];
     final slots = revealed ?? _revealsFor(reading.snapshot);
     if (identical(previous?.reading, reading) &&
-        identical(previous?.revealedTarotSlots, slots))
+        identical(previous?.revealedTarotSlots, slots) &&
+        followUpAttachmentNames == null &&
+        localAttachments == null)
       return;
     final record = GuideHistoryEntry(
       id: id,
@@ -853,6 +914,12 @@ class OnlineGuideController {
           : DateTime.now(),
       reading: reading,
       revealedTarotSlots: slots,
+      followUpAttachmentNames:
+          followUpAttachmentNames ??
+          previous?.followUpAttachmentNames ??
+          const {},
+      localAttachments:
+          localAttachments ?? previous?.localAttachments ?? const [],
     );
     _history[id] = record;
     await _historyStore?.writeHistory(record);

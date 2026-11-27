@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:jovian_divination/jovian_divination.dart';
+import 'package:jovian_divination/jovian_divination.dart' hide TarotSpread;
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../ui/interface_language.dart';
@@ -8,12 +8,20 @@ import '../../../../ui/interface_language.dart';
 import 'coin_cast_ritual.dart';
 import 'tarot_preparation.dart';
 import 'tarot_ritual.dart';
+import 'tarot_spread.dart';
 
 class GuideRitualPresentation {
   final seed = math.Random().nextInt(1 << 30);
   final revealed = <int>{};
   double preparation = 0;
   bool tappedShell = false;
+  TarotSpread? _spread;
+
+  TarotSpread spreadFor(int slotCount) {
+    final spread = _spread;
+    if (spread != null && spread.slotCount == slotCount) return spread;
+    return _spread = TarotSpread(slotCount, seed: seed);
+  }
 }
 
 class GuideRitualDialog extends StatefulWidget {
@@ -160,12 +168,14 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
     final error = widget.error();
     final retry = widget.retry();
     final permission = widget.openAiPermissions?.call();
+    final viewportHeight = MediaQuery.sizeOf(context).height;
+    final extraStageHeight = math.min(96.0, viewportHeight * 0.09);
     return Dialog(
       key: const ValueKey('guide-ritual-dialog'),
-      insetPadding: const EdgeInsets.all(12),
-      constraints: const BoxConstraints(maxWidth: 460),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      constraints: const BoxConstraints(maxWidth: 460, maxHeight: 900),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        key: const ValueKey('guide-ritual-surface'),
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
@@ -212,7 +222,7 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
             ),
           ),
           const Divider(height: 1),
-          Flexible(
+          Expanded(
             child: SingleChildScrollView(
               key: ValueKey(casting ? 'cast' : 'cards'),
               padding: const EdgeInsets.all(16),
@@ -243,10 +253,8 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
                       active: _active,
                       reducedMotion: motionOff,
                       showFirstTossHint: !presentation.tappedShell,
-                      stageHeightLimit: math.max(
-                        144,
-                        MediaQuery.sizeOf(context).height * 0.37,
-                      ),
+                      stageHeightLimit: math.max(144, viewportHeight * 0.37),
+                      stageHeadroom: extraStageHeight,
                       onToss: () {
                         presentation.tappedShell = true;
                         widget.toss();
@@ -265,7 +273,7 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
                       child: Padding(
                         padding: const EdgeInsets.all(12),
                         child: TarotRitualPanel(
-                          slotCount: slotCount,
+                          spread: presentation.spreadFor(slotCount),
                           selectedSlots: selected,
                           draw: flipping ? snapshot.tarotDraw : null,
                           revealed: presentation.revealed,
@@ -273,6 +281,7 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
                           selectionBlocked: retry != null && !flipping,
                           active: _active,
                           reducedMotion: motionOff,
+                          fanExtraHeight: extraStageHeight,
                           choose: widget.choose,
                           cardFlight: (flying) {
                             if (_cardInFlight != flying) {
@@ -294,6 +303,7 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
                                   seed: presentation.seed,
                                   active: _active,
                                   reducedMotion: motionOff,
+                                  fanExtraHeight: extraStageHeight,
                                   progress: (value) =>
                                       presentation.preparation = value,
                                   finish: () => setState(

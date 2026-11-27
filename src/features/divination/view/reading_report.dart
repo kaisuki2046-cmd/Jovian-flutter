@@ -9,7 +9,11 @@ import 'guide_composer.dart';
 import 'reading_reference.dart'
     if (dart.library.js_interop) 'reading_reference_web.dart';
 
-const _methodLabels = {'tarot': '塔罗解读', 'meihua': '梅花易数解读', 'liuyao': '六爻解读'};
+const _readingSections = [
+  ('tarot', '塔罗解读'),
+  ('liuyao', '六爻解读'),
+  ('meihua', '梅花易数解读'),
+];
 
 class ReadingReportView extends StatelessWidget {
   const ReadingReportView({super.key, required this.report});
@@ -29,33 +33,26 @@ class ReadingReportView extends StatelessWidget {
           style: body,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            spacing: 16,
+            spacing: 28,
             children: [
               if (current is LegacyProReport)
                 _render(splitProText(current.opening)),
-              for (final method in proMethods)
+              for (final (method, label) in _readingSections)
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   spacing: 8,
                   children: [
                     Semantics(
                       header: true,
-                      child: Text(_methodLabels[method]!, style: heading),
+                      child: UiText(label, style: heading),
                     ),
                     ...switch (current) {
                       ProParagraphReport(:final sections) => [
-                        for (final (index, paragraph)
-                            in sections[method]!.indexed)
-                          _ReportParagraph(
-                            key: ValueKey((
-                              method,
-                              index,
-                              paragraph.text,
-                              paragraph.detail,
-                            )),
-                            text: paragraph.text,
-                            detail: paragraph.detail,
-                            label: '${_methodLabels[method]}第${index + 1}段详情',
+                        for (final paragraph in sections[method]!)
+                          _render(
+                            paragraph.detail == null
+                                ? splitProText(paragraph.text)
+                                : splitProInterpretation(paragraph.text),
                           ),
                       ],
                       ProTextReport(:final sections) => [
@@ -79,63 +76,34 @@ class ReadingReportView extends StatelessWidget {
   }
 }
 
-class _ReportParagraph extends StatefulWidget {
-  const _ReportParagraph({
+class ReadingChartDetails extends StatelessWidget {
+  const ReadingChartDetails({
     super.key,
-    required this.text,
-    required this.detail,
-    required this.label,
+    required this.report,
+    required this.method,
   });
 
-  final String text;
-  final String? detail;
-  final String label;
+  final ProParagraphReport report;
+  final String method;
 
   @override
-  State<_ReportParagraph> createState() => _ReportParagraphState();
-}
-
-class _ReportParagraphState extends State<_ReportParagraph> {
-  bool _expanded = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final detail = widget.detail;
-    if (detail == null) return _render(splitProText(widget.text));
-    final colors = Theme.of(context).colorScheme;
-    final toggle = Semantics(
-      expanded: _expanded,
-      label: widget.label,
-      child: TextButton(
-        onPressed: () => setState(() => _expanded = !_expanded),
-        child: Text(_expanded ? '收起' : '展开'),
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(top: 12),
+    child: SelectionArea(
+      child: DefaultTextStyle.merge(
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.62),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          spacing: 10,
+          children: [
+            for (final paragraph in report.sections[method]!)
+              if (paragraph.detail case final detail?)
+                _render(splitProText(detail)),
+          ],
+        ),
       ),
-    );
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _render(splitProInterpretation(widget.text)),
-        if (_expanded)
-          Container(
-            width: double.infinity,
-            margin: const EdgeInsetsDirectional.only(start: 8, top: 6),
-            padding: const EdgeInsetsDirectional.fromSTEB(10, 8, 8, 0),
-            decoration: BoxDecoration(
-              color: colors.surfaceContainerHighest,
-              border: BorderDirectional(
-                start: BorderSide(color: colors.outlineVariant, width: 2),
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [_render(splitProText(detail)), toggle],
-            ),
-          )
-        else
-          toggle,
-      ],
-    );
-  }
+    ),
+  );
 }
 
 class GuideFollowUpReply extends StatefulWidget {

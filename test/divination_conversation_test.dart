@@ -21,11 +21,15 @@ import '../src/features/divination/view/composer_attachment_view.dart';
 import '../src/features/divination/view/guide_composer.dart';
 import '../src/features/divination/view/guide_conversation.dart';
 import '../src/features/divination/view/guide_form.dart';
+import '../src/features/divination/view/liuyao_form.dart';
+import '../src/features/divination/view/meihua_page.dart';
 import '../src/features/divination/view/reading_report.dart';
+import '../src/features/divination/view/tarot_cards.dart';
 import '../src/ui/chat_time_label.dart';
 import '../src/ui/interface_language.dart';
 
 import 'support/divination_service_fixture.dart';
+import 'support/tarot_gestures.dart';
 
 void main() {
   final dispatcher =
@@ -529,8 +533,8 @@ void main() {
       await _send(tester);
       expect(service.automatic, [false]);
       for (final position in [40, 38, 39]) {
-        final card = find.bySemanticsLabel('选取第 $position 张牌');
-        tester.widget<Semantics>(card).properties.onTap!();
+        final card = await openTarotCard(tester, position);
+        await confirmTarotCard(tester, card);
         await tester.pumpAndSettle();
       }
       await _tap(tester, '一键翻牌');
@@ -1290,59 +1294,113 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('reading paragraphs expand independently on a narrow screen', (
-    tester,
-  ) async {
-    await tester.binding.setSurfaceSize(const Size(320, 680));
-    addTearDown(() => tester.binding.setSurfaceSize(null));
-    const phrase = '可以先核实安排';
-    const summary = '目前信息仍少。$phrase。';
-    const detail = '先核实是否有下一轮面试。';
-    const otherDetail = '把可参加的时间列出来。';
-    final report = parseSavedProReport({
-      'tarot': [
-        {'text': summary, 'detail': detail},
-        {'text': '第二张牌显示还有变动。', 'detail': otherDetail},
-        {'text': '第三张牌说明可以准备。', 'detail': '整理之前的沟通内容。'},
-        {'text': '综述：稳妥推进。'},
-      ],
-      'meihua': [
-        {'text': '本卦说明还需等待。', 'detail': '及时查看新消息。'},
-        {'text': '变卦提示干扰。', 'detail': '留出时间处理变动。'},
-        {'text': '综述：留出余地。'},
-      ],
-      'liuyao': [
-        {'text': '世爻显示先观察。', 'detail': '了解对方的安排。'},
-        {'text': '应爻说明仍需沟通。', 'detail': '确认可参加的时间。'},
-        {'text': '综述：主动确认。'},
-      ],
-    });
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: ThemeData.dark(),
-        home: Scaffold(
-          body: SingleChildScrollView(child: ReadingReportView(report: report)),
-        ),
-      ),
-    );
-    final styled =
-        tester.widget<Text>(find.text(summary)).textSpan! as TextSpan;
-    expect(
-      (styled.children!.singleWhere((part) => part.toPlainText() == phrase)
-              as TextSpan)
-          .style
-          ?.fontWeight,
-      FontWeight.w700,
-    );
-    await tester.tap(find.text('展开').first);
-    await tester.pumpAndSettle();
-    expect(find.text(detail), findsOneWidget);
-    expect(find.text(otherDetail), findsNothing);
-    await tester.tap(find.text('收起'));
-    await tester.pumpAndSettle();
-    expect(find.text(detail), findsNothing);
-    expect(tester.takeException(), isNull);
-  });
+  testWidgets(
+    'the chat shows spaced summaries and details follow their charts',
+    (tester) async {
+      await tester.binding.setSurfaceSize(const Size(320, 680));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      const phrase = '可以先核实安排';
+      const summary = '目前信息仍少。$phrase。';
+      const tarotDetail = '先核实是否有下一轮面试。';
+      const liuyaoDetail = '了解对方的安排。';
+      const meihuaDetail = '及时查看新消息。';
+      final report = {
+        'tarot': [
+          {'text': summary, 'detail': tarotDetail},
+          {'text': '第二张牌显示还有变动。', 'detail': '把可参加的时间列出来。'},
+          {'text': '第三张牌说明可以准备。', 'detail': '整理之前的沟通内容。'},
+          {'text': '综述：稳妥推进。'},
+        ],
+        'meihua': [
+          {'text': '本卦说明还需等待。', 'detail': meihuaDetail},
+          {'text': '变卦提示干扰。', 'detail': '留出时间处理变动。'},
+          {'text': '综述：留出余地。'},
+        ],
+        'liuyao': [
+          {'text': '世爻显示先观察。', 'detail': liuyaoDetail},
+          {'text': '应爻说明仍需沟通。', 'detail': '确认可参加的时间。'},
+          {'text': '综述：主动确认。'},
+        ],
+      };
+      final service = DivinationServiceFixture()
+        ..failReport = false
+        ..reportPayload = report;
+      final online = service.connect(DivinationRecoveryFixture());
+      addTearDown(online.dispose);
+      await online.start(divinationFixtureDetails, automatic: true);
+      await tester.pumpWidget(_app(online));
+      await tester.pumpAndSettle();
+
+      final details = [
+        find.text(tarotDetail),
+        find.text(liuyaoDetail),
+        find.text(meihuaDetail),
+      ];
+      expect(find.text('展开'), findsNothing);
+      expect(find.text('收起'), findsNothing);
+      for (final detail in details) {
+        expect(detail, findsNothing);
+      }
+      expect(
+        tester.getTopLeft(find.text('六爻解读')).dy -
+            tester.getBottomLeft(find.text('综述：稳妥推进。')).dy,
+        greaterThanOrEqualTo(24),
+      );
+      expect(
+        tester.getTopLeft(find.text('梅花易数解读')).dy -
+            tester.getBottomLeft(find.text('综述：主动确认。')).dy,
+        greaterThanOrEqualTo(24),
+      );
+      final styled =
+          tester.widget<Text>(find.text(summary)).textSpan! as TextSpan;
+      expect(
+        (styled.children!.singleWhere((part) => part.toPlainText() == phrase)
+                as TextSpan)
+            .style
+            ?.fontWeight,
+        FontWeight.w700,
+      );
+      void expectChartDetails() {
+        final charts = [
+          find.byType(TarotReveal),
+          find.byType(JingfangResult),
+          find.byType(MeihuaResult),
+        ];
+        for (final (index, detail) in details.indexed) {
+          expect(detail, findsOneWidget);
+          expect(
+            find.descendant(
+              of: find.byType(ReadingReportView),
+              matching: detail,
+            ),
+            findsNothing,
+          );
+          expect(
+            tester.getTopLeft(detail).dy,
+            greaterThan(tester.getBottomLeft(charts[index]).dy),
+          );
+          if (index < charts.length - 1) {
+            expect(
+              tester.getBottomLeft(detail).dy,
+              lessThan(tester.getTopLeft(charts[index + 1]).dy),
+            );
+          }
+        }
+        expect(find.text('展开'), findsNothing);
+      }
+
+      await _tap(tester, '查看三套盘面');
+      expectChartDetails();
+      await _tap(tester, '收起盘面');
+      for (final detail in details) {
+        expect(detail, findsNothing);
+      }
+      await _tap(tester, '另问一件事');
+      await _tap(tester, '查看此前解读');
+      expectChartDetails();
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('history keeps cached reports after the server task expires', (
     tester,

@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-const coinTossDuration = Duration(milliseconds: 2800);
+const coinTossDuration = Duration(milliseconds: 1500);
 const coinLandingTimes = [0.70, 0.75, 0.80];
 
 const _xTurns = [2, 3, 2];
@@ -29,14 +29,23 @@ typedef CoinPose = ({
   double shadowOpacity,
 });
 
-({double height, double coinSize, double thickness}) coinStageLayout(
+typedef CoinStageLayout = ({
+  double height,
+  double baseHeight,
+  double coinSize,
+  double thickness,
+});
+
+CoinStageLayout coinStageLayout(
   double width, {
   double heightLimit = double.infinity,
+  double headroom = 0,
 }) {
-  final height = math.min((width * 1.24).clamp(300.0, 420.0), heightLimit);
-  final coinSize = math.min(math.min(76.0, width * 0.22), height * 0.24);
+  final baseHeight = math.min((width * 1.24).clamp(300.0, 420.0), heightLimit);
+  final coinSize = math.min(math.min(76.0, width * 0.22), baseHeight * 0.24);
   return (
-    height: height,
+    height: baseHeight + headroom,
+    baseHeight: baseHeight,
     coinSize: coinSize,
     thickness: (coinSize * 0.037).clamp(1.8, 2.8),
   );
@@ -46,12 +55,22 @@ typedef CoinPose = ({
   double width,
   int index, {
   double heightLimit = double.infinity,
-}) {
+  double headroom = 0,
+}) => _restingPosition(
+  width,
+  index,
+  coinStageLayout(width, heightLimit: heightLimit, headroom: headroom),
+);
+
+({double x, double y}) _restingPosition(
+  double width,
+  int index,
+  CoinStageLayout layout,
+) {
   final (horizontal, vertical) = _restingPoints[index];
-  final height = coinStageLayout(width, heightLimit: heightLimit).height;
   return (
     x: horizontal / 320 * width,
-    y: height * (0.50 + 0.48 * vertical / 320),
+    y: layout.height - layout.baseHeight * (0.50 - 0.48 * vertical / 320),
   );
 }
 
@@ -63,10 +82,15 @@ CoinPose coinTossPose(
   double width, {
   int previous = 2,
   double heightLimit = double.infinity,
+  double headroom = 0,
 }) {
   final p = progress.clamp(0.0, 1.0);
-  final layout = coinStageLayout(width, heightLimit: heightLimit);
-  final rest = coinRestingPosition(width, index, heightLimit: heightLimit);
+  final layout = coinStageLayout(
+    width,
+    heightLimit: heightLimit,
+    headroom: headroom,
+  );
+  final rest = _restingPosition(width, index, layout);
   final release = 0.08 + index * 0.025;
   final landing = coinLandingTimes[index];
   final airTime = landing - release;
@@ -76,7 +100,8 @@ CoinPose coinTossPose(
   final arc = math.sin(math.pi * flight);
   // Progress advances linearly in time. Both the throw and its smaller bounce
   // use the same constant acceleration within the casting stage.
-  final gravity = layout.height * _gravityPerStageHeight;
+  final gravity =
+      (layout.baseHeight + headroom * 1.55) * _gravityPerStageHeight;
   final lift = gravity * elapsed * (airTime - elapsed) / 2;
   final bounceTime = airTime * _restitution;
   final bounced = (p - landing).clamp(0.0, bounceTime);

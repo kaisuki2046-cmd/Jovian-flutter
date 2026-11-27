@@ -7,7 +7,6 @@ import '../src/features/divination/view/ritual/coin_toss_motion.dart';
 import '../src/ui/interface_language.dart';
 
 const _tossButton = ValueKey('coin-ritual-toss-button');
-const _tapGuide = ValueKey('coin-ritual-tap-guide');
 const _lines = ValueKey('coin-ritual-lines');
 const _audioChannel = MethodChannel('jovian/coin_audio');
 
@@ -64,6 +63,40 @@ void main() {
       }
     },
   );
+
+  test('headroom raises the flight without enlarging the floor or coins', () {
+    const width = 280.0;
+    const heightLimit = 240.0;
+    const headroom = 64.0;
+    final original = coinStageLayout(width, heightLimit: heightLimit);
+    final taller = coinStageLayout(
+      width,
+      heightLimit: heightLimit,
+      headroom: headroom,
+    );
+    expect(coinTossDuration, const Duration(milliseconds: 1500));
+    expect(taller.height, original.height + headroom);
+    expect(taller.baseHeight, original.baseHeight);
+    expect(taller.coinSize, original.coinSize);
+    expect(taller.thickness, original.thickness);
+    for (var index = 0; index < coinLandingTimes.length; index++) {
+      CoinPose pose(double time, double extra) => coinTossPose(
+        time,
+        index,
+        2,
+        width,
+        heightLimit: heightLimit,
+        headroom: extra,
+      );
+      final floor = pose(1, 0);
+      final lowerFloor = pose(1, headroom);
+      expect(lowerFloor.x, floor.x);
+      expect(lowerFloor.y - floor.y, closeTo(headroom, 0.001));
+      final originalLift = floor.y - pose(0.42, 0).y;
+      final tallerLift = lowerFloor.y - pose(0.42, headroom).y;
+      expect(tallerLift, greaterThan(originalLift + 40));
+    }
+  });
 
   test(
     'coins slow on ascent and speed up on descent under the same gravity',
@@ -140,15 +173,14 @@ void main() {
       expect(find.text('已完成 5 / 6 次'), findsOneWidget);
       expect(find.text('已完成 6 / 6 次'), findsNothing);
       expect(tester.widget<InkWell>(find.byKey(_tossButton)).onTap, isNull);
-      await tester.pump(const Duration(milliseconds: 1200));
+      await tester.pump(coinTossDuration * 0.42);
       expect(
         tester.widget<Positioned>(firstCoin).top!,
         lessThan(restingY - 90),
       );
-      await tester.pump(const Duration(milliseconds: 400));
+      await tester.pump(coinTossDuration * 0.55);
       expect(settled, isEmpty);
-      await tester.pump(const Duration(milliseconds: 1300));
-      await tester.pump(coinTossDuration);
+      await tester.pump(const Duration(milliseconds: 60));
       expect(attempts, 1);
       expect(settled, [6]);
       expect(find.text('六爻已成'), findsOneWidget);
@@ -175,34 +207,30 @@ void main() {
   );
 
   testWidgets(
-    'only uncast lines pulse and the shell hint lasts until the first tap',
+    'only uncast lines pulse and the first-toss caption lasts until tapped',
     (tester) async {
       final tosses = <List<int>>[];
       var presses = 0;
       Widget page() =>
           _rig(tosses: tosses, toss: () => presses++, settled: (_) {});
       await tester.pumpWidget(page());
-      final hint = find.byKey(_tapGuide);
-      expect(hint, findsOneWidget);
-      final restingHint = tester.getTopLeft(hint);
+      final prompt = find.text('点击龟壳开始投掷');
+      expect(prompt, findsOneWidget);
       final dim = _paintedLines(tester);
       expect(dim, hasLength(6));
-      await tester.pump(const Duration(milliseconds: 300));
-      expect(tester.getTopLeft(hint).dy, lessThan(restingHint.dy - 4));
-      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump(const Duration(milliseconds: 800));
       final bright = _paintedLines(tester);
       for (final (index, line) in bright.indexed) {
         expect(line.color, isNot(dim[index].color));
         expect(line.end.dx - line.start.dx, greaterThan(42));
       }
-      expect(hint, findsOneWidget);
+      expect(prompt, findsOneWidget);
       expect(find.text('初爻'), findsNothing);
 
       await tester.tap(find.byKey(_tossButton));
       await tester.pump();
       expect(presses, 1);
-      expect(hint, findsNothing);
-      expect(find.text('点击龟壳开始投掷'), findsNothing);
+      expect(prompt, findsNothing);
 
       tosses.add([3, 2, 3]);
       await tester.pumpWidget(page());
@@ -257,10 +285,6 @@ void main() {
       );
       await tester.pumpWidget(page(pending: true));
       expect(find.byKey(const ValueKey('coin-ritual-gold')), findsNothing);
-      final staticHint = find.byKey(_tapGuide);
-      final hintPosition = tester.getTopLeft(staticHint);
-      await tester.pump(const Duration(milliseconds: 300));
-      expect(tester.getTopLeft(staticHint), hintPosition);
       expect(find.text('正在投掷…'), findsOneWidget);
       expect(tester.widget<InkWell>(find.byKey(_tossButton)).onTap, isNull);
       await tester.pumpWidget(page());
@@ -311,10 +335,7 @@ void main() {
     ];
     await tester.pumpWidget(page(first));
     expect(find.text('Tossing…'), findsOneWidget);
-    expect(
-      find.text('The coins are turning. Wait for them to settle…'),
-      findsOneWidget,
-    );
+    expect(find.text('Waiting for the coins to land…'), findsOneWidget);
     expect(find.bySemanticsLabel('Tossing three coins'), findsOneWidget);
     await tester.pump();
     await tester.pump(coinTossDuration + const Duration(milliseconds: 50));
@@ -394,12 +415,16 @@ void main() {
     expect(haptics, ['HapticFeedbackType.selectionClick']);
     await tester.pumpWidget(page(result));
     expect(_variants(audio), [0]);
-    await tester.pump(const Duration(milliseconds: 400));
+    const afterShakeCues = Duration(milliseconds: 400);
+    await tester.pump(afterShakeCues);
     expect(_variants(audio), [0, 1, 0]);
-    await tester.pump(const Duration(milliseconds: 1570));
+    final firstLanding = coinTossDuration * coinLandingTimes.first;
+    await tester.pump(
+      firstLanding - afterShakeCues + const Duration(milliseconds: 10),
+    );
     expect(_variants(audio), [0, 1, 0, 2]);
     expect(haptics.last, 'HapticFeedbackType.mediumImpact');
-    await tester.pump(const Duration(milliseconds: 140));
+    await tester.pump(coinTossDuration * coinLandingTimes[1] - firstLanding);
     expect(haptics.last, 'HapticFeedbackType.lightImpact');
     await tester.pumpWidget(page(result, active: false));
     expect(audio.last.method, 'stop');

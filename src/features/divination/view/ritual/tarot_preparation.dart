@@ -17,6 +17,7 @@ class TarotDeckPreparation extends StatefulWidget {
     required this.reducedMotion,
     required this.progress,
     required this.finish,
+    this.fanExtraHeight = 0,
   });
 
   final int slotCount;
@@ -27,6 +28,7 @@ class TarotDeckPreparation extends StatefulWidget {
   final bool reducedMotion;
   final ValueChanged<double> progress;
   final VoidCallback finish;
+  final double fanExtraHeight;
 
   @override
   State<TarotDeckPreparation> createState() => _TarotDeckPreparationState();
@@ -89,7 +91,11 @@ class _TarotDeckPreparationState extends State<TarotDeckPreparation>
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
-      final layout = TarotFanLayout(constraints.maxWidth, widget.slotCount);
+      final layout = TarotTableLayout(
+        constraints.maxWidth,
+        widget.slotCount,
+        extraHeight: widget.fanExtraHeight,
+      );
       final height = layout.height;
       final (scene, spreadOrder) = _createScene(
         layout,
@@ -97,18 +103,23 @@ class _TarotDeckPreparationState extends State<TarotDeckPreparation>
         widget.seed,
       );
       final theme = Theme.of(context);
+      final animateBacks = widget.active && !widget.reducedMotion;
       return AnimatedBuilder(
         animation: _animation,
         builder: (context, _) {
           final time = _animation.value * _duration;
-          final status = switch (time) {
-            >= 5420 => '牌阵已就绪',
-            >= 3270 when widget.cutIndex != null => '正在切牌…',
-            >= 2360 => '正在铺牌…',
-            >= 1800 => '正在整理牌堆…',
-            _ => '正在洗牌…',
-          };
+          final stacked = time >= (widget.cutIndex == null ? 3190 : 5420);
+          final status = stacked
+              ? '牌堆已就绪'
+              : switch (time) {
+                  >= 4730 => '正在整理牌堆…',
+                  >= 3270 when widget.cutIndex != null => '正在切牌…',
+                  >= 2360 when widget.cutIndex != null => '正在铺牌…',
+                  >= 1800 => '正在整理牌堆…',
+                  _ => '正在洗牌…',
+                };
           final cards = time >= 4730 ? spreadOrder : scene;
+          final center = layout.cardCenter(TarotTableLayout.initialPile);
           return Column(
             children: [
               SizedBox(
@@ -133,18 +144,41 @@ class _TarotDeckPreparationState extends State<TarotDeckPreparation>
                   child: ClipRect(
                     child: Stack(
                       children: [
-                        for (final card in cards)
-                          if (card.slot != widget.cutIndex ||
-                              time < 3270 ||
-                              time >= 3840)
-                            _motionCard(layout, height, card.at(time)),
-                        if (time >= 3270 && time < 3840)
+                        if (stacked && widget.slotCount > 0)
+                          Positioned.fromRect(
+                            rect: Rect.fromCenter(
+                              center: center,
+                              width: layout.cardWidth,
+                              height: layout.cardHeight,
+                            ),
+                            child: Transform.rotate(
+                              angle: TarotTableLayout.initialAngle,
+                              child: TarotPileArt(
+                                count: widget.slotCount,
+                                cardWidth: layout.cardWidth,
+                                animated: animateBacks,
+                              ),
+                            ),
+                          )
+                        else
+                          for (final card in cards)
+                            if (card.slot != widget.cutIndex ||
+                                time < 3270 ||
+                                time >= 3840)
+                              _motionCard(
+                                layout,
+                                height,
+                                card.at(time),
+                                animateBack: animateBacks,
+                              ),
+                        if (!stacked && time >= 3270 && time < 3840)
                           for (final card in cards)
                             if (card.slot == widget.cutIndex)
                               _motionCard(
                                 layout,
                                 height,
                                 card.at(time),
+                                animateBack: animateBacks,
                                 marker: theme.colorScheme.primary,
                               ),
                       ],
@@ -161,9 +195,10 @@ class _TarotDeckPreparationState extends State<TarotDeckPreparation>
 }
 
 Widget _motionCard(
-  TarotFanLayout layout,
+  TarotTableLayout layout,
   double height,
   _Pose pose, {
+  required bool animateBack,
   Color? marker,
 }) => Positioned(
   left: (layout.width - layout.cardWidth) / 2 + pose.offset.dx,
@@ -178,17 +213,19 @@ Widget _motionCard(
         opacity: pose.opacity,
         child: Material(
           elevation: 3,
-          borderRadius: BorderRadius.circular(6),
+          shape: const TarotCardShape(),
           clipBehavior: Clip.antiAlias,
           child: Stack(
             fit: StackFit.expand,
             children: [
-              const TarotBackArt(),
+              TarotBackArt(animated: animateBack),
               if (marker != null)
                 DecoratedBox(
                   key: const ValueKey('tarot-cut-marker'),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(6),
+                    borderRadius: BorderRadius.all(
+                      TarotCardShape.corner(layout.cardWidth),
+                    ),
                     border: Border.all(color: marker, width: 2),
                   ),
                 ),
@@ -239,7 +276,7 @@ class _DeckMotion {
 }
 
 (List<_DeckMotion>, List<_DeckMotion>) _createScene(
-  TarotFanLayout layout,
+  TarotTableLayout layout,
   int? cut,
   int seed,
 ) {
@@ -252,7 +289,7 @@ class _DeckMotion {
           slot: slot,
           pose: _pose(
             layout.center(slot) - scroll - layout.width / 2,
-            10 + layout.cardHeight / 2 - height / 2 + arc.depth,
+            layout.cardTop + layout.cardHeight / 2 - height / 2 + arc.depth,
             arc.angle,
             1,
             arc.opacity,
@@ -273,7 +310,7 @@ class _DeckMotion {
 }
 
 _DeckMotion _makeCardMotion(
-  TarotFanLayout layout,
+  TarotTableLayout layout,
   double height,
   List<({int slot, _Pose pose})> fan,
   int index,
@@ -284,6 +321,14 @@ _DeckMotion _makeCardMotion(
   final card = fan[index];
   final depth = index - (fan.length - 1) / 2;
   final stack = _pose(depth * 0.23, depth * 0.48, depth * 0.003);
+  final pile =
+      layout.cardCenter(TarotTableLayout.initialPile) -
+      Offset(layout.width / 2, height / 2);
+  final finalStack = _pose(
+    pile.dx + depth * .20,
+    pile.dy + depth * .42,
+    TarotTableLayout.initialAngle,
+  );
   final rng = math.Random(seed ^ (card.slot * 7919));
   final radius =
       math.sqrt(
@@ -305,7 +350,7 @@ _DeckMotion _makeCardMotion(
       (time: time + 100 * rng.nextDouble(), pose: scatter()),
     (time: 2200, pose: stack),
     (time: 2360.0 + 310 * index / fan.length, pose: stack),
-    (time: 3190, pose: card.pose),
+    (time: 3190, pose: cut == null ? finalStack : card.pose),
   ];
   if (cut != null) {
     final side = index >= split ? 1 : -1;
@@ -329,7 +374,7 @@ _DeckMotion _makeCardMotion(
         time: 4730,
         pose: _pose(-packet + depth * 0.4, depth * 0.42, -side * 0.08, 0.82),
       ),
-      (time: 5420, pose: fan[(index - split) % fan.length].pose),
+      (time: 5420, pose: finalStack),
     ]);
   }
   return _DeckMotion(card.slot, frames);

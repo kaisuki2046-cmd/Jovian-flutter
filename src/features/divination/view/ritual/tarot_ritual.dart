@@ -2,18 +2,31 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui' show lerpDouble;
 
-import 'package:jovian_divination/jovian_divination.dart';
+import 'package:jovian_divination/jovian_divination.dart' hide TarotSpread;
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../ui/interface_language.dart';
 import 'tarot_deck.dart';
+import 'tarot_spread.dart';
 
 const _positions = ['现状', '关键影响', '趋势'];
+const _approachMs = 400;
+const _hoverMs = 1000;
+const _dropMs = 165;
+const _transferMs = _approachMs + _hoverMs + _dropMs;
+const _flightCurve = Cubic(.28, .28, .22, 1);
+typedef _CardPose = ({
+  Rect frame,
+  double roll,
+  double yaw,
+  double opacity,
+  double? hoverProgress,
+});
 
 class TarotRitualPanel extends StatefulWidget {
   const TarotRitualPanel({
     super.key,
-    required this.slotCount,
+    required this.spread,
     required this.selectedSlots,
     required this.draw,
     required this.revealed,
@@ -27,9 +40,10 @@ class TarotRitualPanel extends StatefulWidget {
     this.finishLabel = '查看解读',
     this.preparation,
     this.cardFlight,
+    this.fanExtraHeight = 0,
   });
 
-  final int slotCount;
+  final TarotSpread spread;
   final List<int> selectedSlots;
   final TarotDraw? draw;
   final Set<int> revealed;
@@ -43,6 +57,7 @@ class TarotRitualPanel extends StatefulWidget {
   final String finishLabel;
   final Widget? preparation;
   final ValueChanged<bool>? cardFlight;
+  final double fanExtraHeight;
 
   @override
   State<TarotRitualPanel> createState() => _TarotRitualPanelState();
@@ -50,16 +65,23 @@ class TarotRitualPanel extends StatefulWidget {
 
 class _TarotRitualPanelState extends State<TarotRitualPanel>
     with SingleTickerProviderStateMixin {
-  static const _flightCurve = Cubic(.28, .28, .22, 1);
-
   final _area = GlobalKey();
   final _targets = List.generate(_positions.length, (_) => GlobalKey());
   late final _motion = AnimationController(vsync: this)
     ..addStatusListener(_motionChanged);
   _CardFlight? _flight;
   Timer? _finalHold;
-  bool _returning = false;
+  ({_CardPose pose, double start})? _returning;
   bool _landed = false;
+  bool _preloadedReflection = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_preloadedReflection || widget.reducedMotion) return;
+    _preloadedReflection = true;
+    unawaited(precacheImage(const AssetImage(tarotHoverLights), context));
+  }
 
   @override
   void didUpdateWidget(TarotRitualPanel oldWidget) {
@@ -81,16 +103,19 @@ class _TarotRitualPanelState extends State<TarotRitualPanel>
 
   void _motionChanged(AnimationStatus status) {
     if (status == AnimationStatus.completed) _syncFlight();
-    if (status == AnimationStatus.dismissed && _returning) _finishFlight();
+    if (status == AnimationStatus.dismissed && _returning != null) {
+      _finishFlight();
+    }
   }
 
   void _syncFlight() {
     final flight = _flight;
-    if (flight == null || _returning || _landed) return;
+    if (flight == null || _returning != null || _landed) return;
     final accepted =
         widget.selectedSlots.elementAtOrNull(flight.index) == flight.slot;
     if (!accepted && !widget.busy) {
-      _returning = true;
+      final start = _motion.value;
+      _returning = (pose: flight.poseAt(start), start: start);
       _motion.animateBack(
         0,
         duration: const Duration(milliseconds: 230),
@@ -112,7 +137,7 @@ class _TarotRitualPanelState extends State<TarotRitualPanel>
     _motion.stop();
     setState(() {
       _flight = null;
-      _returning = false;
+      _returning = null;
       _landed = false;
     });
     // The controller can finish a transfer while this dialog is rebuilding.
@@ -133,13 +158,20 @@ class _TarotRitualPanelState extends State<TarotRitualPanel>
     final targetContext = _targets[index].currentContext;
     final root = _area.currentContext?.findRenderObject();
     final target = targetContext?.findRenderObject();
-    if (!widget.reducedMotion && root is RenderBox && target is RenderBox) {
+    if (!widget.reducedMotion &&
+        targetContext != null &&
+        root is RenderBox &&
+        target is RenderBox) {
       final from = origin.frame.shift(-root.localToGlobal(Offset.zero));
       final to =
           root.globalToLocal(target.localToGlobal(Offset.zero)) & target.size;
-      Scrollable.ensureVisible(
-        targetContext!,
-        alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart,
+      unawaited(
+        Scrollable.ensureVisible(
+          targetContext,
+          alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart,
+          duration: const Duration(milliseconds: _approachMs),
+          curve: _flightCurve,
+        ),
       );
       _motion.value = 0;
       setState(() {
@@ -153,11 +185,7 @@ class _TarotRitualPanelState extends State<TarotRitualPanel>
         );
       });
       widget.cardFlight?.call(true);
-      _motion.animateTo(
-        1,
-        duration: const Duration(milliseconds: 460),
-        curve: _flightCurve,
-      );
+      _motion.animateTo(1, duration: const Duration(milliseconds: _transferMs));
     }
     widget.choose(slot);
   }
@@ -179,6 +207,7 @@ class _TarotRitualPanelState extends State<TarotRitualPanel>
         .toList(growable: false);
     return Stack(
       key: _area,
+      clipBehavior: Clip.none,
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -230,17 +259,16 @@ class _TarotRitualPanelState extends State<TarotRitualPanel>
                   textAlign: TextAlign.center,
                 ),
               ),
-              const SizedBox(height: 10),
-              UiText(
-                '左右滑动，凭感觉选出你的牌',
-                style: theme.textTheme.titleMedium,
-                textAlign: TextAlign.center,
-              ),
               widget.preparation ??
                   LayoutBuilder(
-                    builder: (context, size) => TarotRitualFan(
-                      layout: TarotFanLayout(size.maxWidth, widget.slotCount),
-                      selectedSlots: {
+                    builder: (context, size) => TarotSpreadTable(
+                      layout: TarotTableLayout(
+                        size.maxWidth,
+                        widget.spread.slotCount,
+                        extraHeight: widget.fanExtraHeight,
+                      ),
+                      spread: widget.spread,
+                      held: {
                         ...widget.selectedSlots,
                         if (flight != null) flight.slot,
                       },
@@ -250,6 +278,7 @@ class _TarotRitualPanelState extends State<TarotRitualPanel>
                           !widget.active ||
                           flight != null,
                       reducedMotion: widget.reducedMotion,
+                      animateBacks: widget.active && !widget.reducedMotion,
                       choose: _choose,
                     ),
                   ),
@@ -262,23 +291,41 @@ class _TarotRitualPanelState extends State<TarotRitualPanel>
               child: ExcludeSemantics(
                 child: AnimatedBuilder(
                   animation: _motion,
-                  child: const RepaintBoundary(child: TarotBackArt()),
-                  builder: (context, child) {
-                    final progress = _motion.value;
+                  builder: (context, _) {
+                    final pose = switch (_returning) {
+                      final returning? => flight.returnToFan(
+                        returning.pose,
+                        returning.start == 0
+                            ? 1
+                            : 1 - _motion.value / returning.start,
+                      ),
+                      null => flight.poseAt(_motion.value),
+                    };
                     return Stack(
+                      clipBehavior: Clip.none,
                       children: [
                         Positioned.fromRect(
                           key: const ValueKey('tarot-card-flight'),
-                          rect: flight.frameAt(progress),
-                          child: Transform.rotate(
-                            angle: flight.angle * (1 - progress),
+                          rect: pose.frame,
+                          child: Transform(
+                            alignment: Alignment.center,
+                            transform: Matrix4.identity()
+                              ..setEntry(3, 2, -430 / (980 * pose.frame.width))
+                              ..rotateZ(pose.roll)
+                              ..rotateY(pose.yaw),
                             child: Opacity(
-                              opacity: lerpDouble(
-                                flight.opacity,
-                                1,
-                                math.min(1, progress / .24),
-                              )!,
-                              child: child,
+                              opacity: pose.opacity,
+                              child: RepaintBoundary(
+                                child: Material(
+                                  elevation: 3,
+                                  shape: const TarotCardShape(),
+                                  clipBehavior: Clip.antiAlias,
+                                  child: TarotBackArt(
+                                    animated: true,
+                                    hoverProgress: pose.hoverProgress,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -311,18 +358,47 @@ class _CardFlight {
   final double angle;
   final double opacity;
 
-  Rect frameAt(double progress) {
-    final bend = progress * (1 - progress);
-    final delta = to.center - from.center;
-    return Rect.fromCenter(
-      center:
-          from.center +
-          Offset(
-            delta.dx * (progress - .66 * bend),
-            delta.dy * (progress + .44 * bend),
-          ),
-      width: lerpDouble(from.width, to.width, progress)!,
-      height: lerpDouble(from.height, to.height, progress)!,
+  _CardPose returnToFan(_CardPose start, double progress) => (
+    frame: Rect.lerp(start.frame, from, progress)!,
+    roll: lerpDouble(start.roll, angle, progress)!,
+    yaw: start.yaw * (1 - progress),
+    opacity: lerpDouble(start.opacity, opacity, progress)!,
+    hoverProgress: null,
+  );
+
+  _CardPose poseAt(double t) {
+    final elapsed = t * _transferMs;
+    final hover = to.shift(Offset(0, -(to.width * .12).clamp(8.0, 14.0)));
+    if (elapsed < _approachMs) {
+      final approach = _flightCurve.transform(elapsed / _approachMs);
+      final bend = approach * (1 - approach);
+      final delta = hover.center - from.center;
+      return (
+        frame: Rect.fromCenter(
+          center:
+              from.center +
+              Offset(
+                delta.dx * (approach - .66 * bend),
+                delta.dy * (approach + .44 * bend),
+              ),
+          width: lerpDouble(from.width, hover.width, approach)!,
+          height: lerpDouble(from.height, hover.height, approach)!,
+        ),
+        roll: angle * (1 - approach),
+        yaw: 0,
+        opacity: lerpDouble(opacity, 1, approach)!,
+        hoverProgress: null,
+      );
+    }
+    final hoverProgress = ((elapsed - _approachMs) / _hoverMs).clamp(0.0, 1.0);
+    final drop = ((elapsed - _approachMs - _hoverMs) / _dropMs).clamp(0.0, 1.0);
+    return (
+      frame: Rect.lerp(hover, to, Curves.easeInCubic.transform(drop))!,
+      roll: 0,
+      // As in the HTML, the yaw is the inverse of the -24° to +24° view angle.
+      yaw: math.sin(hoverProgress * 2 * math.pi) * (24 * math.pi / 180),
+      opacity: 1,
+      hoverProgress: t < 1 ? hoverProgress : null,
     );
   }
 }
@@ -376,9 +452,7 @@ class _TarotPosition extends StatelessWidget {
             excludeSemantics: true,
             child: Material(
               color: theme.colorScheme.surfaceContainerHighest,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(6),
-              ),
+              shape: const TarotCardShape(),
               clipBehavior: Clip.antiAlias,
               child: Stack(
                 fit: StackFit.expand,
@@ -412,7 +486,7 @@ class _TarotPosition extends StatelessWidget {
                                     : 0,
                                 child: Image.asset(
                                   'src/features/divination/assets/tarot/${drawn.face.card.id}.jpg',
-                                  fit: BoxFit.cover,
+                                  fit: BoxFit.contain,
                                   excludeFromSemantics: true,
                                 ),
                               ),

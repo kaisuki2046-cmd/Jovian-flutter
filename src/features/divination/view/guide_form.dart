@@ -530,13 +530,13 @@ class _GuideFormState extends State<GuideForm>
         fit: StackFit.expand,
         children: [
           const GuideDivinationAtmosphere(),
-          SafeArea(top: false, child: _conversationBody(context)),
+          SafeArea(top: false, child: _conversationBody()),
         ],
       ),
     );
   }
 
-  Widget _conversationBody(BuildContext context) {
+  Widget _conversationBody() {
     if (_openLegacyConversation case final conversation?) {
       return LegacyGuideConversationView(
         key: ValueKey(conversation.id),
@@ -608,7 +608,7 @@ class _GuideFormState extends State<GuideForm>
       GuideStage.cast || GuideStage.draw => _buildRitualPrompt(ritual),
       GuideStage.reading when online?.needsTarotReveal == true =>
         _buildRitualPrompt(ritual),
-      GuideStage.reading => _buildResult(context, ritual),
+      GuideStage.reading => _buildResult(ritual),
     };
   }
 
@@ -691,6 +691,7 @@ class _GuideFormState extends State<GuideForm>
         ? null
         : online?.archivedHistoryEntry(turn.readingId!);
     final previous = saved?.reading;
+    final report = previous?.report;
     return [
       GuideQuestionBubble(
         turn.question,
@@ -699,14 +700,18 @@ class _GuideFormState extends State<GuideForm>
       ),
       const SizedBox(height: 8),
       if (turn.reply case final reply?) GuideConversationReply(body: reply),
-      if (previous?.report case final report?)
+      if (previous != null && report != null)
         ExpansionTile(
           key: ValueKey(turn.id),
           title: const UiText('查看此前解读'),
+          expandedCrossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ReadingReportView(report: report),
+            if (report is ProParagraphReport)
+              if (previous.snapshot.chart case final chart?)
+                ..._chartContent(chart, report),
             GuideFollowUpList(
-              followUps: previous!.followUps,
+              followUps: previous.followUps,
               evidence: previous.evidence,
               history: saved,
             ),
@@ -732,13 +737,40 @@ class _GuideFormState extends State<GuideForm>
     const SizedBox(height: 16),
   ];
 
-  Widget _buildResult(BuildContext context, GuideRitualSnapshot ritual) {
+  List<Widget> _chartContent(GuideChart chart, ProReport? report) {
     final text = Theme.of(context).textTheme;
+    final details = report is ProParagraphReport ? report : null;
+    return [
+      const SizedBox(height: 20),
+      UiText('翻开三张塔罗', style: text.titleMedium),
+      const SizedBox(height: 12),
+      TarotReveal(draw: chart.tarot),
+      if (details != null)
+        ReadingChartDetails(report: details, method: 'tarot'),
+      const SizedBox(height: 20),
+      JingfangResult(reading: chart.liuyao),
+      if (details != null)
+        ReadingChartDetails(report: details, method: 'liuyao'),
+      const SizedBox(height: 24),
+      Text(
+        chart.meihuaInputSource == MeihuaInputSource.tarotClick
+            ? '梅花取数来自三次抽牌的点击时刻。'
+            : '梅花取数来自三枚自动生成的数。',
+      ),
+      const SizedBox(height: 8),
+      MeihuaResult(reading: chart.meihua),
+      if (details != null)
+        ReadingChartDetails(report: details, method: 'meihua'),
+    ];
+  }
+
+  Widget _buildResult(GuideRitualSnapshot ritual) {
     final chart = ritual.chart!;
     final online = widget.online;
     final reading = online?.reading;
+    final report = reading?.report;
     final busy = online?.busy ?? false;
-    final hasReport = reading?.report != null;
+    final hasReport = report != null;
     final live = online?.canContinue == true;
     final canFollowUp = live && hasReport && reading!.followUps.length < 8;
     final nextQuestionActions = [
@@ -769,9 +801,7 @@ class _GuideFormState extends State<GuideForm>
             child: const UiText('获取解读'),
           ),
         ],
-        if (reading?.report case final report?) ...[
-          ReadingReportView(report: report),
-        ],
+        if (report != null) ReadingReportView(report: report),
         const SizedBox(height: 16),
         Align(
           alignment: AlignmentDirectional.centerStart,
@@ -784,22 +814,7 @@ class _GuideFormState extends State<GuideForm>
             ),
           ),
         ),
-        if (_showCharts) ...[
-          const SizedBox(height: 20),
-          UiText('翻开三张塔罗', style: text.titleMedium),
-          const SizedBox(height: 12),
-          TarotReveal(draw: chart.tarot),
-          const SizedBox(height: 20),
-          JingfangResult(reading: chart.liuyao),
-          const SizedBox(height: 24),
-          Text(
-            chart.meihuaInputSource == MeihuaInputSource.tarotClick
-                ? '梅花取数来自三次抽牌的点击时刻。'
-                : '梅花取数来自三枚自动生成的数。',
-          ),
-          const SizedBox(height: 8),
-          MeihuaResult(reading: chart.meihua),
-        ],
+        if (_showCharts) ..._chartContent(chart, report),
         if (hasReport) ...[
           const SizedBox(height: 20),
           GuideFollowUpList(

@@ -21,6 +21,7 @@ class CoinCastRitual extends StatefulWidget {
     this.reducedMotion,
     this.showFirstTossHint = true,
     this.stageHeightLimit = double.infinity,
+    this.stageHeadroom = 0,
   });
 
   final List<List<int>> tosses;
@@ -31,6 +32,7 @@ class CoinCastRitual extends StatefulWidget {
   final bool? reducedMotion;
   final bool showFirstTossHint;
   final double stageHeightLimit;
+  final double stageHeadroom;
 
   @override
   State<CoinCastRitual> createState() => _CoinCastRitualState();
@@ -220,7 +222,7 @@ class _CoinCastRitualState extends State<CoinCastRitual>
         ? context.uiLabel('点击龟壳开始投掷')
         : '${context.uiLabel('投掷第 ')}${values.length + 1}${context.uiLabel(' 次')}';
     final resultText = tossing
-        ? context.uiLabel('铜钱翻转，静候落定…')
+        ? context.uiLabel('静候落定…')
         : last == null
         ? ''
         : '${context.uiLabel(coinCastLineNames[values.length - 1])} · '
@@ -260,6 +262,7 @@ class _CoinCastRitualState extends State<CoinCastRitual>
               tossing: tossing,
               flowing: _canAnimate,
               stageHeightLimit: widget.stageHeightLimit,
+              stageHeadroom: widget.stageHeadroom,
             ),
             const SizedBox(height: 12),
             Center(
@@ -268,8 +271,6 @@ class _CoinCastRitualState extends State<CoinCastRitual>
                 onPressed: ready ? _startToss : null,
                 shake: _shake,
                 tossing: tossing,
-                showHint: showHint,
-                animateHint: _canAnimate,
               ),
             ),
             const SizedBox(height: 6),
@@ -281,7 +282,11 @@ class _CoinCastRitualState extends State<CoinCastRitual>
                 child: Text(
                   resultText,
                   textAlign: TextAlign.center,
-                  style: theme.textTheme.bodySmall,
+                  style: tossing
+                      ? theme.textTheme.labelSmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        )
+                      : theme.textTheme.bodySmall,
                 ),
               ),
             ),

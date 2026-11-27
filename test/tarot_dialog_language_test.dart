@@ -6,6 +6,7 @@ import 'package:material_ui/material_ui.dart';
 import '../src/features/divination/view/ritual/guide_ritual_dialog.dart';
 import '../src/ui/interface_language.dart';
 import 'support/divination_service_fixture.dart';
+import 'support/tarot_gestures.dart';
 
 void main() {
   testWidgets('the narrow Tarot ritual localizes labels and reveal actions', (
@@ -64,9 +65,11 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Step 2 · Tarot selection'), findsOneWidget);
     expect(find.text('Choose three Tarot cards'), findsOneWidget);
-    expect(find.text('Swipe sideways and choose the cards that feel right'), findsOneWidget);
-    expect(find.byTooltip('Browse left'), findsOneWidget);
-    expect(find.byTooltip('Browse right'), findsOneWidget);
+    expect(
+      find.text('Hold and drag the deck in any direction'),
+      findsOneWidget,
+    );
+    expect(find.bySemanticsLabel('Spread the deck'), findsOneWidget);
     expect(find.byTooltip('Pause ritual').hitTestable(), findsOneWidget);
     expect(find.bySemanticsLabel('78-card deck'), findsOneWidget);
     expect(
@@ -76,9 +79,9 @@ void main() {
     expect(find.text('Selected 0 / 3'), findsOneWidget);
 
     for (final (index, slot) in [40, 39, 38].indexed) {
-      final card = find.bySemanticsLabel('Choose card $slot');
+      final card = await openTarotCard(tester, slot, english: true);
       await tester.ensureVisible(card);
-      tester.widget<Semantics>(card).properties.onTap!();
+      await confirmTarotCard(tester, card);
       await tester.pumpAndSettle();
       if (index == 0) {
         expect(

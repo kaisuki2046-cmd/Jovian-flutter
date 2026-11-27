@@ -239,6 +239,8 @@ class _CombinedReport extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final snapshot = reading.snapshot;
+    final report = reading.report;
+    final details = report is ProParagraphReport ? report : null;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       spacing: 12,
@@ -249,13 +251,18 @@ class _CombinedReport extends StatelessWidget {
             heading: context.uiLabel('确认的关注点'),
             body: snapshot.focus,
           ),
-        if (reading.report case final report?)
-          ReadingReportView(report: report),
+        if (report != null) ReadingReportView(report: report),
         if (snapshot.chart case final chart?) ...[
           const UiText('塔罗结果'),
           TarotReveal(draw: chart.tarot),
+          if (details != null)
+            ReadingChartDetails(report: details, method: 'tarot'),
           JingfangResult(reading: chart.liuyao),
+          if (details != null)
+            ReadingChartDetails(report: details, method: 'liuyao'),
           MeihuaResult(reading: chart.meihua),
+          if (details != null)
+            ReadingChartDetails(report: details, method: 'meihua'),
         ],
         if (reading.followUps.isNotEmpty)
           GuideFollowUpList(

@@ -1,6 +1,8 @@
 import 'dart:async';
 
-import 'package:jovian_divination/jovian_divination.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/services.dart';
+import 'package:jovian_divination/jovian_divination.dart' hide TarotSpread;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -8,10 +10,109 @@ import '../src/features/divination/view/guide_form.dart';
 import '../src/features/divination/view/ritual/guide_ritual_dialog.dart';
 import '../src/features/divination/view/ritual/tarot_deck.dart';
 import '../src/features/divination/view/ritual/tarot_preparation.dart';
+import '../src/features/divination/view/ritual/tarot_spread.dart';
 import '../src/ui/interface_language.dart';
 import 'support/divination_service_fixture.dart';
+import 'support/tarot_gestures.dart';
 
 void main() {
+  for (final kind in [PointerDeviceKind.touch, PointerDeviceKind.mouse]) {
+    testWidgets('dragging with ${kind.name} leaves cards along the path', (
+      tester,
+    ) async {
+      const slotCount = 78;
+      final layout = TarotTableLayout(310, slotCount, extraHeight: 70);
+      final spread = TarotSpread(slotCount, seed: 14);
+      final picked = <int>{};
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: StatefulBuilder(
+                builder: (_, update) => TarotSpreadTable(
+                  layout: layout,
+                  spread: spread,
+                  held: picked,
+                  busy: false,
+                  reducedMotion: false,
+                  animateBacks: false,
+                  choose: (slot, _) => update(() => picked.add(slot)),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final packet = find.byKey(const ValueKey('tarot-packet'));
+      final opened = find.byWidgetPredicate((widget) {
+        final key = widget.key;
+        return widget is Positioned &&
+            key is ValueKey<String> &&
+            key.value.startsWith('tarot-slot-');
+      });
+      expect(opened, findsNothing);
+      expect(tester.widget<TarotPileArt>(find.byType(TarotPileArt)).count, 78);
+      final gesture = await tester.startGesture(
+        tester.getCenter(packet),
+        kind: kind,
+      );
+      await gesture.moveBy(const Offset(65, 0));
+      await tester.pump();
+      final straight = tester.widgetList<Positioned>(opened).toList();
+      expect(straight.length, greaterThan(10));
+      final gaps = [
+        for (var index = 1; index < straight.length; index++)
+          straight[index].left! - straight[index - 1].left!,
+      ];
+      expect(gaps.map((gap) => gap.round()).toSet().length, greaterThan(1));
+      await tester.pump(const Duration(milliseconds: 400));
+      expect(tester.widgetList<Positioned>(opened), straight);
+      await gesture.moveBy(const Offset(0, -44));
+      await tester.pump();
+      final bent = tester.widgetList<Positioned>(opened).toList();
+      expect(bent.length, greaterThan(straight.length));
+      expect(bent.last.top!, lessThan(straight.last.top! - 20));
+      expect(
+        tester.widget<TarotPileArt>(find.byType(TarotPileArt)).count,
+        slotCount - bent.length,
+      );
+      await gesture.up();
+      await tester.pump();
+
+      final first = find.bySemanticsLabel('选取第 1 张牌');
+      final next = find.bySemanticsLabel('选取第 2 张牌');
+      final glow = find.byKey(const ValueKey('tarot-preview-light'));
+      tester.widget<Semantics>(first).properties.onTap!();
+      await tester.pump();
+      expect(glow, findsOneWidget);
+      expect(tester.widget<Semantics>(first).properties.selected, isTrue);
+      expect(picked, isEmpty);
+      tester.widget<Semantics>(next).properties.onTap!();
+      await tester.pump();
+      expect(tester.widget<Semantics>(first).properties.selected, isFalse);
+      expect(tester.widget<Semantics>(next).properties.selected, isTrue);
+      expect(picked, isEmpty);
+      tester.widget<Semantics>(next).properties.onTap!();
+      await tester.pumpAndSettle();
+      expect(next, findsNothing);
+      expect(picked, {1});
+
+      final pileAction = find.bySemanticsLabel('推开牌堆');
+      Focus.of(tester.element(pileAction)).requestFocus();
+      await tester.pump();
+      final beforeKey = opened.evaluate().length;
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+      await tester.pump();
+      expect(opened.evaluate().length, greaterThan(beforeKey));
+      // The assistive action offers successive pushes without a pointer.
+      await openTarotCard(tester, 78);
+      expect(packet, findsNothing);
+      expect(opened, findsNWidgets(slotCount - picked.length));
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   testWidgets('preparation announces each saved animation phase in English', (
     tester,
   ) async {
@@ -157,32 +258,71 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        final card = find.bySemanticsLabel('选取第 41 张牌');
+        final card = await openTarotCard(tester, 41);
         final flight = find.byKey(const ValueKey('tarot-card-flight'));
         final lights = find.byKey(const ValueKey('tarot-back-lights'));
+        final slotLights = find.descendant(
+          of: find.byType(AspectRatio),
+          matching: lights,
+        );
         final fanTitle = find.text('选择三张塔罗牌');
         final revealTitle = find.text('翻开三张塔罗牌');
         final retry = find.text('重试仪式同步');
-        double flightY() => tester.widget<Positioned>(flight).top!;
+        Positioned flyingCard() => tester.widget<Positioned>(flight);
+        double flightY() => flyingCard().top!;
+        double yawProjection() => tester
+            .widget<Transform>(
+              find
+                  .descendant(of: flight, matching: find.byType(Transform))
+                  .first,
+            )
+            .transform
+            .entry(2, 0);
 
-        expect(lights, findsNWidgets(2));
-        expect(
-          find.descendant(of: find.byType(TarotRitualFan), matching: lights),
-          findsNothing,
+        final inFan = tester.widget<Positioned>(
+          find.byKey(const ValueKey('tarot-slot-40')),
         );
-        tester.widget<Semantics>(card).properties.onTap!();
-        await tester.pump();
+        expect(inFan.width! / inFan.height!, closeTo(2 / 3, .001));
+        expect(slotLights, findsNWidgets(2));
+        expect(
+          find.descendant(of: find.byType(TarotSpreadTable), matching: lights),
+          findsWidgets,
+        );
+        await confirmTarotCard(tester, card);
         final origin = flightY();
         expect(fanTitle, findsOneWidget);
         expect(revealTitle, findsNothing);
         expect(card, findsNothing);
-        expect(lights, findsNWidgets(2));
-        await tester.pump(const Duration(milliseconds: 160));
-        expect(flightY(), lessThan(origin - 20));
+        expect(slotLights, findsNWidgets(2));
+        await tester.pump(const Duration(milliseconds: 220));
+        expect(flightY(), lessThan(origin - 30));
+        expect(yawProjection(), closeTo(0, .001));
+        await tester.pump(const Duration(milliseconds: 430));
+        final leftTurn = flyingCard();
+        final leftYaw = yawProjection();
+        expect(
+          find.descendant(
+            of: flight,
+            matching: find.byWidgetPredicate(
+              (widget) =>
+                  widget is TarotBackArt && widget.hoverProgress != null,
+            ),
+          ),
+          findsOneWidget,
+        );
+        await tester.pump(const Duration(milliseconds: 500));
+        final rightTurn = flyingCard();
+        expect(rightTurn.left!, closeTo(leftTurn.left!, .1));
+        expect(rightTurn.top!, closeTo(leftTurn.top!, .1));
+        expect(leftYaw * yawProjection(), lessThan(0));
+        expect(rightTurn.width! / rightTurn.height!, closeTo(2 / 3, .001));
+
+        await tester.pump(const Duration(milliseconds: 350));
+        expect(flightY(), greaterThan(rightTurn.top!));
         expect(revealTitle, findsNothing);
         expect(find.text('已选 2 / 3 张'), findsOneWidget);
 
-        await tester.pump(const Duration(milliseconds: 305));
+        await tester.pump(const Duration(milliseconds: 80));
         if (reject) {
           // A slow response must keep the card at its destination.
           final landed = flightY();
@@ -218,7 +358,7 @@ void main() {
           expect(flight, findsNothing);
           expect(fanTitle, findsOneWidget);
           expect(find.text('已选 3 / 3 张'), findsOneWidget);
-          expect(lights, findsNWidgets(3));
+          expect(slotLights, findsNWidgets(3));
           expect(revealTitle, findsNothing);
           await tester.pump(const Duration(milliseconds: 150));
           await tester.pumpAndSettle();
@@ -254,23 +394,16 @@ void main() {
     await tester.pump();
     await tester.tap(find.byTooltip('发送消息'));
     await tester.pumpAndSettle();
+    final surface = find.byKey(const ValueKey('guide-ritual-surface'));
+    final bounds = tester.getRect(surface);
+    expect(bounds, const Rect.fromLTWH(12, 8, 336, 624));
     final toss = find.byKey(const ValueKey('coin-ritual-toss-button'));
     expect(toss, findsNothing);
     expect(find.text('第 1 步 · 塔罗选牌'), findsOneWidget);
     expect(find.byType(TarotDeckPreparation), findsNothing);
     expect(find.bySemanticsLabel('78 张塔罗牌阵'), findsOneWidget);
-    final scroll = find.byKey(const ValueKey('tarot-fan-scroll'));
-    final scrollView = tester.widget<SingleChildScrollView>(scroll);
-    final resting = scrollView.controller!.offset;
-    await tester.tap(find.byTooltip('向右浏览牌阵'));
-    await tester.pumpAndSettle();
-    expect(scrollView.controller!.offset, greaterThan(resting));
-    await tester.tap(find.byTooltip('向左浏览牌阵'));
-    await tester.pumpAndSettle();
-    expect(scrollView.controller!.offset, closeTo(resting, 0.01));
-    final center = find.bySemanticsLabel('选取第 40 张牌');
-    expect(center, findsOneWidget);
-    tester.widget<Semantics>(center).properties.onTap!();
+    final center = await openTarotCard(tester, 40);
+    await confirmTarotCard(tester, center);
     await tester.pumpAndSettle();
     expect(center, findsNothing);
     expect(find.text('已选 1 / 3 张'), findsOneWidget);
@@ -282,11 +415,12 @@ void main() {
     expect(find.text('已选 1 / 3 张'), findsOneWidget);
     expect(center, findsNothing);
     for (final position in [38, 39]) {
-      final card = find.bySemanticsLabel('选取第 $position 张牌');
-      tester.widget<Semantics>(card).properties.onTap!();
+      final card = await openTarotCard(tester, position);
+      await confirmTarotCard(tester, card);
       await tester.pumpAndSettle();
     }
     expect(find.text('第 1 步 · 塔罗翻牌'), findsOneWidget);
+    expect(tester.getRect(surface), bounds);
     expect(find.textContaining('六爻卜卦结果'), findsNothing);
     expect(toss, findsNothing);
     expect(service.calls, isNot(contains('POST /reading/toss')));
@@ -312,6 +446,7 @@ void main() {
     expect(faces, findsNWidgets(3));
     await tester.tap(find.text('继续六爻起卦'));
     await tester.pumpAndSettle();
+    expect(tester.getRect(surface), bounds);
     expect(find.text('第 2 步 · 六爻起卦'), findsNothing);
     final castTitle = find.text('投掷铜钱');
     expect(tester.widget<Text>(castTitle).textAlign, TextAlign.center);
@@ -393,12 +528,18 @@ void main() {
     final footerBefore = tester.getRect(find.text('Pause'));
     await tester.pumpAndSettle(const Duration(milliseconds: 240));
     expect(find.byType(TarotDeckPreparation), findsNothing);
+    final layout = tester
+        .widget<TarotSpreadTable>(find.byType(TarotSpreadTable))
+        .layout;
+    final original = TarotTableLayout(layout.width, layout.slotCount);
+    expect(layout.height, closeTo(original.height + 54, 0.01));
+    expect(layout.cardHeight, original.cardHeight);
     expect(
-      tester.getRect(find.byKey(const ValueKey('tarot-fan-scroll'))),
+      tester.getRect(find.byKey(const ValueKey('tarot-spread-stage'))),
       deckBefore,
     );
     expect(tester.getRect(find.text('Pause')), footerBefore);
-    expect(find.byTooltip('Browse right'), findsOneWidget);
+    expect(find.bySemanticsLabel('Spread the deck'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }

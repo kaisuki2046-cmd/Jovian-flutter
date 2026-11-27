@@ -27,6 +27,7 @@ class CoinCastScene extends StatefulWidget {
     required this.tossing,
     required this.flowing,
     required this.stageHeightLimit,
+    required this.stageHeadroom,
   });
 
   final Animation<double> progress;
@@ -37,6 +38,7 @@ class CoinCastScene extends StatefulWidget {
   final bool tossing;
   final bool flowing;
   final double stageHeightLimit;
+  final double stageHeadroom;
 
   @override
   State<CoinCastScene> createState() => _CoinCastSceneState();
@@ -106,7 +108,12 @@ class _CoinCastSceneState extends State<CoinCastScene>
         builder: (context, constraints) {
           final width = math.min(560.0, constraints.maxWidth);
           final heightLimit = widget.stageHeightLimit;
-          final layout = coinStageLayout(width, heightLimit: heightLimit);
+          final headroom = widget.stageHeadroom;
+          final layout = coinStageLayout(
+            width,
+            heightLimit: heightLimit,
+            headroom: headroom,
+          );
           final radius = BorderRadius.circular(18);
           return Center(
             child: DecoratedBox(
@@ -125,7 +132,9 @@ class _CoinCastSceneState extends State<CoinCastScene>
                     fit: StackFit.expand,
                     children: [
                       RepaintBoundary(
-                        child: CustomPaint(painter: _CastingFloor(colors)),
+                        child: CustomPaint(
+                          painter: _CastingFloor(colors, layout.baseHeight),
+                        ),
                       ),
                       if (widget.flowing)
                         RepaintBoundary(
@@ -134,11 +143,12 @@ class _CoinCastSceneState extends State<CoinCastScene>
                             painter: _CastingFlow(
                               _gold,
                               tossing: widget.tossing,
+                              baseHeight: layout.baseHeight,
                             ),
                           ),
                         ),
                       Positioned(
-                        top: layout.height * 0.12 - _lineHeight / 2,
+                        top: layout.baseHeight * 0.12 - _lineHeight / 2,
                         left: 0,
                         right: 0,
                         child: Center(
@@ -181,6 +191,7 @@ class _CoinCastSceneState extends State<CoinCastScene>
                                   width,
                                   previous: widget.previous?[index] ?? 2,
                                   heightLimit: heightLimit,
+                                  headroom: headroom,
                                 ),
                             ];
                             return Stack(
@@ -192,6 +203,7 @@ class _CoinCastSceneState extends State<CoinCastScene>
                                     poses: poses,
                                     moving: widget.moving,
                                     coinSize: layout.coinSize,
+                                    baseHeight: layout.baseHeight,
                                   ),
                                 ),
                                 for (final (index, pose) in poses.indexed)
@@ -350,20 +362,21 @@ Path _octagon(double radius) => Path()
               radius,
   ], true);
 
-void _placeFloor(Canvas canvas, Size size) {
-  canvas.translate(0, size.height * 0.50);
-  canvas.scale(size.width / 320, size.height * 0.48 / 320);
+void _placeFloor(Canvas canvas, Size size, double baseHeight) {
+  canvas.translate(0, size.height - baseHeight * 0.50);
+  canvas.scale(size.width / 320, baseHeight * 0.48 / 320);
 }
 
 class _CastingFloor extends CustomPainter {
-  const _CastingFloor(this.colors);
+  const _CastingFloor(this.colors, this.baseHeight);
 
   final ColorScheme colors;
+  final double baseHeight;
 
   @override
   void paint(Canvas canvas, Size size) {
     canvas.save();
-    _placeFloor(canvas, size);
+    _placeFloor(canvas, size, baseHeight);
     final floor = Rect.fromCenter(
       center: _floorCenter,
       width: 320,
@@ -407,19 +420,22 @@ class _CastingFloor extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_CastingFloor old) => colors != old.colors;
+  bool shouldRepaint(_CastingFloor old) =>
+      colors != old.colors || baseHeight != old.baseHeight;
 }
 
 class _CastingFlow extends CustomPainter {
-  _CastingFlow(this.flow, {required this.tossing}) : super(repaint: flow);
+  _CastingFlow(this.flow, {required this.tossing, required this.baseHeight})
+    : super(repaint: flow);
 
   final Animation<double> flow;
   final bool tossing;
+  final double baseHeight;
 
   @override
   void paint(Canvas canvas, Size size) {
     canvas.save();
-    _placeFloor(canvas, size);
+    _placeFloor(canvas, size, baseHeight);
     final progress = flow.value;
     final brightness = tossing ? 1.0 : 0.90;
     final ink = Paint()
@@ -465,7 +481,9 @@ class _CastingFlow extends CustomPainter {
 
   @override
   bool shouldRepaint(_CastingFlow old) =>
-      tossing != old.tossing || flow != old.flow;
+      tossing != old.tossing ||
+      baseHeight != old.baseHeight ||
+      flow != old.flow;
 }
 
 class _HexagramLines extends CustomPainter {
@@ -525,12 +543,14 @@ class _TossDetails extends CustomPainter {
     required this.poses,
     required this.moving,
     required this.coinSize,
+    required this.baseHeight,
   });
 
   final double progress;
   final List<CoinPose> poses;
   final bool moving;
   final double coinSize;
+  final double baseHeight;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -543,7 +563,8 @@ class _TossDetails extends CustomPainter {
       final ground = coinRestingPosition(
         size.width,
         index,
-        heightLimit: size.height,
+        heightLimit: baseHeight,
+        headroom: size.height - baseHeight,
       );
       final point = Offset(pose.x, ground.y + coinSize * 0.11);
       final width = coinSize * pose.shadowScale * 1.26;
@@ -577,7 +598,8 @@ class _TossDetails extends CustomPainter {
       final startX = (index % 3 - 1) * size.width * 0.21;
       final endX = math.sin(index * 2.4) * 32;
       final x = size.width * 0.50 + startX + (endX - startX) * age;
-      final y = size.height * (0.79 - age * (0.53 + index % 3 * 0.035));
+      final y =
+          size.height - baseHeight * (0.21 + age * (0.53 + index % 3 * 0.035));
       canvas.drawCircle(
         Offset(x, y),
         (1 - age) * 1.65,

@@ -13,7 +13,9 @@ flutter pub get
 flutter run -d chrome --web-port 8081 --target src/app/main.dart --dart-define-from-file=config/local-web.example.json
 ```
 
-Windows 已恢复 Flutter 依赖时，从 Flutter 根目录运行 `& '.\tool\start-web.ps1'`。默认读取 `config/local-web.example.json`，将个人中心和算事分别连到 `localhost:8787` 与 `localhost:8115`。预览使用 `http://localhost:8081`。后端端口有所不同时，可以用 `-ServiceConfig` 指定自己的地址文件，并用 `-WebPort` 匹配现有服务允许的 Web 来源。启动前需已有原 Node 服务在对应端口运行。
+Windows 下双击根目录的 [Start-web.cmd](Start-web.cmd)，会一并启动账户、算事、命理、运势和合盘的原 Node 服务，再打开 Flutter 的 Chrome 预览。服务优先使用原项目的端口，端口被占用时使用备选端口，Flutter 会读取实际分配的地址。启动器按原项目方式加载本机虚拟认证服务商与 DeepSeek 配置。保持启动窗口打开，按 Ctrl+C 或关窗时，这次启动的服务会退出。日志位于 `.local/start-web/`。
+
+在 PowerShell 中也可运行 `& '.\Start-web.cmd' -CheckServices`，只检查五个本机服务能否启动。已有独立运行的服务时，可传 `-ServiceConfig` 指定地址文件，并用 `-WebPort` 匹配后端允许的 Web 来源。
 
 示例文件使用原 `Start-app.cmd` 的主树首选端口，其中合盘为 `8812`。预览树或端口被占用时，以已启动服务的实际地址为准，通过自己的 `--dart-define-from-file` 文件或逐项 `--dart-define` 传入。Flutter Web 监听来源也要与 Node 服务允许的 `APP_WEB_ORIGIN` 一致。构建配置只填客户端可见的 URL。
 

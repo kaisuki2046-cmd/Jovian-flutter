@@ -15,10 +15,16 @@ class LegacyGuideConversationView extends StatelessWidget {
     super.key,
     required this.conversation,
     required this.close,
+    this.resume,
+    this.busy = false,
+    this.resumeError,
   });
 
   final LegacyGuideConversation conversation;
   final VoidCallback close;
+  final ValueChanged<LegacyGuideMessage>? resume;
+  final bool busy;
+  final String? resumeError;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +42,7 @@ class LegacyGuideConversationView extends StatelessWidget {
               child: Align(
                 alignment: AlignmentDirectional.centerStart,
                 child: TextButton.icon(
-                  onPressed: close,
+                  onPressed: busy ? null : close,
                   icon: const Icon(Icons.arrow_back),
                   label: const UiText('返回当前对话'),
                 ),
@@ -54,7 +60,10 @@ class LegacyGuideConversationView extends StatelessWidget {
                         style: theme.textTheme.titleLarge,
                       ),
                     ),
-                  const UiText('旧版记录仅供回看。'),
+                  if (resume == null || !conversation.messages.any(_unfinished))
+                    const UiText('旧版记录仅供回看。'),
+                  if (resumeError case final error?)
+                    Semantics(liveRegion: true, child: UiText(error)),
                   const SizedBox(height: 16),
                   for (final (index, message)
                       in conversation.messages.indexed) ...[
@@ -63,7 +72,21 @@ class LegacyGuideConversationView extends StatelessWidget {
                     Padding(
                       key: ValueKey(message.id),
                       padding: const EdgeInsets.only(bottom: 12),
-                      child: _LegacyMessage(message: message),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          _LegacyMessage(message: message),
+                          if (resume case final restore?
+                              when _unfinished(message))
+                            Align(
+                              alignment: AlignmentDirectional.centerStart,
+                              child: OutlinedButton(
+                                onPressed: busy ? null : () => restore(message),
+                                child: const UiText('继续旧版仪式'),
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
                   ],
                 ],
@@ -74,6 +97,15 @@ class LegacyGuideConversationView extends StatelessWidget {
       ),
     );
   }
+}
+
+bool _unfinished(LegacyGuideMessage message) {
+  final entry = message.reading;
+  if (entry == null) return false;
+  final snapshot = entry.reading.snapshot;
+  final revealed = entry.revealedTarotSlots;
+  return snapshot.stage != GuideStage.reading ||
+      (revealed != null && revealed.length < snapshot.selectedSlots.length);
 }
 
 class _LegacyMessage extends StatelessWidget {

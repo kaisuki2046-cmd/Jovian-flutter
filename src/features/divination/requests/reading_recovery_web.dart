@@ -79,6 +79,7 @@ class _BrowserReadingRecovery
     implements
         GuideHistoryStore,
         LegacyGuideArchiveStore,
+        LegacyGuideRecoveryStore,
         GuideTranscriptStore {
   _BrowserReadingRecovery(Uri base, String? ownerScope)
     : _ownerScope = ownerScope,
@@ -162,6 +163,25 @@ class _BrowserReadingRecovery
     } catch (_) {
       // Archived records are optional when browser storage is unavailable.
       return const [];
+    }
+  }
+
+  @override
+  Future<GuideRecovery?> readLegacyRecovery(
+    String chatId,
+    int messageId,
+  ) async {
+    final owner = _legacyOwner;
+    if (owner == null || !isGuideThreadId(chatId)) return null;
+    try {
+      final storage = web.window.sessionStorage;
+      return decodeLegacyGuideRecovery(
+        storage.getItem('$_legacyRecoveryPrefix$owner.$chatId'),
+        storage.getItem('$_legacyPendingPrefix$owner.$chatId'),
+        messageId,
+      );
+    } catch (_) {
+      return null;
     }
   }
 

@@ -1081,6 +1081,8 @@ const englishInterfaceStrings = <String, String>{
   "旧版六爻": "Legacy Six Lines reading",
   "旧版梅花易数": "Legacy Plum Blossom reading",
   "旧版记录仅供回看。": "This saved reading is read-only.",
+  '继续旧版仪式': 'Resume the original ritual',
+  '这次旧版算事的恢复记录已失效。': 'This original reading can no longer be resumed.',
   "返回当前对话": "Return to current chat",
   "规则解读": "Rule-based reading",
   "AI 综合解读": "AI reading",

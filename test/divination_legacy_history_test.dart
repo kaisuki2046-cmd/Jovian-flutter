@@ -73,6 +73,23 @@ class _LegacyRecovery extends DivinationRecoveryFixture
       decodeLegacyGuideConversations(saved).toList();
 }
 
+class _ResumableLegacy extends _LegacyRecovery
+    implements LegacyGuideRecoveryStore {
+  _ResumableLegacy(super.saved, this.recovery);
+
+  final GuideRecovery recovery;
+  final attempts = <(String, int)>[];
+
+  @override
+  Future<GuideRecovery?> readLegacyRecovery(
+    String chatId,
+    int messageId,
+  ) async {
+    attempts.add((chatId, messageId));
+    return chatId == 'original' && messageId == 2 ? recovery : null;
+  }
+}
+
 void main() {
   final dispatcher =
       TestWidgetsFlutterBinding.ensureInitialized().platformDispatcher;
@@ -82,6 +99,128 @@ void main() {
     );
   });
   tearDown(dispatcher.clearAccessibilityFeaturesTestValue);
+
+  testWidgets('resumes an unfinished original ritual and saves it in Flutter', (
+    tester,
+  ) async {
+    final service = DivinationServiceFixture();
+    final originalStore = DivinationRecoveryFixture();
+    final original = service.connect(originalStore);
+    await original.start(divinationFixtureDetails, automatic: false);
+    await original.toss();
+    final cached = original.reading!.toJson();
+    final token = originalStore.state!.token;
+    original.dispose();
+
+    final legacy = _ResumableLegacy(
+      jsonEncode({
+        'threads': [
+          _thread('original', [
+            {'id': 1, 'kind': 'user', 'text': divinationFixtureDetails},
+            _reading(2, cached),
+          ], title: '原版未完成算事'),
+        ],
+      }),
+      GuideRecovery(
+        token,
+        PendingGuideAction(GuideAction.toss, {
+          'actionId': 'b7e34751-6b2d-46db-9e10-582e7bb371ff',
+          'step': 1,
+        }),
+      ),
+    );
+
+    Future<void> press(Finder target) async {
+      await tester.ensureVisible(target);
+      await tester.tap(target);
+      await tester.pumpAndSettle();
+    }
+
+    service.calls.clear();
+    final online = service.connect(legacy);
+    await tester.pumpWidget(
+      MaterialApp(home: DivinationPage(onlineGuide: online)),
+    );
+    await tester.pumpAndSettle();
+    service.startFailures.add((status: 503, code: 'temporary'));
+    await online.start('我想核对另一个问题的进度。', automatic: false);
+    await tester.pumpAndSettle();
+    final currentError = online.message;
+    expect(currentError, isNotNull);
+    expect(online.canRetry, isTrue);
+    service.calls.clear();
+
+    await press(find.byTooltip('会话历史'));
+    await press(find.text('原版未完成算事'));
+    expect(service.calls, isEmpty);
+    expect(online.reading, isNull);
+
+    service.expired = true;
+    await press(find.text('继续旧版仪式'));
+    expect(find.text('这次旧版算事的恢复记录已失效。'), findsOneWidget);
+    expect(online.reading, isNull);
+    expect(legacy.state, isNull);
+    expect(service.calls, ['GET /reading']);
+    expect(online.message, currentError);
+    expect(online.canRetry, isTrue);
+
+    service.expired = false;
+    service.calls.clear();
+    await press(find.text('继续旧版仪式'));
+    expect(service.calls, [
+      'GET /reading',
+      'POST /reading/toss',
+      'GET /reading',
+    ]);
+    expect(legacy.attempts, [('original', 2), ('original', 2)]);
+    expect(online.reading!.snapshot.tosses.length, 2);
+    expect(find.text('已完成 2 / 6 次'), findsOneWidget);
+    expect(legacy.state!.threadId, 'import-rn-original-2');
+    expect(legacy.state!.pending, isNull);
+    expect((await legacy.readHistory()).single.id, 'import-rn-original-2');
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    online.dispose();
+    final restored = service.connect(legacy);
+    service.calls.clear();
+    await restored.restore();
+    expect(service.calls, ['GET /reading']);
+    expect(restored.reading!.snapshot.tosses.length, 2);
+    restored.dispose();
+  });
+
+  test(
+    'reads only the selected original token and matching pending action',
+    () {
+      final ownerToken = 'a' * 43;
+      final otherToken = 'b' * 43;
+      final saved = jsonEncode({
+        'latest': 9,
+        'tokens': {'2': ownerToken, '9': otherToken},
+      });
+      final action = {
+        'toss': {'actionId': 'original-action', 'step': 1},
+      };
+      expect(decodeLegacyGuideRecovery(saved, null, 3), isNull);
+      expect(
+        decodeLegacyGuideRecovery(
+          saved,
+          jsonEncode({'token': otherToken, 'action': action}),
+          2,
+        )?.pending,
+        isNull,
+      );
+      final matched = decodeLegacyGuideRecovery(
+        saved,
+        jsonEncode({'token': ownerToken, 'action': action}),
+        2,
+      );
+      expect(matched?.token, ownerToken);
+      expect(matched?.pending?.action, GuideAction.toss);
+      expect(matched?.pending?.body, action['toss']);
+    },
+  );
+
   testWidgets(
     'reads original text and mixed RN Web conversations without resuming them',
     (tester) async {

@@ -80,6 +80,11 @@ abstract interface class LegacyGuideArchiveStore {
   Future<List<LegacyGuideConversation>> readLegacyConversations();
 }
 
+abstract interface class LegacyGuideRecoveryStore
+    implements GuideRecoveryStore {
+  Future<GuideRecovery?> readLegacyRecovery(String chatId, int messageId);
+}
+
 class OnlineReading {
   const OnlineReading(
     this.snapshot, {
@@ -379,6 +384,7 @@ class OnlineGuideController {
   }
 
   List<LegacyGuideConversation> get legacyConversations => _legacyConversations;
+  bool get supportsLegacyRecovery => _recovery is LegacyGuideRecoveryStore;
   List<GuideHistoryEntry> get history =>
       _history.values
           .where((entry) => !_legacyReadingIds.contains(entry.id))
@@ -467,6 +473,89 @@ class OnlineGuideController {
     await _save();
     await _saveTranscriptPosition();
   }, revisiting: true);
+
+  Future<String?> resumeLegacyReading(
+    LegacyGuideConversation conversation,
+    LegacyGuideMessage message,
+  ) async {
+    const unavailable = '这次旧版算事的恢复记录已失效。';
+    final store = _recovery;
+    final entry = message.reading;
+    if (_busy ||
+        _changes.isClosed ||
+        store is! LegacyGuideRecoveryStore ||
+        entry == null ||
+        !_legacyConversations.contains(conversation) ||
+        !conversation.messages.contains(message)) {
+      return unavailable;
+    }
+
+    final id = 'import-${entry.id}';
+    if (!isGuideThreadId(id)) return unavailable;
+    if (_history.containsKey(id)) {
+      await openHistory(id);
+      return null;
+    }
+
+    // Verify the original task without clearing feedback in the current chat.
+    final GuideRecovery recovered;
+    final OnlineReading verified;
+    _busy = true;
+    _emit();
+    try {
+      final saved = await store.readLegacyRecovery(
+        conversation.id.substring(3),
+        message.id,
+      );
+      if (saved == null || _changes.isClosed) return unavailable;
+      recovered = saved;
+      verified = await _gateway.get(saved.token);
+    } on ReadingConnectionError catch (error) {
+      return switch (error.status) {
+        401 || 403 || 404 => unavailable,
+        _ => _errorMessage(error),
+      };
+    } finally {
+      _busy = false;
+      _emit();
+    }
+    if (_changes.isClosed) return unavailable;
+    final original = entry.reading.snapshot;
+    final current = verified.snapshot;
+    if (current.question != original.question ||
+        current.focus != original.focus ||
+        current.automatic != original.automatic ||
+        (original.chart != null &&
+            current.chart?.chartHash != original.chart?.chartHash)) {
+      return unavailable;
+    }
+
+    await _run(() async {
+      _conversationId = null;
+      _previousQuestion = null;
+      _clarificationQuestion = null;
+      _threadId = id;
+      _token = recovered.token;
+      _pending = recovered.pending;
+      _reading = verified;
+      _history[id] = GuideHistoryEntry(
+        id: id,
+        updatedAt: entry.updatedAt,
+        reading: entry.reading,
+        revealedTarotSlots: entry.revealedTarotSlots,
+      );
+      await _saveTranscriptPosition();
+      await _save();
+      if (original.stage != GuideStage.reading) {
+        await _beginManualReveal(revisiting: true);
+      }
+      if (_pending != null) {
+        _retry = () => _sendPending(refresh: true);
+        await _sendPending(refresh: true);
+      }
+    }, revisiting: true);
+    return null;
+  }
 
   Future<void> openHistory(String id) => _run(() async {
     if (!_history.containsKey(id) || id == _threadId) return;

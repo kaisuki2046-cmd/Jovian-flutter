@@ -52,6 +52,7 @@ class _GuideFormState extends State<GuideForm>
   DialogRoute<void>? _ritualRoute;
   GuideRitualPresentation? _presentation;
   LegacyGuideConversation? _openLegacyConversation;
+  String? _legacyResumeError;
   final _messageFiles = <String, List<ComposerAttachment>>{};
   ({String text, TextEditingValue draft, List<ComposerAttachment> attachments})?
   _pendingQuestion;
@@ -395,7 +396,30 @@ class _GuideFormState extends State<GuideForm>
 
   void _selectLegacyConversation(LegacyGuideConversation conversation) {
     _closeHistory();
-    setState(() => _openLegacyConversation = conversation);
+    setState(() {
+      _openLegacyConversation = conversation;
+      _legacyResumeError = null;
+    });
+  }
+
+  Future<void> _resumeLegacyReading(LegacyGuideMessage message) async {
+    final online = widget.online;
+    final conversation = _openLegacyConversation;
+    if (online == null || conversation == null || online.busy) return;
+    setState(() => _legacyResumeError = null);
+    final failure = await online.resumeLegacyReading(conversation, message);
+    if (!mounted ||
+        widget.online != online ||
+        _openLegacyConversation != conversation)
+      return;
+    if (failure != null) {
+      setState(() => _legacyResumeError = failure);
+      return;
+    }
+    setState(_clearDraft);
+    if (_snapshot?.stage != GuideStage.reading || online.needsTarotReveal) {
+      _openRitual();
+    }
   }
 
   void _closeHistory() {
@@ -512,6 +536,11 @@ class _GuideFormState extends State<GuideForm>
         key: ValueKey(conversation.id),
         conversation: conversation,
         close: () => setState(() => _openLegacyConversation = null),
+        resume: widget.online?.supportsLegacyRecovery == true
+            ? _resumeLegacyReading
+            : null,
+        busy: widget.online?.busy ?? false,
+        resumeError: _legacyResumeError,
       );
     }
     final online = widget.online;

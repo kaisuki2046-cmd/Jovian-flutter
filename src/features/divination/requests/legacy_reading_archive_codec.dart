@@ -16,6 +16,50 @@ String? legacyGuideOwner(String? scope) {
   return '$kind.${id.runes.map((rune) => rune.toRadixString(16)).join('_')}';
 }
 
+GuideRecovery? decodeLegacyGuideRecovery(
+  String? recovery,
+  String? pending,
+  int messageId,
+) {
+  final saved = _read(() => jsonDecode(recovery ?? 'null'));
+  if (saved is! Map || saved['tokens'] is! Map) return null;
+  final token = (saved['tokens'] as Map)['$messageId'];
+  if (token is! String || !RegExp(r'^[A-Za-z0-9_-]{43}$').hasMatch(token)) {
+    return null;
+  }
+  final event = _read(() => jsonDecode(pending ?? 'null'));
+  if (event is! Map || event['token'] != token || event['action'] is! Map) {
+    return GuideRecovery(token);
+  }
+  final action = event['action'] as Map;
+  final body = action.length == 1 ? action.values.single : null;
+  final replay = switch ((action.keys.firstOrNull, body)) {
+    ('toss', {'actionId': final String id, 'step': final int step})
+        when isGuideThreadId(id) && step >= 0 && step < 6 =>
+      PendingGuideAction(GuideAction.toss, body as Map<String, Object?>),
+    (
+      'pick',
+      {
+        'actionId': final String id,
+        'step': final int step,
+        'slot': final int slot,
+        'epochMs': String _,
+        'monotonicMs': num _,
+        'clockSessionId': final String clock,
+      },
+    )
+        when isGuideThreadId(id) &&
+            isGuideThreadId(clock) &&
+            step >= 0 &&
+            step < 3 &&
+            slot >= 0 &&
+            slot < 78 =>
+      PendingGuideAction(GuideAction.pick, body as Map<String, Object?>),
+    _ => null,
+  };
+  return GuideRecovery(token, replay);
+}
+
 const _legacyMethods = {
   'tarot-liuyao-meihua-v1': LegacyGuideMethod.combined,
   'rws-three-card-v1': LegacyGuideMethod.tarot,
@@ -127,6 +171,7 @@ LegacyGuideMessage? _message(
             'id': snapshotId,
             'reading': snapshot,
             'updatedAt': time.millisecondsSinceEpoch,
+            'revealedTarotSlots': raw['revealedTarotSlots'],
           }),
         );
       } else {

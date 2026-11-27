@@ -46,7 +46,7 @@ try {
 ''';
 
 Future<Map<String, Object?>> _node(Map<String, Object?> values) async {
-  final root = Platform.script.resolve('../../../../../../');
+  final root = Platform.script.resolve('../../../../../backend/');
   final process = await Process.start('node', [
     '--input-type=module',
     '--eval',

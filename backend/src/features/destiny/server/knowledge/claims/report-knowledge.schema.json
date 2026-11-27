@@ -1,0 +1,583 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "命理统一资料库",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "$ref": "#/definitions/entry"
+  },
+  "definitions": {
+    "text": {
+      "type": "string",
+      "pattern": "\\S"
+    },
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https?://"
+    },
+    "chartScope": {
+      "enum": [
+        "natal",
+        "decade",
+        "annual",
+        "monthly",
+        "daily",
+        "hourly"
+      ]
+    },
+    "entry": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "book": {
+              "$ref": "#/definitions/text"
+            },
+            "locator": {
+              "$ref": "#/definitions/text"
+            },
+            "url": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/url"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "book",
+            "locator",
+            "url"
+          ],
+          "additionalProperties": false
+        },
+        "category": {
+          "type": "object",
+          "properties": {
+            "method": {
+              "enum": [
+                "ziwei",
+                "bazi",
+                "western"
+              ]
+            },
+            "topic": {
+              "enum": [
+                "综合",
+                "事业",
+                "爱情",
+                "学业",
+                "财富"
+              ]
+            },
+            "contentType": {
+              "enum": [
+                "personality",
+                "fact"
+              ]
+            }
+          },
+          "required": [
+            "method",
+            "topic",
+            "contentType"
+          ],
+          "additionalProperties": false
+        },
+        "originalText": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/text"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "matchConditions": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "boolean",
+              "description": "该条目可由现有运行时规则、历史对照或铁板编号匹配入口返回。"
+            },
+            "original": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/text"
+              },
+              "uniqueItems": true
+            },
+            "formatted": {
+              "$ref": "#/definitions/formatted"
+            }
+          },
+          "required": [
+            "status",
+            "original",
+            "formatted"
+          ],
+          "additionalProperties": false,
+          "if": {
+            "properties": {
+              "formatted": {
+                "properties": {
+                  "kind": {
+                    "enum": [
+                      "chart",
+                      "historicalCase",
+                      "historicalReference",
+                      "tiebanSelector"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": true
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "status": {
+                "const": false
+              }
+            }
+          }
+        },
+        "modernInterpretation": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/text"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "source",
+        "category",
+        "originalText",
+        "matchConditions",
+        "modernInterpretation"
+      ],
+      "additionalProperties": false
+    },
+    "formatted": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "enum": [
+                "chart",
+                "historicalCase",
+                "historicalReference"
+              ]
+            },
+            "chartScope": {
+              "$ref": "#/definitions/chartScope"
+            },
+            "sourceChartScope": {
+              "$ref": "#/definitions/chartScope"
+            },
+            "rulesetVersion": {
+              "$ref": "#/definitions/text"
+            },
+            "tradition": {
+              "$ref": "#/definitions/text"
+            },
+            "compiler": {
+              "$ref": "#/definitions/text"
+            },
+            "matchScope": {
+              "$ref": "#/definitions/text"
+            },
+            "commonRequired": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/fact"
+              },
+              "minItems": 1
+            },
+            "alternatives": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/alternative"
+              },
+              "minItems": 1
+            },
+            "remainingAlternatives": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "incompatibleAlternatives": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/fact"
+                }
+              }
+            },
+            "comparisonSource": {
+              "type": "object",
+              "properties": {
+                "edition": {
+                  "$ref": "#/definitions/text"
+                },
+                "url": {
+                  "$ref": "#/definitions/url"
+                },
+                "note": {
+                  "$ref": "#/definitions/text"
+                }
+              },
+              "required": [
+                "edition",
+                "url",
+                "note"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "kind",
+            "chartScope",
+            "rulesetVersion",
+            "tradition",
+            "alternatives"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "calculationReference"
+            },
+            "alternatives": {
+              "type": "array",
+              "maxItems": 0
+            },
+            "reference": {
+              "type": "object",
+              "required": [
+                "role",
+                "profile"
+              ],
+              "properties": {
+                "role": {
+                  "$ref": "#/definitions/text"
+                },
+                "profile": {
+                  "$ref": "#/definitions/text"
+                }
+              }
+            },
+            "cells": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "kind",
+            "alternatives",
+            "reference"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "tiebanSelector"
+            },
+            "chartScope": {
+              "enum": [
+                "natal",
+                "annual"
+              ]
+            },
+            "selector": {
+              "$ref": "#/definitions/tieban"
+            },
+            "recordType": {
+              "$ref": "#/definitions/text"
+            },
+            "alternatives": {
+              "type": "array",
+              "maxItems": 0
+            },
+            "uncertain": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/text"
+              }
+            },
+            "excluded": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/text"
+              }
+            },
+            "natalInputs": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "triggerInputs": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "sourceAliases": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          },
+          "required": [
+            "kind",
+            "chartScope",
+            "selector",
+            "recordType",
+            "alternatives"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "enum": [
+                "unmapped",
+                "skipped"
+              ]
+            },
+            "reason": {
+              "$ref": "#/definitions/text"
+            },
+            "alternatives": {
+              "type": "array",
+              "maxItems": 0
+            },
+            "remainingAlternatives": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "recordType": {
+              "enum": [
+                "case"
+              ]
+            },
+            "reviewNote": {
+              "$ref": "#/definitions/text"
+            }
+          },
+          "required": [
+            "kind",
+            "reason",
+            "alternatives"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "alternative": {
+      "type": "object",
+      "properties": {
+        "input": {
+          "$ref": "#/definitions/ruleInput"
+        },
+        "compiler": {
+          "$ref": "#/definitions/text"
+        },
+        "decadalAnchor": {
+          "type": "object",
+          "minProperties": 1
+        },
+        "sourceConditionIndexes": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "input"
+      ],
+      "additionalProperties": false
+    },
+    "ruleInput": {
+      "type": "object",
+      "properties": {
+        "required": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/fact"
+          }
+        },
+        "mustBeAbsent": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/fact"
+          }
+        },
+        "anyOf": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/fact"
+            },
+            "minItems": 1
+          }
+        },
+        "relations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "$ref": "#/definitions/text"
+              },
+              "first": {
+                "$ref": "#/definitions/fact"
+              },
+              "second": {
+                "$ref": "#/definitions/fact"
+              }
+            },
+            "required": [
+              "type",
+              "first",
+              "second"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "thresholds": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fact": {
+                "$ref": "#/definitions/fact"
+              },
+              "min": {
+                "type": "number"
+              },
+              "max": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "fact",
+              "min",
+              "max"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "required"
+      ],
+      "additionalProperties": false
+    },
+    "fact": {
+      "type": "object",
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "$ref": "#/definitions/text"
+        }
+      }
+    },
+    "tieban": {
+      "type": "object",
+      "required": [
+        "kind",
+        "clauseIds",
+        "genderCode",
+        "ages",
+        "libraryEdition"
+      ],
+      "properties": {
+        "kind": {
+          "const": "tieban_clause_id"
+        },
+        "clauseIds": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1001,
+            "maximum": 13000
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "genderCode": {
+          "enum": [
+            null,
+            0,
+            1,
+            2
+          ]
+        },
+        "ages": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "uniqueItems": true
+        },
+        "ageConvention": {
+          "$ref": "#/definitions/text"
+        },
+        "libraryEdition": {
+          "enum": [
+            "muxuan-json",
+            "muxuan-fourteen-table-csv"
+          ]
+        },
+        "equivalentSelectors": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

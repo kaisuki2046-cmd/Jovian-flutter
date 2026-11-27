@@ -1,0 +1,267 @@
+{
+  "scanned": 64390,
+  "alternatives": 25,
+  "witnesses": [
+    {
+      "date": "1950-01-01T02:00:00.000Z",
+      "latitude": 39.9,
+      "longitude": 116.4,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p019-001",
+          "inputDigest": "868065c73aec86208247be18c0641970769432fd80219f88c5f6a9aa67d41ae5"
+        }
+      ]
+    },
+    {
+      "date": "1950-01-01T06:00:00.000Z",
+      "latitude": 57,
+      "longitude": -3,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-wealth-duration-p013-001",
+          "inputDigest": "e6a225f29743cf770e44c8681fc8c79914d6e4ffd1f723227703f85ebc1dc9d2"
+        },
+        {
+          "id": "astro-lilly-v3-wealth-duration-p019-001",
+          "inputDigest": "639fe62639f3dd1ca415764f48ff7ac304103343060c43fa506e58489b8c7034"
+        }
+      ]
+    },
+    {
+      "date": "1950-01-01T12:00:00.000Z",
+      "latitude": 39.9,
+      "longitude": 116.4,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-wealth-duration-p013-001",
+          "inputDigest": "06ba36b221bc8e01b7077aac7dd160bea7545e3dde4ba75c2d7ed5e45b3533c3"
+        },
+        {
+          "id": "astro-lilly-v3-wealth-duration-p017-001",
+          "inputDigest": "39860e9f13bb4d764aa5495c97c8c1e9118b917c2cee97d5c9a677deafed745c"
+        }
+      ]
+    },
+    {
+      "date": "1950-01-01T20:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-wealth-duration-p018-001",
+          "inputDigest": "c9186caeaf4a7387ff303acc3f6b3b09e3856efb984406b25140aa1b3fd25990"
+        }
+      ]
+    },
+    {
+      "date": "1950-01-01T22:00:00.000Z",
+      "latitude": 39.9,
+      "longitude": 116.4,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-wealth-duration-p013-001",
+          "inputDigest": "ced76838d2e439507bdc29795470156832fba4aa8c899e7c81ac5b127d235363"
+        }
+      ]
+    },
+    {
+      "date": "1950-01-03T20:00:00.000Z",
+      "latitude": -33.9,
+      "longitude": 151.2,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p019-001",
+          "inputDigest": "77436fabb7a1d1d70c3961d8965b2d780ec9c756418de1da1f536acba3df07df"
+        }
+      ]
+    },
+    {
+      "date": "1950-01-05T06:00:00.000Z",
+      "latitude": -33.9,
+      "longitude": 151.2,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-wealth-duration-p013-001",
+          "inputDigest": "7357f12dda654e9d7daaf2f00060e0007f6f66c56341b63c7a89fbe87d2f4849"
+        }
+      ]
+    },
+    {
+      "date": "1950-01-11T06:00:00.000Z",
+      "latitude": 57,
+      "longitude": -3,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-wealth-duration-p013-001",
+          "inputDigest": "b09f7fc95149ba563ac7e33f2f34b573ffd1b9331ea89f6e44beda7fd5b37397"
+        }
+      ]
+    },
+    {
+      "date": "1950-01-21T10:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p019-001",
+          "inputDigest": "cf19fca65791cad4bec01547bb3fd8f11fb9825f78dd9505a81e5d8ac7e847e0"
+        }
+      ]
+    },
+    {
+      "date": "1950-02-10T16:00:00.000Z",
+      "latitude": 57,
+      "longitude": -3,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-relatives-p006-001",
+          "inputDigest": "6b3ce056c923e429579d92d0fc9e99fe724adf34856134f849fa02cfe1b2505c"
+        }
+      ]
+    },
+    {
+      "date": "1950-02-12T22:00:00.000Z",
+      "latitude": 57,
+      "longitude": -3,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p019-001",
+          "inputDigest": "c2ffe697bf525ea432c7162d3c0ee7cd195d0124a021970ffcc49c1995c5b45d"
+        }
+      ]
+    },
+    {
+      "date": "1950-03-04T18:00:00.000Z",
+      "latitude": 39.9,
+      "longitude": 116.4,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-wealth-duration-p013-001",
+          "inputDigest": "a65b020e3a4d1accd05ca5333edc7a3f930feb22ea0c6f682a868f6e2e357d4c"
+        }
+      ]
+    },
+    {
+      "date": "1950-03-30T14:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-wealth-duration-p013-001",
+          "inputDigest": "7ec74a5061d2e426db9bda8fa4b89121367f1783d03b1665fca2389b96656554"
+        }
+      ]
+    },
+    {
+      "date": "1950-05-01T06:00:00.000Z",
+      "latitude": 57,
+      "longitude": -3,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p019-001",
+          "inputDigest": "57a3606bb6c002f1e893c19a0fa932fd8afdee310dc1d5ac93149c5de6c7d08a"
+        }
+      ]
+    },
+    {
+      "date": "1950-07-02T20:00:00.000Z",
+      "latitude": -33.9,
+      "longitude": 151.2,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p019-001",
+          "inputDigest": "55425dd66184f7423cb01fface2f8d2dba17366d81263a74002d8555263dbba2"
+        }
+      ]
+    },
+    {
+      "date": "1950-10-02T04:00:00.000Z",
+      "latitude": 39.9,
+      "longitude": 116.4,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p019-001",
+          "inputDigest": "824df3841433ec6ba5baec30ae65b0f750a4e57254ba11acd1203ec91921d73e"
+        }
+      ]
+    },
+    {
+      "date": "1955-06-20T16:00:00.000Z",
+      "latitude": -51,
+      "longitude": -59,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p019-001",
+          "inputDigest": "b604888b1e39512e98546d4e804d06d48fde7f2b738fc2a648ac1943cea96d05"
+        }
+      ]
+    },
+    {
+      "date": "1956-01-20T06:00:00.000Z",
+      "latitude": 57,
+      "longitude": -3,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p007-001",
+          "inputDigest": "5ff0ade9fdd1aa085842f15306f7ddbe47269ae4800ad42048460307a528571e"
+        }
+      ]
+    },
+    {
+      "date": "1957-01-08T08:00:00.000Z",
+      "latitude": 57,
+      "longitude": -3,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p007-001",
+          "inputDigest": "455d9781201a6f4cc24da9ca12adf8a219850fb19c727be62995b0dc3587c73b"
+        }
+      ]
+    },
+    {
+      "date": "1965-04-02T06:00:00.000Z",
+      "latitude": 57,
+      "longitude": -3,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p007-001",
+          "inputDigest": "caee23022025d187c8ef39c2a0513564842f73aad4dc9c23b0555441209621c6"
+        }
+      ]
+    },
+    {
+      "date": "1966-02-12T22:00:00.000Z",
+      "latitude": -33.9,
+      "longitude": 151.2,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p007-001",
+          "inputDigest": "ffb4a23fb63580666657e68917d387ab623b536dc3adc488c013612433cea06b"
+        }
+      ]
+    },
+    {
+      "date": "1967-05-02T22:00:00.000Z",
+      "latitude": 39.9,
+      "longitude": 116.4,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p007-001",
+          "inputDigest": "0f3a78194be38c135a37b37f748a6821463cf076decffb5770c29baa96136695"
+        }
+      ]
+    },
+    {
+      "date": "1979-05-19T18:00:00.000Z",
+      "latitude": -51,
+      "longitude": -59,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p007-001",
+          "inputDigest": "b02db70ca3258ad8ee3a554f6253c5bbdbd4a284e74ba2778707baaff095ccb1"
+        }
+      ]
+    }
+  ]
+}

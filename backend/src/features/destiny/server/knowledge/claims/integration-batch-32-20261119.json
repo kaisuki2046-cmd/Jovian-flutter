@@ -1,0 +1,904 @@
+{
+  "baseline": "thirty-first integration batch",
+  "profile": "bazi-explicit-column-pair-and-hidden-list-v1",
+  "changes": [
+    {
+      "id": "qtbj-v3-c017-p003-301",
+      "method": "bazi",
+      "previousReason": "unmapped_condition",
+      "status": "indexed",
+      "inputs": [
+        {
+          "digest": "47e407d81290bfc5dbcf1c5f7800c65968012e418d4c3e94d60eb189438391b7",
+          "required": [
+            {
+              "kind": "branch",
+              "position": "month",
+              "branch": "寅"
+            },
+            {
+              "kind": "stem",
+              "position": "day",
+              "stem": "丙"
+            },
+            {
+              "kind": "stem",
+              "position": "hour",
+              "stem": "庚"
+            },
+            {
+              "kind": "stem",
+              "position": "month",
+              "stem": "庚"
+            }
+          ],
+          "mustBeAbsent": [
+            {
+              "kind": "branch",
+              "position": "day",
+              "branch": "丑"
+            },
+            {
+              "kind": "branch",
+              "position": "day",
+              "branch": "戌"
+            },
+            {
+              "kind": "branch",
+              "position": "day",
+              "branch": "酉"
+            },
+            {
+              "kind": "branch",
+              "position": "hour",
+              "branch": "丑"
+            },
+            {
+              "kind": "branch",
+              "position": "hour",
+              "branch": "戌"
+            },
+            {
+              "kind": "branch",
+              "position": "hour",
+              "branch": "酉"
+            },
+            {
+              "kind": "branch",
+              "position": "month",
+              "branch": "丑"
+            },
+            {
+              "kind": "branch",
+              "position": "month",
+              "branch": "戌"
+            },
+            {
+              "kind": "branch",
+              "position": "month",
+              "branch": "酉"
+            },
+            {
+              "kind": "branch",
+              "position": "year",
+              "branch": "丑"
+            },
+            {
+              "kind": "branch",
+              "position": "year",
+              "branch": "戌"
+            },
+            {
+              "kind": "branch",
+              "position": "year",
+              "branch": "酉"
+            },
+            {
+              "kind": "stem",
+              "position": "day",
+              "stem": "辛"
+            },
+            {
+              "kind": "stem",
+              "position": "hour",
+              "stem": "辛"
+            },
+            {
+              "kind": "stem",
+              "position": "month",
+              "stem": "辛"
+            },
+            {
+              "kind": "stem",
+              "position": "year",
+              "stem": "辛"
+            }
+          ],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        }
+      ],
+      "branches": []
+    },
+    {
+      "id": "qtbj-v6-c109-p002-301",
+      "method": "bazi",
+      "previousReason": "unmapped_condition",
+      "status": "indexed",
+      "inputs": [
+        {
+          "digest": "2b73eaafe9dea497c3b1371e60ac909fc62888a76b17d7a4882394ad9b910b70",
+          "required": [
+            {
+              "kind": "branch",
+              "position": "day",
+              "branch": "丑"
+            },
+            {
+              "kind": "branch",
+              "position": "month",
+              "branch": "卯"
+            },
+            {
+              "kind": "branch",
+              "position": "year",
+              "branch": "巳"
+            },
+            {
+              "kind": "stem",
+              "position": "day",
+              "stem": "癸"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "640ecd4c61216dbf3407101ca6a918ff3107fdff266f7ecb886870923bd4957a",
+          "required": [
+            {
+              "kind": "branch",
+              "position": "day",
+              "branch": "酉"
+            },
+            {
+              "kind": "branch",
+              "position": "month",
+              "branch": "卯"
+            },
+            {
+              "kind": "branch",
+              "position": "year",
+              "branch": "巳"
+            },
+            {
+              "kind": "stem",
+              "position": "day",
+              "stem": "癸"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "a6410e7ba701235d7cde7325992f10285d4ae5257043fdc755626e2ffb028e0a",
+          "required": [
+            {
+              "kind": "branch",
+              "position": "hour",
+              "branch": "丑"
+            },
+            {
+              "kind": "branch",
+              "position": "month",
+              "branch": "卯"
+            },
+            {
+              "kind": "branch",
+              "position": "year",
+              "branch": "巳"
+            },
+            {
+              "kind": "stem",
+              "position": "day",
+              "stem": "癸"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "a631288f77ffec401a55703620536d2fa855224cd2865311daae4760f3c7d5a8",
+          "required": [
+            {
+              "kind": "branch",
+              "position": "hour",
+              "branch": "酉"
+            },
+            {
+              "kind": "branch",
+              "position": "month",
+              "branch": "卯"
+            },
+            {
+              "kind": "branch",
+              "position": "year",
+              "branch": "巳"
+            },
+            {
+              "kind": "stem",
+              "position": "day",
+              "stem": "癸"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "f7fd59779245865e7c234486f35a8b8da7143a86ecea952447bcdf5ebfe50038",
+          "required": [
+            {
+              "kind": "branch",
+              "position": "hour",
+              "branch": "戌"
+            },
+            {
+              "kind": "branch",
+              "position": "month",
+              "branch": "卯"
+            },
+            {
+              "kind": "branch",
+              "position": "year",
+              "branch": "巳"
+            },
+            {
+              "kind": "stem",
+              "position": "day",
+              "stem": "癸"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "3ff5b30886e9026b792da8d434ef2ca570552da67807e7e9186f8c7f4ae5e275",
+          "required": [
+            {
+              "kind": "branch",
+              "position": "day",
+              "branch": "丑"
+            },
+            {
+              "kind": "branch",
+              "position": "month",
+              "branch": "卯"
+            },
+            {
+              "kind": "branch",
+              "position": "year",
+              "branch": "申"
+            },
+            {
+              "kind": "stem",
+              "position": "day",
+              "stem": "癸"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "ec0e8b87d135e7f54eb0c77020bf7c4b87d004071eef6adb2f0b73f4fcb599cd",
+          "required": [
+            {
+              "kind": "branch",
+              "position": "day",
+              "branch": "酉"
+            },
+            {
+              "kind": "branch",
+              "position": "month",
+              "branch": "卯"
+            },
+            {
+              "kind": "branch",
+              "position": "year",
+              "branch": "申"
+            },
+            {
+              "kind": "stem",
+              "position": "day",
+              "stem": "癸"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "a8028137990799e91316397fbcfa15c91b209711425b43d00ea290fbc8f9239b",
+          "required": [
+            {
+              "kind": "branch",
+              "position": "hour",
+              "branch": "丑"
+            },
+            {
+              "kind": "branch",
+              "position": "month",
+              "branch": "卯"
+            },
+            {
+              "kind": "branch",
+              "position": "year",
+              "branch": "申"
+            },
+            {
+              "kind": "stem",
+              "position": "day",
+              "stem": "癸"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "3b1a3f64f0e2b90b85172499d45be832a8ff44acd0f51a0e24bf6859b9444434",
+          "required": [
+            {
+              "kind": "branch",
+              "position": "hour",
+              "branch": "酉"
+            },
+            {
+              "kind": "branch",
+              "position": "month",
+              "branch": "卯"
+            },
+            {
+              "kind": "branch",
+              "position": "year",
+              "branch": "申"
+            },
+            {
+              "kind": "stem",
+              "position": "day",
+              "stem": "癸"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "1d4671f15c136a7049a3d06aa754c7a3a0e432ed6cd1916ba223ded44501d4b9",
+          "required": [
+            {
+              "kind": "branch",
+              "position": "hour",
+              "branch": "戌"
+            },
+            {
+              "kind": "branch",
+              "position": "month",
+              "branch": "卯"
+            },
+            {
+              "kind": "branch",
+              "position": "year",
+              "branch": "申"
+            },
+            {
+              "kind": "stem",
+              "position": "day",
+              "stem": "癸"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "672a748598c97facaff81ff479673e8a7616bc76e43a01330217a597ba58f87b",
+          "required": [
+            {
+              "kind": "branch",
+              "position": "day",
+              "branch": "巳"
+            },
+            {
+              "kind": "branch",
+              "position": "month",
+              "branch": "卯"
+            },
+            {
+              "kind": "branch",
+              "position": "year",
+              "branch": "丑"
+            },
+            {
+              "kind": "stem",
+              "position": "day",
+              "stem": "癸"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "dff15a2d64515d80ca452063ab91af29e56726fd36173c82b71b89480cf58da6",
+          "required": [
+            {
+              "kind": "branch",
+              "position": "day",
+              "branch": "巳"
+            },
+            {
+              "kind": "branch",
+              "position": "month",
+              "branch": "卯"
+            },
+            {
+              "kind": "branch",
+              "position": "year",
+              "branch": "酉"
+            },
+            {
+              "kind": "stem",
+              "position": "day",
+              "stem": "癸"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "fb386cdb8e23e2bc85b4514eee6c0829573eafcdd9ea0c09491c4c839fb20b8c",
+          "required": [
+            {
+              "kind": "branch",
+              "position": "day",
+              "branch": "巳"
+            },
+            {
+              "kind": "branch",
+              "position": "month",
+              "branch": "卯"
+            },
+            {
+              "kind": "branch",
+              "position": "year",
+              "branch": "戌"
+            },
+            {
+              "kind": "stem",
+              "position": "day",
+              "stem": "癸"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "d261c5882c85f443134413b3522e7dba63bd70174f1367abc177141be7586d57",
+          "required": [
+            {
+              "kind": "branch",
+              "position": "day",
+              "branch": "巳"
+            },
+            {
+              "kind": "branch",
+              "position": "hour",
+              "branch": "丑"
+            },
+            {
+              "kind": "branch",
+              "position": "month",
+              "branch": "卯"
+            },
+            {
+              "kind": "stem",
+              "position": "day",
+              "stem": "癸"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "0d6ad5398b95b1e003a65a0caf0671c7a85775fc9b06b6a3c9f6a751e27b4540",
+          "required": [
+            {
+              "kind": "branch",
+              "position": "day",
+              "branch": "巳"
+            },
+            {
+              "kind": "branch",
+              "position": "hour",
+              "branch": "酉"
+            },
+            {
+              "kind": "branch",
+              "position": "month",
+              "branch": "卯"
+            },
+            {
+              "kind": "stem",
+              "position": "day",
+              "stem": "癸"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "ca85175bf30035f45a3fa9b2ccf35f9e94994aaf457136e43707b559d3efba15",
+          "required": [
+            {
+              "kind": "branch",
+              "position": "day",
+              "branch": "巳"
+            },
+            {
+              "kind": "branch",
+              "position": "hour",
+              "branch": "戌"
+            },
+            {
+              "kind": "branch",
+              "position": "month",
+              "branch": "卯"
+            },
+            {
+              "kind": "stem",
+              "position": "day",
+              "stem": "癸"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "95502154b1c22e1b35b746bb5f046b462c3b6a674e29692640908b2f49ef2d40",
+          "required": [
+            {
+              "kind": "branch",
+              "position": "hour",
+              "branch": "巳"
+            },
+            {
+              "kind": "branch",
+              "position": "month",
+              "branch": "卯"
+            },
+            {
+              "kind": "branch",
+              "position": "year",
+              "branch": "丑"
+            },
+            {
+              "kind": "stem",
+              "position": "day",
+              "stem": "癸"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "a7d72ee6a705766927e8b149698ed0aec72139bbdbb1d4114acae1ad1c81aeef",
+          "required": [
+            {
+              "kind": "branch",
+              "position": "hour",
+              "branch": "巳"
+            },
+            {
+              "kind": "branch",
+              "position": "month",
+              "branch": "卯"
+            },
+            {
+              "kind": "branch",
+              "position": "year",
+              "branch": "酉"
+            },
+            {
+              "kind": "stem",
+              "position": "day",
+              "stem": "癸"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "0939f4cef3a6b69e69fac8ad7134038338b495a82b2ad1bfd613a69f100fcee2",
+          "required": [
+            {
+              "kind": "branch",
+              "position": "hour",
+              "branch": "巳"
+            },
+            {
+              "kind": "branch",
+              "position": "month",
+              "branch": "卯"
+            },
+            {
+              "kind": "branch",
+              "position": "year",
+              "branch": "戌"
+            },
+            {
+              "kind": "stem",
+              "position": "day",
+              "stem": "癸"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "4ca32ffeaa8a52f203cdd76fb68f4fff564febdba66c0f6059f7b54614f5d2d3",
+          "required": [
+            {
+              "kind": "branch",
+              "position": "day",
+              "branch": "丑"
+            },
+            {
+              "kind": "branch",
+              "position": "hour",
+              "branch": "巳"
+            },
+            {
+              "kind": "branch",
+              "position": "month",
+              "branch": "卯"
+            },
+            {
+              "kind": "stem",
+              "position": "day",
+              "stem": "癸"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "c42d2c5a7b478cba4dc4b606dedc2d3d4819b19deeba3a02cdd05f2bcf7b1423",
+          "required": [
+            {
+              "kind": "branch",
+              "position": "day",
+              "branch": "酉"
+            },
+            {
+              "kind": "branch",
+              "position": "hour",
+              "branch": "巳"
+            },
+            {
+              "kind": "branch",
+              "position": "month",
+              "branch": "卯"
+            },
+            {
+              "kind": "stem",
+              "position": "day",
+              "stem": "癸"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "c2bd462e019e52d98c38a6e3d5cace7f9304b9fd7345adff5b2fab9f97a84b4c",
+          "required": [
+            {
+              "kind": "branch",
+              "position": "hour",
+              "branch": "申"
+            },
+            {
+              "kind": "branch",
+              "position": "month",
+              "branch": "卯"
+            },
+            {
+              "kind": "branch",
+              "position": "year",
+              "branch": "丑"
+            },
+            {
+              "kind": "stem",
+              "position": "day",
+              "stem": "癸"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "cac56af2f0c4680e467ca36ec4586ec5f0e452c76ccc41c4ba41e17d1487492c",
+          "required": [
+            {
+              "kind": "branch",
+              "position": "hour",
+              "branch": "申"
+            },
+            {
+              "kind": "branch",
+              "position": "month",
+              "branch": "卯"
+            },
+            {
+              "kind": "branch",
+              "position": "year",
+              "branch": "酉"
+            },
+            {
+              "kind": "stem",
+              "position": "day",
+              "stem": "癸"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "3911717f8846bf6660a47a5b8a16efbd2d30580b007b80ea8f62187910f2b446",
+          "required": [
+            {
+              "kind": "branch",
+              "position": "hour",
+              "branch": "申"
+            },
+            {
+              "kind": "branch",
+              "position": "month",
+              "branch": "卯"
+            },
+            {
+              "kind": "branch",
+              "position": "year",
+              "branch": "戌"
+            },
+            {
+              "kind": "stem",
+              "position": "day",
+              "stem": "癸"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "e023bf6343d108911ecdd50506f6e3470002d2b7371eeb520f41ea7783ee35d4",
+          "required": [
+            {
+              "kind": "branch",
+              "position": "day",
+              "branch": "丑"
+            },
+            {
+              "kind": "branch",
+              "position": "hour",
+              "branch": "申"
+            },
+            {
+              "kind": "branch",
+              "position": "month",
+              "branch": "卯"
+            },
+            {
+              "kind": "stem",
+              "position": "day",
+              "stem": "癸"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "d1e17abd6487ceaa69c9ecb59e0927c3daa50a73543e08030b79d1a2d77e95af",
+          "required": [
+            {
+              "kind": "branch",
+              "position": "day",
+              "branch": "酉"
+            },
+            {
+              "kind": "branch",
+              "position": "hour",
+              "branch": "申"
+            },
+            {
+              "kind": "branch",
+              "position": "month",
+              "branch": "卯"
+            },
+            {
+              "kind": "stem",
+              "position": "day",
+              "stem": "癸"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        }
+      ],
+      "branches": []
+    }
+  ],
+  "wholeEntries": 2,
+  "branchEntries": 0,
+  "wholeAlternatives": 27,
+  "passageAlternatives": 0,
+  "previousQueryableCompiledUnchanged": 2819,
+  "previousQueryableInputsPreserved": 2819,
+  "sourceHashes": {
+    "bazi": "8074930be871d6249c36813d59dae2534ad5f11eeb06c5d2728978b53364e609",
+    "ziwei": "bfe23ad0b26b19992d6f4fe3c2fb1979175513ceaf283bee6ce671d8358698ad",
+    "western": "b92622c3336d4a56af837123b08d438947a5e6751cd272b4be555921a89cb9fc"
+  },
+  "pending": [
+    "qtbj-v3-c027-p001-101",
+    "qtbj-v4-c051-p002-101",
+    "qtbj-v3-c016-p002-301"
+  ]
+}

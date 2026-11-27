@@ -1,0 +1,18 @@
+[
+  {"date": "1965-02-04T02:09:00.000Z", "latitude": -52.384, "longitude": -133.635, "contacts": [{"star": "betelgeuse", "target": "ascendant"}]},
+  {"date": "2016-01-03T17:02:00.000Z", "latitude": 9.878, "longitude": -155.868, "contacts": [{"star": "spica_virgo", "target": "mc"}, {"star": "arcturus", "target": "mc"}]},
+  {"date": "2006-11-24T22:01:00.000Z", "latitude": -6.636, "longitude": -14.983, "contacts": [{"star": "cor_scorpii", "target": "Venus"}, {"star": "sirius", "target": "ascendant"}]},
+  {"date": "1980-04-24T15:47:00.000Z", "latitude": 43.114, "longitude": 16.902, "contacts": [{"star": "cor_leonis", "target": "Jupiter"}]},
+  {"date": "2013-08-29T21:16:00.000Z", "latitude": -25.606, "longitude": 64.505, "contacts": [{"star": "capella", "target": "Moon"}, {"star": "sirius", "target": "Jupiter"}]},
+  {"date": "1978-02-23T10:16:00.000Z", "latitude": -55.682, "longitude": -63.576, "contacts": [{"star": "hercules", "target": "Mars"}]},
+  {"date": "1974-07-20T07:25:00.000Z", "latitude": 44.595, "longitude": -138.383, "contacts": [{"star": "betelgeuse", "target": "Venus"}]},
+  {"date": "1968-09-20T10:05:00.000Z", "latitude": 2.931, "longitude": 55.06, "contacts": [{"star": "spica_virgo", "target": "Mercury"}, {"star": "arcturus", "target": "Mercury"}]},
+  {"date": "1999-06-13T00:36:00.000Z", "latitude": 37.234, "longitude": -167.343, "contacts": [{"star": "oculus_taurus", "target": "Moon"}]},
+  {"date": "2005-12-29T11:32:00.000Z", "latitude": 48.918, "longitude": 90.064, "contacts": [{"star": "procyon", "target": "ascendant"}]},
+  {"date": "2018-09-26T06:41:00.000Z", "latitude": -23.924, "longitude": 46.423, "contacts": [{"star": "cor_leonis", "target": "mc"}]},
+  {"date": "1975-08-06T20:43:00.000Z", "latitude": -8.779, "longitude": 0.759, "contacts": [{"star": "procyon", "target": "Saturn"}]},
+  {"date": "1982-02-03T03:00:00.000Z", "latitude": -20.962, "longitude": -143.986, "contacts": [{"star": "hercules", "target": "ascendant"}]},
+  {"date": "1914-06-15T21:11:00.000Z", "latitude": -37.557, "longitude": -140.711, "contacts": [{"star": "capella", "target": "mc"}]},
+  {"date": "1926-10-22T00:56:00.000Z", "latitude": -18.781, "longitude": 106.069, "contacts": [{"star": "cor_scorpii", "target": "ascendant"}]},
+  {"date": "1953-03-24T10:15:00.000Z", "latitude": -6.613, "longitude": 5.651, "contacts": [{"star": "oculus_taurus", "target": "ascendant"}]}
+]

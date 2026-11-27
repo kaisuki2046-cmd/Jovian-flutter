@@ -1,0 +1,24 @@
+{
+  "profile": "lilly-accidental-source-v1",
+  "reviewedOn": "2026-11-19",
+  "sources": {
+    "orbs": "https://krasiancientastrology.com/wp-content/uploads/2016/11/CA-I-copy.pdf#page=127",
+    "solar": "https://krasiancientastrology.com/wp-content/uploads/2016/11/CA-I-copy.pdf#page=133",
+    "conditions": "https://krasiancientastrology.com/wp-content/uploads/2016/11/CA-I-copy.pdf#page=135",
+    "motionPages": [57,61,65,69,72,76,80]
+  },
+  "mainOrbs": { "Saturn":10, "Jupiter":12, "Mars":7.5, "Sun":17, "Venus":8, "Mercury":7, "Moon":12.5 },
+  "alternateOrbs": { "Saturn":9, "Jupiter":9, "Mars":7, "Sun":15, "Venus":7, "Mercury":7, "Moon":12 },
+  "meanMotionArcseconds": { "Saturn":121, "Jupiter":299, "Mars":1887, "Sun":3548, "Venus":3548, "Mercury":3548, "Moon":47436 },
+  "solar": { "cazimiArcminutes":17, "combustionDegrees":8.5, "beamDegrees":17,
+    "sameSignCombustion":true, "exampleConflict":{"sun":18,"jupiter":28,"definitionResult":"under_beams","printedExampleSays":"combust"} },
+  "platickExample": { "venus":40, "saturn":168, "aspect":"trine", "error":8, "mainMoietySum":9, "alternateMoietySum":8 },
+  "applicationExamples": [
+    { "subject":"Mercury", "subjectLongitude":5, "subjectSpeed":1.5, "other":"Mars", "otherLongitude":10, "otherSpeed":0.5 },
+    { "subject":"Mercury", "subjectLongitude":10, "subjectSpeed":-1, "other":"Mars", "otherLongitude":9, "otherSpeed":-0.2 },
+    { "subject":"Mars", "subjectLongitude":15, "subjectSpeed":0.5, "other":"Mercury", "otherLongitude":17, "otherSpeed":-1 }
+  ],
+  "besiegementExample": { "Saturn":15, "Mars":10, "Venus":13 },
+  "moonPrintedSlowArcminutes":790,
+  "limitations": "两列orb均为同图分项比较，不据此替代回归星对本命点的同度口径；瞬时接近不保证以后成相，不把各项分数求和或将互容当已救应。"
+}

@@ -1,0 +1,349 @@
+{
+  "baseline": "sixth integration batch",
+  "changes": [
+    {
+      "id": "smth-v10-wuxian-p003-505",
+      "method": "bazi",
+      "conditions": [
+        "正官与七杀混杂"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "smth-v10-wuxian-p003-506",
+      "method": "bazi",
+      "conditions": [
+        "七杀旺，且日主衰弱"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "smth-v8-liuri-05-12-p006-001",
+      "method": "bazi",
+      "conditions": [
+        "戊寅日癸亥时",
+        "春生而官煞混杂"
+      ],
+      "previousStatus": "branch_indexed",
+      "status": "indexed"
+    },
+    {
+      "id": "yhzp-v2-c002-p118-102",
+      "method": "bazi",
+      "conditions": [
+        "女命原局无七杀而天月二德具备"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "yhzp-v3-c105-p002-003",
+      "method": "bazi",
+      "conditions": [
+        "日主旺且印星旺"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "qtbj-v4-c050-p002-301",
+      "method": "bazi",
+      "conditions": [
+        "未月戊土，癸与辛同透"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    }
+  ],
+  "deferred": [
+    {
+      "id": "muxuan-v1-f002-p00029-001",
+      "method": "bazi",
+      "conditions": [
+        "年上正财"
+      ],
+      "previousStatus": "indexed",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00030-001",
+      "method": "bazi",
+      "conditions": [
+        "年上偏财"
+      ],
+      "previousStatus": "indexed",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00031-001",
+      "method": "bazi",
+      "conditions": [
+        "年上正官"
+      ],
+      "previousStatus": "indexed",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00032-001",
+      "method": "bazi",
+      "conditions": [
+        "年上七杀"
+      ],
+      "previousStatus": "indexed",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00033-001",
+      "method": "bazi",
+      "conditions": [
+        "年上正印"
+      ],
+      "previousStatus": "indexed",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00035-001",
+      "method": "bazi",
+      "conditions": [
+        "年上食神"
+      ],
+      "previousStatus": "indexed",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00036-001",
+      "method": "bazi",
+      "conditions": [
+        "年上伤官"
+      ],
+      "previousStatus": "indexed",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00040-001",
+      "method": "bazi",
+      "conditions": [
+        "月上正财"
+      ],
+      "previousStatus": "indexed",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00041-001",
+      "method": "bazi",
+      "conditions": [
+        "月上偏财"
+      ],
+      "previousStatus": "indexed",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00042-001",
+      "method": "bazi",
+      "conditions": [
+        "月上正官"
+      ],
+      "previousStatus": "indexed",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00043-001",
+      "method": "bazi",
+      "conditions": [
+        "月上七杀"
+      ],
+      "previousStatus": "indexed",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00045-001",
+      "method": "bazi",
+      "conditions": [
+        "月上偏印"
+      ],
+      "previousStatus": "indexed",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00046-001",
+      "method": "bazi",
+      "conditions": [
+        "月上食神"
+      ],
+      "previousStatus": "indexed",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00047-001",
+      "method": "bazi",
+      "conditions": [
+        "月上伤官"
+      ],
+      "previousStatus": "indexed",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00062-001",
+      "method": "bazi",
+      "conditions": [
+        "时上正财"
+      ],
+      "previousStatus": "indexed",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00064-001",
+      "method": "bazi",
+      "conditions": [
+        "时上正官"
+      ],
+      "previousStatus": "indexed",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00065-001",
+      "method": "bazi",
+      "conditions": [
+        "时上七杀"
+      ],
+      "previousStatus": "indexed",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00067-001",
+      "method": "bazi",
+      "conditions": [
+        "时上偏印"
+      ],
+      "previousStatus": "indexed",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00068-001",
+      "method": "bazi",
+      "conditions": [
+        "时上食神"
+      ],
+      "previousStatus": "indexed",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00069-001",
+      "method": "bazi",
+      "conditions": [
+        "时上伤官"
+      ],
+      "previousStatus": "indexed",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    }
+  ],
+  "reviewed": [
+    {
+      "id": "muxuan-v1-f002-p00037-001",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00048-001",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00051-001",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00052-001",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00053-001",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00054-001",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00055-001",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00056-001",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00058-001",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00059-001",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00070-001",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00075-001",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00076-001",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00077-001",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00078-001",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00079-001",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    },
+    {
+      "id": "muxuan-v1-f002-p00080-001",
+      "status": "unmapped",
+      "reason": "source_review_required"
+    }
+  ]
+}

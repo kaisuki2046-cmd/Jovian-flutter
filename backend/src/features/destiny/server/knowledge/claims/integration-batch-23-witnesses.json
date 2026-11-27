@@ -1,0 +1,476 @@
+{
+  "profile": "ziwei-explicit-natal-year-and-birth-grades-v1",
+  "scanned": 2586,
+  "targetAlternatives": 26,
+  "witnesses": [
+    {
+      "profile": {
+        "date": {
+          "year": 2026,
+          "month": 7,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 9,
+      "proofs": [
+        {
+          "id": "ziwei-v3-c020-p156002-001",
+          "branchIndex": -1,
+          "inputDigest": "711cc8e84e055d7024e99e87c6ecd677ba194c61e898cd83a5513388b36a395f"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 2025,
+          "month": 7,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 6,
+      "proofs": [
+        {
+          "id": "ziwei-v3-c020-p156002-001",
+          "branchIndex": -1,
+          "inputDigest": "7715a94a7752a57a0ea9125aa1ca8532018fadd36fc39194d98ff7a1d61efac1"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 2024,
+          "month": 7,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 3,
+      "proofs": [
+        {
+          "id": "ziwei-v3-c020-p156002-001",
+          "branchIndex": -1,
+          "inputDigest": "814d4e3513928c63fe92395e05ffaa7464e5a55be74c73982da8439f239bc878"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 2023,
+          "month": 7,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 11,
+      "proofs": [
+        {
+          "id": "ziwei-v3-c020-p156002-001",
+          "branchIndex": -1,
+          "inputDigest": "4aa562db283f8ae61e4bd474d542a703ca6226b19ed8976aa5f5171a5e6a7c47"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 2021,
+          "month": 7,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 9,
+      "proofs": [
+        {
+          "id": "ziwei-v2-minggong-p253000-001",
+          "branchIndex": -1,
+          "inputDigest": "fdcb03d204b66a0684c3ba87b0363a8707f4948c072bc98e740ceccb8cfcee81"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 2019,
+          "month": 7,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 3,
+      "proofs": [
+        {
+          "id": "ziwei-v2-minggong-p125002-001",
+          "branchIndex": -1,
+          "inputDigest": "ece43b9d71ac21e2bab2b39270fcd37adfa3270bb6097db79af5b32cc8eaa318"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 2017,
+          "month": 7,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 9,
+      "proofs": [
+        {
+          "id": "ziwei-v2-minggong-p173002-003",
+          "branchIndex": -1,
+          "inputDigest": "198e8cef97be53b8ddbdc090d0f9850469dc1b2f4087464df24ee6b2e3c5ffe5"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 2015,
+          "month": 7,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 2,
+      "proofs": [
+        {
+          "id": "ziwei-v2-minggong-p253000-001",
+          "branchIndex": -1,
+          "inputDigest": "ccf767bfb1cae2b75ff6bbbb2d7c9b32b50e567ff7925897c08c124c90bce5df"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 2009,
+          "month": 7,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 0,
+      "proofs": [
+        {
+          "id": "ziwei-v2-minggong-p253000-001",
+          "branchIndex": -1,
+          "inputDigest": "093dec43135d7b8cf1a4e518930a183d1f363955297011ceb1e594b6dd24dc0f"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 2003,
+          "month": 7,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 6,
+      "proofs": [
+        {
+          "id": "ziwei-v2-minggong-p253000-001",
+          "branchIndex": -1,
+          "inputDigest": "aa53b3e07c49c197404f778870ab025fdf205ec0cdc55eaac9016f1a24d405f8"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1996,
+          "month": 7,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 6,
+      "proofs": [
+        {
+          "id": "ziwei-v2-minggong-p173002-004",
+          "branchIndex": -1,
+          "inputDigest": "f7b39e1c0d9cafec9204c5ac9078896e9ffff3135d69115bbe8945231b5ec01e"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1994,
+          "month": 7,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 7,
+      "proofs": [
+        {
+          "id": "ziwei-v2-minggong-p125002-001",
+          "branchIndex": -1,
+          "inputDigest": "534b1825ca4a481ac2bfcbfb02bce9c8511ec9851dc84d533c806d72a48f7cf5"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1991,
+          "month": 7,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 9,
+      "proofs": [
+        {
+          "id": "ziwei-v2-minggong-p253000-001",
+          "branchIndex": -1,
+          "inputDigest": "f3dfb4968fa700c174f3a88d8bc443a25945702c73ff2a6bc68838b23a90e3b4"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1986,
+          "month": 7,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 1,
+      "proofs": [
+        {
+          "id": "ziwei-v2-minggong-p173002-004",
+          "branchIndex": -1,
+          "inputDigest": "344afe0304107631aa615d0fb55bc7d5260ba692bc4a2e8cc5b29dca79c2af6f"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1985,
+          "month": 7,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 2,
+      "proofs": [
+        {
+          "id": "ziwei-v2-minggong-p253000-001",
+          "branchIndex": -1,
+          "inputDigest": "bb221d77276f059d3a0561facdfe381b6f8b6f138b16a495fda4314c67deebc3"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1979,
+          "month": 7,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 0,
+      "proofs": [
+        {
+          "id": "ziwei-v2-minggong-p253000-001",
+          "branchIndex": -1,
+          "inputDigest": "06509d117b2292ab630512a639fe573e5074799fc71aada6729eedf1bf536ff2"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1978,
+          "month": 7,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 11,
+      "proofs": [
+        {
+          "id": "ziwei-v2-minggong-p142000-004",
+          "branchIndex": 0,
+          "inputDigest": "3df58f5c4f5d28565f34bf74f3d9f23c0bb975b669e8b694aa9b078e4b8fec05"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1973,
+          "month": 7,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 6,
+      "proofs": [
+        {
+          "id": "ziwei-v2-minggong-p253000-001",
+          "branchIndex": -1,
+          "inputDigest": "d8babe8f5273fda962aa8d4ee24b79f176d65ec890ebee760d392a2ef15ad813"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1947,
+          "month": 7,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 2,
+      "proofs": [
+        {
+          "id": "ziwei-v2-minggong-p173002-003",
+          "branchIndex": -1,
+          "inputDigest": "12f2fdd9bcf65a8c7ee0830e51c3cc33be2cd1cb91f22a24befa4494bbe8a256"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1940,
+          "month": 7,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 3,
+      "proofs": [
+        {
+          "id": "ziwei-v2-minggong-p173002-003",
+          "branchIndex": -1,
+          "inputDigest": "fa92843d5252c32c67b1df6a31f16fbe3657e9803aa581374a851beca73fdfc3"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1920,
+          "month": 7,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 10,
+      "proofs": [
+        {
+          "id": "ziwei-v2-minggong-p142000-004",
+          "branchIndex": 0,
+          "inputDigest": "05606cebdc8f357b4d42ed8bead82f62443449837c146a279fdd17e0109c7fc8"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 2025,
+          "month": 1,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 5,
+      "proofs": [
+        {
+          "id": "ziwei-v2-minggong-p142000-004",
+          "branchIndex": 0,
+          "inputDigest": "676a4d218716e2f6b0b67623ad0267eb920dc112a7f9011e3f51766502dbb638"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 2020,
+          "month": 4,
+          "day": 8
+        },
+        "gender": "female"
+      },
+      "timeIndex": 6,
+      "proofs": [
+        {
+          "id": "ziwei-v2-minggong-p173002-003",
+          "branchIndex": -1,
+          "inputDigest": "c29bc588b4a990f2157a7c0dff135b90e6454286f30585e23081bbb30a3bda03"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 2018,
+          "month": 10,
+          "day": 22
+        },
+        "gender": "female"
+      },
+      "timeIndex": 10,
+      "proofs": [
+        {
+          "id": "ziwei-v2-minggong-p173002-004",
+          "branchIndex": -1,
+          "inputDigest": "927899b54deab52d373d24d1b6bd9508262985135a98e9949c298cb16898fdd8"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 2018,
+          "month": 7,
+          "day": 8
+        },
+        "gender": "female"
+      },
+      "timeIndex": 0,
+      "proofs": [
+        {
+          "id": "ziwei-v2-minggong-p173002-004",
+          "branchIndex": -1,
+          "inputDigest": "63638dcb553b16919de10ad289bdb2a9b83ee94ea3c09ceba44ff08a3dc8e636"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 2017,
+          "month": 1,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 5,
+      "proofs": [
+        {
+          "id": "ziwei-v2-minggong-p142000-004",
+          "branchIndex": 1,
+          "inputDigest": "3cf8a92868b297597dd3014c5489d62a73cf77d7726966888c9b0deb6108a0a4"
+        }
+      ]
+    }
+  ],
+  "missing": []
+}

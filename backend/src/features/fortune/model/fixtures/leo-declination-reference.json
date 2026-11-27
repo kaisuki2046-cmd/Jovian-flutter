@@ -1,0 +1,39 @@
+{
+  "source": {
+    "url": "https://www.astro.nu/wp-content/uploads/The-Progressed-Horoscope-Alan-Leo.pdf#page=56",
+    "page": 56,
+    "pdfSHA256": "1bce70fcdc4fa9aa10c21988cd00554af01261a82ab33e50fc961631e52360a9",
+    "retrieved": "2026-11-18",
+    "note": "Visually checked printed declination table. Unsigned rounded degrees, not modern exact ephemeris values. Progressed Moon shows a range and is omitted from the single-time comparison."
+  },
+  "natalAt": "1860-08-07T05:49:00Z",
+  "progressedAt": "1860-09-22T12:00:00Z",
+  "natalDegrees": {
+    "Moon": 11,
+    "Sun": 16,
+    "Mercury": 10,
+    "Venus": 15,
+    "Mars": 28,
+    "Jupiter": 19,
+    "Saturn": 14,
+    "Uranus": 22,
+    "Neptune": 2
+  },
+  "progressedDegrees": {
+    "Sun": 0,
+    "Mercury": 1,
+    "Venus": 15,
+    "Mars": 25,
+    "Jupiter": 16,
+    "Saturn": 12,
+    "Uranus": 22,
+    "Neptune": 2
+  },
+  "example": {
+    "progressedBody": "Mercury",
+    "natalTarget": "Neptune",
+    "comparison": "absolute",
+    "maximumDifference": 1,
+    "sameHemisphereRequired": false
+  }
+}

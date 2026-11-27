@@ -96,7 +96,7 @@ void main() {
     expect(find.text('未注册的手机号验证后会自动创建账号。'), findsOneWidget);
 
     await _tap(tester, '发送验证码');
-    expect(find.textContaining('virtual-auth-provider/inbox'), findsOneWidget);
+    expect(find.textContaining('模拟认证服务的收件箱'), findsOneWidget);
     expect(service.submitted.keys, ['/account/auth/phone/login/code']);
     expect(service.submitted['/account/auth/phone/login/code'], [
       {'phone': '+8613800138000'},

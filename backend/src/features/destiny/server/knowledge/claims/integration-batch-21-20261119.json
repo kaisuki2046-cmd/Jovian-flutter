@@ -1,0 +1,321 @@
+{
+  "baseline": "twentieth integration batch",
+  "profile": "ziwei-explicit-relative-palaces-v1",
+  "changes": [
+    {
+      "id": "ziwei-v1-c007-p101009-001",
+      "method": "ziwei",
+      "previousStatus": "branch_indexed",
+      "previousReason": "unmapped_condition",
+      "inputs": 1,
+      "conditions": [
+        "太阴与文曲合于夫妻宫"
+      ],
+      "sourceLimitations": [
+        "本条是所引篇章的传统判断。适用范围以原文条件为限。"
+      ],
+      "addedInputDigests": [
+        "09e880f6e4a9515ed45394e56625046d7cfeef3d07f531a8057f37095ed0fbfe"
+      ]
+    },
+    {
+      "id": "ziwei-v1-zhuxing-wenda-p115000-001",
+      "method": "ziwei",
+      "previousStatus": "branch_indexed",
+      "previousReason": "unmapped_condition",
+      "inputs": 7,
+      "conditions": [
+        "身宫或命宫逢天同"
+      ],
+      "sourceLimitations": [
+        "本条是所引篇章的传统判断。适用范围以原文条件为限。"
+      ],
+      "addedInputDigests": [
+        "a3fe7df212629e6a87c626e99980f5d91db0a6c4ba30071bda53a84d57ed342f",
+        "7aeb61c674b1c828ea98245251f9e3621aa6fcb0ffb4ea79fb85f2e052cb0d6e",
+        "ee213ea830a7700796469a3ea0bad603255a9fcc509c9f8cddec2280d6762af8",
+        "28194ff49d6abbe9760842fad27a902419781daf3d30200a455caf78f857d588",
+        "64280f566ba6b2cefbbb5eb250c0484a621f407dff67a7a91c85f10bb37a047c",
+        "f5225f1a321074515dbc93f86f5ec779568d37e9537bb4931b74f942abe97ca6",
+        "740ed369366365279878cbb2afb44245d85aca2e3dacea6132af48478b3025a3"
+      ]
+    },
+    {
+      "id": "ziwei-v2-minggong-p146000-001",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "previousReason": "unmapped_condition",
+      "inputs": 7,
+      "conditions": [
+        "按原书女命取法，本命身宫或命宫见廉贞"
+      ],
+      "sourceLimitations": [
+        "本条是所引篇章的传统判断。适用范围以原文条件为限。"
+      ],
+      "addedInputDigests": [
+        "c689b2cb3806672fb8aed963dfd6462ab21fdc2718af2e297f631332a7c6032a",
+        "901f4392ba6e8e61e7325f9220747516c57d02f9d5fde4c03a96bc4f0c953e9d",
+        "788ebf37a0dfe711ab958a7dce90ec45413ab207835bd09c29700e2dbc36d610",
+        "911708799fcc573a385725a2bf3bd73d43679800463e2be67cebb9a33c04b247",
+        "268f2df5b7687fd24c4df537954efa6cfe2b66b1faa456cdbfa11716820021e7",
+        "b1573703f5fe0529fa030d480d44bbe8275672616826a22d6410d9aa225038cc",
+        "9d1bb277cbb96def9962580c0fdace527d53d7bb78a1dca40a9fc6948d482e64"
+      ]
+    },
+    {
+      "id": "ziwei-v2-minggong-p206002-001",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "previousReason": "unmapped_condition",
+      "inputs": 8,
+      "conditions": [
+        "破军守辰、戌、丑或未位命宫",
+        "生年丙或戊",
+        "见紫微同宫或对宫"
+      ],
+      "sourceLimitations": [
+        "本条是所引篇章的传统判断。适用范围以原文条件为限。"
+      ],
+      "addedInputDigests": [
+        "e6d11cc61df6969ad11e097965146313b1893d4645c67bdcdc907ba9573b6ff0",
+        "0b628ca052109180f5822db722215464b410fd1356397842d31947308eb72222",
+        "615b502adf2684d146fbda3ee1b5d83d2404cd5715db4d1c3c2b432db09e628c",
+        "b02a3e86cc5832828a36236fa33c39f9ec41b654609c6b6546c49074e8eac821",
+        "8d270223d4120c18d42ed2cc73510456d012ba94e40eb128fe1ce800739f5778",
+        "2d2b804edd1edc4638a4f8534634f9acbe89972cfed25067be133b01ab9f3f6a",
+        "2a388ead96914de41edadc38b3d3ba294e6aca4c8ab1720b2094fae2bc1274f4",
+        "fd6ac147a2c9a219978187b6ad61e157b01c8846e9e992a6675525b926d50b0a"
+      ]
+    },
+    {
+      "id": "ziwei-v5-jielan-242-p002-001",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "previousReason": "unmapped_condition",
+      "inputs": 2,
+      "conditions": [
+        "太阳太阴位在财帛前后相夹"
+      ],
+      "sourceLimitations": [
+        "按《捷览》本篇的传统语境与星曜条件使用。",
+        "古籍命理用语保留其传统含义，个体情况不能由这一条目单独推出。"
+      ],
+      "addedInputDigests": [
+        "5c47d418f635b0820e506421ff7b88d58141e8a5a28dbdae1aa86c0449ff911a",
+        "fc3ed718bced1aa70acd9e2ad565c6f36e17c3d06813016489903a934a4abed5"
+      ]
+    },
+    {
+      "id": "ziwei-v3-jielan-122-p001-001",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "previousReason": "unmapped_condition",
+      "inputs": 4,
+      "conditions": [
+        "武曲天相夹命，或日月夹财帛宫"
+      ],
+      "sourceLimitations": [
+        "为本篇传统命理判断，按原文条件和适用范围解读。"
+      ],
+      "addedInputDigests": [
+        "0faf53dcc7ceee67433c4eae4029f42b2c2985739e1884402c826acb4ebfbaa6",
+        "a91a1002e47ceee266da2b83db3111a263e88e6ec6d218edea3761000dfef9e4",
+        "5c47d418f635b0820e506421ff7b88d58141e8a5a28dbdae1aa86c0449ff911a",
+        "fc3ed718bced1aa70acd9e2ad565c6f36e17c3d06813016489903a934a4abed5"
+      ]
+    },
+    {
+      "id": "ziwei-v3-jielan-122-p001-004",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "previousReason": "unmapped_condition",
+      "inputs": 1,
+      "conditions": [
+        "太阴与文曲合于妻宫"
+      ],
+      "sourceLimitations": [
+        "为本篇传统命理判断，按原文条件和适用范围解读。"
+      ],
+      "addedInputDigests": [
+        "09e880f6e4a9515ed45394e56625046d7cfeef3d07f531a8057f37095ed0fbfe"
+      ]
+    },
+    {
+      "id": "ziwei-v1-xingjue-044-p188-001",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "previousReason": "unmapped_condition",
+      "inputs": 2,
+      "conditions": [
+        "本命文昌、文曲构成命宫之夹"
+      ],
+      "sourceLimitations": [
+        "在陷宫或同煞时另按原页分支。"
+      ],
+      "addedInputDigests": [
+        "d2d2f8da479d4fe84d3a713eafc7f52c23c38b39eb9b00c12716a45f90ff4060",
+        "b4dba392e78a7f49217f436b254538440d8105dc32e524673c4ef35380d0ac78"
+      ]
+    }
+  ],
+  "statusOnly": [
+    {
+      "id": "ziwei-v1-guancelu-001-p172-001",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "previousReason": "unmapped_condition",
+      "reason": "historical_case",
+      "inputs": 0,
+      "conditions": [
+        "本命紫微与天府分夹迁移宫"
+      ],
+      "sourceLimitations": [
+        "该段为同梁守申命的原例，夹宫取法须按书中星位。"
+      ],
+      "addedInputDigests": []
+    },
+    {
+      "id": "ziwei-v1-guancelu-001-p175-001",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "previousReason": "unmapped_condition",
+      "reason": "unmapped_condition",
+      "inputs": 0,
+      "conditions": [
+        "本命天魁、天钺分夹身宫，见申命同梁案例"
+      ],
+      "sourceLimitations": [
+        "起语在第58印页末，结语接第59印页开头。"
+      ],
+      "addedInputDigests": []
+    },
+    {
+      "id": "ziwei-v1-xingjue-032-p149-001",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "previousReason": "unmapped_condition",
+      "reason": "different_chart_tradition",
+      "inputs": 0,
+      "conditions": [
+        "本命武曲天相夹命宫且日月夹财帛宫"
+      ],
+      "sourceLimitations": [
+        "王公为古书衡量富厚的表述。"
+      ],
+      "addedInputDigests": []
+    },
+    {
+      "id": "ziwei-v2-xingjue-002-p1055-001",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "previousReason": "unmapped_condition",
+      "reason": "unmapped_condition",
+      "inputs": 0,
+      "conditions": [
+        "擎羊和廉贞夹身宫、命宫或官禄宫",
+        "所夹宫内见天相则为刑囚夹印"
+      ],
+      "sourceLimitations": [
+        "保留原书对夹宫与宫内星曜的两层判断。"
+      ],
+      "addedInputDigests": []
+    },
+    {
+      "id": "ziwei-v3-xingjue-049-p1344-001",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "previousReason": "unmapped_condition",
+      "reason": "unmapped_condition",
+      "inputs": 0,
+      "conditions": [
+        "亥地夫妻宫",
+        "武曲破军空劫天马同守"
+      ],
+      "sourceLimitations": [
+        "众星同守是原句条件。"
+      ],
+      "addedInputDigests": []
+    },
+    {
+      "id": "ziwei-v3-xingjue-049-p1369-001",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "previousReason": "unmapped_condition",
+      "reason": "unmapped_condition",
+      "inputs": 0,
+      "conditions": [
+        "亥地夫妻宫",
+        "陀罗单守",
+        "坐病地"
+      ],
+      "sourceLimitations": [
+        "病乡为十二长生术语。"
+      ],
+      "addedInputDigests": []
+    },
+    {
+      "id": "ziwei-v1-zhuxing-wenda-p182015-002",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "previousReason": "unmapped_condition",
+      "reason": "unmapped_condition",
+      "inputs": 0,
+      "conditions": [
+        "本命田宅宫或兄弟宫见天梁，依原句的两宫并列"
+      ],
+      "sourceLimitations": [
+        "为本篇传统命理判断，按原文条件和适用范围解读。"
+      ],
+      "addedInputDigests": []
+    }
+  ],
+  "retiredImpossibleBranches": [
+    {
+      "id": "ziwei-v1-zhuxing-wenda-p115000-001",
+      "inputDigest": "c5c4af27048ddb05cec1ca3b4ccf8ed8246a692f4af026e07f08f67a81394a19",
+      "bodyPalace": "兄弟",
+      "reason": "body palace outside six possible sites in current default chart"
+    },
+    {
+      "id": "ziwei-v1-zhuxing-wenda-p115000-001",
+      "inputDigest": "454e1d01c74fd4c1b9ebe66ed367cd7ffc07f899991d4dbb1937d55aceae1e45",
+      "bodyPalace": "子女",
+      "reason": "body palace outside six possible sites in current default chart"
+    },
+    {
+      "id": "ziwei-v1-zhuxing-wenda-p115000-001",
+      "inputDigest": "f71f996cd567bd34bca8cc605e12860746335daef7496e734c940cddb78c5887",
+      "bodyPalace": "疾厄",
+      "reason": "body palace outside six possible sites in current default chart"
+    },
+    {
+      "id": "ziwei-v1-zhuxing-wenda-p115000-001",
+      "inputDigest": "39e6fc5265d6561bf408a272feef34cd95a14ee3bc5a140a5dc419d615f09053",
+      "bodyPalace": "仆役",
+      "reason": "body palace outside six possible sites in current default chart"
+    },
+    {
+      "id": "ziwei-v1-zhuxing-wenda-p115000-001",
+      "inputDigest": "cca8546e92822338a9d866c4f938fd8ba8bc23b5c583a422a8f38caf757dcc45",
+      "bodyPalace": "田宅",
+      "reason": "body palace outside six possible sites in current default chart"
+    },
+    {
+      "id": "ziwei-v1-zhuxing-wenda-p115000-001",
+      "inputDigest": "08bb2a89554e15ed53da319877f8ee33c0a6865c13febe88337d16d5dcdd9cdf",
+      "bodyPalace": "父母",
+      "reason": "body palace outside six possible sites in current default chart"
+    }
+  ],
+  "previousQueryableEntriesPreserved": 2750,
+  "previousQueryableMetadataUnchanged": 2748,
+  "newEntries": 6,
+  "promotedEntries": 2,
+  "newAlternativeCount": 32,
+  "sourceRecords": 18846,
+  "sourceHashes": {
+    "bazi": "8074930be871d6249c36813d59dae2534ad5f11eeb06c5d2728978b53364e609",
+    "ziwei": "bfe23ad0b26b19992d6f4fe3c2fb1979175513ceaf283bee6ce671d8358698ad",
+    "western": "b92622c3336d4a56af837123b08d438947a5e6751cd272b4be555921a89cb9fc"
+  }
+}

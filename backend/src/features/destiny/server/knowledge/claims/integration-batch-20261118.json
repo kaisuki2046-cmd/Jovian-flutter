@@ -1,0 +1,527 @@
+{
+  "baseline": "c854830",
+  "changes": [
+    {
+      "id": "yhzp-v3-c087-p005-003",
+      "method": "bazi",
+      "conditions": [
+        "原局月支受冲"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "yhzp-v3-c137-p002-002",
+      "method": "bazi",
+      "conditions": [
+        "原局日、时对冲"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "yhzp-v3-c146-p003-001",
+      "method": "bazi",
+      "conditions": [
+        "原局日时相冲"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-c003-p101001-001",
+      "method": "ziwei",
+      "conditions": [
+        "紫微在本命兄弟宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v1-zhuxing-wenda-p123000-001",
+      "method": "ziwei",
+      "conditions": [
+        "巨门守本命身宫或命宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v3-c020-p146000-001",
+      "method": "ziwei",
+      "conditions": [
+        "火星铃星在旺宫"
+      ],
+      "previousStatus": "branch_indexed",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p242001-002",
+      "method": "ziwei",
+      "conditions": [
+        "本命禄存守命"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p267001-002",
+      "method": "ziwei",
+      "conditions": [
+        "本命火星守命"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p255000-003",
+      "method": "ziwei",
+      "conditions": [
+        "本命擎羊守命"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p263000-002",
+      "method": "ziwei",
+      "conditions": [
+        "本命陀罗守命陷地"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v3-jielan-118-p002-001",
+      "method": "ziwei",
+      "conditions": [
+        "火星居旺宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v1-zhuxing-wenda-p024-003",
+      "method": "ziwei",
+      "conditions": [
+        "天相落子息宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v1-zhuxing-wenda-p130000-006",
+      "method": "ziwei",
+      "conditions": [
+        "七杀在子息宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v1-zhuxing-wenda-p133000-014",
+      "method": "ziwei",
+      "conditions": [
+        "破军居子息宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v1-zhuxing-wenda-p159000-003",
+      "method": "ziwei",
+      "conditions": [
+        "陀罗守本命身宫或命宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v1-guancelu-001-p029-001",
+      "method": "ziwei",
+      "conditions": [
+        "禄存守本命身宫或命宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v1-xingjue-044-p212-001",
+      "method": "ziwei",
+      "conditions": [
+        "本命天魁、天钺夹命"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-136-p002-016",
+      "method": "ziwei",
+      "conditions": [
+        "紫微在本命命宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-139-p002-005",
+      "method": "ziwei",
+      "conditions": [
+        "天机守本命命宫或身宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-142-p002-014",
+      "method": "ziwei",
+      "conditions": [
+        "太阳在本命命宫或身宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-142-p002-021",
+      "method": "ziwei",
+      "conditions": [
+        "太阳在本命父母宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-151-p001-009",
+      "method": "ziwei",
+      "conditions": [
+        "廉贞在本命官禄宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-159-p001-023",
+      "method": "ziwei",
+      "conditions": [
+        "贪狼在本命奴仆宫庙旺"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-162-p001-012",
+      "method": "ziwei",
+      "conditions": [
+        "巨门在本命命宫或身宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-162-p001-013",
+      "method": "ziwei",
+      "conditions": [
+        "巨门在本命兄弟宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-162-p001-015",
+      "method": "ziwei",
+      "conditions": [
+        "巨门在本命子女宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-162-p001-018",
+      "method": "ziwei",
+      "conditions": [
+        "巨门在本命迁移宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-162-p001-019",
+      "method": "ziwei",
+      "conditions": [
+        "巨门在本命奴仆宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-162-p001-020",
+      "method": "ziwei",
+      "conditions": [
+        "巨门在本命官禄宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-162-p001-021",
+      "method": "ziwei",
+      "conditions": [
+        "巨门在本命田宅宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-162-p001-022",
+      "method": "ziwei",
+      "conditions": [
+        "巨门在本命福德宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-162-p001-023",
+      "method": "ziwei",
+      "conditions": [
+        "巨门在本命父母宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-164-p001-005",
+      "method": "ziwei",
+      "conditions": [
+        "天相在本命命宫或身宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-166-p001-006",
+      "method": "ziwei",
+      "conditions": [
+        "天梁在本命父母宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-172-p001-019",
+      "method": "ziwei",
+      "conditions": [
+        "破军在本命命宫或身宫失陷"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-172-p001-020",
+      "method": "ziwei",
+      "conditions": [
+        "破军在本命兄弟宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-172-p001-022",
+      "method": "ziwei",
+      "conditions": [
+        "破军在本命子女宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-172-p001-023",
+      "method": "ziwei",
+      "conditions": [
+        "破军在本命财帛宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-172-p001-024",
+      "method": "ziwei",
+      "conditions": [
+        "破军在本命疾厄宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-172-p001-025",
+      "method": "ziwei",
+      "conditions": [
+        "破军在本命迁移宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-172-p001-026",
+      "method": "ziwei",
+      "conditions": [
+        "破军在本命奴仆宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-172-p001-027",
+      "method": "ziwei",
+      "conditions": [
+        "破军在本命官禄宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-172-p001-028",
+      "method": "ziwei",
+      "conditions": [
+        "破军在本命田宅宫失陷"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-172-p001-029",
+      "method": "ziwei",
+      "conditions": [
+        "破军在本命福德宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-172-p001-030",
+      "method": "ziwei",
+      "conditions": [
+        "破军在本命父母宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-189-p001-006",
+      "method": "ziwei",
+      "conditions": [
+        "禄存在本命迁移宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-203-p002-005",
+      "method": "ziwei",
+      "conditions": [
+        "化忌守本命命宫或身宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v5-jielan-232-p001-039",
+      "method": "ziwei",
+      "conditions": [
+        "禄存在本命田宅宫或财帛宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-149-p001-004",
+      "method": "ziwei",
+      "conditions": [
+        "天同守本命命宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v3-jielan-119-p001-007",
+      "method": "ziwei",
+      "conditions": [
+        "本命贪狼入庙"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v3-jielan-121-p001-014",
+      "method": "ziwei",
+      "conditions": [
+        "羊陀守本命疾厄宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v3-jielan-121-p001-015",
+      "method": "ziwei",
+      "conditions": [
+        "火铃在本命迁移宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v1-zhuxing-wenda-p133000-021",
+      "method": "ziwei",
+      "conditions": [
+        "破军在本命疾厄宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v1-zhuxing-wenda-p133000-022",
+      "method": "ziwei",
+      "conditions": [
+        "破军在本命福德宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v1-zhuxing-wenda-p133000-023",
+      "method": "ziwei",
+      "conditions": [
+        "破军在本命父母宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v1-zhuxing-wenda-p159000-006",
+      "method": "ziwei",
+      "conditions": [
+        "陀罗守本命身宫或命宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-216-p001-006",
+      "method": "ziwei",
+      "conditions": [
+        "陀罗守本命身宫或命宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-216-p001-007",
+      "method": "ziwei",
+      "conditions": [
+        "陀罗守本命身宫或命宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    }
+  ]
+}

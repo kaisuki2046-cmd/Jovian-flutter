@@ -468,7 +468,7 @@ class _AccountPageState extends State<AccountPage> {
             liveRegion: true,
             child: UiText(
               challenge.issued.localInbox
-                  ? '请在本机 virtual-auth-provider/inbox 查找最新 TXT。'
+                  ? '请在本机模拟认证服务的收件箱查找最新验证码。'
                   : '验证码已发送，请查收。',
               style: small,
             ),

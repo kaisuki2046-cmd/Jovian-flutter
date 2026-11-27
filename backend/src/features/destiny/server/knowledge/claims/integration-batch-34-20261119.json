@@ -1,0 +1,586 @@
+{
+  "baseline": "thirty-third integration batch",
+  "profile": "ziwei-explicit-single-seat-and-body-placement-v1",
+  "changes": [
+    {
+      "id": "ziwei-v1-zhuxing-wenda-p168000-001",
+      "method": "ziwei",
+      "previousStatus": "branch_indexed",
+      "status": "indexed",
+      "inputs": [
+        {
+          "digest": "c978b77f318c9b2ed0063b7f2236327e82d62d29b2baa0335b1d62858851c611",
+          "required": [
+            {
+              "kind": "body_palace",
+              "palace": "命宫"
+            },
+            {
+              "kind": "palace_star",
+              "palace": "命宫",
+              "star": "铃星",
+              "scope": "origin"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "b532f3aa301051f0d770be13280fb2a057b19365b111024d180e467308f4e7d8",
+          "required": [
+            {
+              "kind": "body_palace",
+              "palace": "夫妻"
+            },
+            {
+              "kind": "palace_star",
+              "palace": "夫妻",
+              "star": "铃星",
+              "scope": "origin"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "8267d2d7b206327750e5ae7e5366a3410d6048e37fbf067a01e09c5245438e7b",
+          "required": [
+            {
+              "kind": "body_palace",
+              "palace": "财帛"
+            },
+            {
+              "kind": "palace_star",
+              "palace": "财帛",
+              "star": "铃星",
+              "scope": "origin"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "b0f066664df998943e8058eef7f63d711560028ba25ab4abdb0c303450fd038c",
+          "required": [
+            {
+              "kind": "body_palace",
+              "palace": "迁移"
+            },
+            {
+              "kind": "palace_star",
+              "palace": "迁移",
+              "star": "铃星",
+              "scope": "origin"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "f81a0adc011b0b1a388beb2034d49394335d0d54a20a4b64c954e744ce987da3",
+          "required": [
+            {
+              "kind": "body_palace",
+              "palace": "官禄"
+            },
+            {
+              "kind": "palace_star",
+              "palace": "官禄",
+              "star": "铃星",
+              "scope": "origin"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "882702af330c60a410b1ef83c8eb26e2399474dc8a7b2f440ec6efc2aaecc488",
+          "required": [
+            {
+              "kind": "body_palace",
+              "palace": "福德"
+            },
+            {
+              "kind": "palace_star",
+              "palace": "福德",
+              "star": "铃星",
+              "scope": "origin"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "aa59a25024b26fe93009bbdedea0c0cdd7d5707e548efa8d40d5e3fcfdc87263",
+          "required": [
+            {
+              "kind": "palace_star",
+              "palace": "命宫",
+              "star": "铃星",
+              "scope": "origin"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        }
+      ],
+      "branches": []
+    },
+    {
+      "id": "ziwei-v4-jielan-222-p001-001",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "inputs": [
+        {
+          "digest": "c978b77f318c9b2ed0063b7f2236327e82d62d29b2baa0335b1d62858851c611",
+          "required": [
+            {
+              "kind": "body_palace",
+              "palace": "命宫"
+            },
+            {
+              "kind": "palace_star",
+              "palace": "命宫",
+              "star": "铃星",
+              "scope": "origin"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "b532f3aa301051f0d770be13280fb2a057b19365b111024d180e467308f4e7d8",
+          "required": [
+            {
+              "kind": "body_palace",
+              "palace": "夫妻"
+            },
+            {
+              "kind": "palace_star",
+              "palace": "夫妻",
+              "star": "铃星",
+              "scope": "origin"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "8267d2d7b206327750e5ae7e5366a3410d6048e37fbf067a01e09c5245438e7b",
+          "required": [
+            {
+              "kind": "body_palace",
+              "palace": "财帛"
+            },
+            {
+              "kind": "palace_star",
+              "palace": "财帛",
+              "star": "铃星",
+              "scope": "origin"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "b0f066664df998943e8058eef7f63d711560028ba25ab4abdb0c303450fd038c",
+          "required": [
+            {
+              "kind": "body_palace",
+              "palace": "迁移"
+            },
+            {
+              "kind": "palace_star",
+              "palace": "迁移",
+              "star": "铃星",
+              "scope": "origin"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "f81a0adc011b0b1a388beb2034d49394335d0d54a20a4b64c954e744ce987da3",
+          "required": [
+            {
+              "kind": "body_palace",
+              "palace": "官禄"
+            },
+            {
+              "kind": "palace_star",
+              "palace": "官禄",
+              "star": "铃星",
+              "scope": "origin"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "882702af330c60a410b1ef83c8eb26e2399474dc8a7b2f440ec6efc2aaecc488",
+          "required": [
+            {
+              "kind": "body_palace",
+              "palace": "福德"
+            },
+            {
+              "kind": "palace_star",
+              "palace": "福德",
+              "star": "铃星",
+              "scope": "origin"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "aa59a25024b26fe93009bbdedea0c0cdd7d5707e548efa8d40d5e3fcfdc87263",
+          "required": [
+            {
+              "kind": "palace_star",
+              "palace": "命宫",
+              "star": "铃星",
+              "scope": "origin"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        }
+      ],
+      "branches": []
+    },
+    {
+      "id": "ziwei-v2-xingjue-026-p438-001",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "inputs": [
+        {
+          "digest": "6a7db1ee9a30f1dd4920a9e16c4071ee44954f789d5857cc45657c8025ae95bf",
+          "required": [
+            {
+              "kind": "body_palace",
+              "palace": "夫妻"
+            },
+            {
+              "kind": "palace_core_star_count",
+              "palace": "夫妻",
+              "count": 1
+            },
+            {
+              "kind": "palace_star",
+              "palace": "夫妻",
+              "star": "地空",
+              "scope": "origin"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "0ef6e52b85b29649970f670f3319ab76b1cdc75060abea0a1923c943a4f550dc",
+          "required": [
+            {
+              "kind": "body_palace",
+              "palace": "财帛"
+            },
+            {
+              "kind": "palace_core_star_count",
+              "palace": "财帛",
+              "count": 1
+            },
+            {
+              "kind": "palace_star",
+              "palace": "财帛",
+              "star": "地空",
+              "scope": "origin"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "bf0b8a18e6fa33cd2f5a516d9bcb4f72b71698688a7da6ac7926f9f006ccaa94",
+          "required": [
+            {
+              "kind": "body_palace",
+              "palace": "迁移"
+            },
+            {
+              "kind": "palace_core_star_count",
+              "palace": "迁移",
+              "count": 1
+            },
+            {
+              "kind": "palace_star",
+              "palace": "迁移",
+              "star": "地空",
+              "scope": "origin"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "4062943255f44dfa4de99456c8c59b84cb4e676f747b9088268abce92e7e3705",
+          "required": [
+            {
+              "kind": "body_palace",
+              "palace": "官禄"
+            },
+            {
+              "kind": "palace_core_star_count",
+              "palace": "官禄",
+              "count": 1
+            },
+            {
+              "kind": "palace_star",
+              "palace": "官禄",
+              "star": "地空",
+              "scope": "origin"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        },
+        {
+          "digest": "50f4be4ceb0513349cbbdf8bb4941323082cb68a462fe9350f68c824a2e1ffe8",
+          "required": [
+            {
+              "kind": "body_palace",
+              "palace": "福德"
+            },
+            {
+              "kind": "palace_core_star_count",
+              "palace": "福德",
+              "count": 1
+            },
+            {
+              "kind": "palace_star",
+              "palace": "福德",
+              "star": "地空",
+              "scope": "origin"
+            }
+          ],
+          "mustBeAbsent": [],
+          "anyOf": [],
+          "relations": [],
+          "thresholds": []
+        }
+      ],
+      "branches": [],
+      "remainingAlternatives": 1
+    }
+  ],
+  "diagnosticChanges": [
+    {
+      "id": "ziwei-v3-xingjue-049-p1366-001",
+      "previousReason": "unmapped_condition",
+      "reason": "unmapped_condition",
+      "condition": "核空劫、陀罗和七杀合夹",
+      "branches": [],
+      "revisedConditions": false,
+      "revisedEvidence": false
+    }
+  ],
+  "newWholeEntries": 2,
+  "promotedWholeEntries": 1,
+  "newAlternatives": 12,
+  "targetAlternatives": 19,
+  "previousQueryableCompiledUnchanged": 2825,
+  "previousQueryableValidInputsPreserved": 2826,
+  "retiredImpossibleBodyAlternatives": [
+    {
+      "digest": "9d9614127820cf9dafbf379501a671bc7f9adf2b673d5b2e6fd2f9ece0702e0f",
+      "required": [
+        {
+          "kind": "body_palace",
+          "palace": "兄弟"
+        },
+        {
+          "kind": "palace_star",
+          "palace": "兄弟",
+          "star": "铃星",
+          "scope": "origin"
+        }
+      ],
+      "mustBeAbsent": [],
+      "anyOf": [],
+      "relations": [],
+      "thresholds": []
+    },
+    {
+      "digest": "91df02e78b615a7f25ef12496bbda18bca40c9f5ade339d119fc3bafee7b156b",
+      "required": [
+        {
+          "kind": "body_palace",
+          "palace": "子女"
+        },
+        {
+          "kind": "palace_star",
+          "palace": "子女",
+          "star": "铃星",
+          "scope": "origin"
+        }
+      ],
+      "mustBeAbsent": [],
+      "anyOf": [],
+      "relations": [],
+      "thresholds": []
+    },
+    {
+      "digest": "d501f46dea6d96bdd25b499fc7cca6fcc9f9baebdbc3f183a3b27c38bf339eb3",
+      "required": [
+        {
+          "kind": "body_palace",
+          "palace": "疾厄"
+        },
+        {
+          "kind": "palace_star",
+          "palace": "疾厄",
+          "star": "铃星",
+          "scope": "origin"
+        }
+      ],
+      "mustBeAbsent": [],
+      "anyOf": [],
+      "relations": [],
+      "thresholds": []
+    },
+    {
+      "digest": "48d17ab46c36073034cee595ac8e10f0ace755ee0a19fc38eb8b766c4ad1c968",
+      "required": [
+        {
+          "kind": "body_palace",
+          "palace": "仆役"
+        },
+        {
+          "kind": "palace_star",
+          "palace": "仆役",
+          "star": "铃星",
+          "scope": "origin"
+        }
+      ],
+      "mustBeAbsent": [],
+      "anyOf": [],
+      "relations": [],
+      "thresholds": []
+    },
+    {
+      "digest": "e1e1a9b5581d38a4f5bbaf095ce95f8c8c9ba45f5837aa0e29a1b2f20ce3a064",
+      "required": [
+        {
+          "kind": "body_palace",
+          "palace": "田宅"
+        },
+        {
+          "kind": "palace_star",
+          "palace": "田宅",
+          "star": "铃星",
+          "scope": "origin"
+        }
+      ],
+      "mustBeAbsent": [],
+      "anyOf": [],
+      "relations": [],
+      "thresholds": []
+    },
+    {
+      "digest": "1aac6b8e11a77273ef595e1b976718a364a483a1e074dfba3f91fd25efec720f",
+      "required": [
+        {
+          "kind": "body_palace",
+          "palace": "父母"
+        },
+        {
+          "kind": "palace_star",
+          "palace": "父母",
+          "star": "铃星",
+          "scope": "origin"
+        }
+      ],
+      "mustBeAbsent": [],
+      "anyOf": [],
+      "relations": [],
+      "thresholds": []
+    }
+  ],
+  "sourceHashes": {
+    "bazi": "8074930be871d6249c36813d59dae2534ad5f11eeb06c5d2728978b53364e609",
+    "ziwei": "bfe23ad0b26b19992d6f4fe3c2fb1979175513ceaf283bee6ce671d8358698ad",
+    "western": "b92622c3336d4a56af837123b08d438947a5e6751cd272b4be555921a89cb9fc"
+  },
+  "status": "validated",
+  "validation": {
+    "nativeWitnessesComplete": true,
+    "nativeCharts": 4680,
+    "witnesses": 12,
+    "finalWitnessFile": "integration-batch-34-witnesses.json",
+    "targetedTestsPassed": 4,
+    "regressionFiles": 66,
+    "regressionTestsPassed": 368,
+    "typecheckPassed": true,
+    "moduleBoundaryCheckPassed": true
+  },
+  "excludedByChart": [
+    {
+      "id": "ziwei-v2-xingjue-026-p438-001",
+      "digest": "68d7d5f88df2d0fdc7378671f80222ed3bb7fe3eb560d536c3dfb77da345544c",
+      "required": [
+        {
+          "kind": "body_palace",
+          "palace": "命宫"
+        },
+        {
+          "kind": "palace_core_star_count",
+          "palace": "命宫",
+          "count": 1
+        },
+        {
+          "kind": "palace_star",
+          "palace": "命宫",
+          "star": "地空",
+          "scope": "origin"
+        }
+      ],
+      "reason": "earth_void_and_earth_robbery_share_life_body_at_zi_or_wu_hour"
+    }
+  ]
+}

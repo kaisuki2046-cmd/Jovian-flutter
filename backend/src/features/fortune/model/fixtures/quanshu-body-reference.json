@@ -1,0 +1,42 @@
+{
+  "profile": "quanshu-body-life-limits-atomic-v1",
+  "sourceURL": "https://zh.wikisource.org/wiki/紫微斗數全書/卷二#安身命例",
+  "sourceRevision": "Source JSON retains the original fixed revisions. This fixture checks the current digital transcription, not an original printed facsimile.",
+  "referenceType": "Expected grid expanded from the source's month/hour algorithm, not a claimed printed 144-cell table.",
+  "hours": "子丑寅卯辰巳午未申酉戌亥",
+  "bodyGridByMonth": [
+    "寅卯辰巳午未申酉戌亥子丑", "卯辰巳午未申酉戌亥子丑寅", "辰巳午未申酉戌亥子丑寅卯",
+    "巳午未申酉戌亥子丑寅卯辰", "午未申酉戌亥子丑寅卯辰巳", "未申酉戌亥子丑寅卯辰巳午",
+    "申酉戌亥子丑寅卯辰巳午未", "酉戌亥子丑寅卯辰巳午未申", "戌亥子丑寅卯辰巳午未申酉",
+    "亥子丑寅卯辰巳午未申酉戌", "子丑寅卯辰巳午未申酉戌亥", "丑寅卯辰巳午未申酉戌亥子"
+  ],
+  "explicitSourceExamples": [
+    {"month":1,"hour":"子","life":"寅","body":"寅"},
+    {"month":1,"hour":"丑","life":"丑","body":"卯"},
+    {"month":1,"hour":"寅","life":"子","body":"辰"}
+  ],
+  "examples": [
+    {"n":6,"dateStr":"1946-02-15","timeIndex":8,"gender":"女","year":2026,"scope":"decadal","bodyBranch":"戌","lifeBranch":"午","focusBranch":"亥"},
+    {"n":8,"dateStr":"1946-02-15","timeIndex":5,"gender":"女","year":2026,"scope":"decadal","bodyBranch":"未","lifeBranch":"酉","focusBranch":"寅"},
+    {"n":9,"dateStr":"1946-02-15","timeIndex":5,"gender":"女","year":2026,"scope":"decadal","bodyBranch":"未","lifeBranch":"酉","focusBranch":"寅"},
+    {"n":22,"dateStr":"1946-05-15","timeIndex":1,"gender":"女","year":2026,"scope":"decadal","bodyBranch":"午","lifeBranch":"辰","focusBranch":"酉"},
+    {"n":29,"dateStr":"1946-02-15","timeIndex":8,"gender":"女","year":2026,"scope":"decadal","bodyBranch":"戌","lifeBranch":"午","focusBranch":"亥"},
+    {"n":47,"dateStr":"1946-02-15","timeIndex":3,"gender":"女","year":2026,"scope":"yearly","bodyBranch":"巳","lifeBranch":"亥","focusBranch":"午"}
+  ],
+  "encounterExamples": {
+    "tanlangNatal": {"dateStr":"1990-01-15","timeIndex":0,"gender":"女","year":2000},
+    "tanlangAnnual": {"dateStr":"1990-01-15","timeIndex":7,"gender":"女","year":2006},
+    "tanlangWithoutXing": {"dateStr":"1990-01-15","timeIndex":2,"gender":"女","year":2002},
+    "qishaSeparate": {"dateStr":"1990-01-15","timeIndex":1,"gender":"女","year":1998},
+    "qishaShared": {"dateStr":"1990-04-15","timeIndex":0,"gender":"女","year":1998},
+    "qishaLifeTrineBodyOpposed": {"dateStr":"1946-05-15","timeIndex":8,"gender":"女","year":1991},
+    "qishaLifeOpposedBodyTrine": {"dateStr":"1946-02-05","timeIndex":3,"gender":"女","year":2009},
+    "qishaSharedTrineAndOpposed": {"dateStr":"1946-03-13","timeIndex":0,"gender":"女","year":1989},
+    "qishaTwoTrines": {"dateStr":"1946-05-15","timeIndex":8,"gender":"女","year":1993},
+    "qishaRepeat": {"dateStr":"1990-01-15","timeIndex":4,"gender":"女","year":1999},
+    "qishaPlain": {"dateStr":"1990-01-15","timeIndex":0,"gender":"女","year":2020},
+    "qishaFlowOnly": {"dateStr":"1990-01-15","timeIndex":0,"gender":"女","year":2008},
+    "qishaImperialOnly": {"dateStr":"1990-01-15","timeIndex":4,"gender":"女","year":2015},
+    "qishaBoth": {"dateStr":"1990-02-15","timeIndex":0,"gender":"女","year":2013}
+  }
+}

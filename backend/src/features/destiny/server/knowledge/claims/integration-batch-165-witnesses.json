@@ -1,0 +1,142 @@
+[
+  {
+    "date": "1970-01-01T00:00:00.000Z",
+    "latitude": 35.68,
+    "longitude": 139.69,
+    "proofs": [
+      "022:Venus:morning_only"
+    ]
+  },
+  {
+    "date": "1970-02-02T21:03:30.143Z",
+    "latitude": -26.2,
+    "longitude": 28.04,
+    "proofs": [
+      "005:Mercury:first_mover",
+      "020:Mercury:first_mover",
+      "022:Mercury:morning_only"
+    ]
+  },
+  {
+    "date": "1970-06-14T09:17:30.715Z",
+    "latitude": 35.68,
+    "longitude": 139.69,
+    "proofs": [
+      "022:Venus:midheaven_lord_only"
+    ]
+  },
+  {
+    "date": "1970-08-19T03:24:31.001Z",
+    "latitude": 51.5,
+    "longitude": -0.12,
+    "proofs": [
+      "022:Mars:morning_only"
+    ]
+  },
+  {
+    "date": "1971-03-04T09:45:31.859Z",
+    "latitude": 0.01,
+    "longitude": -78.5,
+    "proofs": [
+      "022:Mars:midheaven_lord_only"
+    ]
+  },
+  {
+    "date": "1971-05-09T03:52:32.145Z",
+    "latitude": 35.68,
+    "longitude": 139.69,
+    "proofs": [
+      "021:Mercury:both_lord"
+    ]
+  },
+  {
+    "date": "1972-11-18T01:52:04.576Z",
+    "latitude": 51.5,
+    "longitude": -0.12,
+    "proofs": [
+      "022:Mercury:midheaven_lord_only"
+    ]
+  },
+  {
+    "date": "1973-02-24T17:02:35.005Z",
+    "latitude": 35.68,
+    "longitude": 139.69,
+    "proofs": [
+      "021:Venus:both_lord"
+    ]
+  },
+  {
+    "date": "1973-06-03T08:13:05.434Z",
+    "latitude": 0.01,
+    "longitude": -78.5,
+    "proofs": [
+      "005:Mars:first_mover",
+      "020:Mars:first_mover"
+    ]
+  },
+  {
+    "date": "1974-05-30T23:51:37.007Z",
+    "latitude": 42.98,
+    "longitude": -81.25,
+    "proofs": [
+      "005:Venus:first_mover",
+      "020:Venus:first_mover"
+    ]
+  },
+  {
+    "date": "1975-12-10T21:51:09.438Z",
+    "latitude": -26.2,
+    "longitude": 28.04,
+    "proofs": [
+      "022:Mars:midheaven_placed_only"
+    ]
+  },
+  {
+    "date": "1977-03-15T04:40:11.440Z",
+    "latitude": 35.68,
+    "longitude": 139.69,
+    "proofs": [
+      "022:Venus:midheaven_placed_only"
+    ]
+  },
+  {
+    "date": "1979-02-03T14:53:44.443Z",
+    "latitude": -26.2,
+    "longitude": 28.04,
+    "proofs": [
+      "021:Mars:both_lord"
+    ]
+  },
+  {
+    "date": "1981-06-07T10:24:48.161Z",
+    "latitude": 51.5,
+    "longitude": -0.12,
+    "proofs": [
+      "021:Mars:both_placed"
+    ]
+  },
+  {
+    "date": "1984-03-22T15:13:22.594Z",
+    "latitude": 0.01,
+    "longitude": -78.5,
+    "proofs": [
+      "021:Venus:both_placed"
+    ]
+  },
+  {
+    "date": "1985-11-04T10:16:25.168Z",
+    "latitude": -26.2,
+    "longitude": 28.04,
+    "proofs": [
+      "022:Mercury:midheaven_placed_only"
+    ]
+  },
+  {
+    "date": "2003-10-04T00:53:23.625Z",
+    "latitude": 35.68,
+    "longitude": 139.69,
+    "proofs": [
+      "021:Mercury:both_placed"
+    ]
+  }
+]

@@ -1,0 +1,26 @@
+{
+  "ids": ["001","030","033","056","063","077","090","121"],
+  "conditionGroups": 23,
+  "wholeRecords": 2,
+  "witnesses": [
+    {"profile":{"date":{"year":1924,"month":1,"day":8},"gender":"male"},"timeIndex":1,"proofs":[{"id":"ziwei-v3-jielan-123-p001-033","text":null,"inputDigest":"2ab140bb259f151d698145902f825466a9f4b8f40a80c7f9366f79eb40d799fc"}]},
+    {"profile":{"date":{"year":1924,"month":1,"day":1},"gender":"male"},"timeIndex":8,"proofs":[{"id":"ziwei-v3-jielan-123-p001-001","text":"如丙丁壬癸生人，在辰戌安命，魁钺加夹","inputDigest":"31849eeb80d924b7f04ebf9d970a04f7ee9b3f6fe2daaa977f5b3a1925f39aff"},{"id":"ziwei-v3-jielan-123-p001-090","text":"如丙丁壬癸生人，在辰戌安命，魁钺加夹","inputDigest":"31849eeb80d924b7f04ebf9d970a04f7ee9b3f6fe2daaa977f5b3a1925f39aff"}]},
+    {"profile":{"date":{"year":1924,"month":4,"day":15},"gender":"female"},"timeIndex":2,"proofs":[{"id":"ziwei-v3-jielan-123-p001-033","text":null,"inputDigest":"d66e7657f56fcef90db9fb57521a8dbfbcadc2a0bd554ad62169297005e6ea91"}]},
+    {"profile":{"date":{"year":1925,"month":2,"day":1},"gender":"female"},"timeIndex":3,"proofs":[{"id":"ziwei-v3-jielan-123-p001-077","text":"然有日月反背而多富贵者，要看本宫三合有吉化拱照，不加杀是也。","inputDigest":"f64aa57a7535a817f8a539e6551113c222f2b8c6b02ec3cf45da7832c824fdf3"}]},
+    {"profile":{"date":{"year":1926,"month":11,"day":22},"gender":"male"},"timeIndex":0,"proofs":[{"id":"ziwei-v3-jielan-123-p001-056","text":null,"inputDigest":"6c0e4227a1289d27e21935fcabc1ddd7ac9dbc2b5ba7ba0446b6cee83e9e4c0d"}]},
+    {"profile":{"date":{"year":1927,"month":3,"day":15},"gender":"male"},"timeIndex":11,"proofs":[{"id":"ziwei-v3-jielan-123-p001-033","text":null,"inputDigest":"f9a31224fdae5bbce73aaf3eb2ea856bc248720643c4b12af1c9f60ed1730c46"}]},
+    {"profile":{"date":{"year":1927,"month":7,"day":15},"gender":"male"},"timeIndex":9,"proofs":[{"id":"ziwei-v3-jielan-123-p001-001","text":"如丙丁壬癸生人，在辰戌安命，魁钺加夹","inputDigest":"52df94a56df5f144f3d5e034134801839e0dbdce974f87b8fc40d0ced0236dcb"},{"id":"ziwei-v3-jielan-123-p001-090","text":"如丙丁壬癸生人，在辰戌安命，魁钺加夹","inputDigest":"52df94a56df5f144f3d5e034134801839e0dbdce974f87b8fc40d0ced0236dcb"}]},
+    {"profile":{"date":{"year":1931,"month":2,"day":22},"gender":"male"},"timeIndex":6,"proofs":[{"id":"ziwei-v3-jielan-123-p001-030","text":"如七杀在寅申坐命者，亦为上格","inputDigest":"d62459d76cab0ca6831fcad2002d01431e3b6330ac68b9e64adeb0233249b980"}]},
+    {"profile":{"date":{"year":1924,"month":4,"day":1},"gender":"male"},"timeIndex":1,"proofs":[{"id":"ziwei-v3-jielan-123-p001-030","text":"如七杀在寅申坐命者，亦为上格","inputDigest":"34dad9c162e32b473b123fd36f71060ffcf579a6a44172e55db725b26831945f"}]},
+    {"profile":{"date":{"year":1926,"month":6,"day":1},"gender":"male"},"timeIndex":7,"proofs":[{"id":"ziwei-v3-jielan-123-p001-001","text":"如丙丁壬癸生人，在辰戌安命，魁钺加夹","inputDigest":"28f8e6bb543282764ca10b938e65b220cd478abaea721307c1203e9cfef9b3c8"},{"id":"ziwei-v3-jielan-123-p001-090","text":"如丙丁壬癸生人，在辰戌安命，魁钺加夹","inputDigest":"28f8e6bb543282764ca10b938e65b220cd478abaea721307c1203e9cfef9b3c8"}]},
+    {"profile":{"date":{"year":1930,"month":6,"day":15},"gender":"male"},"timeIndex":11,"proofs":[{"id":"ziwei-v3-jielan-123-p001-063","text":"如命坐阴阳，财官二宫昌曲来会","inputDigest":"ba4e98cf82cc9fc35d9d3e71635b2e006ea591ae61e8588c3b5fe32f4bd7e62c"}]},
+    {"profile":{"date":{"year":1926,"month":5,"day":12},"gender":"male"},"timeIndex":0,"proofs":[{"id":"ziwei-v3-jielan-123-p001-056","text":null,"inputDigest":"667c778e39d0a667b02b180d9f66701c4b63624c0dbabb7efe8d8f2bc640f53e"}]},
+    {"profile":{"date":{"year":1933,"month":10,"day":30},"gender":"male"},"timeIndex":11,"proofs":[{"id":"ziwei-v3-jielan-123-p001-121","text":"如巳亥二宫安命，值此二星坐守，加杀化忌","inputDigest":"29c793a2300115cecd22532f4ff79cac08a626f47a11ee2db09bc41703dd32ec"}]},
+    {"profile":{"date":{"year":1932,"month":4,"day":6},"gender":"male"},"timeIndex":0,"proofs":[{"id":"ziwei-v3-jielan-123-p001-001","text":"如丙丁壬癸生人，在辰戌安命，魁钺加夹","inputDigest":"b9ff5c624deda63701ff92d2a05d4b477debe2bf9bc2c96a8aeafc34f31d3d20"},{"id":"ziwei-v3-jielan-123-p001-090","text":"如丙丁壬癸生人，在辰戌安命，魁钺加夹","inputDigest":"b9ff5c624deda63701ff92d2a05d4b477debe2bf9bc2c96a8aeafc34f31d3d20"}]},
+    {"profile":{"date":{"year":1924,"month":1,"day":15},"gender":"male"},"timeIndex":7,"proofs":[{"id":"ziwei-v3-jielan-123-p001-033","text":null,"inputDigest":"9906109d7a3a199543fa277cb1835240be2d8e7fed88a04f2b439e32957e156c"}]},
+    {"profile":{"date":{"year":1924,"month":1,"day":15},"gender":"male"},"timeIndex":9,"proofs":[{"id":"ziwei-v3-jielan-123-p001-033","text":null,"inputDigest":"44b7b57ff34bd3b0859e0500caf7de6513d1e3a9add2f02e2d8f79cfee53e4d4"}]},
+    {"profile":{"date":{"year":1924,"month":2,"day":8},"gender":"male"},"timeIndex":10,"proofs":[{"id":"ziwei-v3-jielan-123-p001-033","text":null,"inputDigest":"4bbbf1b0245e029acdf277fb7074d27ac237fdebd3588ba9afbf91185b802416"}]},
+    {"profile":{"date":{"year":1924,"month":10,"day":15},"gender":"male"},"timeIndex":3,"proofs":[{"id":"ziwei-v3-jielan-123-p001-063","text":"或命坐昌曲，财官日月来会，更遇魁钺吉星，富贵必矣。","inputDigest":"342b701aac9400216dad129b064679c176eec3191184b2c3294495294b02540e"}]},
+    {"profile":{"date":{"year":1925,"month":9,"day":22},"gender":"male"},"timeIndex":4,"proofs":[{"id":"ziwei-v3-jielan-123-p001-077","text":"然有日月反背而多富贵者，要看本宫三合有吉化拱照，不加杀是也。","inputDigest":"3ef15b9f125020cd563b1ca4de5bf9a0b0dd0ec245bed7821a7fc85a4da503f9"}]}
+  ]
+}

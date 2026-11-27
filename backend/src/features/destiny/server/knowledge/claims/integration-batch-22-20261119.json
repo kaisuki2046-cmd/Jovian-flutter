@@ -1,0 +1,460 @@
+{
+  "baseline": "twenty-first integration batch",
+  "profile": "bazi-explicit-natal-gods-and-pillars-v1",
+  "changes": [
+    {
+      "id": "yhzp-v1-c313-p005-001",
+      "method": "bazi",
+      "previousReason": "unmapped_condition",
+      "status": "branch_indexed",
+      "inputs": [],
+      "branches": [
+        {
+          "text": "露官藏殺方\n爲福",
+          "conditionCompiler": "bazi-visible-hidden-gods-v1",
+          "inputDigests": [
+            "62768b79e97c82b94bc05f9a1fb60eb3640ee4d9bc52ef189a3f700f20d2826d",
+            "cf885afd0532e9307c308ae65eb0ab8bbaf513e6801fd1b712aacbfd66081414",
+            "3c99793a76ce6e75537cbeb8fbc75eb58ccbb3d8f8aca28d1209542e243a1a50",
+            "1e4542565eec5e3b80e3feafdd4ec70d4f02ad0c0deed6e8cdac69d65f6d9657",
+            "ec02e499f5c22b7d820bc59462950392a4be7993351a6b818527b6ccd56de7eb",
+            "3a04d1b080df8078559aea622c97280ae9b9bb1c48a5cfe1d2c45ac17d2102ea",
+            "ff8a5e95cd6b9611ba7b539b4a5c232f900a5d0376fd766db31da1ea6bf8fd58",
+            "44ad09d46ae267d6f1d31438d6c6670e7c3adf1e326ffeedbca0e012cc7a5204",
+            "a8decc3b827a2bec02d8f33a74b80a1a1f4cec00cb3085d1b16267398476807d",
+            "9599c499906386c34a047f285d0ee473706f666c8db624b94d74c2cabeec4b1a",
+            "346ae1af0552787be581108537a17e2b36a663cd8615cc6013f2c02f16b4a8a5",
+            "112c62974ed0b5c6860852954d06fe6ef79b2c70cfd0727140930c92e80d64bb"
+          ]
+        },
+        {
+          "text": "露殺藏官是禍胎",
+          "conditionCompiler": "bazi-visible-hidden-gods-v1",
+          "inputDigests": [
+            "09b8b59661e243f2d067695f08153711d0b659602bc7a4a7e3626e29a481a9e7",
+            "16d43c988037ebce466606dd79e2d912bdf47548455ef3ff84fd5764f7bb03ea",
+            "a19952fd635f6c1d47c94159c883cca58dd208bf92a1c1648a70e0f6a6191e73",
+            "9d0806d389e1161154e30c2882645a78025b349d6ddb89620132d2659c64784e",
+            "6d14e6913a4d49e3a2f4b229df943be22cbbb92fe338de91f4f8507d2858b8f9",
+            "872ed0d4290da9a2a0503c4c0cd74ed217290094793d819ebbd7d7aa51188da2",
+            "6b1541892e679ea1ba649989384dbff521708876c4bc36371006e5afe46c1cdf",
+            "c6449d08bbfeacdd5d4d2af0f17890a8e7013156dcf81c5ebebf886d2f03714b",
+            "7728ff71cf1eb7ca7a67340094609ff18618c03366539b2bc7ee5a37a975380f",
+            "0d8a8e16835e79bfe0cd3429643db2f0590944b4863b5565f748af4233300dfe",
+            "2772300703d16ef1ea34ce76f07919fbf7bcf39cac73fcb73a69f8163086ff6a",
+            "c82f01b4fef22069a4ae195657da7f62dc69322632fec97fac9ff67040645d9d"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "yhzp-v3-c022-p003-002",
+      "method": "bazi",
+      "previousReason": "unmapped_condition",
+      "status": "indexed",
+      "inputs": [
+        {
+          "digest": "5fc6bb7746a94ece14680c724e4c0e8c05155b0ec856c9bf5b3f22eb1bdb7682"
+        },
+        {
+          "digest": "f5345c625e5372006dd8fad12a446a2ff5fa529c0ec9a19b90886ce7fa649919"
+        },
+        {
+          "digest": "0914b22e10be4fe8acb65ecbcfd9cfba90e6b0434445557baf78057c1cc63157"
+        },
+        {
+          "digest": "3945c3d5a24c13f81fee3d5ce75567c080722ae19e7c633cc1f55523916bbe62"
+        },
+        {
+          "digest": "95e7c9d361ecc605e594f5a5c99dcb52bc625f04c0d6e9ac2cd9e37022ca949a"
+        },
+        {
+          "digest": "71ee5af7b483cb1c5d3aa05c24c31e0674e3e8c86a18a531d569b3dd5fb15cd5"
+        },
+        {
+          "digest": "d8829d6feac69b738740ebba21bef9a82c226b9b561e360c7248a1d88d714df5"
+        },
+        {
+          "digest": "323f0fd202fe36ffc280c76d29b69d0191f39629966ec84d7e39f987201d0fbd"
+        },
+        {
+          "digest": "28f0ab1bf11cad59c50b8485e45e2a42775751de42acbd0dfde118c44d2a23b8"
+        },
+        {
+          "digest": "ca3e272dd6f2fac35a6057ec180365977b98b586020d2125c9c6d7bb6dc6f5d3"
+        },
+        {
+          "digest": "512487c157fb8f0b1b040aa68e9f48642e327fdb41538991c7aed9f63ceb7cb2"
+        },
+        {
+          "digest": "6fb4eb38685d7b0b3b0dd7cb883135a5e6121d9f08df02f8711878290d22ed30"
+        },
+        {
+          "digest": "294cb8f6a5925a30852c8f69f620651113aed52ab716169ef9fc3d713b9c5f4c"
+        },
+        {
+          "digest": "46057f8ae673ecace62a1ce6cdbd605c0b6f36d2577cb341fcd3111b0ee20ef0"
+        },
+        {
+          "digest": "ed7fdcaa16082e762fc3a36305faedb77f820486c0ff3dc5d5622314497ce47d"
+        },
+        {
+          "digest": "3da9ee273adc6e9aea6874fa900cf8c4d95106b2a936407b7a61e75043a3385f"
+        },
+        {
+          "digest": "f741174d4ca1d032750c25964cb70bebe09d924bfc9ff981a2586183533e6167"
+        },
+        {
+          "digest": "ae9da8bbbb43721e28478d102efd26c2741d3c78f3efaae92a7d02cb51436448"
+        },
+        {
+          "digest": "3f8fd349defcf24ce0e2a98c4666d1dc6e20a1094fba9cbdcadf5a1ea2b8d122"
+        },
+        {
+          "digest": "834088f60762d58f6f9f1bb21b3dbf7419ea095a08586f859f11f84bfb587f5e"
+        },
+        {
+          "digest": "e2ef4e6f85d0248489b685dc49718c3325a47c57da26469bfe75f92586c4c8d8"
+        },
+        {
+          "digest": "f355a58b46e740dd18957058490d2351a279bec24146bb693c582c6991d91e80"
+        },
+        {
+          "digest": "3668b03b70a186047d4ec44bf4137197d2e9960a9d8edaccd626ad66f08e228d"
+        },
+        {
+          "digest": "2ff53dd12a098e2f2eecc6568c4accc8b2d3bf80e42c70d03f5f0ec4b8677665"
+        },
+        {
+          "digest": "3c5dcaa9c3fe52829a4ef879747f65a0c22f6049d176c0d080729dfab9348277"
+        },
+        {
+          "digest": "3e116966e3aab32a7c11def546fe844a91762c1e55dfc604394ec252dbd93812"
+        },
+        {
+          "digest": "58e3e43020d097d2a56b395e0f290fc901104ab7fb16f2855ba5aaf1fd804bb3"
+        },
+        {
+          "digest": "fa59b42a71870ff58adabf67409aade71023d89489d7304bd862e3908be12f21"
+        },
+        {
+          "digest": "fc75a00109adfb2e50e9d705d642c85562ce21a502664b284187f0c1015fb6db"
+        },
+        {
+          "digest": "7cf11379ed93e675c3f33114cc1d509813bd3393588685cc2088d8775a000989"
+        },
+        {
+          "digest": "d60f72462287ac139e07267d8c629806858988c43c383d1f3e1c472d756e8f90"
+        },
+        {
+          "digest": "10ebc5be594a66a6089ea2583fe8de36c87a99a53ebafa4c3efdc98cde72732b"
+        },
+        {
+          "digest": "b00917acf18e553144294f8e8836b2b35720401ca40af22d5cdb47f9176d5b37"
+        },
+        {
+          "digest": "777de7509577167f058a9149fd431e5e8ca48a81e9b37a2d675a5fe54b72ae7b"
+        },
+        {
+          "digest": "032adfdbed2d8064e2d188038327374d7d4d436604985bb8d83ee2d83042ed8a"
+        },
+        {
+          "digest": "c3ab943a89a26b812cadd3d3ac05d0e21a0d9cc2303bbcc59ded3e13562c40c2"
+        },
+        {
+          "digest": "333f38369a55ae1baef446344dc6b179c277a9cff24ce7c3d24844af0f804cef"
+        },
+        {
+          "digest": "f58e17c721e18f2e788b646e63b9755d3d1baef1ed5ea7d6ced233e0bd7b6a74"
+        },
+        {
+          "digest": "12c318d963b16a4331a673d61d29c8b674783fcf5150c973d973ec4f126bd890"
+        },
+        {
+          "digest": "65bbcfb3e30474a624e3e907e195fe2290329da95e921d210d0aca56049a979e"
+        },
+        {
+          "digest": "443ef4293e6f9e1cb9cba6dc4e59b831f2f18744840be911287fd438a86911a7"
+        },
+        {
+          "digest": "8b2f11df88b8e842dbcf437c78c27421e1a308f62b0a17ab65abb1a3d67a09b2"
+        },
+        {
+          "digest": "c4c180cd1ce156c2788b8d3041144e722a3f6ac8c4789caaf833d83340c06060"
+        },
+        {
+          "digest": "e6684a31650ee41d8716f473332bc2b3d80cb597e6351258cfe235c260725533"
+        },
+        {
+          "digest": "f7fae611b8df2027aaad91e5538642cb15c9dada3c9b7c1ad431e0c545999e86"
+        },
+        {
+          "digest": "decc33c2d47acbc16a8995073cae3fd8042d92ce3c6dc3f6e5be3c2ed1f342b2"
+        }
+      ],
+      "branches": []
+    },
+    {
+      "id": "yhzp-v3-c087-p002-001",
+      "method": "bazi",
+      "previousReason": "unmapped_condition",
+      "status": "indexed",
+      "inputs": [
+        {
+          "digest": "53d6debb12ec71a2fa875f62c6c7664b90d45869534e8dee1c6e2824cf40e673"
+        },
+        {
+          "digest": "c0b11d203c2687a74a50c42f99c5d803392581773b7012afaff366cac6935689"
+        },
+        {
+          "digest": "0cee6c51ecd5ca970996188c93e1f8c5ff9d9a216374f5d8224b386b0ed74704"
+        },
+        {
+          "digest": "adfa3b58329a64af25a1c58898bdc416c11cf562d80e350def0e3aa67b1f68cd"
+        },
+        {
+          "digest": "c273d5ec013470d5c743d7cd4481cd0b34b442c79be16ef1362087e13ae6964e"
+        },
+        {
+          "digest": "255a632c221eb41a37465904be0595afce08ede1d1aa4bc43aee321912df0512"
+        },
+        {
+          "digest": "1857e669894658a238203f3c7b11efe21bfa634505382e7d5d4ae6851ca7e38a"
+        },
+        {
+          "digest": "107777ac8c613dd77f3e59513c873a8ef538427d350a5b93beb96cee4bf844c2"
+        },
+        {
+          "digest": "a319e9c7d4eafec4f43be06fd221e8934e01451aec52d5a68cd85e3f37afc264"
+        },
+        {
+          "digest": "a2ec04a36dbccd0386834e71a7bdc5ad0af54d1a6ff5f6ea455126c054c0085b"
+        },
+        {
+          "digest": "52580422f8c722bccf36af8d2df8e887be874e79683a265b0998b8db257482fc"
+        },
+        {
+          "digest": "ef2e1678f78cbc6dc5ea5ba3ce8201ec9f7ece56cf0527a3144664e78ebffbbf"
+        },
+        {
+          "digest": "41c73bd4c4c347b9e5a16b7d4abd67bd4d74434f372b4279db8bd38a4fe06839"
+        },
+        {
+          "digest": "24a164942be3c8c77396992613fc6bb095d405b65379b523d7c169cb354355cf"
+        },
+        {
+          "digest": "9fd6a1f0e479735bd9db1132836ebf22d5f03f6a0052b12c6dbcde825f52f26c"
+        },
+        {
+          "digest": "d203be928f868a1d724aeaa2895b830832646fe81d48599edddc33199e4b0698"
+        },
+        {
+          "digest": "d3916bfcfade8ff00c4fcc36538e9cf71e1165ee3c222dc3a985859d4185d71f"
+        },
+        {
+          "digest": "f68b34aadb54461a8a901aa9c2cb143ab119177c864a8a1e6b8d2b1a81aef2f4"
+        },
+        {
+          "digest": "8f3550d895398ee6e8aafcc12cec0ac312d339a2b9d49d99d1459bcb2cdc8e49"
+        },
+        {
+          "digest": "ba57dd084d9f1435a79c4b2bdf659bb3fb28564cea21d6636540dea721b915dd"
+        },
+        {
+          "digest": "61010be95941ae982a313c78f0ce049a5af2d541324804ce8388c54a7d24ef12"
+        },
+        {
+          "digest": "e796600c0d73bcbf5abafadaacd392872feba61e63318325207d19034595151c"
+        },
+        {
+          "digest": "664eb0039f869f5599aa3c1deb16bd5daa3a34f127c33f38e146e2aa07cdd713"
+        },
+        {
+          "digest": "abd816f7b8cd348c7feb241feb244eb2030693c203b41b67d904be2b45e769fe"
+        },
+        {
+          "digest": "d6ea34ca2b1f86a337bc605cb9048c56e65ae62b343d612d20c043c0d15dfe1d"
+        },
+        {
+          "digest": "077fda51ff630ce7b3c49911d31816ddba5631c34bf6fa867c7add0c226c6c34"
+        },
+        {
+          "digest": "2a6a13cbb25adbe51871f7ac2c06ed7f44be9589b8e8f4f4c4b555aecbb63d31"
+        },
+        {
+          "digest": "804f206ef2419b849d2573d9ae09452138a5b8a4277c46bd3b022b6a890c6bff"
+        },
+        {
+          "digest": "85f8cf2932d6c12c3c77d7ca083fd9fe8c8748b55765c975ff230e4f5cd152d3"
+        },
+        {
+          "digest": "e27f3ebe029c16de0fa67220e3d9511e6dc94c04d5f497c0440218fe2e69817f"
+        },
+        {
+          "digest": "7681f3035e7e4fefb534ee6ec1044025d03cab5a33ece6033b6a1815c6cf95a8"
+        },
+        {
+          "digest": "3cfbf03ad32955dfc2e53f3ce82efcfb3cae46d92e8ee1591ce4af3c2d0d9fb7"
+        },
+        {
+          "digest": "9956391d885d8d4e65f75d2aa1b76e1ea44e0f78ae8370544378a37646ebd2c0"
+        },
+        {
+          "digest": "65f28f0ecdc1aca86ebf606c3acfc640c6c70e2f5cbd7979ab411c958e718c67"
+        },
+        {
+          "digest": "960d99770c124087233be59b404ae3d221d82a7dc8aa664fe45fcc374f9d460b"
+        },
+        {
+          "digest": "b97447c5fcc50d94ddbddb1806035feb7c8e55e5d5ebb1b833c323065474c8ef"
+        },
+        {
+          "digest": "ab198b6361a0ead528c774ef71054b12118bb8a3cd1d46e97a08c682b3c495f8"
+        },
+        {
+          "digest": "2f39c8fac91720fec8730d36384cbb0ed1c097bfe9c8bc30d235792113ff27a7"
+        },
+        {
+          "digest": "d531b65d4125fdd4d263c65186a433800b0ad19983173a722860606755d8eabd"
+        },
+        {
+          "digest": "3936b7c21a45fc914dfc7a131db87bf1521125c658cfa12a8de6123f93e72043"
+        },
+        {
+          "digest": "a572d9bb508245bc6e4c064b9f785bdcce97f189b86add643570ee76446a1997"
+        },
+        {
+          "digest": "c93d7b54f15355d4c61fe78448b708c4452d254ad2bbc07ff373b2ee49a04e2f"
+        },
+        {
+          "digest": "c25e975f0d9b57b53d0916065f4d6e2052138cf493013216e1f1eeb621b98b1c"
+        },
+        {
+          "digest": "d4b708eca45e2b37f9c0ea583643fcf276d37ce5d34e75b2a984be261e5e16c9"
+        },
+        {
+          "digest": "c1942573382344f4d3424acbc300666aae8e1076496da57e31ca771da419f199"
+        },
+        {
+          "digest": "b79d70d96ae90665e47f07d3fc7f8b3fe13cbf6b77ad9b69037d391b8d3d9c3e"
+        }
+      ],
+      "branches": []
+    },
+    {
+      "id": "yhzp-v3-c105-p002-101",
+      "method": "bazi",
+      "previousReason": "unmapped_condition",
+      "status": "branch_indexed",
+      "inputs": [],
+      "branches": [
+        {
+          "text": "官喜露，露則清高",
+          "conditionCompiler": "bazi-visible-hidden-gods-v1",
+          "inputDigests": [
+            "dc86e983df5a77a63fb21e140a51e7b94bc181596a54587a9453fd83273adc3f",
+            "70c9b60d4afb3eb96021b3a253274995b2514bbf7177d02076876185e97d6e08",
+            "8d1ef8a8f082bc982e72ef6ba238183cc4f93460db7c6fdfdade03e9ea2a8305"
+          ]
+        },
+        {
+          "text": "財要藏，藏則豊厚",
+          "conditionCompiler": "bazi-visible-hidden-gods-v1",
+          "inputDigests": [
+            "baaa4b8654c56112d620636d0b9c71f866c6cb6cc3df662de784ba23ec3b340e",
+            "4ec08a737d3812d38fe33c8e4bfdf8107211d89c623ae449c0feed8bf0be6333",
+            "30acd9f1b7a0fb2ee721580d1800a5923c500e2a1103796a44ec38ce0181c685",
+            "fa3ad925d7d03104a43c5ecf7cb11f1cf62cd72ae8d613db5e8044ccb4cefcf3",
+            "155bd694e242030e9bc2f3a272c3ba9cb80a5425b9ca909f9abb5c46b647ceae",
+            "d4b51548ae32db16f574434918bb1a987bbe151920d7485612f8234706f30e1f",
+            "4775090ed8eaba191da86bf90cab75fc0ea5cb69753fc83dfe5e9f2b74cdccfb",
+            "6e63f3c676d5d73a2075eac5e32b221f4076ee0949fc0230efbcac48fff5f0e5"
+          ]
+        },
+        {
+          "text": "殺藏官露，惡隱善揚。人生遇此，名振鄉邦",
+          "conditionCompiler": "bazi-visible-hidden-gods-v1",
+          "inputDigests": [
+            "62768b79e97c82b94bc05f9a1fb60eb3640ee4d9bc52ef189a3f700f20d2826d",
+            "ec02e499f5c22b7d820bc59462950392a4be7993351a6b818527b6ccd56de7eb",
+            "a8decc3b827a2bec02d8f33a74b80a1a1f4cec00cb3085d1b16267398476807d",
+            "cf885afd0532e9307c308ae65eb0ab8bbaf513e6801fd1b712aacbfd66081414",
+            "3a04d1b080df8078559aea622c97280ae9b9bb1c48a5cfe1d2c45ac17d2102ea",
+            "9599c499906386c34a047f285d0ee473706f666c8db624b94d74c2cabeec4b1a",
+            "3c99793a76ce6e75537cbeb8fbc75eb58ccbb3d8f8aca28d1209542e243a1a50",
+            "ff8a5e95cd6b9611ba7b539b4a5c232f900a5d0376fd766db31da1ea6bf8fd58",
+            "346ae1af0552787be581108537a17e2b36a663cd8615cc6013f2c02f16b4a8a5",
+            "1e4542565eec5e3b80e3feafdd4ec70d4f02ad0c0deed6e8cdac69d65f6d9657",
+            "44ad09d46ae267d6f1d31438d6c6670e7c3adf1e326ffeedbca0e012cc7a5204",
+            "112c62974ed0b5c6860852954d06fe6ef79b2c70cfd0727140930c92e80d64bb"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "yhzp-v5-c094-p003-001",
+      "method": "bazi",
+      "previousReason": "unmapped_condition",
+      "status": "indexed",
+      "inputs": [
+        {
+          "digest": "157c9c9e12e60165c844a9aa41ab7ac15b13c520fd2c73704f031c87ce11c447"
+        },
+        {
+          "digest": "d86a822c67474f0114fb30d584a45b8322afe5ae2909d8549c0e6aead3b40706"
+        }
+      ],
+      "branches": []
+    },
+    {
+      "id": "yhzp-v5-c147-p005-001",
+      "method": "bazi",
+      "previousReason": "unmapped_condition",
+      "status": "indexed",
+      "inputs": [
+        {
+          "digest": "015348e6cdcf2453794f1c914a9527a062ccacfecf181d9fd14afbf53063bac2"
+        },
+        {
+          "digest": "f06cbda721d8fe6f3c6668db7ce682b076ac474d59b95e41ffaece8724c599e5"
+        },
+        {
+          "digest": "cc8cb28adb16abf78863a8394ec2e5e0ae23e0885497e9a684eae7112d6f8255"
+        },
+        {
+          "digest": "68503adf4e5dcf382a01071485253b07fea4cc216529432e8219fcfc8df776d7"
+        },
+        {
+          "digest": "68f3fbef8b5369ef90a1b0baa1ac7efaba40c60927e4d9044218e38a94b95af3"
+        },
+        {
+          "digest": "19b142a320dbcf23ee42b0711f48853bdd3c8d895f4db43e55a5b3989c1f4e7d"
+        }
+      ],
+      "branches": []
+    },
+    {
+      "id": "zpzq-v1-c021-p007-001",
+      "method": "bazi",
+      "previousReason": "unmapped_condition",
+      "status": "indexed",
+      "inputs": [
+        {
+          "digest": "ca79e3b20be6d7acc7375fb4dc6d70ca3dd53f6e280eb381ffa1a06382ddcc9a"
+        }
+      ],
+      "branches": []
+    }
+  ],
+  "previousQueryableCompiledUnchanged": 2756,
+  "sourceRecords": 18846,
+  "wholeEntries": 5,
+  "branchEntries": 2,
+  "wholeAlternatives": 101,
+  "passageAlternatives": 47,
+  "sourceHashes": {
+    "bazi": "8074930be871d6249c36813d59dae2534ad5f11eeb06c5d2728978b53364e609",
+    "ziwei": "bfe23ad0b26b19992d6f4fe3c2fb1979175513ceaf283bee6ce671d8358698ad",
+    "western": "b92622c3336d4a56af837123b08d438947a5e6751cd272b4be555921a89cb9fc"
+  }
+}

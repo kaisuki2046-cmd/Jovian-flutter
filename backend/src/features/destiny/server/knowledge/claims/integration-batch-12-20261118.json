@@ -1,0 +1,253 @@
+{
+  "baseline": "eleventh integration batch",
+  "profile": "ziwei-explicit-source-palace-context-v1",
+  "changes": [
+    {
+      "id": "ziwei-v2-minggong-p188000-001",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "chapter": "一 命宫",
+      "conditions": [
+        "原篇女命遇天相"
+      ],
+      "inputs": 1
+    },
+    {
+      "id": "ziwei-v2-minggong-p203000-001",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "chapter": "一 命宫",
+      "conditions": [
+        "女命逢七杀"
+      ],
+      "inputs": 1
+    },
+    {
+      "id": "ziwei-v4-jielan-141-p002-001",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "chapter": "天机入女命吉凶诀",
+      "conditions": [
+        "按古籍女命体例；天机、太阴同宫"
+      ],
+      "inputs": 1
+    },
+    {
+      "id": "ziwei-v2-minggong-p009-002",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "chapter": "一 命宫",
+      "conditions": [
+        "古书女命，天机入庙"
+      ],
+      "inputs": 1
+    },
+    {
+      "id": "ziwei-v4-jielan-149-p001-003",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "chapter": "天同入命吉凶诀",
+      "conditions": [
+        "古籍女命天同太阴同宫"
+      ],
+      "inputs": 1
+    },
+    {
+      "id": "ziwei-v4-jielan-160-p001-003",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "chapter": "贪狼入命吉凶诀",
+      "conditions": [
+        "古籍女命贪狼落陷"
+      ],
+      "inputs": 1
+    },
+    {
+      "id": "ziwei-v4-jielan-173-p001-003",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "chapter": "破军入命吉凶诀",
+      "conditions": [
+        "古籍女命破军在子或午入庙"
+      ],
+      "inputs": 2
+    },
+    {
+      "id": "ziwei-v1-xingjue-018-p954-001",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "chapter": "論夭折",
+      "conditions": [
+        "命宫廉贞",
+        "身宫七杀",
+        "福德破军"
+      ],
+      "inputs": 12
+    },
+    {
+      "id": "ziwei-v2-xingjue-012-p1097-001",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "chapter": "貪狼",
+      "conditions": [
+        "贪狼守身或命",
+        "落陷"
+      ],
+      "inputs": 13
+    },
+    {
+      "id": "ziwei-v2-fuqigong-p101021-002",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "chapter": "三妻妾",
+      "conditions": [
+        "本命夫妻宫见原句并列的火星或铃星，失陷"
+      ],
+      "inputs": 4
+    }
+  ],
+  "corrected": [
+    {
+      "id": "ziwei-v2-c011-p101002-002",
+      "method": "ziwei",
+      "previousStatus": "indexed",
+      "status": "indexed",
+      "chapter": "十田宅",
+      "conditions": [
+        "本命田宅宫在卯，天机与巨门同宫"
+      ],
+      "inputs": 1,
+      "previousInputs": 12
+    },
+    {
+      "id": "ziwei-v2-c011-p101002-003",
+      "method": "ziwei",
+      "previousStatus": "indexed",
+      "status": "indexed",
+      "chapter": "十田宅",
+      "conditions": [
+        "本命田宅宫在酉，天机与巨门同宫"
+      ],
+      "inputs": 1,
+      "previousInputs": 12
+    },
+    {
+      "id": "ziwei-v2-c011-p101003-003",
+      "method": "ziwei",
+      "previousStatus": "indexed",
+      "status": "indexed",
+      "chapter": "十田宅",
+      "conditions": [
+        "本命田宅宫在寅，太阳与巨门同宫"
+      ],
+      "inputs": 1,
+      "previousInputs": 12
+    },
+    {
+      "id": "ziwei-v2-c011-p101003-004",
+      "method": "ziwei",
+      "previousStatus": "indexed",
+      "status": "indexed",
+      "chapter": "十田宅",
+      "conditions": [
+        "本命田宅宫在申，太阳与巨门同宫"
+      ],
+      "inputs": 1,
+      "previousInputs": 12
+    },
+    {
+      "id": "ziwei-v2-guanlugong-p101011-003",
+      "method": "ziwei",
+      "previousStatus": "indexed",
+      "status": "indexed",
+      "chapter": "九官禄",
+      "conditions": [
+        "本命官禄宫在卯，巨门与天机同宫"
+      ],
+      "inputs": 1,
+      "previousInputs": 12
+    },
+    {
+      "id": "ziwei-v2-guanlugong-p101011-004",
+      "method": "ziwei",
+      "previousStatus": "indexed",
+      "status": "indexed",
+      "chapter": "九官禄",
+      "conditions": [
+        "本命官禄宫在酉，巨门与天机同宫"
+      ],
+      "inputs": 1,
+      "previousInputs": 12
+    }
+  ],
+  "deferred": [
+    {
+      "id": "ziwei-v3-xingjue-051-p1431-001",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "status": "unmapped",
+      "previousReason": "unmapped_condition",
+      "reason": "different_chart_tradition",
+      "chapter": "財帛宮",
+      "conditions": [
+        "财帛武曲",
+        "陷地",
+        "七杀同居"
+      ]
+    }
+  ],
+  "notes": [
+    "原书明确宫位章节或入命吉凶诀为省略的宫位提供语境；明确写出的宫位优先，命限混合标题不套用。",
+    "女命条件保留为性别事实，不作为可忽略的说明。",
+    "后句单一星的失陷与同居条件绑定前句锚点；多星亮度主语不明时不猜。",
+    "指定宫位的同居不可由另一宫位的同居满足。",
+    "两条寅申子女宫机梁同居旧误匹配退回版本及星系复核，完整必要条件不删。",
+    "原条目的限制与适用边界连同命中材料交给模型，不作为工具操作指令。"
+  ],
+  "retired": [
+    {
+      "id": "ziwei-v2-c005-p101007-003",
+      "method": "ziwei",
+      "previousStatus": "indexed",
+      "status": "unmapped",
+      "reason": "different_chart_tradition",
+      "chapter": "四子女",
+      "conditions": [
+        "本命子女宫在寅，天机与天梁同宫"
+      ],
+      "previousInputs": 12
+    },
+    {
+      "id": "ziwei-v2-c005-p101007-004",
+      "method": "ziwei",
+      "previousStatus": "indexed",
+      "status": "unmapped",
+      "reason": "different_chart_tradition",
+      "chapter": "四子女",
+      "conditions": [
+        "本命子女宫在申，天机与天梁同宫"
+      ],
+      "previousInputs": 12
+    }
+  ]
+}

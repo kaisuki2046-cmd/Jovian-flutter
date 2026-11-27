@@ -1,0 +1,414 @@
+{
+  "baseline": "seventh integration batch",
+  "changes": [
+    {
+      "id": "astro-lilly-v3-parents-p001-001",
+      "method": "western",
+      "conditions": [
+        "昼生本命；以太阳与月亮分别为父母指征；二者对第一宫宫主星或上升点形成六合或拱相"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 4
+    },
+    {
+      "id": "astro-lilly-v3-wit-p001-001",
+      "method": "western",
+      "conditions": [
+        "本命水星与月亮形成六合或拱相；Lilly 在同一分支优先取六合"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-parents-p002-001",
+      "method": "western",
+      "conditions": [
+        "夜生本命。土星与月亮分别对第一宫主形成莉莉所说善相"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-concord-p001-001",
+      "method": "western",
+      "conditions": [
+        "按莉莉男性本命分支，在同一张本命盘中，木星或金星与月亮或第七宫主形成六合或拱相。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-family-p001-001",
+      "method": "western",
+      "conditions": [
+        "昼生本命，太阳与木星或金星合相。第二宫、第四宫等位置为原文附加佐证"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-wit-p003-001",
+      "method": "western",
+      "conditions": [
+        "本命水星与月亮构成合相，星座不限。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-wit-p004-001",
+      "method": "western",
+      "conditions": [
+        "本命水星与月亮形成刑相。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-relatives-p002-001",
+      "method": "western",
+      "conditions": [
+        "第一宫主与第三宫主有友善相位。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-relatives-p003-001",
+      "method": "western",
+      "conditions": [
+        "第一宫主与第三宫主形成四分或对分。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-travel-p002-001",
+      "method": "western",
+      "conditions": [
+        "远行检查中，月亮和水星彼此互容或者合相。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 1
+    },
+    {
+      "id": "astro-lilly-v3-family-p003-001",
+      "method": "western",
+      "conditions": [
+        "采用夜盘条件，土星与月亮出现友善相位。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-family-p004-001",
+      "method": "western",
+      "conditions": [
+        "采用夜盘条件，土星与月亮出现刑相或冲相。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-family-p005-001",
+      "method": "western",
+      "conditions": [
+        "第十宫主与第四宫主形成对分。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-family-p006-001",
+      "method": "western",
+      "conditions": [
+        "昼盘太阳与木星或金星合相或友善成相。两者与二宫、四宫有关时，原文增加权重。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-preferment-p028-001",
+      "method": "western",
+      "conditions": [
+        "月亮落第一宫对冲第七宫太阳，月亮刑第四宫木星。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-wealth-level-p008-001",
+      "method": "western",
+      "conditions": [
+        "月土确合相且同处所选一个角宫；只标moon_saturn_conjunction_is_angular不足以跳过星体与宫位。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-wealth-level-p009-001",
+      "method": "western",
+      "conditions": [
+        "月亮与土星成四分或对分。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-ease-p003-001",
+      "method": "western",
+      "conditions": [
+        "金星与火星的善相已经按莉莉口径实际核查为false；缺少相位数据不等于无善相。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-ease-p004-001",
+      "method": "western",
+      "conditions": [
+        "土星和火星分占第一、七宫，且实际对分；两种宫位分配均可。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-mines-p005-001",
+      "method": "western",
+      "conditions": [
+        "土星居土象座，善相太阳、火星或水星之一。或土星自身在第四宫；或同一颗被土星善相的所列行星实际在第四宫。第二支不可用善相太阳再另拼一颗无相位的四宫星满足those Planets。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-preferment-p065-001",
+      "method": "western",
+      "conditions": [
+        "昼盘木星在第十宫，土星或火星刑冲木星。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-preferment-p069-001",
+      "method": "western",
+      "conditions": [
+        "上升主拱或六合太阳；或晨出且最邻太阳；或与第十宫主合相。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 1
+    },
+    {
+      "id": "astro-lilly-v3-marriage-p012-001",
+      "method": "western",
+      "conditions": [
+        "月亮天蝎，与狮子土星成刑相。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-spouse-origin-p005-001",
+      "method": "western",
+      "conditions": [
+        "原版p.592为太阳与水星符号，非现代转录的Sun and Moon。两颗在七宫合相，或两颗均照见第七宫；不是日月组合。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 1
+    },
+    {
+      "id": "astro-lilly-v3-spouse-description-p030-001",
+      "method": "western",
+      "conditions": [
+        "第四宫金星与宝瓶月亮成刑冲之一。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-spouse-description-p034-001",
+      "method": "western",
+      "conditions": [
+        "初版列金星in conjunction with土、木、水，本条保留三颗均与同一金星合相的明确子集；逗号是否可作逐一列举另须平行文本，不由一个星型标签代替实际配置。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-spouse-description-p035-001",
+      "method": "western",
+      "conditions": [
+        "火星与金星在原句with的同伴配置，本条用合相的明确子集保存。不是任意混合性质即可。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-relatives-p009-001",
+      "method": "western",
+      "conditions": [
+        "依莉莉相位口径，上升主与土星成四分相或对分相。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-relatives-p010-001",
+      "method": "western",
+      "conditions": [
+        "依莉莉相位口径，上升主与火星成四分相或对分相。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-relatives-p018-001",
+      "method": "western",
+      "conditions": [
+        "本命水星与火星成莉莉所取的对分相。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-family-p029-001",
+      "method": "western",
+      "conditions": [
+        "夜盘土星与月亮两颗均须受到木星／金星的合相或善相支持；对每颗逐项核对，同一吉星或不同吉星均可，原句没有要求两颗必须只见同一颗吉星。二宫、四宫或该处主宰是另列加强。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-parents-p005-001",
+      "method": "western",
+      "conditions": [
+        "夜盘中土星及月亮各对第一宫主有四分或对分相。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-parents-p006-001",
+      "method": "western",
+      "conditions": [
+        "月亮或金星六合／拱上升主；太阳、土星分别对同一上升主的六合和拱均已实查为false。不能将缺失事实当作没有父亲见证。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-children-p034-001",
+      "method": "western",
+      "conditions": [
+        "土星位于第五宫，太阳与木星成莉莉所取的四分相。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-wit-p031-001",
+      "method": "western",
+      "conditions": [
+        "水星与火星成刑相或冲相。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-wit-p033-001",
+      "method": "western",
+      "conditions": [
+        "水月处所均不良，或互成刑／冲，或明确全无相位；各组按且／或分别判断，缺失相位事实不当作无相。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 2
+    },
+    {
+      "id": "astro-lilly-v3-parents-p010-001",
+      "method": "western",
+      "conditions": [
+        "昼盘以太阳和月亮为本段父母指征。两颗各自刑或冲同一第一宫主，不能把日月彼此刑冲替代对上升主的关系。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-parents-p011-001",
+      "method": "western",
+      "conditions": [
+        "按前句的相反比较读取：太阳或土星六合／拱上升主，月亮和金星对该上升主的六合／拱均实查为false。此条是and so judge的明示对称读法。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-spouse-description-p058-001",
+      "method": "western",
+      "conditions": [
+        "金星与土星、火星三颗均在第六宫，金星各与同一土、火合相。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-spouse-description-p063-001",
+      "method": "western",
+      "conditions": [
+        "金星与月亮实际刑相或对分，两个分支为或。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    }
+  ],
+  "extended": [
+    {
+      "id": "astro-lilly-v3-travel-p001-001",
+      "status": "indexed",
+      "previousRemaining": 1,
+      "remainingAlternatives": 0
+    }
+  ],
+  "calculationProfile": "lilly-1647-two-orb-tables-v1"
+}

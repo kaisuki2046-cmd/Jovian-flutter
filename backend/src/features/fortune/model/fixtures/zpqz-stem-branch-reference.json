@@ -1,0 +1,309 @@
+{
+  "source": "https://www.ncc.com.tw/fate/paleo/bg/bg_034.htm",
+  "sourceRootPillars": [
+    "庚寅",
+    "庚午",
+    "丙子",
+    "丙申"
+  ],
+  "sourceGeneratingPillars": [
+    "庚辰",
+    "辛丑",
+    "丙寅",
+    "丁卯"
+  ],
+  "jiaLuckExamples": {
+    "concealedOfficer": { "date": [1980, 1, 2], "hour": 18, "gender": 0, "year": 2033, "luck": "壬午", "natal": ["己未", "丙子", "甲戌", "癸酉"] },
+    "onlyHiddenJi": { "date": [1980, 2, 11], "hour": 18, "gender": 0, "year": 2054, "luck": "庚午", "natal": ["庚申", "戊寅", "甲寅", "癸酉"] },
+    "officerAndOutput": { "date": [1981, 11, 12], "hour": 4, "gender": 0, "year": 2032, "luck": "甲辰", "natal": ["辛酉", "己亥", "甲午", "丙寅"] },
+    "wuChen": { "date": [1980, 1, 2], "hour": 18, "gender": 1, "year": 2060, "luck": "戊辰", "natal": ["己未", "丙子", "甲戌", "癸酉"] },
+    "jiWei": { "date": [1982, 9, 8], "hour": 18, "gender": 1, "year": 2084, "luck": "己未", "natal": ["壬戌", "己酉", "甲午", "癸酉"] }
+  },
+  "calendarExamples": {
+    "74": {
+      "date": [
+        1984,
+        3,
+        5
+      ],
+      "hour": 22,
+      "gender": 0,
+      "year": 2045,
+      "luck": "庚申",
+      "natal": [
+        "甲子",
+        "丁卯",
+        "戊戌",
+        "癸亥"
+      ]
+    },
+    "75": {
+      "date": [
+        1984,
+        3,
+        5
+      ],
+      "hour": 22,
+      "gender": 0,
+      "year": 2035,
+      "luck": "辛酉",
+      "natal": [
+        "甲子",
+        "丁卯",
+        "戊戌",
+        "癸亥"
+      ]
+    },
+    "76": {
+      "date": [
+        1980,
+        9,
+        11
+      ],
+      "hour": 0,
+      "gender": 0,
+      "year": 2002,
+      "luck": "壬午",
+      "natal": [
+        "庚申",
+        "乙酉",
+        "丁亥",
+        "庚子"
+      ]
+    },
+    "77": {
+      "date": [
+        1980,
+        9,
+        11
+      ],
+      "hour": 0,
+      "gender": 0,
+      "year": 2012,
+      "luck": "辛巳",
+      "natal": [
+        "庚申",
+        "乙酉",
+        "丁亥",
+        "庚子"
+      ]
+    },
+    "78": {
+      "date": [
+        1988,
+        9,
+        9
+      ],
+      "hour": 0,
+      "gender": 0,
+      "year": 2070,
+      "luck": "壬子",
+      "natal": [
+        "戊辰",
+        "辛酉",
+        "丁卯",
+        "庚子"
+      ]
+    },
+    "88": {
+      "date": [
+        1981,
+        4,
+        9
+      ],
+      "hour": 8,
+      "gender": 0,
+      "year": 2041,
+      "luck": "戊戌",
+      "natal": [
+        "辛酉",
+        "壬辰",
+        "丁巳",
+        "甲辰"
+      ]
+    },
+    "89": {
+      "date": [
+        1981,
+        11,
+        10
+      ],
+      "hour": 0,
+      "gender": 0,
+      "year": 2022,
+      "luck": "癸卯",
+      "natal": [
+        "辛酉",
+        "己亥",
+        "壬辰",
+        "庚子"
+      ]
+    },
+    "90": {
+      "date": [
+        1970,
+        1,
+        9
+      ],
+      "hour": 10,
+      "gender": 0,
+      "year": 1998,
+      "luck": "庚辰",
+      "natal": [
+        "己酉",
+        "丁丑",
+        "己丑",
+        "己巳"
+      ]
+    },
+    "91": {
+      "date": [
+        1981,
+        11,
+        12
+      ],
+      "hour": 0,
+      "gender": 0,
+      "year": 2051,
+      "luck": "丙午",
+      "natal": [
+        "辛酉",
+        "己亥",
+        "甲午",
+        "甲子"
+      ]
+    },
+    "92": {
+      "date": [
+        1980,
+        1,
+        2
+      ],
+      "hour": 0,
+      "gender": 0,
+      "year": 1992,
+      "luck": "戊寅",
+      "natal": [
+        "己未",
+        "丙子",
+        "甲戌",
+        "甲子"
+      ]
+    },
+    "93": {
+      "date": [
+        1980,
+        1,
+        2
+      ],
+      "hour": 0,
+      "gender": 0,
+      "year": 1982,
+      "luck": "丁丑",
+      "natal": [
+        "己未",
+        "丙子",
+        "甲戌",
+        "甲子"
+      ]
+    },
+    "94": {
+      "date": [
+        1981,
+        3,
+        17
+      ],
+      "hour": 0,
+      "gender": 0,
+      "year": 2048,
+      "luck": "戊戌",
+      "natal": [
+        "辛酉",
+        "辛卯",
+        "甲午",
+        "甲子"
+      ]
+    },
+    "95": {
+      "date": [
+        1980,
+        3,
+        22
+      ],
+      "hour": 0,
+      "gender": 0,
+      "year": 1986,
+      "luck": "戊寅",
+      "natal": [
+        "庚申",
+        "己卯",
+        "甲午",
+        "甲子"
+      ]
+    }
+  },
+  "chenGuardExamples": [
+    {"date": [1971, 4, 12], "hour": 8, "gender": 0, "year": 2029, "luck": "戊戌", "natal": ["辛亥", "壬辰", "丁卯", "甲辰"], "timing": [7, true, true]},
+    {"date": [1972, 4, 16], "hour": 8, "gender": 0, "year": 2028, "luck": "戊戌", "natal": ["壬子", "甲辰", "丁丑", "甲辰"], "timing": [12, false, true]},
+    {"date": [1971, 4, 22], "hour": 8, "gender": 0, "year": 2028, "luck": "戊戌", "natal": ["辛亥", "壬辰", "丁丑", "甲辰"], "timing": [17, false, false]},
+    {"date": [1972, 4, 6], "hour": 16, "gender": 0, "year": 2024, "luck": "戊戌", "natal": ["壬子", "甲辰", "丁卯", "戊申"], "timing": [2, true, true], "priorWu": "hour"},
+    {"date": [1970, 4, 7], "hour": 4, "gender": 0, "year": 1982, "luck": "戊寅", "natal": ["庚戌", "庚辰", "丁巳", "壬寅"]},
+    {"date": [1970, 4, 7], "hour": 8, "gender": 0, "year": 1982, "luck": "戊寅", "natal": ["庚戌", "庚辰", "丁巳", "甲辰"]},
+    {"date": [1971, 4, 12], "hour": 8, "gender": 0, "year": 2011, "luck": "丙申", "natal": ["辛亥", "壬辰", "丁卯", "甲辰"], "hiddenWuOnly": true},
+    {"date": [1971, 4, 12], "hour": 8, "gender": 1, "year": 1978, "luck": "辛卯", "natal": ["辛亥", "壬辰", "丁卯", "甲辰"], "annualWuOnly": true}
+  ],
+  "stemBranchExamples": [
+    {"date": [1970, 1, 9], "hour": 10, "gender": 1, "year": 2033, "luck": "庚午", "natal": ["己酉", "丁丑", "己丑", "己巳"], "source": "rootless"},
+    {"date": [1970, 9, 21], "hour": 14, "gender": 0, "year": 1977, "luck": "甲申", "natal": ["庚戌", "乙酉", "甲辰", "辛未"], "source": "officer-root"},
+    {"date": [1972, 11, 12], "hour": 16, "gender": 0, "year": 2046, "luck": "癸卯", "natal": ["壬子", "辛亥", "丁未", "戊申"], "source": "hurt-combination"},
+    {"date": [1970, 9, 21], "hour": 10, "gender": 0, "year": 1977, "luck": "甲申", "natal": ["庚戌", "乙酉", "甲辰", "己巳"]},
+    {"date": [1970, 1, 14], "hour": 14, "gender": 0, "year": 2039, "luck": "甲申", "natal": ["己酉", "丁丑", "甲午", "辛未"]},
+    {"date": [1970, 11, 13], "hour": 4, "gender": 0, "year": 2004, "luck": "癸未", "natal": ["庚戌", "丁亥", "丁酉", "壬寅"]},
+    {"date": [1980, 1, 1], "hour": 0, "gender": 0, "year": 1982, "luck": "丁丑", "natal": ["己未", "丙子", "癸酉", "壬子"]}
+  ],
+  "fireExamples": [
+    {"date": [1970, 1, 14], "hour": 14, "gender": 0, "year": 1977, "luck": "戊寅", "natal": ["己酉", "丁丑", "甲午", "辛未"], "matches": [94], "otherFireMember": "戌"},
+    {"date": [1973, 9, 15], "hour": 12, "gender": 0, "year": 1983, "luck": "壬戌", "natal": ["癸丑", "辛酉", "甲寅", "庚午"], "matches": [94]},
+    {"date": [1970, 3, 15], "hour": 16, "gender": 0, "year": 1975, "luck": "戊寅", "natal": ["庚戌", "己卯", "甲午", "壬申"], "matches": [95]},
+    {"date": [1970, 3, 15], "hour": 16, "gender": 0, "year": 2013, "luck": "甲戌", "natal": ["庚戌", "己卯", "甲午", "壬申"], "matches": [95], "otherFireMember": "寅"},
+    {"date": [1971, 8, 17], "hour": 12, "gender": 0, "year": 1991, "luck": "戊戌", "natal": ["辛亥", "丙申", "甲戌", "庚午"], "matches": [], "gengSameColumnOnly": true},
+    {"date": [1970, 8, 12], "hour": 12, "gender": 0, "year": 2024, "luck": "戊寅", "natal": ["庚戌", "甲申", "甲子", "庚午"], "matches": [95], "gengInBothLayouts": true},
+    {"date": [1970, 1, 14], "hour": 18, "gender": 0, "year": 1978, "luck": "戊寅", "natal": ["己酉", "丁丑", "甲午", "癸酉"], "matches": [], "concealedXin": [["day", "hour"]]},
+    {"date": [1970, 1, 14], "hour": 12, "gender": 0, "year": 1979, "luck": "戊寅", "natal": ["己酉", "丁丑", "甲午", "庚午"], "matches": []},
+    {"date": [1970, 1, 24], "hour": 14, "gender": 0, "year": 1978, "luck": "戊寅", "natal": ["己酉", "丁丑", "甲辰", "辛未"], "matches": [], "annualWuOnly": true}
+  ],
+  "returnClashCalendar": {
+    "date": [
+      1981,
+      11,
+      10
+    ],
+    "hour": 0,
+    "gender": 0,
+    "year": 2022,
+    "luck": "癸卯",
+    "natal": [
+      "辛酉",
+      "己亥",
+      "壬辰",
+      "庚子"
+    ]
+  },
+  "weiCalendar": {
+    "date": [
+      1981,
+      11,
+      10
+    ],
+    "hour": 0,
+    "gender": 0,
+    "year": 2062,
+    "luck": "丁未",
+    "natal": [
+      "辛酉",
+      "己亥",
+      "壬辰",
+      "庚子"
+    ]
+  }
+}

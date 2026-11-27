@@ -1,0 +1,323 @@
+{
+  "witnesses": [
+    {
+      "date": "1900-01-03T00:00:00.000Z",
+      "latitude": -49,
+      "longitude": 151.2,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p059-001",
+          "inputDigest": "f7960ab165997226cd24747825e40d07ef03db4d5c81aad738f4e7bfe8ab7650"
+        },
+        {
+          "id": "astro-lilly-v3-family-p059-001",
+          "inputDigest": "5470d52a8004813ea4bd79c7c3afd09ad641ab59dd2e7405ceaa56112b007691"
+        },
+        {
+          "id": "astro-lilly-v3-family-p059-001",
+          "inputDigest": "9edb403af66fac70e541281d9e6ddd7820727351b662d087b0c5ea8ccc3a9269"
+        },
+        {
+          "id": "astro-lilly-v3-family-p059-001",
+          "inputDigest": "8304a9291abccca0dbabee6e5d6f411cb18c61746a3c9248018f4f8232e84372"
+        }
+      ]
+    },
+    {
+      "date": "1900-03-12T16:59:06.214Z",
+      "latitude": 12.5,
+      "longitude": 15.1,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p045-001",
+          "inputDigest": "32b69ec29553ab09f872a9f8fd6ad543ccb1e798177efc9754d206d12317efb5"
+        },
+        {
+          "id": "astro-lilly-v3-family-p060-001",
+          "inputDigest": "63d3f87b2d87de00125e3f356b9ded20d250dc7aaca65576b88046c7fb941df7"
+        }
+      ]
+    },
+    {
+      "date": "1900-04-16T01:28:39.321Z",
+      "latitude": 53.3,
+      "longitude": 25,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p061-001",
+          "inputDigest": "58e87f505ef79ac2cc300fb60190bbe186ce95ea5c1f850c30245ffb3495adf7"
+        }
+      ]
+    },
+    {
+      "date": "1900-06-23T18:27:45.535Z",
+      "latitude": 28.6,
+      "longitude": 77.2,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p045-001",
+          "inputDigest": "02c1ee7f4d451559c11301e2bbcb68fdd2672b488f948980161350358234f60a"
+        },
+        {
+          "id": "astro-lilly-v3-family-p061-001",
+          "inputDigest": "14a09b2bd9de2d3d01eb39356ce9f89b422f03d114a561a1da32aaf11bd6634b"
+        }
+      ]
+    },
+    {
+      "date": "1900-07-28T02:57:18.642Z",
+      "latitude": 60.5,
+      "longitude": -0.13,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p060-001",
+          "inputDigest": "b58f4161d86830de480b7ada2802ccc6af65fcb09044b9c85996e5fc8c13484a"
+        }
+      ]
+    },
+    {
+      "date": "1900-08-31T11:26:51.749Z",
+      "latitude": 24.8,
+      "longitude": 113.2,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p061-001",
+          "inputDigest": "5ee154ed7d52255e1cb1547a4e6a2807a02f9375e1cbf346ed84abd39d18cf6a"
+        }
+      ]
+    },
+    {
+      "date": "1900-10-04T19:56:24.856Z",
+      "latitude": -48.5,
+      "longitude": -71.2,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p060-001",
+          "inputDigest": "5d9a298bb0ff918be000f2298b2902f73f20ff9a53f67501d992d605b16f4af2"
+        }
+      ]
+    },
+    {
+      "date": "1900-11-08T04:25:57.963Z",
+      "latitude": -49,
+      "longitude": 151.2,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p061-001",
+          "inputDigest": "066238da01a80062930bd5b614e92ab6e9326ecff5a502fc1741a8de088ae5e6"
+        }
+      ]
+    },
+    {
+      "date": "1900-12-12T12:55:31.070Z",
+      "latitude": 40,
+      "longitude": -74,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p060-001",
+          "inputDigest": "6b383e8a76c9a9506484ede7be4297da97ce255b0ae32252c2dff30f7c43829a"
+        },
+        {
+          "id": "astro-lilly-v3-family-p061-001",
+          "inputDigest": "a05f9b1311845367c249388ec38df6f21614086a7c63c6670edb849b4d495216"
+        }
+      ]
+    },
+    {
+      "date": "1901-01-15T21:25:04.177Z",
+      "latitude": 12.5,
+      "longitude": 15.1,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p062-001",
+          "inputDigest": "e4fb47fe6a5b053576e64e8de2469a3de97a69519a4759363fb480741476c3cf"
+        }
+      ]
+    },
+    {
+      "date": "1901-02-19T05:54:37.284Z",
+      "latitude": 53.3,
+      "longitude": 25,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p051-001",
+          "inputDigest": "18140110cf95020ce435415b407259f7d5db756b6c47174bc0d483b9a25cebb4"
+        },
+        {
+          "id": "astro-lilly-v3-family-p051-001",
+          "inputDigest": "bd9d21117b574f2eb839754d4e5597e5137385e0199877db0d5b9eab8d2ec1f8"
+        }
+      ]
+    },
+    {
+      "date": "1901-06-02T07:23:16.605Z",
+      "latitude": 60.5,
+      "longitude": -0.13,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p060-001",
+          "inputDigest": "5710f4af3e2d2a216ed346e112b01f285d3b3a089292d1d521a3dd98131b2f44"
+        }
+      ]
+    },
+    {
+      "date": "1901-12-25T10:20:35.247Z",
+      "latitude": 53.3,
+      "longitude": 25,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p061-001",
+          "inputDigest": "99ded65aebab8ab1910089b70ee3d0a41ffab29bfbe55da9b26b3f2ec4f88019"
+        }
+      ]
+    },
+    {
+      "date": "1902-01-28T18:50:08.354Z",
+      "latitude": -23,
+      "longitude": 149.16,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p060-001",
+          "inputDigest": "79564e40d4ac016ecd5a7c315aefe993041835824a9fccfc88c2b78e13e5345d"
+        }
+      ]
+    },
+    {
+      "date": "1902-04-07T11:49:14.568Z",
+      "latitude": 60.5,
+      "longitude": -0.13,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p043-001",
+          "inputDigest": "9b3c9b53a1d770fc8b082b8753fc06122876a44f4e7dca701ae8b7150347babc"
+        }
+      ]
+    },
+    {
+      "date": "1902-09-26T06:17:00.103Z",
+      "latitude": 12.5,
+      "longitude": 15.1,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p055-001",
+          "inputDigest": "76b0f3246e9f16698071306e29ba72ad935cee96f0df235ae9db43d9f7ec85eb"
+        },
+        {
+          "id": "astro-lilly-v3-family-p055-001",
+          "inputDigest": "96d9900dab96205de9711fc6aec8165cfd4086486f80f8a9be12f4a944b01512"
+        }
+      ]
+    },
+    {
+      "date": "1902-12-03T23:16:06.317Z",
+      "latitude": -23,
+      "longitude": 149.16,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p064-001",
+          "inputDigest": "9dc35843efd7b86288be6c274093ca9144a9e74c65a688062568941479036cd9"
+        }
+      ]
+    },
+    {
+      "date": "1905-09-29T14:02:39.527Z",
+      "latitude": 24.8,
+      "longitude": 113.2,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p043-001",
+          "inputDigest": "2b936d964774897ce6f9c5bb47fead6586df1181cd5e9b2bad087098d69953ed"
+        }
+      ]
+    },
+    {
+      "date": "1907-02-26T21:25:56.132Z",
+      "latitude": -23,
+      "longitude": 149.16,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p044-001",
+          "inputDigest": "74199712d061bf1b3e15292fdb60a83dd7bba25acbe6b200c37754334846def5"
+        },
+        {
+          "id": "astro-lilly-v3-family-p044-001",
+          "inputDigest": "fe31266f2753b8776353a38a83eda0994d756d9971520e8f9a9e120413eff072"
+        }
+      ]
+    },
+    {
+      "date": "1908-07-26T04:49:12.737Z",
+      "latitude": 40,
+      "longitude": -74,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p050-001",
+          "inputDigest": "c3a51f20f3c64a93badc4704fe5cad2bcbe1d8c4240e00f711f310ea6c12b91f"
+        },
+        {
+          "id": "astro-lilly-v3-family-p050-001",
+          "inputDigest": "200b8ced6ead7eb0844ad3211fd9ee7f4706476690ae2e191fb1d85bd9e7bed5"
+        }
+      ]
+    },
+    {
+      "date": "1909-03-23T16:16:04.486Z",
+      "latitude": -48.5,
+      "longitude": -71.2,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p052-001",
+          "inputDigest": "76d961b8ac12a90cc8659f7208debe338e0a3f1d5ff73c87034219a2eadcd3b9"
+        }
+      ]
+    },
+    {
+      "date": "1922-12-16T08:10:38.108Z",
+      "latitude": 40,
+      "longitude": -74,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p052-001",
+          "inputDigest": "76f12a81e776a2a9750f666ca4e01f0482fd779c7164aa591e71f11e855498af"
+        }
+      ]
+    },
+    {
+      "date": "1936-04-24T14:06:59.302Z",
+      "latitude": -48.5,
+      "longitude": -71.2,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p052-001",
+          "inputDigest": "6f42bb650244ed378f8ed261a293edd6e313f8b94b5e7c226fc9f9bb9976c9aa"
+        },
+        {
+          "id": "astro-lilly-v3-family-p052-001",
+          "inputDigest": "c8ed9edabc4dada48b5f18a61f4df7c8115fdb45fd217db835a525488923535d"
+        }
+      ]
+    },
+    {
+      "date": "1996-03-23T23:51:28.461Z",
+      "latitude": 60.5,
+      "longitude": -0.13,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p040-001",
+          "inputDigest": "06f92d3857553b7ba818aa2e63d8a78bfe018a83b57e040c26cf0b569cfe12aa"
+        }
+      ]
+    },
+    {
+      "date": "2024-04-04T19:03:15.690Z",
+      "latitude": 60.5,
+      "longitude": -0.13,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p042-001",
+          "inputDigest": "375a6ba7988673ed3fc8a596526e86c56820fe75718153dc7323286bb3f1f00b"
+        }
+      ]
+    }
+  ]
+}

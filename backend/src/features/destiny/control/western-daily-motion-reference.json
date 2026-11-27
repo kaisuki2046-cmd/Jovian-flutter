@@ -1,0 +1,329 @@
+{
+  "reference": "NASA/JPL Horizons observer ephemerides, quantity 31, geocentre, UT, apparent ecliptic longitude of date",
+  "source": "https://ssd-api.jpl.nasa.gov/doc/horizons.html",
+  "manual": "https://ssd.jpl.nasa.gov/horizons/manual.html",
+  "bodies": [
+    {
+      "planet": "Sun",
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&TLIST=%272447891.5%2C2447892.5%2C2451544.5%2C2451545.5%2C2460754.5%2C2460755.5%27&TLIST_TYPE=%27JD%27&QUANTITIES=%2731%27&CSV_FORMAT=%27YES%27&CAL_FORMAT=%27JD%27&ANG_FORMAT=%27DEG%27&EXTRA_PREC=%27YES%27&TIME_TYPE=%27UT%27&APPARENT=%27AIRLESS%27",
+      "signature": {
+        "version": "1.2",
+        "source": "NASA/JPL Horizons API"
+      },
+      "windows": [
+        {
+          "center": "1989-12-31T12:00:00.000Z",
+          "before": {
+            "date": "1989-12-31T00:00:00Z",
+            "longitude": 279.2849701
+          },
+          "after": {
+            "date": "1990-01-01T00:00:00Z",
+            "longitude": 280.3045062
+          },
+          "signedDegrees": 1.019536099999982
+        },
+        {
+          "center": "2000-01-01T12:00:00.000Z",
+          "before": {
+            "date": "2000-01-01T00:00:00Z",
+            "longitude": 279.8592049
+          },
+          "after": {
+            "date": "2000-01-02T00:00:00Z",
+            "longitude": 280.8786379
+          },
+          "signedDegrees": 1.0194329999999354
+        },
+        {
+          "center": "2025-03-20T12:00:00.000Z",
+          "before": {
+            "date": "2025-03-20T00:00:00Z",
+            "longitude": 359.6263648
+          },
+          "after": {
+            "date": "2025-03-21T00:00:00Z",
+            "longitude": 0.6198141
+          },
+          "signedDegrees": 0.9934493000000089
+        }
+      ]
+    },
+    {
+      "planet": "Moon",
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27301%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&TLIST=%272447891.5%2C2447892.5%2C2451544.5%2C2451545.5%2C2460754.5%2C2460755.5%27&TLIST_TYPE=%27JD%27&QUANTITIES=%2731%27&CSV_FORMAT=%27YES%27&CAL_FORMAT=%27JD%27&ANG_FORMAT=%27DEG%27&EXTRA_PREC=%27YES%27&TIME_TYPE=%27UT%27&APPARENT=%27AIRLESS%27",
+      "signature": {
+        "version": "1.2",
+        "source": "NASA/JPL Horizons API"
+      },
+      "windows": [
+        {
+          "center": "1989-12-31T12:00:00.000Z",
+          "before": {
+            "date": "1989-12-31T00:00:00Z",
+            "longitude": 313.2830646
+          },
+          "after": {
+            "date": "1990-01-01T00:00:00Z",
+            "longitude": 326.557372
+          },
+          "signedDegrees": 13.274307399999998
+        },
+        {
+          "center": "2000-01-01T12:00:00.000Z",
+          "before": {
+            "date": "2000-01-01T00:00:00Z",
+            "longitude": 217.2933209
+          },
+          "after": {
+            "date": "2000-01-02T00:00:00Z",
+            "longitude": 229.3171907
+          },
+          "signedDegrees": 12.023869800000057
+        },
+        {
+          "center": "2025-03-20T12:00:00.000Z",
+          "before": {
+            "date": "2025-03-20T00:00:00Z",
+            "longitude": 241.8502924
+          },
+          "after": {
+            "date": "2025-03-21T00:00:00Z",
+            "longitude": 253.8873741
+          },
+          "signedDegrees": 12.037081700000044
+        }
+      ]
+    },
+    {
+      "planet": "Mercury",
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27199%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&TLIST=%272447891.5%2C2447892.5%2C2451544.5%2C2451545.5%2C2460754.5%2C2460755.5%27&TLIST_TYPE=%27JD%27&QUANTITIES=%2731%27&CSV_FORMAT=%27YES%27&CAL_FORMAT=%27JD%27&ANG_FORMAT=%27DEG%27&EXTRA_PREC=%27YES%27&TIME_TYPE=%27UT%27&APPARENT=%27AIRLESS%27",
+      "signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "windows": [
+        {
+          "center": "1989-12-31T12:00:00.000Z",
+          "before": {
+            "date": "1989-12-31T00:00:00Z",
+            "longitude": 295.8948308
+          },
+          "after": {
+            "date": "1990-01-01T00:00:00Z",
+            "longitude": 295.7954362
+          },
+          "signedDegrees": -0.09939460000009603
+        },
+        {
+          "center": "2000-01-01T12:00:00.000Z",
+          "before": {
+            "date": "2000-01-01T00:00:00Z",
+            "longitude": 271.1117994
+          },
+          "after": {
+            "date": "2000-01-02T00:00:00Z",
+            "longitude": 272.6680612
+          },
+          "signedDegrees": 1.5562618000000157
+        },
+        {
+          "center": "2025-03-20T12:00:00.000Z",
+          "before": {
+            "date": "2025-03-20T00:00:00Z",
+            "longitude": 8.1192414
+          },
+          "after": {
+            "date": "2025-03-21T00:00:00Z",
+            "longitude": 7.4820654
+          },
+          "signedDegrees": -0.637175999999954
+        }
+      ]
+    },
+    {
+      "planet": "Venus",
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27299%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&TLIST=%272447891.5%2C2447892.5%2C2451544.5%2C2451545.5%2C2460754.5%2C2460755.5%27&TLIST_TYPE=%27JD%27&QUANTITIES=%2731%27&CSV_FORMAT=%27YES%27&CAL_FORMAT=%27JD%27&ANG_FORMAT=%27DEG%27&EXTRA_PREC=%27YES%27&TIME_TYPE=%27UT%27&APPARENT=%27AIRLESS%27",
+      "signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "windows": [
+        {
+          "center": "1989-12-31T12:00:00.000Z",
+          "before": {
+            "date": "1989-12-31T00:00:00Z",
+            "longitude": 306.3701468
+          },
+          "after": {
+            "date": "1990-01-01T00:00:00Z",
+            "longitude": 306.2818333
+          },
+          "signedDegrees": -0.08831349999991289
+        },
+        {
+          "center": "2000-01-01T12:00:00.000Z",
+          "before": {
+            "date": "2000-01-01T00:00:00Z",
+            "longitude": 240.9614017
+          },
+          "after": {
+            "date": "2000-01-02T00:00:00Z",
+            "longitude": 242.170442
+          },
+          "signedDegrees": 1.2090402999999696
+        },
+        {
+          "center": "2025-03-20T12:00:00.000Z",
+          "before": {
+            "date": "2025-03-20T00:00:00Z",
+            "longitude": 4.5557945
+          },
+          "after": {
+            "date": "2025-03-21T00:00:00Z",
+            "longitude": 3.9371598
+          },
+          "signedDegrees": -0.6186347000000296
+        }
+      ]
+    },
+    {
+      "planet": "Mars",
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27499%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&TLIST=%272447891.5%2C2447892.5%2C2451544.5%2C2451545.5%2C2460754.5%2C2460755.5%27&TLIST_TYPE=%27JD%27&QUANTITIES=%2731%27&CSV_FORMAT=%27YES%27&CAL_FORMAT=%27JD%27&ANG_FORMAT=%27DEG%27&EXTRA_PREC=%27YES%27&TIME_TYPE=%27UT%27&APPARENT=%27AIRLESS%27",
+      "signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "windows": [
+        {
+          "center": "1989-12-31T12:00:00.000Z",
+          "before": {
+            "date": "1989-12-31T00:00:00Z",
+            "longitude": 248.945043
+          },
+          "after": {
+            "date": "1990-01-01T00:00:00Z",
+            "longitude": 249.6482639
+          },
+          "signedDegrees": 0.7032209000000194
+        },
+        {
+          "center": "2000-01-01T12:00:00.000Z",
+          "before": {
+            "date": "2000-01-01T00:00:00Z",
+            "longitude": 327.5754592
+          },
+          "after": {
+            "date": "2000-01-02T00:00:00Z",
+            "longitude": 328.3511322
+          },
+          "signedDegrees": 0.7756729999999834
+        },
+        {
+          "center": "2025-03-20T12:00:00.000Z",
+          "before": {
+            "date": "2025-03-20T00:00:00Z",
+            "longitude": 110.1574949
+          },
+          "after": {
+            "date": "2025-03-21T00:00:00Z",
+            "longitude": 110.4049142
+          },
+          "signedDegrees": 0.24741930000004686
+        }
+      ]
+    },
+    {
+      "planet": "Jupiter",
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27599%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&TLIST=%272447891.5%2C2447892.5%2C2451544.5%2C2451545.5%2C2460754.5%2C2460755.5%27&TLIST_TYPE=%27JD%27&QUANTITIES=%2731%27&CSV_FORMAT=%27YES%27&CAL_FORMAT=%27JD%27&ANG_FORMAT=%27DEG%27&EXTRA_PREC=%27YES%27&TIME_TYPE=%27UT%27&APPARENT=%27AIRLESS%27",
+      "signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "windows": [
+        {
+          "center": "1989-12-31T12:00:00.000Z",
+          "before": {
+            "date": "1989-12-31T00:00:00Z",
+            "longitude": 95.3510595
+          },
+          "after": {
+            "date": "1990-01-01T00:00:00Z",
+            "longitude": 95.2160871
+          },
+          "signedDegrees": -0.13497240000003785
+        },
+        {
+          "center": "2000-01-01T12:00:00.000Z",
+          "before": {
+            "date": "2000-01-01T00:00:00Z",
+            "longitude": 25.2331086
+          },
+          "after": {
+            "date": "2000-01-02T00:00:00Z",
+            "longitude": 25.2738722
+          },
+          "signedDegrees": 0.04076359999999113
+        },
+        {
+          "center": "2025-03-20T12:00:00.000Z",
+          "before": {
+            "date": "2025-03-20T00:00:00Z",
+            "longitude": 74.2697202
+          },
+          "after": {
+            "date": "2025-03-21T00:00:00Z",
+            "longitude": 74.3999498
+          },
+          "signedDegrees": 0.13022960000000694
+        }
+      ]
+    },
+    {
+      "planet": "Saturn",
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27699%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&TLIST=%272447891.5%2C2447892.5%2C2451544.5%2C2451545.5%2C2460754.5%2C2460755.5%27&TLIST_TYPE=%27JD%27&QUANTITIES=%2731%27&CSV_FORMAT=%27YES%27&CAL_FORMAT=%27JD%27&ANG_FORMAT=%27DEG%27&EXTRA_PREC=%27YES%27&TIME_TYPE=%27UT%27&APPARENT=%27AIRLESS%27",
+      "signature": {
+        "version": "1.2",
+        "source": "NASA/JPL Horizons API"
+      },
+      "windows": [
+        {
+          "center": "1989-12-31T12:00:00.000Z",
+          "before": {
+            "date": "1989-12-31T00:00:00Z",
+            "longitude": 285.4801866
+          },
+          "after": {
+            "date": "1990-01-01T00:00:00Z",
+            "longitude": 285.5983638
+          },
+          "signedDegrees": 0.11817719999999099
+        },
+        {
+          "center": "2000-01-01T12:00:00.000Z",
+          "before": {
+            "date": "2000-01-01T00:00:00Z",
+            "longitude": 40.4058374
+          },
+          "after": {
+            "date": "2000-01-02T00:00:00Z",
+            "longitude": 40.3858934
+          },
+          "signedDegrees": -0.01994400000000951
+        },
+        {
+          "center": "2025-03-20T12:00:00.000Z",
+          "before": {
+            "date": "2025-03-20T00:00:00Z",
+            "longitude": 353.0288193
+          },
+          "after": {
+            "date": "2025-03-21T00:00:00Z",
+            "longitude": 353.1517265
+          },
+          "signedDegrees": 0.122907199999986
+        }
+      ]
+    }
+  ]
+}

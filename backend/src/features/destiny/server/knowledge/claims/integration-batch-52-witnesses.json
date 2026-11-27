@@ -1,0 +1,1445 @@
+{
+  "scanned": 10272,
+  "alternatives": 85,
+  "witnesses": [
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 6,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-040",
+          "text": "己生人次之",
+          "inputDigest": "0aaf07e5227c6e5adae46ea1aff1d7a89e6930185d0e6766f0978da683c65f06"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 9,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "fb96d42a8d7de674999085683f2ce16e1d548efec14f9b5a376a9c4f49d0b325"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 11,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-031",
+          "text": "丑宫安命，日巳月酉来朝，为并明",
+          "inputDigest": "b862f93c5c01d3b735a8e7f721248ea3919fc529b66fb9bab595cfd9d03d6d48"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 8
+        },
+        "gender": "female"
+      },
+      "timeIndex": 5,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "caa3eb64250c8feaa200cc31e189fccf1dc24f912ef2d7a78082e7737f70b77c"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 8
+        },
+        "gender": "female"
+      },
+      "timeIndex": 7,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-029",
+          "text": "如巳有日守垣，亥有巨者，上格。",
+          "inputDigest": "e8b2ed8f5a624b6a2325df9591bb2f1cb0f2ce184f5b76649fc73c35482beb69"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 3,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "4351fb130b31014678287d09e9df834c3daf6bf9ffe20f0ac584d8daed7f2707"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 4,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-018",
+          "inputDigest": "cd3c0e9f51d3981b89785ce958fa9847b930377d8080f4706ef7924a1c60f40b"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 22
+        },
+        "gender": "female"
+      },
+      "timeIndex": 8,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-029",
+          "text": "巳有巨者，下格。",
+          "inputDigest": "fca067652509a6895391ebdef59738ce0a6bc0561c07d3cc3301f712f8f074c9"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 2,
+          "day": 5
+        },
+        "gender": "female"
+      },
+      "timeIndex": 0,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-022",
+          "text": "如命安丑宫，日月在未，安命未宫，日月在丑，谓之同临是也。",
+          "inputDigest": "7a375c073f8bfb4983158d4b082eb910f42136ce6d5d8753e6b518306c67646f"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 2,
+          "day": 5
+        },
+        "gender": "female"
+      },
+      "timeIndex": 6,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-022",
+          "text": "如命安丑宫，日月在未，安命未宫，日月在丑，谓之同临是也。",
+          "inputDigest": "11d3b84f50516bd98c2b68446aff83d1be48209f438cb5e9c70322c7a0eac43a"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 2,
+          "day": 12
+        },
+        "gender": "female"
+      },
+      "timeIndex": 6,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-103",
+          "inputDigest": "f05732fde84d4d0164aa0af64b6b49ad38ca17bfc31f4102ff3530c37ea9eb0d"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 2,
+          "day": 19
+        },
+        "gender": "female"
+      },
+      "timeIndex": 5,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-039",
+          "text": "如酉安命，丑府巳相来朝，亦贵。",
+          "inputDigest": "b6146e82078df145c52eeba79f906e6924f3ca8bdb4cd4d72202c2aa468ea862"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 2,
+          "day": 19
+        },
+        "gender": "female"
+      },
+      "timeIndex": 6,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-066",
+          "text": "如甲生人，立命寅宫，甲禄到寅守命，亦作禄朝垣格。又如庚在申，乙在卯，辛在酉，此四位禄守命宫",
+          "inputDigest": "e23380c3d0b2f0cdefa53f73b47fa60d2f00bbd53a1b440b97a5f9a2cd85d03d"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 2,
+          "day": 26
+        },
+        "gender": "female"
+      },
+      "timeIndex": 10,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-046",
+          "text": "辰戌二宫安命，值巨门失陷，主人作事颠置",
+          "inputDigest": "267a8345911e6d631e882ff9564c8b4bc9cf8f59b75b92c682f01015523a4ed8"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 3,
+          "day": 4
+        },
+        "gender": "female"
+      },
+      "timeIndex": 4,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-032",
+          "text": "如辰日守命，戌月对照，戌月守命，辰日对照，亦主极贵。",
+          "inputDigest": "c76eb8aad15caeb5b2e7e95e87436799bd87b1c86e5bd57c2cb1d298516d068d"
+        },
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "3d79ca4d1510ac483138ee3b329b1598747345ba0c7d6a784d96acc2a964ff8a"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 3,
+          "day": 4
+        },
+        "gender": "female"
+      },
+      "timeIndex": 5,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "a4d7b0787cf46ccf612a7c04f14ded40593defdb619e41633c9c9f53a61e4f5a"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 3,
+          "day": 4
+        },
+        "gender": "female"
+      },
+      "timeIndex": 8,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "3601023e4e12226716312e12e64427aedd5f62999849b866543ba6d78d682438"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 3,
+          "day": 11
+        },
+        "gender": "female"
+      },
+      "timeIndex": 3,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "0a6bf9c457c6bd117fc1f4a023c00ba757701780695f10a4270dda0f2794f883"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 3,
+          "day": 11
+        },
+        "gender": "female"
+      },
+      "timeIndex": 10,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "400dbb1ab14bbf21d72b49b29869604ad2f261ab6bcbdefcaec1da176a11bb59"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 3,
+          "day": 18
+        },
+        "gender": "female"
+      },
+      "timeIndex": 0,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-101",
+          "inputDigest": "b0d639cf3b9ab74d91388d60c26c7b58ee69a115ca1e1b5dad17cef0be4b8a8e"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 4,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 5,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-046",
+          "text": "辰戌二宫安命，值巨门失陷，主人作事颠置",
+          "inputDigest": "e84bd908c1ec5d8b976d3bf930f181290090188cd707bd32c87b3b3a79b853ad"
+        },
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "8ce519873fabe632b716f2acd150f0e49af77e481fe31a8df10d6864e665eefc"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 4,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 7,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "954ab385954002e15b41b4c48d1aa492405274eef96ffb407d0e1c8b63127a57"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 4,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 4,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "d52d24ddda31830dab298c60a4ff3fb34cecd522169f90ac0ff13c29b3a12497"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 4,
+          "day": 22
+        },
+        "gender": "female"
+      },
+      "timeIndex": 8,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "8c42c586ebf6ea93c15c8b87e451a9060d87e1a19e28d8c0c4aa41bb5a1cdd99"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 4,
+          "day": 29
+        },
+        "gender": "female"
+      },
+      "timeIndex": 9,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-032",
+          "text": "未宫安命，日卯月亥来朝，为明珠出海，定主财官双美。",
+          "inputDigest": "9ca53d0ad1de5cf571b05c90ccb10ce6fa138cafacb8a0e82f36ad24ed85adf9"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 5,
+          "day": 13
+        },
+        "gender": "female"
+      },
+      "timeIndex": 3,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-103",
+          "inputDigest": "c2df5beb461002fd13f258d34d1838854857580dbcb0d2fcba0f0dd5d63e1a1b"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 5,
+          "day": 13
+        },
+        "gender": "female"
+      },
+      "timeIndex": 4,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "9dffbb7d7d07b6f55d25d5ef81ac4a93d4eeb5dbeed2453b80b49fb1cdd14d42"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 5,
+          "day": 20
+        },
+        "gender": "female"
+      },
+      "timeIndex": 2,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-113",
+          "text": "或迁移、官禄、财帛三宫遇之，亦主终身福寿。",
+          "inputDigest": "ac96d978d3694c540c2eb7e4f6ac9126b32c969eec0bb12259304d204646b774"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 5,
+          "day": 20
+        },
+        "gender": "female"
+      },
+      "timeIndex": 4,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-113",
+          "text": "或迁移、官禄、财帛三宫遇之，亦主终身福寿。",
+          "inputDigest": "3a832b94e9de84e821ea5ba3bc0d12ef18deff0f6360bf57c20a7af1fe3755f6"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 5,
+          "day": 20
+        },
+        "gender": "female"
+      },
+      "timeIndex": 6,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-113",
+          "text": "或迁移、官禄、财帛三宫遇之，亦主终身福寿。",
+          "inputDigest": "2fd8461c6c8ae5715b0d4531d4f80b2b750d2de9098b5583818513a8f67c1afc"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 5,
+          "day": 20
+        },
+        "gender": "female"
+      },
+      "timeIndex": 10,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-106",
+          "inputDigest": "9aac16d5fbdcd248ff7c8bbb1b7bc1913ecbfed9753349388725cb44da4a757d"
+        },
+        {
+          "id": "ziwei-v3-jielan-123-p001-113",
+          "text": "辰戌丑未安命，二星坐守是也。",
+          "inputDigest": "3cc2e7bb2699b8cb08b605cf2169ec11c1beab981728dcbf53394d693cc9802c"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 5,
+          "day": 27
+        },
+        "gender": "female"
+      },
+      "timeIndex": 1,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-032",
+          "text": "如辰日守命，戌月对照，戌月守命，辰日对照，亦主极贵。",
+          "inputDigest": "9463cd0c7d824c89156e506fc43827b5fe8aaa79533a02cf3f2ecc35aa888f08"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 5,
+          "day": 27
+        },
+        "gender": "female"
+      },
+      "timeIndex": 4,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "bccbaf6bb855dea786307b03acc4d71b8b24844cd193f67040dec2e9d3e7b2aa"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 6,
+          "day": 3
+        },
+        "gender": "female"
+      },
+      "timeIndex": 2,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "7a46d790e44154564fc0072fda3f891f522ba82501900afa321cf4912a923822"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 6,
+          "day": 10
+        },
+        "gender": "female"
+      },
+      "timeIndex": 3,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "a51b34916123305f63c8d1b7333a49d29f3600c19bd323b6dd77e1677c006b80"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 7,
+          "day": 8
+        },
+        "gender": "female"
+      },
+      "timeIndex": 1,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "4a74525c27d4eaabd78b1e4df0edafea69c8c65a9f33fd745cdb10d4e0cb7019"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 7,
+          "day": 29
+        },
+        "gender": "female"
+      },
+      "timeIndex": 2,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "7aa55a44fd5bd46058fc3aca5b9a4e2d93f54b04834eb08ef39acee903fbd343"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 8,
+          "day": 5
+        },
+        "gender": "female"
+      },
+      "timeIndex": 4,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "c676b6cf5a47b1da7700bec311e686f0a933a2776f7c42875cc9ebc6155e6d74"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 9,
+          "day": 2
+        },
+        "gender": "female"
+      },
+      "timeIndex": 1,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "6dc4e117ee5cbeb19274214321faa2d03f8d34db66cd78271164fa18d77e5af5"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 9,
+          "day": 2
+        },
+        "gender": "female"
+      },
+      "timeIndex": 3,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "a92ad7b5e69396d626db182e775e6e42a3df4353e1a03bd6e6f7f1a085d1dca6"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 9,
+          "day": 9
+        },
+        "gender": "female"
+      },
+      "timeIndex": 0,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-101",
+          "inputDigest": "16c815f3da57148697d70c006fabe76dcbfd2bd2130105e63375e0455b480582"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 9,
+          "day": 23
+        },
+        "gender": "female"
+      },
+      "timeIndex": 2,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "085660af6641eab995e099c87924619d0f4dda3cd577bb1f0649b3d1b46f6ba2"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 11,
+          "day": 11
+        },
+        "gender": "female"
+      },
+      "timeIndex": 0,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-101",
+          "inputDigest": "85e8f5ef5838cf288f2045f3150101d448f2a97b8eb8d296722d9971de9301dc"
+        },
+        {
+          "id": "ziwei-v3-jielan-123-p001-119",
+          "text": "如命在亥，子时生人，命在巳，午时生人是也。",
+          "inputDigest": "8992840227254c02edd41b9885c2c1568ac515eb8ceb0197b11608d2cfd71d4b"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 11,
+          "day": 11
+        },
+        "gender": "female"
+      },
+      "timeIndex": 6,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-119",
+          "text": "如命在亥，子时生人，命在巳，午时生人是也。",
+          "inputDigest": "cd324cb33bf7476da99de94a48e6c81c0ad9b27d343bb74651bf80cab2ba5482"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 11,
+          "day": 11
+        },
+        "gender": "female"
+      },
+      "timeIndex": 10,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-113",
+          "text": "辰戌丑未安命，二星坐守是也。",
+          "inputDigest": "361ba8ef802516b0af0c46c5164eb8f6e330062d9557e59cd29c5fbc5728bee1"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1981,
+          "month": 1,
+          "day": 13
+        },
+        "gender": "female"
+      },
+      "timeIndex": 11,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "6060d706fd6be446ff62f99d7859390c19b52ce74d35851bd872a3ae6531f69d"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1981,
+          "month": 2,
+          "day": 10
+        },
+        "gender": "female"
+      },
+      "timeIndex": 5,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-066",
+          "text": "如甲生人，立命寅宫，甲禄到寅守命，亦作禄朝垣格。又如庚在申，乙在卯，辛在酉，此四位禄守命宫",
+          "inputDigest": "8baf8e36ae26bc0036e64b78d57b4c91a25ab0267b65cf72bc5c22138996ba33"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1981,
+          "month": 3,
+          "day": 17
+        },
+        "gender": "female"
+      },
+      "timeIndex": 8,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-022",
+          "text": "秘云：日月同临论对宫，丙辛人遇福兴隆。",
+          "inputDigest": "3fbdf4e1591a30ebed7dfdcdafdde391022e5003f6e8e4e65747d0dd366a159c"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1981,
+          "month": 3,
+          "day": 24
+        },
+        "gender": "female"
+      },
+      "timeIndex": 4,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "7d7c185cf5f93d5b3a718385c36f23cb602975a1a62334f6f4778776688364b8"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1981,
+          "month": 3,
+          "day": 24
+        },
+        "gender": "female"
+      },
+      "timeIndex": 9,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "978fc93cbf734d8459650f1b454ae2810fcc41f487f178d7a188bc5b99a26f63"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1981,
+          "month": 4,
+          "day": 7
+        },
+        "gender": "female"
+      },
+      "timeIndex": 2,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-018",
+          "inputDigest": "10efa2a872c452eb45fb7c3ebb7228c2f1322f90c65904a68a37a8350a7ec314"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1981,
+          "month": 5,
+          "day": 5
+        },
+        "gender": "female"
+      },
+      "timeIndex": 7,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-042",
+          "inputDigest": "47c872549434af61715025373871fbea76cae50e8670252ecdecd14ab40d6165"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1981,
+          "month": 6,
+          "day": 2
+        },
+        "gender": "female"
+      },
+      "timeIndex": 5,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "dda5fc3eebb516d4c044fda1ade380d9227becdc240242138b2c82706b0a8fde"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1981,
+          "month": 7,
+          "day": 14
+        },
+        "gender": "female"
+      },
+      "timeIndex": 3,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "8970fd21a8c37f5e2a4929d0622a163e7e06620c1ba1e62e41aa28019b95deee"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1981,
+          "month": 9,
+          "day": 29
+        },
+        "gender": "female"
+      },
+      "timeIndex": 1,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "2fd84c074a5846bfb0cc6f4f5b5ed3f037085bb4a5330cfa75523cf2ce4c546f"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1981,
+          "month": 10,
+          "day": 20
+        },
+        "gender": "female"
+      },
+      "timeIndex": 11,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "e856d28bdfee74e6840b1e1e272cc8c7f5b703cd89030ac4ea32b414b67c1927"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1981,
+          "month": 11,
+          "day": 10
+        },
+        "gender": "female"
+      },
+      "timeIndex": 1,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "ce08be4da637c580e460e05c766e60252b7f23c9d70761e5b70e6c92f1683a23"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1981,
+          "month": 11,
+          "day": 17
+        },
+        "gender": "female"
+      },
+      "timeIndex": 10,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-022",
+          "text": "秘云：日月同临论对宫，丙辛人遇福兴隆。",
+          "inputDigest": "990e15675fe759c340d4981717b437425c1aaffc2e15ca915d9d0944259ff519"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1981,
+          "month": 12,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 10,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-041",
+          "text": "寅宫次之",
+          "inputDigest": "c4de887f461d2d242850aee7a56c2ca6155d21c1f7fd63e1d1151d9c37526da7"
+        },
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "deff596f226fde15da42935495927b79065439d5befd229a1e187e454362c79c"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1982,
+          "month": 4,
+          "day": 20
+        },
+        "gender": "female"
+      },
+      "timeIndex": 3,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "787ed770a86d90b4d13d0dfa89e9c867e5decf782e942baebdde3bdf9ffd35aa"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1982,
+          "month": 5,
+          "day": 11
+        },
+        "gender": "female"
+      },
+      "timeIndex": 5,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "241e12ed499c072742c0e478032415fc4ba38367bc7986261c7d945bdc434b54"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1983,
+          "month": 3,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 8,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-040",
+          "text": "癸生人主富，又次也",
+          "inputDigest": "81f56fe813b7aeeccc260ce8d90aad21b4d3d7823eb5d2a50639fac0daeb007c"
+        },
+        {
+          "id": "ziwei-v3-jielan-123-p001-041",
+          "text": "或梁在午，曲在子拱冲者，亦官至二品。",
+          "inputDigest": "d823fb172310ac8d2741176d539004d432f6dcbbd7ac73871d3bcf04ed5a3183"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1984,
+          "month": 1,
+          "day": 3
+        },
+        "gender": "female"
+      },
+      "timeIndex": 7,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "ff87538a5acea23676694983730aa00114c0718e1aa9104c6eddecfefa2ce31d"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1984,
+          "month": 2,
+          "day": 7
+        },
+        "gender": "female"
+      },
+      "timeIndex": 0,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-066",
+          "text": "如甲生人，立命寅宫，甲禄到寅守命，亦作禄朝垣格。又如庚在申，乙在卯，辛在酉，此四位禄守命宫",
+          "inputDigest": "a7b456506869b038af5aa108dcf5e57b95c66344542827604bb1772006f57cc1"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1984,
+          "month": 2,
+          "day": 28
+        },
+        "gender": "female"
+      },
+      "timeIndex": 3,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-108",
+          "inputDigest": "e20fe6af3fd90891fa3a3c44cb19e86011726256336526adb11a75353293e938"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1984,
+          "month": 5,
+          "day": 8
+        },
+        "gender": "female"
+      },
+      "timeIndex": 6,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-124",
+          "inputDigest": "588d7cc48e7b320beae670f633fa2ca720a4cabc0664561ec01ff50c0e86b8a0"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1984,
+          "month": 7,
+          "day": 24
+        },
+        "gender": "female"
+      },
+      "timeIndex": 5,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-049",
+          "text": "禄存化禄及天马同守命宫是也",
+          "inputDigest": "ac0704d12716f05eddad6fb1db5557cb52ff05a86f38627230ff20cd623fc384"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1984,
+          "month": 12,
+          "day": 18
+        },
+        "gender": "female"
+      },
+      "timeIndex": 8,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "c06ba7692ca413d971a76fc697c3fbe52aa001b301b67efa97258e3c63779631"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1985,
+          "month": 2,
+          "day": 26
+        },
+        "gender": "female"
+      },
+      "timeIndex": 11,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-066",
+          "text": "如甲生人，立命寅宫，甲禄到寅守命，亦作禄朝垣格。又如庚在申，乙在卯，辛在酉，此四位禄守命宫",
+          "inputDigest": "85bbb25c29306e9ff3cf3eefc61b3abdab79df28836a0dc2ca1aca2773772533"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1985,
+          "month": 4,
+          "day": 2
+        },
+        "gender": "female"
+      },
+      "timeIndex": 7,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-100",
+          "text": "如身命自未至子遇太阴，必主富贵",
+          "inputDigest": "2646cb7077e8a33a178524ef6efd77a61e90129f8b5c67b8606ab88b0b9dd43a"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1986,
+          "month": 3,
+          "day": 11
+        },
+        "gender": "female"
+      },
+      "timeIndex": 8,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-022",
+          "text": "秘云：日月同临论对宫，丙辛人遇福兴隆。",
+          "inputDigest": "30eb92dd5c273176181efdddf908767cbaf42b1bd2c253fa68d1c9581b0de1fa"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1986,
+          "month": 3,
+          "day": 18
+        },
+        "gender": "female"
+      },
+      "timeIndex": 0,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-023",
+          "text": "如丙生人次之",
+          "inputDigest": "fcaf4ff09f41bda692a84181be8a760c8252a694d30b13dfbce597fe2f7afee0"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1986,
+          "month": 4,
+          "day": 29
+        },
+        "gender": "female"
+      },
+      "timeIndex": 3,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-022",
+          "text": "秘云：日月同临论对宫，丙辛人遇福兴隆。",
+          "inputDigest": "8c310ac06f4bc17489c3e5caa17aecb35a2dd9f62bc022013836105da3e50fb0"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1987,
+          "month": 3,
+          "day": 3
+        },
+        "gender": "female"
+      },
+      "timeIndex": 9,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-040",
+          "text": "丁生人上格",
+          "inputDigest": "7afc4f5b6a63dd06f123add440a2b4e47a3be883498176aaa6c219007fd61c04"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1987,
+          "month": 5,
+          "day": 12
+        },
+        "gender": "female"
+      },
+      "timeIndex": 2,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-023",
+          "text": "丁生人亦主平常",
+          "inputDigest": "7f0e7fc086cd9d69947f82044c598f5a71cab777a8ec517ccdd37dd7af89e1b1"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1988,
+          "month": 8,
+          "day": 23
+        },
+        "gender": "female"
+      },
+      "timeIndex": 2,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-041",
+          "text": "午宫安命，二星同宫坐守，上格",
+          "inputDigest": "8fe995aecf8e9907b8e0f295adf118aa0489c0260cf5599bc623ac2c282d748d"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1990,
+          "month": 5,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 9,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-049",
+          "text": "禄存化禄及天马同守命宫是也",
+          "inputDigest": "3dbfd557a2e691cbecec28ab3b8daf6c556536bc39938b9b7bcc02944ee8d8fc"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1983,
+          "month": 2,
+          "day": 21
+        },
+        "gender": "male"
+      },
+      "timeIndex": 6,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-044",
+          "inputDigest": "d7d4b24b035adec51e785c262464fa3feb1e035c61cb33421e505776af22da64"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1983,
+          "month": 9,
+          "day": 7
+        },
+        "gender": "male"
+      },
+      "timeIndex": 2,
+      "proofs": [
+        {
+          "id": "ziwei-v3-jielan-123-p001-093",
+          "inputDigest": "4b9e38e907302147045d9102e9c3406671ae13e5912ee0c4f4772024e87766b7"
+        }
+      ]
+    }
+  ]
+}

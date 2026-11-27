@@ -1,0 +1,21 @@
+// Client entry point for application integration. Server and storage stay private.
+export { default as AccountScreen } from './view/screen';
+export { AccountSectionScreen } from './view/section-screen';
+export { WelcomeScreen } from './auth/view/screen';
+export { AccountSessionProvider, useAccountSession } from './auth/control/SessionProvider';
+export { PreferencesProvider } from './settings/control/PreferencesProvider';
+export { AppUpdateProvider } from './settings/control/AppUpdateProvider';
+export { default as ProfilePreviewScreen } from './profile/view/PreviewScreen';
+export { confirmAccountBirthProfile, requestAccountBirthProfile, requestBirthWheelDefaults } from './reading-profile/requests/reading-profile';
+export type { AccountBirthProfile, BirthProfileField } from './reading-profile/model/reading-profile';
+export { archiveDestinyReport, requestLatestDestinyArchive, listDestinyHistory, requestDestinyHistoryRecord } from './history/requests/destiny-history';
+export { requestLatestSynastrySnapshot, requestSynastrySnapshot } from './history/requests/destiny-history';
+export { requestLatestAccountChartSnapshot, requestAccountChartSnapshot } from './history/requests/destiny-history';
+export type { AccountChartSnapshotResult, DestinyArchive, DestinyArchiveReceipt, HistoryEntry, HistoryPage, HistoryRecord } from './history/model/contract';
+export type { SynastryChartSnapshot, SynastrySnapshotResult } from './history/model/synastry-snapshot';
+export type { ArchiveIdentity } from './auth/model/archive-identity';
+export { useReadingHistory } from './history/control/useReadingHistory';
+export { saveReadingArchive, requestLatestReadingArchive, requestReadingArchive, listReadingHistory } from './history/requests/reading-history';
+export type { ReadingArchive, ReadingHistoryEntry, ReadingHistoryRecord, ReadingKind } from './history/model/reading-archive';
+export { describeModelPermissionError, modelAccountRequest, requestSameSiteModel } from './settings/requests/model-access';
+export { accountClient as authenticatedAppClient, accountRequest as appSessionRequestOptions } from './client';

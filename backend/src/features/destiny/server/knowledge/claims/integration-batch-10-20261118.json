@@ -1,0 +1,345 @@
+{
+  "baseline": "ninth integration batch",
+  "profile": "ziwei-explicit-branch-alternatives-v1",
+  "changes": [
+    {
+      "id": "ziwei-v2-minggong-p102000-003",
+      "method": "ziwei",
+      "conditions": [
+        "紫微入庙守午位命宫",
+        "生年甲、丁或己"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p102000-004",
+      "method": "ziwei",
+      "conditions": [
+        "紫微入庙守午位命宫",
+        "生年丙或戊"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p110000-001",
+      "method": "ziwei",
+      "conditions": [
+        "天机入庙守子位或午位命宫",
+        "生年丁、己、癸、甲、庚或壬"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p110000-004",
+      "method": "ziwei",
+      "conditions": [
+        "天机守巳位或亥位命宫",
+        "生年丙、壬或戊"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p118000-003",
+      "method": "ziwei",
+      "conditions": [
+        "太阳守卯位或酉位命宫",
+        "生年乙或辛"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p118000-004",
+      "method": "ziwei",
+      "conditions": [
+        "太阳守卯位或酉位命宫",
+        "生年甲或庚"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p126000-005",
+      "method": "ziwei",
+      "conditions": [
+        "武曲入庙守辰位或戌位命宫",
+        "生年甲或乙"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p150000-002",
+      "method": "ziwei",
+      "conditions": [
+        "天府守卯位或酉位命宫",
+        "生年乙、丙或辛"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p158000-002",
+      "method": "ziwei",
+      "conditions": [
+        "太阴失陷守卯、辰或巳位命宫",
+        "生年乙、壬或戊"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p166000-001",
+      "method": "ziwei",
+      "conditions": [
+        "贪狼守子位或午位命宫",
+        "生年丁或己"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p166000-004",
+      "method": "ziwei",
+      "conditions": [
+        "贪狼守寅位或申位命宫",
+        "生年庚"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p166000-006",
+      "method": "ziwei",
+      "conditions": [
+        "贪狼入庙守辰位或戌位命宫",
+        "生年戊或己"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p175000-001",
+      "method": "ziwei",
+      "conditions": [
+        "巨门守子位或午位命宫",
+        "生年丁、己、癸或辛"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p175000-002",
+      "method": "ziwei",
+      "conditions": [
+        "巨门守子位或午位命宫",
+        "生年丙或戊"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p175000-007",
+      "method": "ziwei",
+      "conditions": [
+        "巨门守辰位或戌位命宫",
+        "生年癸或辛"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p175000-008",
+      "method": "ziwei",
+      "conditions": [
+        "巨门守辰位或戌位命宫",
+        "生年丁"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p184000-002",
+      "method": "ziwei",
+      "conditions": [
+        "天相失陷守卯位或酉位命宫",
+        "生年乙或辛"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p184000-003",
+      "method": "ziwei",
+      "conditions": [
+        "天相失陷守卯位或酉位命宫",
+        "生年甲或庚"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p193000-001",
+      "method": "ziwei",
+      "conditions": [
+        "天梁入庙守子位或午位命宫",
+        "生年丁、己或癸"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p199000-001",
+      "method": "ziwei",
+      "conditions": [
+        "七杀守子位或午位命宫",
+        "生年丁、己或甲"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p199000-005",
+      "method": "ziwei",
+      "conditions": [
+        "七杀入庙守寅位或申位命宫",
+        "生年甲、庚、丁或己"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p207000-002",
+      "method": "ziwei",
+      "conditions": [
+        "破军入庙守子位或午位命宫",
+        "生年丁、己或癸"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p207000-003",
+      "method": "ziwei",
+      "conditions": [
+        "破军入庙守子位或午位命宫",
+        "生年丙或戊"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p207000-008",
+      "method": "ziwei",
+      "conditions": [
+        "破军守寅位或申位命宫",
+        "生年甲、庚、丁或己"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p215000-002",
+      "method": "ziwei",
+      "conditions": [
+        "文昌守申、子或辰位命宫",
+        "生年癸、甲或庚"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p215000-003",
+      "method": "ziwei",
+      "conditions": [
+        "文昌入庙守巳、酉或丑位命宫",
+        "生年乙、戊或辛"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p215000-004",
+      "method": "ziwei",
+      "conditions": [
+        "文昌守亥、卯或未位命宫",
+        "生年乙或戊"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p223000-002",
+      "method": "ziwei",
+      "conditions": [
+        "文曲守申、子或辰位命宫",
+        "生年丁、癸或辛"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p223000-003",
+      "method": "ziwei",
+      "conditions": [
+        "文曲入庙守巳、酉或丑位命宫",
+        "与紫微同宫",
+        "生年辛"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p206002-003",
+      "method": "ziwei",
+      "conditions": [
+        "破军守子位或午位命宫",
+        "生年癸或甲"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p179000-002",
+      "method": "ziwei",
+      "conditions": [
+        "按原书女命取法，巨门失陷守命"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    }
+  ],
+  "deferred": [
+    {
+      "id": "ziwei-v2-minggong-p193000-004",
+      "method": "ziwei",
+      "conditions": [
+        "天梁入庙守丑位或未位命宫",
+        "生年壬或乙"
+      ],
+      "previousStatus": "unmapped",
+      "status": "unmapped",
+      "reason": "different_chart_tradition"
+    },
+    {
+      "id": "ziwei-v1-guancelu-001-p066-001",
+      "method": "ziwei",
+      "conditions": [
+        "本命天同和天梁同守申位命宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "unmapped",
+      "reason": "historical_case"
+    }
+  ],
+  "notes": [
+    "保留两个或三个明列地支的或备选、具体宫位、生年天干、同守星与独守限定。",
+    "前置入庙、失陷与后置的亮度条件使用同一星、同一宫；不删除条件扩大匹配。",
+    "天梁丑未入庙与当前引擎旺档不同，保留为待接入，不补造庙事实。",
+    "特定命例的描述不能仅因一组星位符合就作为通用性格断语；原例保留待核。"
+  ]
+}

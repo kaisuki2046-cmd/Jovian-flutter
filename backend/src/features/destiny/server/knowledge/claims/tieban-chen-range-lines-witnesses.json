@@ -1,0 +1,25 @@
+{
+  "source": "https://vr-d.com/pdf-file/%E5%91%BD%E7%90%86%2F%E9%93%81%E6%9D%BF%E7%A5%9E%E6%95%B0%E5%8D%81%E4%B9%9D%E6%B3%95%E7%A7%98%E8%A7%A3_%E9%99%88%E9%BC%8E%E9%BE%99.pdf#page=14",
+  "scanned": 2880,
+  "numberCount": 81,
+  "matchedSources": 27,
+  "additionalOnSameChart": 27,
+  "printed": {"birthTime":"1911-01-26T16:00:00.000Z","gender":"男"},
+  "witnesses": [
+    {"birthTime":"1927-02-15T04:00:00.000Z","gender":"男","proofs":[{"claimId":"tbss-v4-clauses-p04357-001","axis":"chen_range_lines_year_month_base","clauseId":4357,"newOnChart":true},{"claimId":"tbss-v3-clauses-p03492-001","axis":"chen_range_lines_year_month_offset","clauseId":4549,"newOnChart":true},{"claimId":"tbss-v4-clauses-p04741-001","axis":"chen_range_lines_year_month_offset","clauseId":4741,"newOnChart":true}]},
+    {"birthTime":"1927-05-15T04:00:00.000Z","gender":"男","proofs":[{"claimId":"tbss-v4-clauses-p04482-001","axis":"chen_range_lines_year_month_offset","clauseId":4482,"newOnChart":true}]},
+    {"birthTime":"1928-11-15T04:00:00.000Z","gender":"男","proofs":[{"claimId":"tbss-v9-clauses-p09189-001","axis":"chen_range_lines_day_hour_offset","clauseId":9189,"newOnChart":true},{"claimId":"tbss-v9-clauses-p09093-001","axis":"chen_range_lines_day_hour_offset","clauseId":9093,"newOnChart":true},{"claimId":"tbss-v8-clauses-p08997-001","axis":"chen_range_lines_day_hour_offset","clauseId":8997,"newOnChart":true}]},
+    {"birthTime":"1929-05-15T04:00:00.000Z","gender":"男","proofs":[{"claimId":"tbss-v3-clauses-p03579-001","axis":"chen_range_lines_year_month_offset","clauseId":3579,"newOnChart":true},{"claimId":"tbss-v3-clauses-p03675-001","axis":"chen_range_lines_year_month_offset","clauseId":3675,"newOnChart":true}]},
+    {"birthTime":"1929-06-15T04:00:00.000Z","gender":"女","proofs":[{"claimId":"tbss-v3-clauses-p03735-001","axis":"chen_range_lines_year_month_offset","clauseId":3735,"newOnChart":true}]},
+    {"birthTime":"1930-02-15T04:00:00.000Z","gender":"男","proofs":[{"claimId":"tbss-v9-clauses-p09674-001","axis":"chen_range_lines_year_month_offset","clauseId":9674,"newOnChart":true}]},
+    {"birthTime":"1930-04-15T04:00:00.000Z","gender":"男","proofs":[{"claimId":"tbss-v9-clauses-p09357-001","axis":"chen_range_lines_year_month_base","clauseId":9357,"newOnChart":true},{"claimId":"tbss-v9-clauses-p09453-001","axis":"chen_range_lines_year_month_offset","clauseId":9453,"newOnChart":true}]},
+    {"birthTime":"1931-01-15T04:00:00.000Z","gender":"男","proofs":[{"claimId":"tbss-v9-clauses-p09477-001","axis":"chen_range_lines_year_month_offset","clauseId":9477,"newOnChart":true},{"claimId":"tbss-v9-clauses-p09573-001","axis":"chen_range_lines_year_month_offset","clauseId":9573,"newOnChart":true}]},
+    {"birthTime":"1990-05-31T16:00:00.000Z","gender":"男","proofs":[{"claimId":"tbss-v4-clauses-p04285-001","axis":"chen_range_lines_day_hour_offset","clauseId":4285,"newOnChart":true},{"claimId":"tbss-v4-clauses-p04189-001","axis":"chen_range_lines_day_hour_offset","clauseId":4189,"newOnChart":true},{"claimId":"tbss-v4-clauses-p04093-001","axis":"chen_range_lines_day_hour_offset","clauseId":4093,"newOnChart":true}]},
+    {"birthTime":"1990-05-31T20:00:00.000Z","gender":"男","proofs":[{"claimId":"tbss-v4-clauses-p04261-001","axis":"chen_range_lines_day_hour_offset","clauseId":4261,"newOnChart":true}]},
+    {"birthTime":"1990-06-01T02:00:00.000Z","gender":"男","proofs":[{"claimId":"tbss-v4-clauses-p04290-001","axis":"chen_range_lines_day_hour_offset","clauseId":4290,"newOnChart":true},{"claimId":"tbss-v4-clauses-p04002-001","axis":"chen_range_lines_day_hour_offset","clauseId":4002,"newOnChart":true}]},
+    {"birthTime":"1990-06-02T22:00:00.000Z","gender":"男","proofs":[{"claimId":"tbss-v3-clauses-p03260-001","axis":"chen_range_lines_day_hour_offset","clauseId":3260,"newOnChart":true},{"claimId":"tbss-v2-clauses-p02972-001","axis":"chen_range_lines_day_hour_offset","clauseId":2972,"newOnChart":true}]},
+    {"birthTime":"1990-06-03T02:00:00.000Z","gender":"男","proofs":[{"claimId":"tbss-v3-clauses-p03003-001","axis":"chen_range_lines_day_hour_offset","clauseId":3003,"newOnChart":true}]},
+    {"birthTime":"1990-06-03T20:00:00.000Z","gender":"男","proofs":[{"claimId":"tbss-v9-clauses-p09194-001","axis":"chen_range_lines_day_hour_offset","clauseId":9194,"newOnChart":true}]},
+    {"birthTime":"1990-06-04T00:00:00.000Z","gender":"男","proofs":[{"claimId":"tbss-v9-clauses-p09069-001","axis":"chen_range_lines_day_hour_offset","clauseId":9069,"newOnChart":true},{"claimId":"tbss-v8-clauses-p08973-001","axis":"chen_range_lines_day_hour_offset","clauseId":8973,"newOnChart":true}]}
+  ]
+}

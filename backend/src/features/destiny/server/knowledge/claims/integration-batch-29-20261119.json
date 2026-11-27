@@ -1,0 +1,70 @@
+{
+  "baseline": "twenty-eighth integration batch",
+  "profile": "source-bound-same-pillar-shensha-and-day-spouse-v1",
+  "changes": [
+    {
+      "id": "yhzp-v3-c131-p002-001",
+      "method": "bazi",
+      "previousReason": "unmapped_condition",
+      "inputs": [
+        {
+          "digest": "21970f9f6b58f5a4ff056423a18e5671beb94905c5a050b915f4ec3da47ee3d8"
+        }
+      ],
+      "branches": []
+    },
+    {
+      "id": "yhzp-v3-c131-p002-004",
+      "method": "bazi",
+      "previousReason": "unmapped_condition",
+      "inputs": [
+        {
+          "digest": "b32566db761e5f84e27ed227875032c1c43bcff24367839c047fa36445b6afb2"
+        }
+      ],
+      "branches": []
+    },
+    {
+      "id": "yhzp-v3-c137-p009-002",
+      "method": "bazi",
+      "previousReason": "unmapped_condition",
+      "inputs": [
+        {
+          "digest": "3a3bbb0fb1d274d192c8aa46a0f345dd5048a8100708f9fae9d246b6e640ab27"
+        }
+      ],
+      "branches": []
+    },
+    {
+      "id": "yhzp-v4-c040-p006-001",
+      "method": "bazi",
+      "previousReason": "unmapped_condition",
+      "reason": "unmapped_condition",
+      "inputs": [],
+      "branches": [
+        {
+          "text": "華蓋逢空，偏宜僧道",
+          "conditionCompiler": "natal-shensha-v1-source-placements-v1",
+          "inputs": [
+            {
+              "digest": "3a3bbb0fb1d274d192c8aa46a0f345dd5048a8100708f9fae9d246b6e640ab27"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "sourceRecords": 18846,
+  "previousQueryableCompiledUnchanged": 2808,
+  "previousQueryableInputsPreserved": 2808,
+  "wholeEntries": 3,
+  "branchEntries": 1,
+  "wholeAlternatives": 3,
+  "passageAlternatives": 1,
+  "newAlternativeCount": 4,
+  "sourceHashes": {
+    "bazi": "8074930be871d6249c36813d59dae2534ad5f11eeb06c5d2728978b53364e609",
+    "ziwei": "bfe23ad0b26b19992d6f4fe3c2fb1979175513ceaf283bee6ce671d8358698ad",
+    "western": "b92622c3336d4a56af837123b08d438947a5e6751cd272b4be555921a89cb9fc"
+  }
+}

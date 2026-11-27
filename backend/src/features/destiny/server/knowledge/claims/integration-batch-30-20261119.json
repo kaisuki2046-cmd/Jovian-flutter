@@ -1,0 +1,198 @@
+{
+  "baseline": "twenty-ninth integration batch",
+  "profile": "lilly-source-composites-and-selected-member-sign-v1",
+  "changes": [
+    {
+      "id": "astro-lilly-v3-spouse-description-p004-001",
+      "method": "western",
+      "previousReason": "unsupported_calculation_profile",
+      "inputs": [
+        {
+          "digest": "965a767afeac18feabbe38894f1f591888bb71f24e570264272c420b364fd6fd"
+        },
+        {
+          "digest": "a162bedfbfbc076d914aebe59d650b42f1dbc08b9f59bd5a072b27a3691291fd"
+        }
+      ],
+      "branches": []
+    },
+    {
+      "id": "astro-lilly-v3-spouse-description-p006-001",
+      "method": "western",
+      "previousReason": "unsupported_calculation_profile",
+      "inputs": [
+        {
+          "digest": "4c694bb42f70cf042465ca3157c3701bc867f256defdbe5e195b84a01d060a6a"
+        },
+        {
+          "digest": "46da93a5f10e3684abe731c23e5080f14b1352ef56b4a4b250013e04aa80d34f"
+        }
+      ],
+      "branches": []
+    },
+    {
+      "id": "astro-lilly-v3-friends-p018-001",
+      "method": "western",
+      "previousReason": "unsupported_calculation_profile",
+      "inputs": [
+        {
+          "digest": "4abc24a7647f3f1da1ab288e7b500de5ddedbaa00c6ba90e897813cf8e9c9803"
+        },
+        {
+          "digest": "798c970d8c04e163325319a8b2f3878a4aeafc0ece0253a057eb335049404086"
+        },
+        {
+          "digest": "1f28506717aa2e88de4d4f8a708fba47c252b5c2d0852904225fd90bde7de751"
+        },
+        {
+          "digest": "1684ca91ca577393f26c739bff29caa95b40946b9f7db207db3681373685eff0"
+        },
+        {
+          "digest": "2a773938c480526f2e593c89dc6f229c4d49df6a1f13b3421fd64b60cf6563f8"
+        },
+        {
+          "digest": "0c2d1c5edcd8f47d01a6ab6a9822ccbd574001317168a832cd168320211a6318"
+        },
+        {
+          "digest": "2b695f02ca9ca535f1b594c0b2b7a90ea9aa9860088211554410fa1301dfc1ea"
+        },
+        {
+          "digest": "bcc4c3083d038c265af2ed2fcb75b9757673228ad65d5dbcab06f35aed5d6449"
+        },
+        {
+          "digest": "9308e4bf626e028b0bfabe40758173a3622416a53761b07de27f5cb3bd44ba78"
+        },
+        {
+          "digest": "4308adc7ea2d00cd5db989ed3f464f7bfa042c2491f4491887ccf697ce5eeb1f"
+        }
+      ],
+      "branches": []
+    },
+    {
+      "id": "astro-lilly-v3-children-p009-001",
+      "method": "western",
+      "previousReason": "unsupported_calculation_profile",
+      "inputs": [
+        {
+          "digest": "45ad815fc444de9523174a3a319864a03673aeb0c03f3b9c59344bdf62c62a19"
+        }
+      ],
+      "branches": []
+    },
+    {
+      "id": "astro-lilly-v3-religion-dreams-p011-001",
+      "method": "western",
+      "previousReason": "unsupported_calculation_profile",
+      "inputs": [
+        {
+          "digest": "b031ea9e5e788e1e4cb72e51b4509fbef4d1ec0f599c45e49cd7f0ccc67e0d91"
+        },
+        {
+          "digest": "2079bf21afdabe389eb55710fecec2a5f2e99b87e98bc3124dd4b2719ba4ac8b"
+        }
+      ],
+      "branches": []
+    },
+    {
+      "id": "astro-lilly-v3-profession-p031-001",
+      "method": "western",
+      "previousReason": "unsupported_calculation_profile",
+      "inputs": [
+        {
+          "digest": "079a5c478c35d7c46dfdf94c8641c5ca9529273c61f09ea76f74cc8317337737"
+        },
+        {
+          "digest": "95cf515fd3a8a700105685cfb03724169c1d86f41ff19a8069bab10cda9c63ce"
+        },
+        {
+          "digest": "6525313ea131536a0a5484ccf0057aa1dcc89fd13504e4ea49859eda0f36c6c2"
+        },
+        {
+          "digest": "de13561be6d7818349ce5801977d8734e36f99d076d8e476c59ed04e31851d44"
+        },
+        {
+          "digest": "3bafe95b0679850c414a99cf0350afdf7a6660af0ad68e073400e59b1385f3ef"
+        },
+        {
+          "digest": "77bb8107df07bb95c0225267e64c994b0a9f63688a0b8ff1058cf273a112fd1d"
+        },
+        {
+          "digest": "36e9078a1f0451926b5dbd35892a23eb2bdaae3e5e77bcd617d40a4ad6f454fd"
+        },
+        {
+          "digest": "cea5e37327197d0642211956f6d29904620e644ba0a0b1239444e0e8e793fa4e"
+        },
+        {
+          "digest": "99b8382d94f8673fa8cbb46013d431ecf4df4f93d681ee8b5ce2cbb4355b5de1"
+        }
+      ],
+      "branches": []
+    },
+    {
+      "id": "astro-lilly-v3-profession-p032-001",
+      "method": "western",
+      "previousReason": "unsupported_calculation_profile",
+      "inputs": [
+        {
+          "digest": "4a3d794c94cc938f54ed95b16eec41ec388f4aaf46c618e39440ebc0ad758442"
+        },
+        {
+          "digest": "d7f3708462747fe0dccd2b8aee41fe5f0659164c8d0fd9ba36d4829dfad0969e"
+        },
+        {
+          "digest": "8e7c05331d4690929fb6e20c0804e8e7001dcabaaa8841e54eaab97cc47b33da"
+        },
+        {
+          "digest": "084e30c48524e8b4208813cf9fb341b5ac01658cef06d7172a9ccf63c8900106"
+        },
+        {
+          "digest": "5c8cc12f601c69d29baa6b812f10669decd4452ae4358591cf1d08ca70f80e6a"
+        },
+        {
+          "digest": "11971e294046a57ab10ebd8912d5d3599bb8c7f4e101621eb9c46dd6d6b07808"
+        },
+        {
+          "digest": "627a284ca35317640b2e5cafd9b8a28b7eeabd543ad3b0540da50b46b56a7388"
+        },
+        {
+          "digest": "0a04c55c7056656051bf9f3960a545495f7d79a8f843b560cc45159b31723004"
+        },
+        {
+          "digest": "db9368c9cf3c62a90880607ccb24833115fb148ee453f0f6a72d0d1a9a11c3c3"
+        },
+        {
+          "digest": "079a5c478c35d7c46dfdf94c8641c5ca9529273c61f09ea76f74cc8317337737"
+        },
+        {
+          "digest": "95cf515fd3a8a700105685cfb03724169c1d86f41ff19a8069bab10cda9c63ce"
+        },
+        {
+          "digest": "6525313ea131536a0a5484ccf0057aa1dcc89fd13504e4ea49859eda0f36c6c2"
+        },
+        {
+          "digest": "e8dddb3a2a97b9d145f509d51b34663899b1f6db20d7c2597e0e4504c2a6dbce"
+        },
+        {
+          "digest": "b179444b49398c9bbc6e42a68f1fe1c877dd87a59496456d62cecd007ea4ce2d"
+        },
+        {
+          "digest": "edc5c0e37ada1a164d8859338d920cc1de4cc0850457775220543d8625da026b"
+        }
+      ],
+      "branches": []
+    }
+  ],
+  "sourceRecords": 18846,
+  "previousQueryableCompiledUnchanged": 2812,
+  "previousQueryableInputsPreserved": 2812,
+  "wholeEntries": 7,
+  "branchEntries": 0,
+  "wholeAlternatives": 41,
+  "passageAlternatives": 0,
+  "newAlternativeCount": 41,
+  "sourceHashes": {
+    "bazi": "8074930be871d6249c36813d59dae2534ad5f11eeb06c5d2728978b53364e609",
+    "ziwei": "bfe23ad0b26b19992d6f4fe3c2fb1979175513ceaf283bee6ce671d8358698ad",
+    "western": "b92622c3336d4a56af837123b08d438947a5e6751cd272b4be555921a89cb9fc"
+  }
+}

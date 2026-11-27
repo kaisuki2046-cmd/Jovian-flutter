@@ -1,0 +1,296 @@
+{
+  "baseline": "fourteenth integration batch",
+  "profile": "explicit-bazi-shown-hidden-literals-v1",
+  "changes": [
+    {
+      "id": "smth-v10-wuxian-p003-502",
+      "method": "bazi",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "conditions": [
+        "月令受到冲击"
+      ],
+      "inputs": 3,
+      "inputDigests": [
+        "43624dedef53a1beb0ec7f6e65cc0d52cc0dae4b22432a8ccd34ffc9522ee022",
+        "b04fa5a056a04017a8c76e5a2e5be6913f803b2e036e372812fd22a1e8dd782c",
+        "b56948e912fdd07643dd3f74a4b887903dadf64ad30a8be77096961a597627a0"
+      ],
+      "conditionCompiler": "existing-literal-parser"
+    },
+    {
+      "id": "yhzp-v1-c294-p002-001",
+      "method": "bazi",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "conditions": [
+        "原局年柱带官星与印绶"
+      ],
+      "inputs": 6,
+      "inputDigests": [
+        "8d518bbb1b078f5e602f89e21df7301bb5da0e7f2772d7b753bf2b52de4aaf97",
+        "95cd38cb950168b1f2f3608877146ec6e408dca882f35aae9e2beb40b24f85bd",
+        "4a3b8b25de6808dbd24d642317d5883c438c10e6295bb7d713bb8396fa6379c6",
+        "be7111154200b13bd8461498cc9b13fc20a1360bb2302137ba429232aca67cec",
+        "e8f45496dec9b71a39cd12ecc913ae27c76d70417501f4799699b1cfbdc8e058",
+        "ce8e9d6792b2fa0445daee43166a9f7c820d9943bcdd40d71baf5fe48989e539"
+      ],
+      "conditionCompiler": "existing-literal-parser"
+    },
+    {
+      "id": "yhzp-v1-c294-p002-002",
+      "method": "bazi",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "conditions": [
+        "以月令为提纲，月上带官星和印绶"
+      ],
+      "inputs": 6,
+      "inputDigests": [
+        "eec342f1e13196f868fea5713c048091defe70c9389409be3ae105dcffbd13a6",
+        "23f1c8cb95c40421880ecb200231eecb6eb3655b5933f2d1c1d3cab0b4a20952",
+        "b734203b4cfcccebda2085c498135192531f1275e35c60b90c96e13c2c1dbfc6",
+        "8d04cb91fc70d467b5b61b905c0cdee4bac1e64f3ba5384beb67abfe7eb7e26b",
+        "9ffae1c54247b8922bdba8710a6580e28b701750ea232713d65aed86a61b2ef8",
+        "ca63a7e021e3f8e4eb1f2faa15171eee85bc4ee2f10b5a5a1e2142545e14c66a"
+      ],
+      "conditionCompiler": "existing-literal-parser"
+    },
+    {
+      "id": "yhzp-v2-c002-p011-101",
+      "method": "bazi",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "conditions": [
+        "原局年柱克日干，原注以甲乙日遇庚辛年示意"
+      ],
+      "inputs": 20,
+      "inputDigests": [
+        "1b170f605fae7af0268a884e44db7401588a893709c1baeb76b06fe318b3ac90",
+        "d7929dc78abb9da0650c4453525b95ab36fe4cb8aee3e2a204c64b402d4e4b28",
+        "1ec0a7bfbb25b2508324f90531cb412e501d45fb8a2a78cac534f57b8bc7b755",
+        "a4b81cbba0573e94a5255269139a7a359cf609f002e68441612e9b637062494a",
+        "51418723f621663ae5ac36178e2037cabe9a40bd56a532218fb7e61eb9d44eb6",
+        "b1c6f60dc68030ee71b96aec2282646499732cf02980d2e117185bf4e9f05f47",
+        "5ed899d85d3d2997816fc1eb3db402acd8e1c05ac5085c16e73b0877c9efb462",
+        "c88cea29df7ac2fe95b6097f0068fa97e9c70decce7b72b80fd67cb06a7becee",
+        "82fd4a2825ae85bfb71e61f456b5cdc661e757cdf562c2ba9ef0d2d5f41e80ea",
+        "0072608e39a074f4bf574eebf38daf6f4fb43c5476f91cb9ec90e9e4b24a5950",
+        "50d56c3ee59921ddcf8e54fe137b52105f05ceca9e67952473040e366c0a1e2a",
+        "59454c9aa6c77260f7248ba394d9938b8115378b122f908614257ef4cc00b814",
+        "44b71bdcae5b79a35d61ca54f7ab556844141631967c9341322fad74233c7760",
+        "361fdf2e9bcf7d1050fa3e60c95deec5d638e4e700399d927e3de334bc0a8319",
+        "9793da245bff0339f2b1ebaf2a8eda14d7c33cb2ff033494485f277089707261",
+        "279076c32df2e8a3b0084849a7ee105fe7ec084a43b53dac2af836ca8f423587",
+        "3573325cc7d3ef42813e134ddd7781b7a10c43806b0752dccc6ff4e9c37177b0",
+        "17ed834794e56c52a1c0132897ea497d32cdb56d5182a09a32864c40875edf78",
+        "5dcdaaf7f2c04ab54f891392b03f41c1befbd4bf095d5e82f45c1f127d111d1e",
+        "d316bb44a8017dc9c118dbbee5f65d77743e554e1c429617491c6ebd34f1b155"
+      ],
+      "conditionCompiler": "existing-literal-parser"
+    },
+    {
+      "id": "yhzp-v2-c279-p002-001",
+      "method": "bazi",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "conditions": [
+        "按本篇取癸酉、己巳、乙丑时的金神"
+      ],
+      "inputs": 3,
+      "inputDigests": [
+        "c480552829b92fafd8dc75407efc9e8197933d4570baee51eb9447957f7af8b4",
+        "b03ef272b8f3b5a1acaeadc6341167488d5121afd83824373d9f6a03e9e34454",
+        "016b0804a28fee06d99ca420be735e86e7afb060ac284f1fe57d4cdefb28e712"
+      ],
+      "conditionCompiler": "existing-literal-parser"
+    },
+    {
+      "id": "yhzp-v3-c031-p002-003",
+      "method": "bazi",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "conditions": [
+        "女命比肩或劫财在天干透出，原文称姊妹"
+      ],
+      "inputs": 6,
+      "inputDigests": [
+        "b0c82c86a2674a061fcc1bad2435389f125a51e2b32585350f574c59fc396ac3",
+        "c2be18cb556d0662b5c5cfe44427a6767d28bd633227fcfa6c46ac0fbed5a8cc",
+        "c3116bb3cb80f7500a8c2bdae4ac2ebbca8eb48545fe2ecb506f399c7d6f6a95",
+        "d532997fa076708b1e941c7dbf9f0313f37366cca318eb432ba146819fa46ec7",
+        "1ba7176c73341847fc86f0ab671c8c1861836317e4d109edc0c9aa344043ae3b",
+        "e278dd4f149a095be54688e6b9c57034c4bdfab8f6034fc5206a80e5c1785a91"
+      ],
+      "conditionCompiler": "bazi-literal-dnf-v1"
+    },
+    {
+      "id": "qtbj-v2-c005-p004-001",
+      "method": "bazi",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "conditions": [
+        "巳月甲木癸、丁、庚都透干"
+      ],
+      "inputs": 1,
+      "inputDigests": [
+        "8f2c5d585e4fa356f713a744cc9391a5eba1ffc0aec957ec44d6fbc985e71db4"
+      ],
+      "conditionCompiler": "bazi-literal-dnf-v1"
+    },
+    {
+      "id": "qtbj-v2-c005-p008-001",
+      "method": "bazi",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "conditions": [
+        "甲日午月透癸庚，或未月透庚丁"
+      ],
+      "inputs": 6,
+      "inputDigests": [
+        "8909cc59ed41d4cfc897458cee95a5f96f023ab46b4d7155b781314f8a88a747",
+        "b4c70bd8d32ca294d53c1f1c4c1463a53799f190fa5861f38c59d2caa9107e89",
+        "84b8d5ee5c0f24b2ce4def4a34503eb386ab0070dd1c0399e5e0559d9047c4f1",
+        "92d81b02323f81777dcf04a78f6388033281a3ca716399f2481bcfbeec9fab42",
+        "8c1a43977d5d86fa8f7568b9ae7fb7b95acb3d1581c12c66887a8ef8a05c2fbc",
+        "92373d1e5f7fcf383a18622917d8fb4a4f8500273cb752ec0c9c7dd97f2f8bb8"
+      ],
+      "conditionCompiler": "bazi-literal-dnf-v1"
+    },
+    {
+      "id": "qtbj-v2-c007-p002-002",
+      "method": "bazi",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "conditions": [
+        "酉月甲木透丙、庚"
+      ],
+      "inputs": 2,
+      "inputDigests": [
+        "ed79ba1d03bf7de8abad9786fd6f18195baf86e0f5e598c3442d384c81dd6727",
+        "6a80525693ff2a4bbf2d230b6dbbfdb4659bbf7a8d06f9401de799611c1256a1"
+      ],
+      "conditionCompiler": "bazi-literal-dnf-v1"
+    },
+    {
+      "id": "qtbj-v2-c008-p001-001",
+      "method": "bazi",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "conditions": [
+        "亥月甲木庚、丁透干又透戊"
+      ],
+      "inputs": 1,
+      "inputDigests": [
+        "e587eb5138c886816c5a4d55252c40008b66ca836ad4a7c425bc0f1101671839"
+      ],
+      "conditionCompiler": "bazi-literal-dnf-v1"
+    },
+    {
+      "id": "qtbj-v2-c008-p007-001",
+      "method": "bazi",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "conditions": [
+        "甲日子月，壬透而丙不见"
+      ],
+      "inputs": 3,
+      "inputDigests": [
+        "0aa0d4d4cbc9bc40ab01fbef66ce0538ffa18f5e2e111065160b8d0764e2bf5e",
+        "5903d3b7b74d030b2e815bb110116a1efbcfeb4b13223888a61e063aa90b2d18",
+        "891116ed36377816d864b5b48dbcd7355d6255715583c73f9e86c4164389ef25"
+      ],
+      "conditionCompiler": "bazi-literal-dnf-v1"
+    },
+    {
+      "id": "qtbj-v2-c010-p004-001",
+      "method": "bazi",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "conditions": [
+        "乙日卯月丙癸同透且庚不透"
+      ],
+      "inputs": 3,
+      "inputDigests": [
+        "3e4536f791f81c1a6282c9ed6b273c17b0b151b44e3a4d72fc23602c04fa8d64",
+        "8a22826763fc413074962ef1fa0d713802be5c9072218c6179b7dc63518f3f91",
+        "eca20285700f418e9f816de010e039fa0c1e4e2b4255047b3cdf74a41b8c6e18"
+      ],
+      "conditionCompiler": "bazi-literal-dnf-v1"
+    },
+    {
+      "id": "qtbj-v5-c076-p003-301",
+      "method": "bazi",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "conditions": [
+        "亥月庚日甲透而丁藏"
+      ],
+      "inputs": 12,
+      "inputDigests": [
+        "70c16c388c09e67f2299ede7e80f2802d609cdc6887fd49d573791ab1a207a43",
+        "f7fc7643dfee935bbaae2b66e11efd94f3c447b4e7e6a923c9199175ffb31ee9",
+        "7be50f08eae035e8700fb42ffc70ce714a2c63f75738d52ef4c46020b5e110ba",
+        "55d608c016b8a659376032d2ade1b9992d5a56b9bde45e16ad813443a15b2ba3",
+        "053536d1ca2c6dd1d03724f7a51f47f77b261d8308e048b1cb5fe751aa3b90ae",
+        "e23502af10dad7d7d020978ac0dae664dd46167fb3c793f0fcdc9f15e9f703db",
+        "5d6eccca1c7655449c017a070b92e0761474cd29429050db8c7c4ba091083d32",
+        "9bd6d18f8af403541b36d23982ece8ebccbb2e7b557c9e047429a4035cb35ce3",
+        "d45f0928f6852bb4bfeaf5951bba63b89bd1405c7bb2429befa682227a5171e6",
+        "298bcb63c8933d8c82f4a522d357d5761cd82c9b286a93704e0cf1324c3319df",
+        "c4bb54f1c63a7d2a1aa69f5fd934196c1d4bd7aa12e3d698db82115991dd772f",
+        "53306a18949b6f7dd2af91af680c154e5473da493dce8520163ced1fdd3fc4a1"
+      ],
+      "conditionCompiler": "bazi-literal-dnf-v1"
+    },
+    {
+      "id": "qtbj-v6-c098-p002-101",
+      "method": "bazi",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "conditions": [
+        "辰月壬日，甲庚齐透"
+      ],
+      "inputs": 4,
+      "inputDigests": [
+        "5016f9979717e030c147bc583761cfff9eff6b59686f4af6462401db4f0c7e99",
+        "5d252930b76f5969e03e75227ef61ea2ec28dd52a278eadc1ea4d72370b4f8cc",
+        "5bee5fbf378e0b07e7302a1f6ae2dd9926772258530b83418fab0fd526031acd",
+        "364f4dd7b6f5277a3fdd70773567120a4d293f0985d2f0269be62659d868fd8e"
+      ],
+      "conditionCompiler": "bazi-literal-dnf-v1"
+    }
+  ],
+  "deferred": [
+    {
+      "id": "qtbj-v2-c005-p004-002",
+      "reason": "Unspecified 见庚丁 is not equated with all hidden stems or silently restricted to visible stems."
+    },
+    {
+      "id": "yhzp-v1-c217-p002-001",
+      "reason": "The supplied 十恶 day list includes 乙丑; do not silently substitute the familiar 己丑 list without edition verification."
+    }
+  ],
+  "boundaries": [
+    "Unknown source words or control/strength requirements are not dropped.",
+    "Visible stems exclude the day master; concealed stems use the actual branch list.",
+    "Unshown and absent throughout the chart are different predicates.",
+    "The two month alternatives keep their own visible stems and absences.",
+    "Supplemental alternatives must admit a legal year-month and day-hour configuration."
+  ],
+  "uniqueAlternatives": 76
+}

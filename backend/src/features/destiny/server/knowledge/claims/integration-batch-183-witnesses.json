@@ -1,0 +1,22 @@
+{
+  "27": {"date": "1903-02-22T06:40:00.000Z", "latitude": 51.066, "longitude": 177.758},
+  "28": {"date": "1911-12-16T02:21:00.000Z", "latitude": 39.422, "longitude": -159.051},
+  "29": {"date": "2001-04-14T02:04:00.000Z", "latitude": -22.113, "longitude": -60.147},
+  "32": {"date": "1955-09-04T22:11:00.000Z", "latitude": -18.312, "longitude": -16.957},
+  "33": {"date": "1947-10-23T23:59:00.000Z", "latitude": -51.871, "longitude": 104.591},
+  "34": {"date": "1938-09-06T23:45:00.000Z", "latitude": 45.283, "longitude": -136.387},
+  "36": {"date": "1903-02-22T06:40:00.000Z", "latitude": 51.066, "longitude": 177.758},
+  "37": {"date": "1962-07-10T15:16:00.000Z", "latitude": -45.976, "longitude": 57.744},
+  "39": {"date": "2007-08-21T11:40:00.000Z", "latitude": -7.695, "longitude": 176.712},
+  "40": {"date": "2015-03-31T07:21:00.000Z", "latitude": -52.755, "longitude": -14.645},
+  "41": {"date": "1994-09-29T17:11:00.000Z", "latitude": 35.972, "longitude": -32.837},
+  "42": {"date": "2000-11-18T17:08:00.000Z", "latitude": -34.841, "longitude": -123.575},
+  "34-exaltation": {"date": "2002-01-31T03:29:00.000Z", "latitude": 28.194, "longitude": -146.4},
+  "37-trine": {"date": "1951-09-08T15:25:00.000Z", "latitude": -36.513, "longitude": -73.593},
+  "36-trine": {"date": "1947-12-15T23:28:00.000Z", "latitude": -32.675, "longitude": 103.852},
+  "33-ascendant": {"date": "2015-03-31T07:21:00.000Z", "latitude": -52.755, "longitude": -14.645},
+  "33-descendant": {"date": "1901-01-11T13:29:00.000Z", "latitude": 45.791, "longitude": 20.083},
+  "33-ic": {"date": "1905-05-25T07:42:00.000Z", "latitude": -11.269, "longitude": 42.005},
+  "unsupportedSolarHouse": {"date": "1945-04-10T23:42:00.000Z", "latitude": -23.787, "longitude": 123.845},
+  "sunOutsideRise": {"date": "1969-06-21T21:46:00.000Z", "latitude": -15.092, "longitude": 131.988}
+}

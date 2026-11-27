@@ -1,0 +1,33 @@
+{
+  "sourceRecords": 7,
+  "alternatives": 10,
+  "negative": {
+    "night": {
+      "profile": {
+        "date": {
+          "year": 1970,
+          "month": 4,
+          "day": 18
+        },
+        "time": {
+          "timeKnown": true,
+          "hour": 2,
+          "minute": 15
+        },
+        "gender": "female"
+      }
+    }
+  },
+  "witnesses": [
+    {"profile":{"date":{"year":2003,"month":6,"day":15},"time":{"timeKnown":true,"hour":8,"minute":15},"gender":"female"},"proofs":[{"id":"ziwei-v1-xingjue-048-p1046-001","inputDigest":"3278df417464e4c29b781f57977b77a4dd454f5655bffd63e1015e144b4d13c8"}]},
+    {"profile":{"date":{"year":1988,"month":7,"day":19},"time":{"timeKnown":true,"hour":6,"minute":15},"gender":"female"},"proofs":[{"id":"ziwei-v1-xingjue-044-p177-001","inputDigest":"f9af4e783dc41adfb7df1fa327b92e27549b1bca9a36369321edfb1d7e83b2d7"}]},
+    {"profile":{"date":{"year":1968,"month":10,"day":2},"time":{"timeKnown":true,"hour":12,"minute":15},"gender":"female"},"proofs":[{"id":"ziwei-v1-xingjue-044-p177-001","inputDigest":"3c18d68d726f0547192132ce35b60c79d6db44deb7ab99a5b4dae91f15363f04"}]},
+    {"profile":{"date":{"year":1995,"month":12,"day":3},"time":{"timeKnown":true,"hour":14,"minute":15},"gender":"female"},"proofs":[{"id":"ziwei-v1-xingjue-053-p1001-001","inputDigest":"7180633da17f82ee531d7958c19b6e9830777b33fa13a046082bafd29091698a"}]},
+    {"profile":{"date":{"year":1964,"month":6,"day":25},"time":{"timeKnown":true,"hour":10,"minute":15},"gender":"male"},"proofs":[{"id":"ziwei-v1-xingjue-048-p1048-001","inputDigest":"3911c567c64858dd4b5fbaf4b160caa61950e3f65e1f7985041b687ee0095d0f"}]},
+    {"profile":{"date":{"year":1995,"month":6,"day":4},"time":{"timeKnown":true,"hour":12,"minute":15},"gender":"female"},"proofs":[{"id":"ziwei-v1-xingjue-044-p1040-001","inputDigest":"3aff12a11eedd26fc8d30be8890b40c45a061e34eb80662930320f413964b6a4"}]},
+    {"profile":{"date":{"year":1995,"month":9,"day":18},"time":{"timeKnown":true,"hour":6,"minute":15},"gender":"female"},"proofs":[{"id":"ziwei-v1-xingjue-044-p177-001","inputDigest":"eaf2464d81fe5b06c9051e437d3a2e4fe1e7ac69f2c8e7643c4c4102370e712e"}]},
+    {"profile":{"date":{"year":1978,"month":8,"day":7},"time":{"timeKnown":true,"hour":2,"minute":15},"gender":"female"},"proofs":[{"id":"ziwei-v1-xingjue-048-p1050-001","inputDigest":"1659872deabcf4a78fda7cb73b5466fb7471cea0686328094be2ab505c0b5a0c"}]},
+    {"profile":{"date":{"year":1981,"month":12,"day":21},"time":{"timeKnown":true,"hour":8,"minute":15},"gender":"male"},"proofs":[{"id":"ziwei-v1-xingjue-053-p1001-001","inputDigest":"02da4cd277c57aa8400379cede915c8537c29e7e50307fe14082936b0a97515c"}]},
+    {"profile":{"date":{"year":1971,"month":2,"day":28},"time":{"timeKnown":true,"hour":10,"minute":15},"gender":"male"},"proofs":[{"id":"ziwei-v1-xingjue-048-p1049-001","inputDigest":"e95825a453aa362c956d366443b736b50f341663edc738076e71bed5e09443f1"}]}
+  ]
+}

@@ -1,0 +1,212 @@
+{
+  "scanned": 517,
+  "targetAlternatives": 18,
+  "witnesses": [
+    {
+      "date": "2026-01-01T00:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "ids": [
+        "astro-lilly-v3-travel-p007-001",
+        "astro-lilly-v3-mines-p002-001",
+        "astro-lilly-v3-relatives-p012-001"
+      ],
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-travel-p007-001",
+          "inputDigest": "469434124ec2718fd5937538b2d9737878696eb8188dbb02de60f1a7eb9107ee"
+        },
+        {
+          "id": "astro-lilly-v3-mines-p002-001",
+          "inputDigest": "da6cb1598b7b78f0090516d525f9a85f54bbca06e64f012ba549e78fd616dc54"
+        },
+        {
+          "id": "astro-lilly-v3-relatives-p012-001",
+          "inputDigest": "092fb23e74502198162c25db0ba76cf2a979f4f3849e5cce1b788d2bbbcf1fbb"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-01T08:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "ids": [
+        "astro-lilly-v3-mines-p002-001"
+      ],
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-mines-p002-001",
+          "inputDigest": "fdc67b95fa890c1c0248c2c8b1992f7ee7137a738da13f260878500828b17ee9"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-01T12:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "ids": [
+        "astro-lilly-v3-mines-p002-001"
+      ],
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-mines-p002-001",
+          "inputDigest": "bf0eda8634481936067f081e0c762248cb39fa0fdd6d8fe57b1ec7d97390f756"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-03T00:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "ids": [
+        "astro-lilly-v3-travel-p007-001"
+      ],
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-travel-p007-001",
+          "inputDigest": "ae7022d6538da85880a8ee487492bf643a920191ea29526123c50db0e4d3b79b"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-03T12:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "ids": [
+        "astro-lilly-v3-travel-p002-001",
+        "astro-lilly-v3-mines-p002-001"
+      ],
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-travel-p002-001",
+          "inputDigest": "1a014adca0839faf02e8d1315e6179869f9b5d976ed6d86a18da908cf66fdcbd"
+        },
+        {
+          "id": "astro-lilly-v3-mines-p002-001",
+          "inputDigest": "9c5b80b1b740b999423c40d1b7609549a41e80db747a62737676382f6bce6d33"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-07T08:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "ids": [
+        "astro-lilly-v3-family-p009-001"
+      ],
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p009-001",
+          "inputDigest": "5cc3046e6a56330fa574bca714e2e719878154fdc4250104127a5a91c5766da3"
+        },
+        {
+          "id": "astro-lilly-v3-family-p009-001",
+          "inputDigest": "d920823b13d97c8d910a0f7ba93408a008c26084bd2daaa699f6fd7081e223d0"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-07T16:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "ids": [
+        "astro-lilly-v3-family-p009-001"
+      ],
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p009-001",
+          "inputDigest": "64402aa8b54ea2faf9d3c925af4a9da4d311bb905c80a53c060aa34852a45e74"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-09T00:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "ids": [
+        "astro-lilly-v3-family-p009-001"
+      ],
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-family-p009-001",
+          "inputDigest": "a4dad45bbcfd17d0847d58070ebc06f63c0c9baac7aff2ca1348b808abedaacc"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-17T16:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "ids": [
+        "astro-lilly-v3-travel-p007-001"
+      ],
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-travel-p007-001",
+          "inputDigest": "1c7027d49f21473d8272a95e2b6db59de604ce617674583531abae98e60d29d4"
+        },
+        {
+          "id": "astro-lilly-v3-travel-p007-001",
+          "inputDigest": "412425e88c9c2ca0e8702455aa07ec60941f800e970821e6ad03abbc6ade8d96"
+        }
+      ]
+    },
+    {
+      "date": "2026-05-03T04:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "ids": [
+        "astro-lilly-v3-wit-p006-001"
+      ],
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-wit-p006-001",
+          "inputDigest": "1acb2324a19fca5050594a74444f27c09e1072520ac5dc4067df415bc97da7f1"
+        }
+      ]
+    },
+    {
+      "date": "2026-05-21T04:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "ids": [
+        "astro-lilly-v3-travel-p007-001"
+      ],
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-travel-p007-001",
+          "inputDigest": "4f11228e3a6bd8530d63570e10c0be09a6b00cc178aa2fe541af9435ea498c9a"
+        }
+      ]
+    },
+    {
+      "date": "2026-06-02T00:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "ids": [
+        "astro-lilly-v3-wit-p006-001"
+      ],
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-wit-p006-001",
+          "inputDigest": "ca541d6413f5f69a24b74022e9bd162c092ce6b6588acf40b6035ad7f0b6acda"
+        }
+      ]
+    },
+    {
+      "date": "2026-06-22T00:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "ids": [
+        "astro-lilly-v3-travel-p007-001"
+      ],
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-travel-p007-001",
+          "inputDigest": "475bf7b36dfc1e369f6c6c70e28b09cd2e9ffb60b914542ae87de712593fe137"
+        }
+      ]
+    }
+  ],
+  "missing": []
+}

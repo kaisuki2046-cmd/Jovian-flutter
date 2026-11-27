@@ -1,0 +1,281 @@
+{
+  "scanned": 6655,
+  "witnesses": [
+    {
+      "date": "1960-01-01T00:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "gender": "男",
+      "ids": [
+        "astro-lilly-v3-concord-p001-001",
+        "astro-lilly-v3-ease-p003-001"
+      ]
+    },
+    {
+      "date": "1960-01-01T03:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "gender": "男",
+      "ids": [
+        "astro-lilly-v3-parents-p006-001"
+      ]
+    },
+    {
+      "date": "1960-01-01T04:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "gender": "男",
+      "ids": [
+        "astro-lilly-v3-travel-p001-001"
+      ]
+    },
+    {
+      "date": "1960-01-01T08:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "gender": "男",
+      "ids": [
+        "astro-lilly-v3-preferment-p069-001"
+      ]
+    },
+    {
+      "date": "1960-01-01T13:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "gender": "男",
+      "ids": [
+        "astro-lilly-v3-wit-p001-001"
+      ]
+    },
+    {
+      "date": "1960-01-01T15:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "gender": "男",
+      "ids": [
+        "astro-lilly-v3-spouse-description-p063-001"
+      ]
+    },
+    {
+      "date": "1960-03-01T03:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "gender": "男",
+      "ids": [
+        "astro-lilly-v3-family-p006-001",
+        "astro-lilly-v3-wealth-level-p009-001",
+        "astro-lilly-v3-spouse-description-p035-001"
+      ]
+    },
+    {
+      "date": "1960-05-15T04:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "gender": "男",
+      "ids": [
+        "astro-lilly-v3-family-p001-001"
+      ]
+    },
+    {
+      "date": "1960-06-01T21:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "gender": "男",
+      "ids": [
+        "astro-lilly-v3-relatives-p002-001"
+      ]
+    },
+    {
+      "date": "1960-08-01T00:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "gender": "男",
+      "ids": [
+        "astro-lilly-v3-relatives-p009-001"
+      ]
+    },
+    {
+      "date": "1965-01-01T10:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "gender": "男",
+      "ids": [
+        "astro-lilly-v3-wit-p003-001",
+        "astro-lilly-v3-travel-p002-001",
+        "astro-lilly-v3-family-p003-001",
+        "astro-lilly-v3-relatives-p010-001",
+        "astro-lilly-v3-wit-p031-001",
+        "astro-lilly-v3-parents-p011-001"
+      ]
+    },
+    {
+      "date": "1965-01-15T08:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "gender": "男",
+      "ids": [
+        "astro-lilly-v3-wit-p033-001"
+      ]
+    },
+    {
+      "date": "1992-10-15T22:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "gender": "男",
+      "ids": [
+        "astro-lilly-v3-family-p029-001"
+      ]
+    },
+    {
+      "date": "1980-01-15T08:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "gender": "男",
+      "ids": [
+        "astro-lilly-v3-mines-p005-001",
+        "astro-lilly-v3-spouse-origin-p005-001"
+      ]
+    },
+    {
+      "date": "1980-01-15T10:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "gender": "男",
+      "ids": [
+        "astro-lilly-v3-family-p004-001"
+      ]
+    },
+    {
+      "date": "1980-02-15T00:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "gender": "男",
+      "ids": [
+        "astro-lilly-v3-relatives-p003-001",
+        "astro-lilly-v3-family-p005-001",
+        "astro-lilly-v3-relatives-p018-001"
+      ]
+    },
+    {
+      "date": "1980-05-15T10:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "gender": "男",
+      "ids": [
+        "astro-lilly-v3-parents-p010-001"
+      ]
+    },
+    {
+      "date": "1980-05-15T22:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "gender": "男",
+      "ids": [
+        "astro-lilly-v3-children-p034-001"
+      ]
+    },
+    {
+      "date": "1980-09-15T12:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "gender": "男",
+      "ids": [
+        "astro-lilly-v3-parents-p002-001"
+      ]
+    },
+    {
+      "date": "1980-11-15T00:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "gender": "男",
+      "ids": [
+        "astro-lilly-v3-parents-p001-001",
+        "astro-lilly-v3-preferment-p065-001"
+      ]
+    },
+    {
+      "date": "1980-12-15T00:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "gender": "男",
+      "ids": [
+        "astro-lilly-v3-wit-p004-001"
+      ]
+    },
+    {
+      "date": "1981-03-15T10:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "gender": "男",
+      "ids": [
+        "astro-lilly-v3-ease-p004-001"
+      ]
+    },
+    {
+      "date": "1981-05-15T00:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "gender": "男",
+      "ids": [
+        "astro-lilly-v3-wealth-level-p008-001"
+      ]
+    },
+    {
+      "date": "1981-07-15T18:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "gender": "男",
+      "ids": [
+        "astro-lilly-v3-parents-p005-001"
+      ]
+    },
+    {
+      "date": "1992-07-15T16:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "gender": "男",
+      "ids": [
+        "astro-lilly-v3-spouse-description-p030-001"
+      ]
+    },
+    {
+      "date": "2006-04-15T00:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "gender": "男",
+      "ids": [
+        "astro-lilly-v3-marriage-p012-001"
+      ]
+    },
+    {
+      "date": "2010-08-15T14:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "gender": "男",
+      "ids": [
+        "astro-lilly-v3-spouse-description-p058-001"
+      ]
+    },
+    {
+      "date": "1981-01-19T08:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "gender": "男",
+      "ids": [
+        "astro-lilly-v3-preferment-p028-001"
+      ]
+    },
+    {
+      "date": "2021-02-11T00:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "gender": "男",
+      "ids": [
+        "astro-lilly-v3-spouse-description-p034-001"
+      ]
+    }
+  ],
+  "missing": [],
+  "adaptiveScanned": 22074,
+  "calculationProfile": "lilly-1647-two-orb-tables-v1"
+}

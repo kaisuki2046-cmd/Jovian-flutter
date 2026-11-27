@@ -1,20 +1,25 @@
 # 木星环 Flutter 版
 
-Flutter 版沿用项目的[目录分工](../app/FRAMEWORK.md)、[协作协议](../app/COLLABORATION.md)和 [Flutter 前端开工规范](AGENTS.md)。迁移分支从 `b47e061a` 开始，算事界面对照 `YA` 的 `d12e3f0c`。前端通过现有 API 接入 Node 服务。命理、合盘和运势的本机计算复用原 TypeScript 资源。下文的 Dart 服务和计算对照命令仅用于独立原型，启动 Flutter 前端时使用原 Node 服务。
+Flutter 版沿用项目的[目录分工](backend/FRAMEWORK.md)、[协作协议](backend/COLLABORATION.md)和 [Flutter 前端开工规范](AGENTS.md)。迁移分支从 `b47e061a` 开始，算事界面对照 `YA` 的 `d12e3f0c`。前端通过现有 API 接入 Node 服务。命理、合盘和运势的本机计算复用原 TypeScript 资源。下文的 Dart 服务和计算对照命令仅用于独立原型，启动 Flutter 前端时使用原 Node 服务。
 
 ## 启动 Flutter Web 前端
 
-从 Flutter 独立仓库的根目录启动。同级 `app/` 提供原 TypeScript 计算源码和可选的本机 Node 服务。原项目也可以放在任意目录，通过环境变量 `JOVIAN_LEGACY_SOURCE_ROOT` 指定绝对路径。运行中的 Node 服务可以直接通过 API 地址接入。本文指向原项目的相对链接以同级布局为例。
+检出本仓库的 `flutter` 分支后，从根目录启动。Flutter 客户端在 `src/`，账户、算事、命理、运势和合盘的 Node 服务以及 TypeScript 计算源码在 `backend/`。依赖通过各自的锁文件安装。
 
-原项目的 Node 依赖位于另一工作树时，设置 `JOVIAN_LEGACY_NODE_ROOT` 指向依赖所在的项目根目录。按以下顺序生成计算资源、准备 Flutter 依赖并启动，将服务地址和 Web 来源设为已有服务允许的值。更多说明见[本机计算](tool/legacy_compute/README.md)。若使用 Flutter 项目 `.local` 下的本地 SDK，在 PowerShell 中把 `flutter` 换成 `& '.\.local\flutter-toolchain\flutter\bin\flutter.bat'`。
+准备 Flutter SDK、Chrome 和带 npm 的 Node.js（22.13+ 的 22.x、24.3+ 的 24.x，或 26+）。Windows 下可双击 [Start-web.cmd](Start-web.cmd)。启动器首次会安装 Node 依赖、生成计算资源、启动五个服务并打开 Flutter Web。Flutter SDK 可以在 PATH 中，也可以放在 `.local/flutter-toolchain/flutter/`。
+
+单独准备前端资源及连接已运行的 API 时，可以在根目录执行以下命令。
 
 ```sh
+npm ci --prefix backend
 node tool/legacy_compute/build.mjs
 flutter pub get
 flutter run -d chrome --web-port 8081 --target src/app/main.dart --dart-define-from-file=config/local-web.example.json
 ```
 
-Windows 下双击根目录的 [Start-web.cmd](Start-web.cmd)，会一并启动账户、算事、命理、运势和合盘的原 Node 服务，再打开 Flutter 的 Chrome 预览。服务优先使用原项目的端口和备选端口。预设端口都被占用时由系统分配临时端口，Flutter 会读取实际地址。启动器按原项目方式加载本机虚拟认证服务商与 DeepSeek 配置。保持启动窗口打开，按 Ctrl+C 或关窗时，这次启动的服务会退出。日志位于 `.local/start-web/`。
+服务优先使用预设端口。端口被占用时，启动器选择可用端口并传给 Flutter。保持启动窗口打开，按 Ctrl+C 或关窗后这次启动的服务会退出。日志位于 `.local/start-web/`，业务数据默认保存在 `backend/` 内的本地数据目录。新检出会从空库启动。
+
+本地开发模式内置模拟微信、QQ 和短信适配器，验证码写入 `backend/dev-auth/inbox/`。真实在线解读需要配置 DeepSeek，可以复制 [backend/.env.example](backend/.env.example) 为 `backend/.env`，再设置 `DEEPSEEK_API_KEY` 或 `DEEPSEEK_API_KEY_FILE`。正式短信、邮件与登录渠道按 [Node 后端说明](backend/README.md) 单独配置。
 
 在 PowerShell 中也可运行 `& '.\Start-web.cmd' -CheckServices`，只检查五个本机服务能否启动。已有独立运行的服务时，可传 `-ServiceConfig` 指定地址文件，并用 `-WebPort` 匹配后端允许的 Web 来源。两种启动方式都会在缺少计算资源时从指定源码生成，并由 Flutter 自动准备项目依赖。 预览的渲染资源由本机提供。
 
@@ -38,9 +43,9 @@ Web 底栏同步当前页面路径，支持刷新和浏览器前进、后退。�
 
 个人中心的个性签名与星座、性格、兴趣标签按账号保存在本机。Web 和保留应用数据的 Android 原位升级可读取同一账号的旧版记录。「基础个人资料」里的简介通过原账户接口管理公开范围。
 
-算事沿用原版的单一对话入口。输入问题并发送后，按服务返回的流程投六次铜钱，再从 78 张牌里选三张。仪式可暂停续接，支持逐张翻牌和一键翻牌。会话有效时，刷新或重新打开可继续同一盘尚未完成的翻牌。翻完或会话过期后可直接回看已保存的报告。投币、洗牌、选牌和翻牌的操作提示随界面语言切换。问题已确认但启盘失败时，可以按原问题「重试算事」，或用「修改问题」回到输入框。服务端提示确认过期时可重新确认。六爻、梅花易数和塔罗盘面均可在同一对话中查看。服务端提供切牌位置时，前端按该位置演示切牌。
+算事沿用原版的单一对话入口。输入问题并发送后，从 78 张牌里选三张、翻牌，再投六次铜钱。仪式可暂停续接，支持逐张翻牌和一键翻牌。会话有效时，刷新或重新打开可继续同一盘尚未完成的翻牌。翻完或会话过期后可直接回看已保存的报告。投币、洗牌、选牌和翻牌的操作提示随界面语言切换。问题已确认但启盘失败时，可以按原问题「重试算事」，或用「修改问题」回到输入框。服务端提示确认过期时可重新确认。六爻、梅花易数和塔罗盘面均可在同一对话中查看。服务端提供切牌位置时，前端按该位置演示切牌。
 
-算事的果冻章鱼出场、表情、倾听和飞入输入框沿用原 RN 的角色画面与节奏。透明帧资源在 Flutter 内播放，减少动态效果时使用静止姿态。问候文字和金粉也随动态效果设置暂停。需要从同级 RN 源码重新导出角色帧时，在 Flutter 根目录运行 `node tool/render_assistant_motion.mjs`。可通过 `JOVIAN_BROWSER_TEST_ROOT` 和 `CHROME_EXECUTABLE` 指定本机的 Playwright 依赖和 Chrome。
+算事的果冻章鱼出场、表情、倾听和飞入输入框沿用原 RN 的角色画面与节奏。透明帧资源在 Flutter 内播放，减少动态效果时使用静止姿态。问候文字和金粉也随动态效果设置暂停。需要从仓库内带的原版角色源码重新导出角色帧时，在 Flutter 根目录运行 `node tool/render_assistant_motion.mjs`。可通过 `JOVIAN_BROWSER_TEST_ROOT` 和 `CHROME_EXECUTABLE` 指定本机的 Playwright 依赖和 Chrome。
 
 Web、Android 和 iOS 的投币反馈使用同一套声音节拍。减少动态效果时只播放一次碰撞音，暂停或离开仪式会停止声音。算事主报告可逐段展开，追问可查看原文依据并打开或复制参考链接，历史快照会保留当次的依据。
 
@@ -73,6 +78,7 @@ app-flutter/
 │   │   └── synastry/              双人盘面、比较和在线解读
 │   ├── shared/                    公共请求与契约
 │   └── ui/                        公共主题
+├── backend/                       Node 服务、知识库、计算源码及 npm 锁文件
 ├── test/                          Flutter 组件测试
 └── web/                           Flutter Web 入口和图标
 ```
@@ -81,9 +87,10 @@ app-flutter/
 
 ## 组件测试和开发用服务
 
-在 Flutter 仓库根目录执行以下命令。
+在 Flutter 仓库根目录执行以下命令。全仓静态分析也会检查 Dart 历史服务和对照工具。首次检出时，先在这些子包目录运行各自的 dart pub get。
 
 ```sh
+npm ci --prefix backend
 node tool/legacy_compute/build.mjs
 flutter pub get
 flutter run -d chrome --target src/app/main.dart
@@ -94,12 +101,7 @@ flutter build web --target src/app/main.dart --no-web-resources-cdn
 
 在线算事沿用现有 Node 账户和算事服务。启动这两个服务后，在 `app-flutter/` 下运行以下命令，并将 Web 来源加入它们各自的允许列表。登录或进入游客会话后，在个人中心的「隐私与授权」中开启算事授权。下文的 Dart 服务命令用于隔离环境中的历史原型对照。
 
-算事会先选择三张塔罗牌。现有 Node 接口会在六次投掷后返回牌面，Flutter 随后进入翻牌和解读。支持提前返回牌面的接口会让用户先翻牌，再进入六爻起卦。要给 Node 服务增加提前翻牌支持，在同级原项目 `app/` 的 Git 工作树中应用[算事服务补丁](tool/patches/divination-tarot-first.patch)，然后重启 Node 算事服务。补丁以原项目 `dev` 的 `7170624` 为基准。
-
-```sh
-git -C ../app apply --check "$(pwd)/tool/patches/divination-tarot-first.patch"
-git -C ../app apply "$(pwd)/tool/patches/divination-tarot-first.patch"
-```
+仓库内的 Node 服务支持先选牌、翻牌再投铜钱。连接外部旧版接口时，Flutter 仍可在六次投掷后接收并翻开牌面。迁移来源见 [Node 后端说明](backend/README.md)。
 
 ```sh
 flutter run -d chrome --web-port 8114 --target src/app/main.dart --dart-define=ACCOUNT_API_URL=http://localhost:8787 --dart-define=DIVINATION_REPORT_URL=http://localhost:8115
@@ -119,7 +121,7 @@ Android 的「关于木星环」显示安装包版本。配置 `ANDROID_UPDATE_D
 
 在 `app-flutter/` 中用 `flutter build bundle --debug --target src/app/main.dart` 检查 Flutter 入口和资源。Android、iOS 的系统启动、WebView 运行和后端连接仍需分别在对应设备验收。签名由发布流程配置。
 
-在 `src/features/divination/control/` 下运行 Dart 计算对照。六爻历法和组合起盘对照使用旧项目的 npm 依赖。
+在 `src/features/divination/control/` 下运行 Dart 计算对照。六爻历法和组合起盘对照使用 `backend/` 的 npm 依赖。
 
 ```sh
 dart pub get
@@ -130,7 +132,7 @@ dart run test/guide_ritual_parity.dart
 dart run test/online_controller_contract.dart
 ```
 
-在 `src/features/divination/server/` 下运行后端验收。测试使用临时 SQLite 文件与本机 HTTP 端口。存储对照也使用旧项目的 npm 依赖。
+在 `src/features/divination/server/` 下运行后端验收。测试使用临时 SQLite 文件与本机 HTTP 端口。存储对照也使用 `backend/` 的 npm 依赖。
 
 ```sh
 dart pub get
@@ -153,7 +155,7 @@ Flutter Web 使用原 TypeScript 计算四周期事实。登录或进入游客�
 
 年运的太阳回归地点支持切换南纬和西经。地点无法确定回归上升时，可清空坐标生成常规解读。指定的命盘失效时可以直接返回命理重新选择。
 
-在 `src/features/fortune/control/calculation/` 下运行 `dart pub get` 和 `dart run test/calendar_parity.dart`，与旧版核对周期、黄历、历法查询、日柱判定与报告归档键。对照使用 Node.js 和原项目的 npm 依赖。
+在 `src/features/fortune/control/calculation/` 下运行 `dart pub get` 和 `dart run test/calendar_parity.dart`，与旧版核对周期、黄历、历法查询、日柱判定与报告归档键。对照使用 Node.js 和 `backend/` 的 npm 依赖。
 
 运势原始资料位于本模块的 `model/knowledge/fortune_knowledge.json`。服务校验原文摘要与条件审阅摘要，再按源文件哈希构建 SQLite 索引。索引默认保存在 `storage/knowledge/.local/`，该目录由 Git 忽略。
 
@@ -169,9 +171,9 @@ dart run test/knowledge_contract.dart
 
 `calculateFortuneFacts` 接收账户层授权的盘面引用和时段，生成八字本命、节气流柱、十神、干支关系、大运和黄历事实。出生资料不足时保留候选，各候选不合并为一张确定的盘。SQLite 的 `matchRun` 校验事实来源、时段、身份绑定与计算版本后执行匹配。事实记录使用 Dart 引擎版本，与旧 Node 事实提交版本分别标识。
 
-在 `src/features/fortune/control/calculation/` 下运行 `dart run test/facts_parity.dart`，对照旧档案的立春、晚子、交运、海外出生时钟与候选隔离。对照默认读取原工程的 npm 依赖，也可用 `JOVIAN_LEGACY_NODE_ROOT` 指定装好原依赖的工作树。资料库测试同时核对旧档案的寒露节令月能命中对应解读规则。
+在 `src/features/fortune/control/calculation/` 下运行 `dart run test/facts_parity.dart`，对照旧档案的立春、晚子、交运、海外出生时钟与候选隔离。对照使用 `backend/` 中随仓库附带的实现和 npm 依赖。资料库测试同时核对旧档案的寒露节令月能命中对应解读规则。
 
-在 `src/features/destiny/control/` 下运行 `dart pub get`、`dart run test/birth_clock_parity.dart` 和 `dart run test/bazi_parity.dart`。出生时刻对照覆盖时分缺失采样、历史时区和夏令时边界。八字对照覆盖节气前后、23 点换日和大运。运行对照需 Node.js，八字对照还需要原项目的 npm 依赖。Dart 时钟使用内置 IANA 转换规则，新时钟版本标识为 `gregory-iana-tzdb-v1`。
+在 `src/features/destiny/control/` 下运行 `dart pub get`、`dart run test/birth_clock_parity.dart` 和 `dart run test/bazi_parity.dart`。出生时刻对照覆盖时分缺失采样、历史时区和夏令时边界。八字对照覆盖节气前后、23 点换日和大运。运行对照需 Node.js，八字对照还需要 `backend/` 的 npm 依赖。Dart 时钟使用内置 IANA 转换规则，新时钟版本标识为 `gregory-iana-tzdb-v1`。
 
 Flutter 的「命理」沿用原版出生资料核对流程，通过本机计算桥调用原 TypeScript 排八字、紫微和西方星盘。盘面可在同一弹窗切换，时分缺失时显示原计算给出的稳定结果和时辰情景。出生地沿用旧版 2,941 条目录。配置 `DESTINY_REPORT_URL` 后，报告沿用原 Node 解读和账户归档服务。重新进入可回看上次报告和已归档盘面，完整快照可直接用于周期运势。
 
@@ -179,7 +181,7 @@ Flutter 的「命理」沿用原版出生资料核对流程，通过本机计算
 
 会员打开命理表单时会直接看到已保存的出生资料。确认测算时，通过原账户接口同步出生字段并沿用可见性设置。若账户同时更新，核对界面会显示本次填写与账户最新资料。访客可填写资料进行本次测算。
 
-「基础个人资料」可编辑出生日期、时分、地点和性别。省市区选择沿用原账户目录，也可手动保留境外城市和历史地名。「隐私设置」逐项管理出生资料可见性。遇到同时编辑时，页面保留草稿并提示重新加载账户最新值。[原地点目录与许可](../app/src/features/account/reading-profile/places/README.md)
+「基础个人资料」可编辑出生日期、时分、地点和性别。省市区选择沿用原账户目录，也可手动保留境外城市和历史地名。「隐私设置」逐项管理出生资料可见性。遇到同时编辑时，页面保留草稿并提示重新加载账户最新值。[原地点目录与许可](backend/src/features/account/reading-profile/places/README.md)
 
 「隐私设置」中的「预览他人可见内容」显示已保存的公开资料。其他已登录用户从消息页找人、关注或粉丝列表进入用户主页时，读取原账户服务提供的公开出生资料。只有本人预览显示每项可见性状态。
 
@@ -219,9 +221,9 @@ Flutter 的「命理」沿用原版出生资料核对流程，通过本机计算
 | 运势 | 命理入口、UTC 校时、四周期和指定日期计算、黄历、历法查询、在线解读与归档恢复、独立每日提运建议、原生会话接线 | 原生平台真机回归 |
 | 命理 | 账户出生资料回填和并发同步、原生本机出生资料、出生资料核对、原 TypeScript 三类排盘、紫微宫位交互、西方星图、现有报告自动归档及回看 | 原生平台真机回归 |
 | 账户 | 密码登录、短信找回密码、密码修改与短信验证后设置密码、手机号绑定和换绑、会话、UID、报告与档案、设置、出生资料与可见性编辑、个人信息申请与审核、注销与回执、实名认证占位表单 | 实名验证服务、正式第三方登录 |
-| 合规 | 现行与历史协议、辅助草案、分用途 AI 授权、隐私权利入口 | 原版合规中心的发布材料仍在 [RN 仓库](../app/src/features/compliance/README.md) |
+| 合规 | 现行与历史协议、辅助草案、分用途 AI 授权、隐私权利入口 | 发布材料随附于 [合规中心](backend/src/features/compliance/README.md) |
 | 合盘 | 双人排盘和比较、本人档案、在线四类解读与归档 | 原生平台真机回归 |
 | 社交 | 消息通知、关注与粉丝、按 UID 或昵称查找用户、公开资料预览、搜索开关和黑名单 | 原生平台真机回归 |
 | 预览 | Flutter 独立源码入口、Web 与原生端使用原 API | 正式部署、平台回归 |
 
-牌图按旧版[资源清单](../app/src/features/divination/data/asset_manifest.json)逐张校验。Dart 的 Pro 提示词统一用 LF 换行生成版本摘要，已归档报告沿用原有数据格式。
+牌图按旧版[资源清单](backend/src/features/divination/data/asset_manifest.json)逐张校验。Dart 的 Pro 提示词统一用 LF 换行生成版本摘要，已归档报告沿用原有数据格式。

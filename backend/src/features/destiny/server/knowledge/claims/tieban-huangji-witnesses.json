@@ -1,0 +1,630 @@
+{
+  "profile": "muxuan-huangji-base-v1",
+  "libraryEdition": "muxuan-json",
+  "witnesses": [
+    {
+      "birthTime": "1977-09-15T12:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "丁巳",
+        "己酉",
+        "乙亥",
+        "壬午"
+      ],
+      "axis": "yuan_hui",
+      "clauseId": 1015,
+      "claimId": "tbss-v1-clauses-p01015-001"
+    },
+    {
+      "birthTime": "1977-06-15T12:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "丁巳",
+        "丙午",
+        "癸卯",
+        "戊午"
+      ],
+      "axis": "yuan_hui",
+      "clauseId": 1016,
+      "claimId": "tbss-v1-clauses-p01016-001"
+    },
+    {
+      "birthTime": "1971-03-15T12:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "辛亥",
+        "辛卯",
+        "己亥",
+        "庚午"
+      ],
+      "axis": "yuan_hui",
+      "clauseId": 1113,
+      "claimId": "tbss-v1-clauses-p01113-001"
+    },
+    {
+      "birthTime": "1964-01-15T12:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "癸卯",
+        "乙丑",
+        "癸亥",
+        "戊午"
+      ],
+      "axis": "yuan_hui",
+      "clauseId": 1116,
+      "claimId": "tbss-v1-clauses-p01116-001"
+    },
+    {
+      "birthTime": "1990-01-08T00:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "己巳",
+        "丁丑",
+        "癸酉",
+        "壬子"
+      ],
+      "axis": "yun_shi",
+      "clauseId": 1151,
+      "claimId": "tbss-v1-clauses-p01151-001"
+    },
+    {
+      "birthTime": "1990-01-08T04:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "己巳",
+        "丁丑",
+        "癸酉",
+        "甲寅"
+      ],
+      "axis": "yun_shi",
+      "clauseId": 1161,
+      "claimId": "tbss-v1-clauses-p01161-001"
+    },
+    {
+      "birthTime": "1968-11-15T12:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "戊申",
+        "癸亥",
+        "己丑",
+        "庚午"
+      ],
+      "axis": "yuan_hui",
+      "clauseId": 1209,
+      "claimId": "tbss-v1-clauses-p01209-001"
+    },
+    {
+      "birthTime": "1965-02-15T12:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "乙巳",
+        "戊寅",
+        "庚子",
+        "壬午"
+      ],
+      "axis": "yuan_hui",
+      "clauseId": 1212,
+      "claimId": "tbss-v1-clauses-p01212-001"
+    },
+    {
+      "birthTime": "1965-04-15T12:00:00.000+08:00",
+      "gender": "女",
+      "pillars": [
+        "乙巳",
+        "庚辰",
+        "己亥",
+        "庚午"
+      ],
+      "axis": "yuan_hui",
+      "clauseId": 1213,
+      "claimId": "tbss-v1-clauses-p01213-001"
+    },
+    {
+      "birthTime": "1968-12-15T12:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "戊申",
+        "甲子",
+        "己未",
+        "庚午"
+      ],
+      "axis": "yuan_hui",
+      "clauseId": 1218,
+      "claimId": "tbss-v1-clauses-p01218-001"
+    },
+    {
+      "birthTime": "1973-11-15T12:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "癸丑",
+        "癸亥",
+        "乙卯",
+        "壬午"
+      ],
+      "axis": "yuan_hui",
+      "clauseId": 1309,
+      "claimId": "tbss-v1-clauses-p01309-001"
+    },
+    {
+      "birthTime": "1970-05-15T12:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "庚戌",
+        "辛巳",
+        "乙未",
+        "壬午"
+      ],
+      "axis": "yuan_hui",
+      "clauseId": 1311,
+      "claimId": "tbss-v1-clauses-p01311-001"
+    },
+    {
+      "birthTime": "1970-04-15T12:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "庚戌",
+        "庚辰",
+        "乙丑",
+        "壬午"
+      ],
+      "axis": "yuan_hui",
+      "clauseId": 1313,
+      "claimId": "tbss-v1-clauses-p01313-001"
+    },
+    {
+      "birthTime": "1970-08-15T12:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "庚戌",
+        "甲申",
+        "丁卯",
+        "丙午"
+      ],
+      "axis": "yuan_hui",
+      "clauseId": 1316,
+      "claimId": "tbss-v1-clauses-p01316-001"
+    },
+    {
+      "birthTime": "1973-12-15T12:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "癸丑",
+        "甲子",
+        "乙酉",
+        "壬午"
+      ],
+      "axis": "yuan_hui",
+      "clauseId": 1318,
+      "claimId": "tbss-v1-clauses-p01318-001"
+    },
+    {
+      "birthTime": "1964-12-15T12:00:00.000+08:00",
+      "gender": "女",
+      "pillars": [
+        "甲辰",
+        "丙子",
+        "戊戌",
+        "戊午"
+      ],
+      "axis": "yuan_hui",
+      "clauseId": 1416,
+      "claimId": "tbss-v1-clauses-p01416-001"
+    },
+    {
+      "birthTime": "1969-07-15T12:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "己酉",
+        "辛未",
+        "辛卯",
+        "甲午"
+      ],
+      "axis": "yuan_hui",
+      "clauseId": 1515,
+      "claimId": "tbss-v1-clauses-p01515-001"
+    },
+    {
+      "birthTime": "1969-06-15T12:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "己酉",
+        "庚午",
+        "辛酉",
+        "甲午"
+      ],
+      "axis": "yuan_hui",
+      "clauseId": 1517,
+      "claimId": "tbss-v1-clauses-p01517-001"
+    },
+    {
+      "birthTime": "1991-06-15T12:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "辛未",
+        "甲午",
+        "丙辰",
+        "甲午"
+      ],
+      "axis": "yuan_hui",
+      "clauseId": 1518,
+      "claimId": "tbss-v1-clauses-p01518-001"
+    },
+    {
+      "birthTime": "1966-09-15T12:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "丙午",
+        "丁酉",
+        "丁丑",
+        "丙午"
+      ],
+      "axis": "yuan_hui",
+      "clauseId": 1612,
+      "claimId": "tbss-v1-clauses-p01612-001"
+    },
+    {
+      "birthTime": "1966-02-15T12:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "丙午",
+        "庚寅",
+        "乙巳",
+        "壬午"
+      ],
+      "axis": "yuan_hui",
+      "clauseId": 1615,
+      "claimId": "tbss-v1-clauses-p01615-001"
+    },
+    {
+      "birthTime": "1966-12-15T12:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "丙午",
+        "庚子",
+        "戊申",
+        "戊午"
+      ],
+      "axis": "yuan_hui",
+      "clauseId": 1617,
+      "claimId": "tbss-v1-clauses-p01617-001"
+    },
+    {
+      "birthTime": "1984-06-15T12:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "甲子",
+        "庚午",
+        "庚辰",
+        "壬午"
+      ],
+      "axis": "yuan_hui",
+      "clauseId": 1817,
+      "claimId": "tbss-v1-clauses-p01817-001"
+    },
+    {
+      "birthTime": "1990-01-02T10:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "己巳",
+        "丙子",
+        "丁卯",
+        "乙巳"
+      ],
+      "axis": "yun_shi",
+      "clauseId": 2121,
+      "claimId": "tbss-v2-clauses-p02121-001"
+    },
+    {
+      "birthTime": "1990-01-02T02:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "己巳",
+        "丙子",
+        "丁卯",
+        "辛丑"
+      ],
+      "axis": "yun_shi",
+      "clauseId": 2151,
+      "claimId": "tbss-v2-clauses-p02151-001"
+    },
+    {
+      "birthTime": "1990-01-02T12:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "己巳",
+        "丙子",
+        "丁卯",
+        "丙午"
+      ],
+      "axis": "yun_shi",
+      "clauseId": 2161,
+      "claimId": "tbss-v2-clauses-p02161-001"
+    },
+    {
+      "birthTime": "1990-01-04T08:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "己巳",
+        "丙子",
+        "己巳",
+        "戊辰"
+      ],
+      "axis": "yun_shi",
+      "clauseId": 3101,
+      "claimId": "tbss-v2-clauses-p02341-001"
+    },
+    {
+      "birthTime": "1990-01-18T22:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "己巳",
+        "丁丑",
+        "癸未",
+        "癸亥"
+      ],
+      "axis": "yun_shi",
+      "clauseId": 3109,
+      "claimId": "tbss-v3-clauses-p03109-001"
+    },
+    {
+      "birthTime": "1990-01-04T18:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "己巳",
+        "丙子",
+        "己巳",
+        "癸酉"
+      ],
+      "axis": "yun_shi",
+      "clauseId": 3111,
+      "claimId": "tbss-v3-clauses-p03111-001"
+    },
+    {
+      "birthTime": "1990-01-04T02:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "己巳",
+        "丙子",
+        "己巳",
+        "乙丑"
+      ],
+      "axis": "yun_shi",
+      "clauseId": 3161,
+      "claimId": "tbss-v3-clauses-p03161-001"
+    },
+    {
+      "birthTime": "1990-01-01T18:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "己巳",
+        "丙子",
+        "丙寅",
+        "丁酉"
+      ],
+      "axis": "yun_shi",
+      "clauseId": 4121,
+      "claimId": "tbss-v4-clauses-p04121-001"
+    },
+    {
+      "birthTime": "1990-01-01T00:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "己巳",
+        "丙子",
+        "丙寅",
+        "戊子"
+      ],
+      "axis": "yun_shi",
+      "clauseId": 4141,
+      "claimId": "tbss-v3-clauses-p03040-001"
+    },
+    {
+      "birthTime": "1990-01-06T06:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "己巳",
+        "丁丑",
+        "辛未",
+        "辛卯"
+      ],
+      "axis": "yun_shi",
+      "clauseId": 5131,
+      "claimId": "tbss-v5-clauses-p05131-001"
+    },
+    {
+      "birthTime": "1990-01-06T14:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "己巳",
+        "丁丑",
+        "辛未",
+        "乙未"
+      ],
+      "axis": "yun_shi",
+      "clauseId": 5161,
+      "claimId": "tbss-v5-clauses-p05161-001"
+    },
+    {
+      "birthTime": "1990-01-11T08:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "己巳",
+        "丁丑",
+        "丙子",
+        "壬辰"
+      ],
+      "axis": "yun_shi",
+      "clauseId": 6111,
+      "claimId": "tbss-v6-clauses-p06111-001"
+    },
+    {
+      "birthTime": "1990-01-11T18:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "己巳",
+        "丁丑",
+        "丙子",
+        "丁酉"
+      ],
+      "axis": "yun_shi",
+      "clauseId": 6121,
+      "claimId": "tbss-v6-clauses-p06121-001"
+    },
+    {
+      "birthTime": "1990-01-11T04:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "己巳",
+        "丁丑",
+        "丙子",
+        "庚寅"
+      ],
+      "axis": "yun_shi",
+      "clauseId": 6151,
+      "claimId": "tbss-v6-clauses-p06151-001"
+    },
+    {
+      "birthTime": "1990-01-11T14:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "己巳",
+        "丁丑",
+        "丙子",
+        "乙未"
+      ],
+      "axis": "yun_shi",
+      "clauseId": 6161,
+      "claimId": "tbss-v6-clauses-p06161-001"
+    },
+    {
+      "birthTime": "1990-01-11T02:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "己巳",
+        "丁丑",
+        "丙子",
+        "己丑"
+      ],
+      "axis": "yun_shi",
+      "clauseId": 6171,
+      "claimId": "tbss-v6-clauses-p06171-001"
+    },
+    {
+      "birthTime": "1990-01-11T12:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "己巳",
+        "丁丑",
+        "丙子",
+        "甲午"
+      ],
+      "axis": "yun_shi",
+      "clauseId": 6181,
+      "claimId": "tbss-v6-clauses-p06181-001"
+    },
+    {
+      "birthTime": "1990-01-05T22:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "己巳",
+        "丙子",
+        "庚午",
+        "丁亥"
+      ],
+      "axis": "yun_shi",
+      "clauseId": 7101,
+      "claimId": "tbss-v7-clauses-p07101-001"
+    },
+    {
+      "birthTime": "1990-01-05T04:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "己巳",
+        "丙子",
+        "庚午",
+        "戊寅"
+      ],
+      "axis": "yun_shi",
+      "clauseId": 7121,
+      "claimId": "tbss-v7-clauses-p07121-001"
+    },
+    {
+      "birthTime": "1990-01-05T08:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "己巳",
+        "丙子",
+        "庚午",
+        "庚辰"
+      ],
+      "axis": "yun_shi",
+      "clauseId": 7131,
+      "claimId": "tbss-v7-clauses-p07131-001"
+    },
+    {
+      "birthTime": "1990-01-05T06:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "己巳",
+        "丙子",
+        "庚午",
+        "己卯"
+      ],
+      "axis": "yun_shi",
+      "clauseId": 7151,
+      "claimId": "tbss-v7-clauses-p07151-001"
+    },
+    {
+      "birthTime": "1990-01-05T00:00:00.000+08:00",
+      "gender": "女",
+      "pillars": [
+        "己巳",
+        "丙子",
+        "庚午",
+        "丙子"
+      ],
+      "axis": "yun_shi",
+      "clauseId": 7161,
+      "claimId": "tbss-v7-clauses-p07161-001"
+    },
+    {
+      "birthTime": "1990-01-29T04:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "己巳",
+        "丁丑",
+        "甲午",
+        "丙寅"
+      ],
+      "axis": "yun_shi",
+      "clauseId": 8141,
+      "claimId": "tbss-v8-clauses-p08141-001"
+    },
+    {
+      "birthTime": "1990-01-29T12:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "己巳",
+        "丁丑",
+        "甲午",
+        "庚午"
+      ],
+      "axis": "yun_shi",
+      "clauseId": 8171,
+      "claimId": "tbss-v8-clauses-p08171-001"
+    },
+    {
+      "birthTime": "1990-01-29T00:00:00.000+08:00",
+      "gender": "男",
+      "pillars": [
+        "己巳",
+        "丁丑",
+        "甲午",
+        "甲子"
+      ],
+      "axis": "yun_shi",
+      "clauseId": 8181,
+      "claimId": "tbss-v8-clauses-p08181-001"
+    }
+  ]
+}

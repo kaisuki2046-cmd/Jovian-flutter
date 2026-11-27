@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:jovian_compliance_server/jovian_compliance_server.dart';
 
 Future<void> main() async {
-  final root = Platform.script.resolve('../../../../../../').toFilePath();
+  final root = Platform.script.resolve('../../../../../backend/').toFilePath();
   final legacy = await Process.run(
     'node',
     [

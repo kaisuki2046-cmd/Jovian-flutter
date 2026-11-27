@@ -1,0 +1,41 @@
+{
+  "sourceURL": "https://www.ncc.com.tw/fate/paleo/bg/bg_034.htm",
+  "sourcePassages": ["p002", "p024", "p037", "p038", "p039", "p040", "p041", "p042"],
+  "sourceRootExamples": ["丙子", "丙申", "庚寅", "辛卯"],
+  "sourceDirections": {"东方": "寅卯辰", "南方": "巳午未", "西方": "申酉戌", "北方": "亥子丑"},
+  "sourceBranchClasses": {"四生": "寅申巳亥", "四正": "子午卯酉", "四库": "辰戌丑未"},
+  "calendarExamples": {
+    "twoShen": {"date": [1992, 8, 18], "gender": 0, "year": 2046, "natal": ["壬申", "戊申", "丙寅", "丁酉"], "luck": "壬寅"},
+    "fireStem": {"date": [1983, 12, 14], "gender": 0, "year": 2005, "natal": ["癸亥", "甲子", "丙子", "丁酉"], "luck": "丙寅"},
+    "youClash": {"date": [1992, 8, 16], "gender": 0, "year": 2036, "natal": ["壬申", "戊申", "甲子", "癸酉"], "luck": "癸卯"},
+    "chenRen": {"date": [1982, 4, 14], "gender": 0, "year": 2020, "natal": ["壬戌", "甲辰", "丁卯", "己酉"], "luck": "庚子"},
+    "chenWater": {"date": [1992, 4, 9], "gender": 0, "year": 1994, "natal": ["壬申", "甲辰", "乙卯", "乙酉"], "luck": "癸卯"}
+  },
+  "clashExamples": {
+    "metalPair": {"date": [1972, 9, 20], "hour": 10, "gender": 0, "year": 2028, "natal": ["壬子", "己酉", "甲寅", "己巳"], "luck": "癸卯"},
+    "metalFull": {"date": [1973, 9, 15], "hour": 10, "gender": 0, "year": 2033, "natal": ["癸丑", "辛酉", "甲寅", "己巳"], "luck": "丁卯"},
+    "yearWood": {"date": [1971, 9, 26], "hour": 18, "gender": 0, "year": 2027, "natal": ["辛亥", "丁酉", "甲寅", "癸酉"], "luck": "癸卯"},
+    "elseWood": {"date": [1972, 9, 20], "hour": 14, "gender": 0, "year": 2028, "natal": ["壬子", "己酉", "甲寅", "辛未"], "luck": "癸卯"},
+    "luckCompletesWood": {"date": [1971, 9, 16], "hour": 14, "gender": 0, "year": 2031, "natal": ["辛亥", "丁酉", "甲辰", "辛未"], "luck": "癸卯"},
+    "chenOnly": {"date": [1972, 9, 10], "hour": 18, "gender": 0, "year": 2025, "natal": ["壬子", "己酉", "甲辰", "癸酉"], "luck": "癸卯"},
+    "xuOnly": {"date": [1970, 9, 11], "hour": 18, "gender": 0, "year": 2023, "natal": ["庚戌", "乙酉", "甲午", "癸酉"], "luck": "己卯"},
+    "adjacentChen": {"date": [1971, 9, 16], "hour": 10, "gender": 0, "year": 2031, "natal": ["辛亥", "丁酉", "甲辰", "己巳"], "luck": "癸卯"},
+    "singleXu": {"date": [1960, 9, 23], "hour": 20, "gender": 0, "year": 2019, "natal": ["庚子", "乙酉", "甲寅", "甲戌"], "luck": "己卯"},
+    "annualPartnerOnly": {"date": [1972, 9, 20], "hour": 18, "gender": 0, "year": 2030, "natal": ["壬子", "己酉", "甲寅", "癸酉"], "luck": "癸卯"},
+    "chouOnly": {"date": [1972, 9, 20], "hour": 2, "gender": 0, "year": 2028, "natal": ["壬子", "己酉", "甲寅", "乙丑"], "luck": "癸卯"},
+    "offMonth": {"date": [1970, 1, 14], "hour": 10, "gender": 0, "year": 1989, "natal": ["己酉", "丁丑", "甲午", "己巳"], "luck": "己卯"},
+    "offDayMaster": {"date": [1970, 9, 9], "hour": 18, "gender": 0, "year": 2023, "natal": ["庚戌", "乙酉", "壬辰", "己酉"], "luck": "己卯"},
+    "shenYinOfficer": {"date": [1974, 8, 12], "hour": 16, "gender": 0, "year": 2028, "natal": ["甲寅", "壬申", "乙酉", "甲申"], "luck": "丙寅"}
+  },
+  "chenExamples": {
+    "renShen": {"date": [1970, 4, 7], "hour": 4, "gender": 0, "year": 2040, "natal": ["庚戌", "庚辰", "丁巳", "壬寅"], "luck": "壬申"},
+    "renHai": {"date": [1971, 4, 12], "hour": 8, "gender": 0, "year": 2011, "natal": ["辛亥", "壬辰", "丁卯", "甲辰"], "luck": "丙申"},
+    "renOtherWater": {"date": [1970, 4, 27], "hour": 4, "gender": 0, "year": 2009, "natal": ["庚戌", "庚辰", "丁丑", "壬寅"], "luck": "丙子"},
+    "sealNewRen": {"date": [1970, 4, 15], "hour": 16, "gender": 0, "year": 2045, "natal": ["庚戌", "庚辰", "乙丑", "甲申"], "luck": "壬申"},
+    "sealNewGuiFromZi": {"date": [1984, 4, 11], "hour": 8, "gender": 0, "year": 2028, "natal": ["甲子", "戊辰", "乙亥", "庚辰"], "luck": "癸亥"},
+    "sealExisting": {"date": [1984, 4, 11], "hour": 14, "gender": 0, "year": 2028, "natal": ["甲子", "戊辰", "乙亥", "癸未"], "luck": "癸亥"},
+    "sealOutsideOnly": {"date": [1984, 4, 11], "hour": 8, "gender": 0, "year": 2038, "natal": ["甲子", "戊辰", "乙亥", "庚辰"], "luck": "壬戌"},
+    "sealNoAssociate": {"date": [1970, 4, 15], "hour": 8, "gender": 0, "year": 2035, "natal": ["庚戌", "庚辰", "乙丑", "庚辰"], "luck": "癸酉"}
+  },
+  "calendarNote": "Modern test charts are independently calculated in Beijing with uniquely verified upstream ten-stage tables. The first five samples use 18:00; the newer examples record their own local hour. These charts witness source predicates without identifying historical case subjects."
+}

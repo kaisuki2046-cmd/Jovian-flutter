@@ -1,0 +1,283 @@
+{
+  "baseline": "seventeenth integration batch",
+  "profile": "bazi-counts-and-source-literal-passages-v1",
+  "changes": [
+    {
+      "id": "yhzp-v2-c252-p006-001",
+      "method": "bazi",
+      "previousStatus": "unmapped",
+      "previousReason": "unmapped_condition",
+      "status": "branch_indexed",
+      "conditions": [
+        "年柱、月柱各见伤官的分位取象"
+      ],
+      "branches": [
+        {
+          "index": 0,
+          "text": "年帶傷官，父母不全",
+          "inputDigests": [
+            "cc032a32df1255bb74100ba195c62102cbe6a0fb0b6b3c4fa8fb1f0a277543e2",
+            "6becd1c1ef647ac3d3face103caf2ffd3c5d6a0c6abefdd64314e1b99e26778c"
+          ]
+        },
+        {
+          "index": 1,
+          "text": "月帶傷官，兄弟不完",
+          "inputDigests": [
+            "e85c1a4895fcf40ca5189055ae795971652282cfd97ba5f6bb11edce965e88c3",
+            "60a5a59cf14ad8d089594fabc21668fb0b3f7d1d79385fdd531f7dff2ba18d3d"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "qtbj-v3-c017-p002-101",
+      "method": "bazi",
+      "previousStatus": "unmapped",
+      "previousReason": "unmapped_condition",
+      "status": "indexed",
+      "conditions": [
+        "寅月丙日，一庚透且支中另藏丙火"
+      ],
+      "inputDigests": [
+        "4f2cf3d3fe65bdf7084493d42d010f2904631c24c89dc6f5a6c56e7bfa27e020",
+        "02031a5961edf62416805ec2ade7547032e5071053d57c6cde41e8c68768d306",
+        "3b3f44e3e9e29a012042fed319e7dccb9f1aaf07ccbc14279fc9cd65cad2ddd3",
+        "ca7b2718ea4a285e939ae2d4dd6a53f028238ec6c1dd270595ceb7901cf8abd3",
+        "472369b8d4a64a099696488745b589badb195cb662e2e3304b1e46f4d98ad131",
+        "1bfc6cceee6b247376e8009b9f2264302dee4743d505a1a1e23ead08872f1e50",
+        "7398dc5f84192911c71cd433436f411071e1af34d07c431224868595fbcf0990",
+        "af45ac4866c9a94733b92829f925261b64f291fe522780c48917f93468737f50",
+        "5fc3babd804f5e20306e5ab8e9a9ecc022e9afc7112dbe587b2451bf523e8058",
+        "5db303943c66e628a61d63de0c7eff2396469727dc33ec03e66b59d0ac480b9c",
+        "f98c62f72ba6dae0326e97d2070156de2e4e94a75711f9ea75a02c99f080b405",
+        "82d184db84ef945d71dda25b32695e3d3a3160fb0e7b7f7be501c6e50cacb995",
+        "c1eae776f0432c28bda1df3dc97b4c9fa94668cf4242f406948ae3f5cf0ff264",
+        "71d491e1a913f22891da9630e71cd9f9e31dcc59e4b20081c628a25c9a12f291",
+        "9d35580be8b190e8f59f916ea04fb4c5cc064bb423d11408ec9cd0bdddd45dd3",
+        "d9ec8996a883a940ff58211542761ec5353356bf0305ca34854fa55bfc7ddd10",
+        "1afa9a7fb10e42d40ddab75da24437b5fd05fc046a8b1ca4bfb7fb3b7debf7ae"
+      ],
+      "compiler": "bazi-literal-source-count-v1"
+    },
+    {
+      "id": "qtbj-v3-c031-p001-101",
+      "method": "bazi",
+      "previousStatus": "unmapped",
+      "previousReason": "unmapped_condition",
+      "status": "branch_indexed",
+      "conditions": [
+        "卯月丁火，分庚甲两透、庚透甲藏和甲透庚藏"
+      ],
+      "branches": [
+        {
+          "index": 0,
+          "text": "庚甲两透，科甲定然",
+          "inputDigests": [
+            "23268ca183aadb1ad14bec7d167654e42eda34f7a901271ec938d2adc05fb017",
+            "c9a589f60e8194cb7e74245b881fe6cf93f4b55ebba68035571f7e43817d08d6"
+          ]
+        },
+        {
+          "index": 1,
+          "text": "庚透甲藏，亦有生贡",
+          "inputDigests": [
+            "8c37f6594dafa210b6b0d4d262edc2a8ce82bb31131cdf54d69243ff824240cb",
+            "22cfff7fe7550bef2be25f62315c4313f7010dadeea62ffd649d525d1f4f87f7",
+            "ab634d2fb9e98ac6696b99b8b590e0ab5fc9bd15ec1c749ef2b3bb6f47335337",
+            "11518e66fe041c0c2d782be2932f69f5e0df634715cfc29441889da77dff18f5",
+            "0c8454d4965d6378af3a6bb99d3e9c7487a4a164a3555908c29bac08546e4f20",
+            "ae968a76d3185454d454b40bbe36a2e7423671af64a5ffe38892f361b2a93bc0",
+            "c49f0ec60d8708da6234e62933c4ea0cf3813e5f2395bb8613c13d0225a2dd09"
+          ]
+        },
+        {
+          "index": 2,
+          "text": "甲透庚藏，异路功名",
+          "inputDigests": [
+            "b4bce15b1dda19366951b4b660e319948a8734a5bd3f7bd0f285793833ff5857",
+            "63181362606d8f84dc00eb3807c97e43c4477d2c4733561c235279ec51091065",
+            "353fc860400b1f418f41e6bf62c28e2aef77ed0d7d25d38593a52e0ee2ff9518",
+            "e5775c08b271e478bd03a271316d7a94dc86705b02ae696975426fc7d9cf41b5",
+            "7edaf0f48cf4d880d7dcf1a3dbb633fa16bb49143b13a67090ca445d0c683652",
+            "ee0b1f66de41e02a4eb3b806d30545715ef21acf07e2c5f5ee525ae48e537207",
+            "809e196a7dfdd48fdf2a3b4dc081c5b1f99ec19c6ff4e2ab2ef3596b056278be"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "qtbj-v4-c058-p001-101",
+      "method": "bazi",
+      "previousStatus": "unmapped",
+      "previousReason": "unmapped_condition",
+      "status": "indexed",
+      "conditions": [
+        "辰月己土丙癸甲三者同透"
+      ],
+      "inputDigests": [
+        "9662502f511dbc536fa1def80f93c3ae758a43cd854a737655cf994cba64645b"
+      ],
+      "compiler": "bazi-literal-dnf-v1"
+    },
+    {
+      "id": "qtbj-v4-c060-p002-101",
+      "method": "bazi",
+      "previousStatus": "unmapped",
+      "previousReason": "unmapped_condition",
+      "status": "branch_indexed",
+      "conditions": [
+        "秋月己土分丙癸同透和无癸两丙透"
+      ],
+      "branches": [
+        {
+          "index": 0,
+          "text": "丙癸两透，雁塔题名",
+          "inputDigests": [
+            "472ee143f422f5dd535a03184036b2913530646ee89f40ad7826f9313756297a",
+            "13da2d94cbe8e1883ab2be7aac346b64108cea34f81ed9072ef2202a6b2adf61",
+            "4993375180735bc66b35f0e0a7be162ec546e7e49006a28b646395b5a27f0979",
+            "ff24c1572fa2b515b5714fae90dd0c251e0010d960643ee42ae038e0a8e3d344",
+            "8d8e9c7f29137f7721ca1c45b2ed7ded0da085f141afefa7ea848b904fa0a512",
+            "6a7e6188ceadcd1700cd30018d3cd4a801ffe114817733c3827ee0c2fd745535",
+            "8068c43a5ccdfdcdee9cdfc05a65d01e1761f09625033fa9893076d82f9b96b3",
+            "6b24ed92a020815f024f78b76639168279ccd82ca3d7ddabe0d4cc4556730462",
+            "2321e1393a6af76faff096db5abf522ca5399605c72dedaa5fcbbec4031dc267"
+          ]
+        },
+        {
+          "index": 1,
+          "text": "或无癸，有两丙透者，异途显达，或武职权高",
+          "inputDigests": [
+            "2be5eb3cd7a83a63724488f646a61563a4686b882fad0713b9e776f69d1d4fa0",
+            "617e650e5903e8c67b5578bd411efc979d94f4d6407511f909d1aa404f149288",
+            "49b6432e7a16d51b501310c75939df85cde6de5941d12ae8b5ce20389cb2f89b",
+            "a7b72996390c19ba0497e7f548d670d4393d92a66bc730567731aeb5fc2606e1",
+            "50a47fa8e7322213178d460c81860090fc092e753e11c737fe8700bb28206e39",
+            "10b60762fcdc23ea5d730f66966c2c9c421c533028d436254861f6259f13e143"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "qtbj-v4-c061-p002-101",
+      "method": "bazi",
+      "previousStatus": "unmapped",
+      "previousReason": "unmapped_condition",
+      "status": "branch_indexed",
+      "conditions": [
+        "冬月己土，一丙透一丙藏而有甲出干"
+      ],
+      "branches": [
+        {
+          "index": 0,
+          "text": "或干透一丙，支藏一丙，如以甲透，科甲有准",
+          "inputDigests": [
+            "3eea9a8d1d25919b77179b6a609416f31cc0ff969bb1095e8b38d790dcca97f7",
+            "5bb9ed4567e336fcaa741832bd667e9b6b1484fb36fae7087a664b9fca19320b",
+            "d568c65527f3326032fe97e0e4607bd489dcf45100b4cc1eafd19a272d0c2cfc",
+            "15140e7470c36bc01387d0072349585f4346d4456d293256b83a1af5af467de8",
+            "23176a2d85350cfd7491fb3ec9d9f9226a739289c10e8faef27e597b37253efa",
+            "f1f41d1b02bb8a60266581b71a10c031a4a44a50172396712c7bc94ea0aa559e",
+            "75f7736c99a4d912de5d902adbe6164abe7afc335f9ad61e9d37c0b71f4c6af9",
+            "e3fcadb01cb1567c7d99989586657e01df1c5ad7f09e835764a16e84e756dc17",
+            "46fa6cfcd80ad6bcefa7e79dd76f65d335682161bbbcf0b5371e1b1bb4c6ac3e",
+            "3aa9f277489b784929adbf4849f232e41e231928072e2650aa4d9925a559abda",
+            "0dfa72f1fd97d4d83d141fe91c0c971944649ddd2f9142446c515a0cf41bf45f",
+            "565c3a565abe76a58a1b1f82812f28c94816d48a047dd484ae27ae0a32a6eada",
+            "9e9c6fadbb75999841b4d3926644652aba52ea20503e76a33374c254ab614ac0",
+            "db37053457878716b1103a6aea1a3bdbded6e39a59f3da88c9173b34f2f035ff",
+            "ed33d12c879790c954ea38a97a5f1a9d962ae8eb40c67c65880b52132fc8210e",
+            "a9e30c2f5deb80707f6f5ba90ecfce770205e5d4a9b24b8fd534069a65ba3da0",
+            "77c8228614a6f020363d44c0e9f766f6b1960fac143ab1f967b3564c2f7fea53",
+            "fa5d0d660e7d5f78c973c781248dc0c62981361a31511951e5da53a25bfdb2fa",
+            "bab48ea5df9cd6e4d1d6f88e4f514fb8d0c29f19bd0729d36582d6dae01570f4",
+            "37f409e0fd95bf0636e5a38f2b9cf48e7fa0e74ae6b47e4783ccdc4fd992fa9b",
+            "e049a12a81feed43c84aa2c9e878937507c478b9690cf08b90ebe29ded3f34e9",
+            "e320afa56bcd319fe2433ffbff7708f5c6c9deb07db1ba7def2a976221a5ec61",
+            "1139280c70c555bbe379454d996406da39857224b66b63f634f396bf8f053fc3",
+            "397836330fa8f244dad17d0c6f7208eaea20ee58fec9eaeb3c1d01e2f124338b",
+            "cf5b333b745fc7ea709f91c0f54fbddac9179657c685361ab91ac06d2107c916",
+            "2247f7283afcc4538296e7d4d87ddfbee0c7d1595721fe705eefc071c921f630"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "qtbj-v6-c099-p002-101",
+      "method": "bazi",
+      "previousStatus": "unmapped",
+      "previousReason": "unmapped_condition",
+      "status": "branch_indexed",
+      "conditions": [
+        "巳月壬日辨壬辛两透，或癸辛同透另有甲透"
+      ],
+      "branches": [
+        {
+          "index": 0,
+          "text": "壬辛两透，金榜有名",
+          "inputDigests": [
+            "6e4871db171263b003cafa5ad512f6b3f6883a7c8e5c5a3d1ee3bd8903ce5ccb",
+            "cde07cf05ff609e12aa640fcdebc39d5f9db15631283e00248cfd71d635ba01c",
+            "d636c5dfa68f52c75353da07ee445402284b141b8e0afae101f5543946c388c5"
+          ]
+        },
+        {
+          "index": 1,
+          "text": "或癸辛两出，加以甲透，亦主异路之荣",
+          "inputDigests": [
+            "fd915e0eedb0705b4437232e5efae92398d33b547d08cd27979ca1b79b767ef9"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "qtbj-v6-c115-p001-101",
+      "method": "bazi",
+      "previousStatus": "unmapped",
+      "previousReason": "unmapped_condition",
+      "status": "branch_indexed",
+      "conditions": [
+        "酉月癸日，分丙辛二者隔位同透与丙透辛藏"
+      ],
+      "branches": [
+        {
+          "index": 0,
+          "text": "如丙与辛隔位同透，主科甲功名",
+          "inputDigests": [
+            "907df8e6e08f7ba26f57613b3c55b563775f8b1dff4f3eece353358c3094946f",
+            "457b79a193f7f64af3cb8caf0d9a9c396c0be0686c43c28996fd0e68166bdfe3",
+            "c766e59d26aa7499d4b2cf1d95b978c2b660c372a1ef1ab16d8238d6abc611f4"
+          ]
+        },
+        {
+          "index": 1,
+          "text": "或丙透辛藏，一榜之士",
+          "inputDigests": [
+            "f612940c31cab1f9b75a1ec7897ebb95d29453760194dbee8db0d855414c745f",
+            "0944a5d0b06ac39e9fac8d36ca6e2d7f2d6d356f047015e6761c97bb86aba013",
+            "bbe72cd42d9b9b5d4867b764d2234e24e3ff00a99ad81bff498f9dd8807362aa",
+            "f86492fd065387a519f48482b7ece7b229c97fc1d30bae8a9dd2c400a082b545",
+            "3d3b395b87d7c817b43fe2e1c08b046d0479ebdd5037e1ed5d31f2011d81c847",
+            "88d8993ed914a3e1f7a392edcdf2eab9ee7f0a72302c65ea578e31d89859da45",
+            "a6f0c613d92c77eacf20f90d3fc4c556fa65daa924f3ba77d2573d5828d2a522",
+            "9d7a2d3cc996aba97847e982c9d44ed558eacd201fdca1939005d54280a4364e",
+            "4d08b5f91a792e7b54581e9025dc74d581f1f23998c456a032314bd5607841a8",
+            "177ed0f93e4703b8144ef81078ec500f6dfd654ec67fa0cdb0df2acfc6b9f959",
+            "2ccac443f3163eca40bf560f5a25965074bd826a6b35ae2082f03d4d9e0b54da",
+            "39f37a9eaec313dc6685ba3641c8f283ee18f83a090e3a629a73e67969b5a826",
+            "c635c5d522254eef8109c2e724567febc138e4aee4bab76fbca6d921f9a54a4c"
+          ]
+        }
+      ]
+    }
+  ],
+  "targetAlternatives": 99,
+  "previousQueryableEntriesUnchanged": 2731,
+  "sourceHashes": {
+    "bazi": "8074930be871d6249c36813d59dae2534ad5f11eeb06c5d2728978b53364e609",
+    "ziwei": "bfe23ad0b26b19992d6f4fe3c2fb1979175513ceaf283bee6ce671d8358698ad",
+    "western": "b92622c3336d4a56af837123b08d438947a5e6751cd272b4be555921a89cb9fc"
+  },
+  "sourceRecords": 18846
+}

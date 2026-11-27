@@ -1,0 +1,117 @@
+{
+  "baseline": "twenty-sixth integration batch",
+  "profile": "lilly-essential-dignity-aggregates-v1",
+  "changes": [
+    {
+      "id": "astro-lilly-v3-general-fortune-p001-001",
+      "method": "western",
+      "previousReason": "unsupported_calculation_profile",
+      "previousAlternatives": 0,
+      "remainingAlternatives": 0,
+      "inputs": [
+        {
+          "digest": "56bef41ef855c7ee03517be621a2541902aef7549189468f3b91d7c86767af57"
+        },
+        {
+          "digest": "2ec2d62d3a4cc8fcd2d0643a4d7559c57126846aabeb105f0e75fe8a691bafea"
+        }
+      ],
+      "addedInputDigests": [
+        "56bef41ef855c7ee03517be621a2541902aef7549189468f3b91d7c86767af57",
+        "2ec2d62d3a4cc8fcd2d0643a4d7559c57126846aabeb105f0e75fe8a691bafea"
+      ]
+    },
+    {
+      "id": "astro-lilly-v3-religion-dreams-p002-001",
+      "method": "western",
+      "previousReason": "unsupported_calculation_profile",
+      "previousAlternatives": 0,
+      "remainingAlternatives": 0,
+      "inputs": [
+        {
+          "digest": "f19b1eeb675e2b1c83997270f3a7c2c4b3b8b5722554bb400b188ef559ba59f2"
+        }
+      ],
+      "addedInputDigests": [
+        "f19b1eeb675e2b1c83997270f3a7c2c4b3b8b5722554bb400b188ef559ba59f2"
+      ]
+    },
+    {
+      "id": "astro-lilly-v3-spouse-description-p017-001",
+      "method": "western",
+      "previousReason": "unsupported_calculation_profile",
+      "previousAlternatives": 0,
+      "remainingAlternatives": 0,
+      "inputs": [
+        {
+          "digest": "da30401cba2782f13868455953bae6b473a76ad9ba741160056babb3cafd00fa"
+        },
+        {
+          "digest": "89257749b5245bd8ee094e01a28c809f25973ad1c4646ec6d4ee2f61216b22f5"
+        }
+      ],
+      "addedInputDigests": [
+        "da30401cba2782f13868455953bae6b473a76ad9ba741160056babb3cafd00fa",
+        "89257749b5245bd8ee094e01a28c809f25973ad1c4646ec6d4ee2f61216b22f5"
+      ]
+    },
+    {
+      "id": "astro-lilly-v3-travel-p008-001",
+      "method": "western",
+      "previousReason": "unsupported_calculation_profile",
+      "previousAlternatives": 0,
+      "remainingAlternatives": 0,
+      "inputs": [
+        {
+          "digest": "e24097d69f70c792dc07d7d14130575080ee28ceffb07fa7b59fc73f43cc8fbe"
+        },
+        {
+          "digest": "ca541d6413f5f69a24b74022e9bd162c092ce6b6588acf40b6035ad7f0b6acda"
+        }
+      ],
+      "addedInputDigests": [
+        "e24097d69f70c792dc07d7d14130575080ee28ceffb07fa7b59fc73f43cc8fbe",
+        "ca541d6413f5f69a24b74022e9bd162c092ce6b6588acf40b6035ad7f0b6acda"
+      ]
+    }
+  ],
+  "extended": [
+    {
+      "id": "astro-lilly-v3-spouse-description-p051-001",
+      "method": "western",
+      "previousAlternatives": 3,
+      "remainingAlternatives": 1,
+      "inputs": [
+        {
+          "digest": "b324d4d7e824c24f537c2f1b0af2aaed71da9567e4b6e1622f06d9f1b9228192"
+        },
+        {
+          "digest": "28c3508cd7fe00e503983e6af20ec37ae91cdfd4667822891451c68379c0efe0"
+        },
+        {
+          "digest": "fc597a4420dedc46d6788014a3f10f07babf5b538389ef557034c7d57cdbd7c6"
+        },
+        {
+          "digest": "808e30a5b0983f784c6902baf515df528f7902f611812c66718b0bb4d1ad628d"
+        },
+        {
+          "digest": "9d18f7ba058b5c6656741f38b64350464fc8fbf532ddb15bd5d9173cf8b3c3d4"
+        }
+      ],
+      "addedInputDigests": [
+        "b324d4d7e824c24f537c2f1b0af2aaed71da9567e4b6e1622f06d9f1b9228192",
+        "28c3508cd7fe00e503983e6af20ec37ae91cdfd4667822891451c68379c0efe0"
+      ]
+    }
+  ],
+  "sourceRecords": 18846,
+  "previousQueryableCompiledUnchanged": 2800,
+  "previousQueryableInputsPreserved": 2801,
+  "wholeEntries": 4,
+  "newAlternativeCount": 9,
+  "sourceHashes": {
+    "bazi": "8074930be871d6249c36813d59dae2534ad5f11eeb06c5d2728978b53364e609",
+    "ziwei": "bfe23ad0b26b19992d6f4fe3c2fb1979175513ceaf283bee6ce671d8358698ad",
+    "western": "b92622c3336d4a56af837123b08d438947a5e6751cd272b4be555921a89cb9fc"
+  }
+}

@@ -1,0 +1,502 @@
+{
+  "baseline": "fifth integration batch",
+  "changes": [
+    {
+      "id": "astro-lilly-v3-spouse-origin-p001-001",
+      "method": "western",
+      "conditions": [
+        "Regiomontanus 本命盘中，第七宫主落九宫或第九宫主落七宫；采用原书男性婚姻分支"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-travel-p001-001",
+      "method": "western",
+      "conditions": [
+        "第九宫主落第一宫，或第一宫主落第九宫，或两者合相。Regiomontanus 口径"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 1
+    },
+    {
+      "id": "astro-lilly-v3-spouse-description-p002-001",
+      "method": "western",
+      "conditions": [
+        "男性本命历史分支，金星落第2宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-spouse-description-p003-001",
+      "method": "western",
+      "conditions": [
+        "男性本命历史分支，金星落第11宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-women-marriage-p003-001",
+      "method": "western",
+      "conditions": [
+        "太阳在本书东方象限10、11、12、4、5、6宫之一；不以太阳相对自身的晨昏作为条件。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-women-marriage-p004-001",
+      "method": "western",
+      "conditions": [
+        "太阳在本书西方象限9、8、7、1、2、3宫之一。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-enemies-p002-001",
+      "method": "western",
+      "conditions": [
+        "七宫主或十二宫主入十宫，或十宫主落七宫或十二宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-preferment-p015-001",
+      "method": "western",
+      "conditions": [
+        "上升主落第十宫，或第十宫主落第一宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-ease-p007-001",
+      "method": "western",
+      "conditions": [
+        "同一火星在第七宫处女／摩羯／金牛；与金星成相或不成相都不增加前提。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-spouse-description-p018-001",
+      "method": "western",
+      "conditions": [
+        "金星落第七宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-spouse-description-p019-001",
+      "method": "western",
+      "conditions": [
+        "金星落第十宫，与木星成相时增加同向见证。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-spouse-description-p025-001",
+      "method": "western",
+      "conditions": [
+        "第七宫宫主落其本宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-concord-p008-001",
+      "method": "western",
+      "conditions": [
+        "金星和木星同时落第十二宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-enemies-p003-001",
+      "method": "western",
+      "conditions": [
+        "第一宫主落第七宫，或第七宫主落第一宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-enemies-p005-001",
+      "method": "western",
+      "conditions": [
+        "十一宫主居第七宫。原文另用推运解释态度转换的时机。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-health-servants-p004-001",
+      "method": "western",
+      "conditions": [
+        "六宫主居第十宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-travel-followup-p021-001",
+      "method": "western",
+      "conditions": [
+        "在原书宫制下第九宫主落第2宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-travel-followup-p022-001",
+      "method": "western",
+      "conditions": [
+        "在原书宫制下第九宫主落第3宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-travel-followup-p023-001",
+      "method": "western",
+      "conditions": [
+        "在原书宫制下第九宫主落第5宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-travel-followup-p024-001",
+      "method": "western",
+      "conditions": [
+        "在原书宫制下第九宫主落第6宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-travel-followup-p025-001",
+      "method": "western",
+      "conditions": [
+        "在原书宫制下第九宫主落第7宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-travel-followup-p026-001",
+      "method": "western",
+      "conditions": [
+        "在原书宫制下第九宫主落第8宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-travel-followup-p035-001",
+      "method": "western",
+      "conditions": [
+        "第九宫主落第一宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-spouse-description-p029-001",
+      "method": "western",
+      "conditions": [
+        "在原书男性历史分支，金星落六宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-spouse-description-p038-001",
+      "method": "western",
+      "conditions": [
+        "在原书条件下，第七宫主居十宫，或十宫主居第七宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-spouse-description-p039-001",
+      "method": "western",
+      "conditions": [
+        "在原书条件下，第七宫主居二宫，或二宫主居第七宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-spouse-description-p040-001",
+      "method": "western",
+      "conditions": [
+        "在原书条件下，第七宫主居十二宫，或十二宫主居第七宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-spouse-description-p041-001",
+      "method": "western",
+      "conditions": [
+        "在原书条件下，第七宫主居六宫，或六宫主居第七宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-concord-p012-001",
+      "method": "western",
+      "conditions": [
+        "在本章男子婚姻判断中，金星落十二宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-enemies-p011-001",
+      "method": "western",
+      "conditions": [
+        "第一宫主在第十二宫，或第十二宫主在第一宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-siblings-p039-001",
+      "method": "western",
+      "conditions": [
+        "上升主为土星、木星或火星，且位于第三宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-spouse-description-p051-001",
+      "method": "western",
+      "conditions": [
+        "三条原文支：金土相伴且在土星界；或土星照金星；或土星与火星均在第七宫。不是三者同时要求。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "remainingAlternatives": 2
+    }
+  ],
+  "corrected": [
+    {
+      "id": "astro-lilly-v3-wealth-level-p002-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-friends-p008-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-friends-p009-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-friends-p010-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-preferment-p032-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-preferment-p033-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-family-p010-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-mines-p003-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-mines-p004-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-friends-p021-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-friends-p022-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-friends-p023-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-religion-dreams-p004-001",
+      "status": "indexed",
+      "remainingAlternatives": 2
+    },
+    {
+      "id": "astro-lilly-v3-religion-dreams-p008-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-honour-p027-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-preferment-p066-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-preferment-p068-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-friends-p042-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-enemies-p021-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-enemies-p022-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-enemies-p023-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-relatives-p007-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-relatives-p015-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-relatives-p016-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-relatives-p017-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-siblings-p035-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-siblings-p036-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-family-p028-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-mines-p006-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-children-p022-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-children-p023-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-children-p026-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-religion-dreams-p026-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-health-servants-p013-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    },
+    {
+      "id": "astro-lilly-v3-wit-p042-001",
+      "status": "indexed",
+      "remainingAlternatives": 0
+    }
+  ]
+}

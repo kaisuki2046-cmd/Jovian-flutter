@@ -1,0 +1,105 @@
+{
+  "sources": [
+    {
+      "title": "The Progressed Horoscope, digital reflow; not original facsimile pagination",
+      "url": "https://www.astro.nu/wp-content/uploads/The-Progressed-Horoscope-Alan-Leo.pdf",
+      "pages": [
+        62,
+        68,
+        69
+      ],
+      "pdfSHA256": "1bce70fcdc4fa9aa10c21988cd00554af01261a82ab33e50fc961631e52360a9",
+      "verification": "Visually checked full decan table and A/B/a/b hierarchy. Whole-sign first-decan prose continues across all three decans."
+    },
+    {
+      "title": "How to Judge a Nativity, Alan Leo, fourth edition 1928, printed pp.26-27; supporting same-author edition",
+      "url": "https://archive.org/download/howtojudgenativi00leoa/howtojudgenativi00leoa.pdf",
+      "pdfPage": 51,
+      "printedPage": 27,
+      "pdfSHA256": "99fe9a864d34b48ae017c13d96791039784830da3f79966f71c7195873752fc6",
+      "verification": "Visually checked sign/ruler glyphs. Aquarius Saturn, Pisces Jupiter, Scorpio Mars. Footnote does not allot sign houses to Uranus or Neptune. Not claimed an identical 1906 edition."
+    }
+  ],
+  "decanSigns": [
+    [
+      0,
+      4,
+      8
+    ],
+    [
+      1,
+      5,
+      9
+    ],
+    [
+      2,
+      6,
+      10
+    ],
+    [
+      3,
+      7,
+      11
+    ],
+    [
+      4,
+      8,
+      0
+    ],
+    [
+      5,
+      9,
+      1
+    ],
+    [
+      6,
+      10,
+      2
+    ],
+    [
+      7,
+      11,
+      3
+    ],
+    [
+      8,
+      0,
+      4
+    ],
+    [
+      9,
+      1,
+      5
+    ],
+    [
+      10,
+      2,
+      6
+    ],
+    [
+      11,
+      3,
+      7
+    ]
+  ],
+  "signRulers": [
+    "Mars",
+    "Venus",
+    "Mercury",
+    "Moon",
+    "Sun",
+    "Mercury",
+    "Venus",
+    "Mars",
+    "Jupiter",
+    "Saturn",
+    "Saturn",
+    "Jupiter"
+  ],
+  "hierarchy": [
+    "natal-sign-and-ruler",
+    "natal-decan-and-ruler",
+    "progressed-sign-and-ruler",
+    "progressed-decan-and-ruler"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "sourceRecords": 15,
+  "wholeRecords": 11,
+  "alternatives": 16,
+  "witnesses": [
+    {"profile":{"date":{"year":2008,"month":12,"day":20},"gender":"male"},"timeIndex":9,"proofs":[{"id":"ziwei-v3-xingjue-054-p702-001","text":null,"inputDigest":"22da5f282170b5c04e5e830d2acef0d1852df16d98f8f494d5060c15343601d5"}]},
+    {"profile":{"date":{"year":1959,"month":12,"day":9},"gender":"female"},"timeIndex":4,"proofs":[{"id":"ziwei-v3-xingjue-054-p1509-001","text":null,"inputDigest":"7cb4671703632344ba28da0139d6239a201051c340bafac6e6e08aa5bf7956fc"}]},
+    {"profile":{"date":{"year":2004,"month":8,"day":4},"gender":"male"},"timeIndex":10,"proofs":[{"id":"ziwei-v3-xingjue-054-p1507-001","text":null,"inputDigest":"9100592051456263f2ee90aa272e5f1c4d081f6c31e2c93dda0014c0d54b71da"}]},
+    {"profile":{"date":{"year":1946,"month":11,"day":22},"gender":"male"},"timeIndex":2,"proofs":[{"id":"ziwei-v3-xingjue-054-p1500-001","text":null,"inputDigest":"1880f493d3e094f55e02399a791ea45987bbd1143a939de6899996b58bcf7bd9"}]},
+    {"profile":{"date":{"year":1998,"month":4,"day":25},"gender":"male"},"timeIndex":3,"proofs":[{"id":"ziwei-v3-xingjue-054-p700-001","text":"奴宮紫羊同宮","inputDigest":"4f189d06f0dd5a18be964237976822578e6f14329c6ece9ffbe706112fbe3ed5"}]},
+    {"profile":{"date":{"year":1974,"month":7,"day":21},"gender":"male"},"timeIndex":11,"proofs":[{"id":"ziwei-v3-xingjue-054-p1508-001","text":null,"inputDigest":"af6f115ac0d8621f02a67dd158b77c017bcfbc30d8050535c7bd6537b6d69f4b"}]},
+    {"profile":{"date":{"year":1935,"month":9,"day":22},"gender":"male"},"timeIndex":10,"proofs":[{"id":"ziwei-v3-xingjue-054-p1506-001","text":null,"inputDigest":"d7c48d66988c7d0e0bea96c0959aba68b9c35c55818de9cad19bb04bd28a8db8"}]},
+    {"profile":{"date":{"year":1963,"month":7,"day":19},"gender":"male"},"timeIndex":6,"proofs":[{"id":"ziwei-v3-xingjue-054-p1505-001","text":null,"inputDigest":"c4ce16b7dc922dfceba6669628183d9595108dac51a0bdf341de738c9f5c5470"}]},
+    {"profile":{"date":{"year":1962,"month":4,"day":8},"gender":"female"},"timeIndex":8,"proofs":[{"id":"ziwei-v3-xingjue-054-p1508-001","text":null,"inputDigest":"f56dcb963efd28d27d711a71a85deed881bb1061b56a2668c9a2432d2d7acdd6"}]},
+    {"profile":{"date":{"year":2009,"month":2,"day":28},"gender":"male"},"timeIndex":2,"proofs":[{"id":"ziwei-v3-xingjue-054-p699-001","text":null,"inputDigest":"21a49f3506fa7b87f80dd36d315a7f08e817fd8f4a29c8d1a1c6609a6184fd03"}]},
+    {"profile":{"date":{"year":1927,"month":10,"day":20},"gender":"female"},"timeIndex":9,"proofs":[{"id":"ziwei-v3-xingjue-054-p1504-001","text":null,"inputDigest":"63e68abbd29234cb84e44e79741bf5e39b0ab1786d6d1bc5d3d485fa44e537d1"}]},
+    {"profile":{"date":{"year":1938,"month":8,"day":25},"gender":"female"},"timeIndex":1,"proofs":[{"id":"ziwei-v3-xingjue-054-p701-001","text":"奴宮子地天梁坐守","inputDigest":"609de5631b8f4fea30e9d850d4aae3c18aa71f7478201ffb72cbce008da55599"}]},
+    {"profile":{"date":{"year":1992,"month":2,"day":28},"gender":"female"},"timeIndex":10,"proofs":[{"id":"ziwei-v3-xingjue-054-p1510-001","text":null,"inputDigest":"3a120a58976713d40e67979bd98187971486c4a34ceb606282b7ff2f0a68a746"}]},
+    {"profile":{"date":{"year":1919,"month":4,"day":6},"gender":"female"},"timeIndex":6,"proofs":[{"id":"ziwei-v3-xingjue-054-p1501-001","text":null,"inputDigest":"b806766eae236bcb410ea601fca4f9f2ec43416c9349d88ee3a62f9fc2f93087"}]},
+    {"profile":{"date":{"year":1916,"month":8,"day":2},"gender":"male"},"timeIndex":3,"proofs":[{"id":"ziwei-v3-xingjue-054-p1502-001","text":"奴宮得天同化祿","inputDigest":"9af5bfba566b476e99dd87cb51199fa95d8a9b906d8ca8f0c13ff89f52e7a979"}]},
+    {"profile":{"date":{"year":1969,"month":3,"day":14},"gender":"female"},"timeIndex":6,"proofs":[{"id":"ziwei-v3-xingjue-054-p1503-001","text":"奴宮空虛無正星、對宮日月羊刃","inputDigest":"7e607fdcdf6e09203d451fe7dc275027b5db773a6649eb7b1796192e9b8c6573"}]}
+  ]
+}

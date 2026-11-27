@@ -1,0 +1,24 @@
+{
+  "profile": "smth-annual-column-relations-v1",
+  "source": {
+    "url": "https://zh.wikisource.org/wiki/三命通會_(四庫全書本)/卷02",
+    "sections": ["論太嵗", "總論嵗運", "論十干合"],
+    "edition": "四库本数字录文，非原刊影印；原JSON保持原样",
+    "reviewed": "2026-11-19",
+    "caution": "录文巳/己、已等字形须按天干语境复核；不以巳支替代己干。日前五辰、人元旺衰、宅墓及救应有效性继续待核。"
+  },
+  "stemPairs": ["甲己", "乙庚", "丙辛", "丁壬", "戊癸"],
+  "branchPairs": ["子丑", "寅亥", "卯戌", "辰酉", "巳申", "午未"],
+  "directedExamples": [
+    {"natalDay": "甲子", "yearPillar": "己丑", "example": "day-jia-year-ji"},
+    {"natalDay": "己丑", "yearPillar": "甲子", "example": "day-ji-year-jia"}
+  ],
+  "realExamples": {
+    "jiaWuBothWitnesses": {"year":1980,"month":7,"day":10,"hour":12,"gender":0,"targetYear":2018,"pillars":["庚申","癸未","甲申","庚午"]},
+    "crossColumn": {"year":1990,"month":2,"day":8,"hour":0,"gender":0,"targetYear":2039,"pillars":["庚午","戊寅","甲辰","甲子"]},
+    "unrelatedYearOnly": {"year":1985,"month":2,"day":16,"hour":8,"gender":0,"targetYear":2020,"pillars":["乙丑","戊寅","丙戌","壬辰"]},
+    "hourOnly": {"year":1990,"month":2,"day":8,"hour":4,"gender":0,"targetYear":2021,"pillars":["庚午","戊寅","甲辰","丙寅"]},
+    "sameColumn": {"year":1984,"month":2,"day":10,"hour":12,"gender":0,"targetYear":2009},
+    "transition": {"year":1990,"month":9,"day":29,"hour":12,"gender":1,"targetYear":2033,"boundary":"2033-11-14T06:00:00.000Z"}
+  }
+}

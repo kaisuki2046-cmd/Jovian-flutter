@@ -18,7 +18,7 @@ const _natalFixtures = {
 };
 
 void main() async {
-  final root = Platform.script.resolve('../../../../../../../');
+  final root = Platform.script.resolve('../../../../../../backend/');
   final legacyManifest = File.fromUri(
     root.resolve('src/features/fortune/model/knowledge/fortune_knowledge.json'),
   );

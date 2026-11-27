@@ -1,0 +1,321 @@
+{
+  "source": "https://commons.wikimedia.org/wiki/Category:Rider-Waite_tarot_deck_(Roses_%26_Lilies)",
+  "assets": [
+    {
+      "file": "back.jpg",
+      "sha256": "0a15d479275e47cdffa5e984756d6fa306eca672dfa78db8be1e562a78d4fc59"
+    },
+    {
+      "file": "cups-10.jpg",
+      "sha256": "d351794c34e53bcf93dc59f6a000881d14863880802c9bc326272b3768dddcf8"
+    },
+    {
+      "file": "cups-2.jpg",
+      "sha256": "f83f1991c89951690934d5aea6788187772f81053e18613ebef810184e9d3cd2"
+    },
+    {
+      "file": "cups-3.jpg",
+      "sha256": "5715e1cbf1ca370606bb748afe5b0f85e976595b28a4f7698a701144306a3863"
+    },
+    {
+      "file": "cups-4.jpg",
+      "sha256": "ed1e69c67927905febaeb8b4a86bd3ea754c123b0acf5cd544bf1513a3182b10"
+    },
+    {
+      "file": "cups-5.jpg",
+      "sha256": "c01ddc1e9a7fc54a4b3f7308a828b58b2083896f521ab26d491745c717e79958"
+    },
+    {
+      "file": "cups-6.jpg",
+      "sha256": "9b2c1aed32ccd0abc10dbd32a283d394367bcca11ee064b2b03bfeb3679bb615"
+    },
+    {
+      "file": "cups-7.jpg",
+      "sha256": "eb4212e2e7b4a3f08de667fdf67ac5c46e0359e5364eb270b7275b83038a7048"
+    },
+    {
+      "file": "cups-8.jpg",
+      "sha256": "20a23f3531eac2343bfd59718ae90a232fe73034a9f5e2ae10b0f5839d5bace1"
+    },
+    {
+      "file": "cups-9.jpg",
+      "sha256": "4664dbedfb736efab6c75ea3daa60faecf423693ce2961298761c2fa1254c06f"
+    },
+    {
+      "file": "cups-ace.jpg",
+      "sha256": "7ff45197c1424a3c52ff10c1ec9690c9f171b6ac7a6186ade5ffea79a2380389"
+    },
+    {
+      "file": "cups-king.jpg",
+      "sha256": "dc8fed5b96170327faac70b2afdf229090ac5873bbffa4aa5dfca927b5b51972"
+    },
+    {
+      "file": "cups-knight.jpg",
+      "sha256": "f388a5923610cb5ec86f78e3e59f078dac49464936307580438965f86512b0e5"
+    },
+    {
+      "file": "cups-page.jpg",
+      "sha256": "957cec09cb5412e1b1929e6528fadf6d0d0bbca3c4a796a9535fd0feff7f6566"
+    },
+    {
+      "file": "cups-queen.jpg",
+      "sha256": "c4209eb5b0bd81de31e075df277758bde89cd2a90d98a515416afc5d1eeda0e9"
+    },
+    {
+      "file": "major-0.jpg",
+      "sha256": "28f9d69a0ad3905f46a027e817c2d35f942d1fe5de0da503d4f36e8c6c6c89da"
+    },
+    {
+      "file": "major-1.jpg",
+      "sha256": "61be2cf46780785f640fe17aee51d7b9fa039dda70c1a1c8648881073b78d729"
+    },
+    {
+      "file": "major-10.jpg",
+      "sha256": "c244288a281ad0c9bf697266df88576dacd61962a582b64c883ae9e43e2b8d7d"
+    },
+    {
+      "file": "major-11.jpg",
+      "sha256": "333b2db79435dec21ad1356ef3c903b26d0b78d9bc4b638020b6a0c1cac82424"
+    },
+    {
+      "file": "major-12.jpg",
+      "sha256": "2850a0b28a2e739ee66339269ffe1b5f3c8e185879e6f341654ff7d7175834e9"
+    },
+    {
+      "file": "major-13.jpg",
+      "sha256": "89527c856c9ca8bb146a87531905e61a864cb24c1046ab064fc286f4eab6ad0a"
+    },
+    {
+      "file": "major-14.jpg",
+      "sha256": "7c41a50d8db7f4028459d10cae38c5c44a48d5485214502f3225ee95d6d8bb7b"
+    },
+    {
+      "file": "major-15.jpg",
+      "sha256": "4cbc6d886510cff376e45b111212884a8c65680ff76cfc89e0612a5ea0eff24d"
+    },
+    {
+      "file": "major-16.jpg",
+      "sha256": "28869cb1b648f5181409630ea314e5e46eb7339d6e706b848c949124d2711fe1"
+    },
+    {
+      "file": "major-17.jpg",
+      "sha256": "560cac13b106d625497119f398c90378f441f9314ef3568d4022be867a216ca1"
+    },
+    {
+      "file": "major-18.jpg",
+      "sha256": "b72b0173c85c6e2346c50cad8bc607bf1e9eca585bf689cffbe75013eea4fa83"
+    },
+    {
+      "file": "major-19.jpg",
+      "sha256": "499dda129fd6b128ca039bc96ae31a364b965b2ea883d081d2274ea9d0561877"
+    },
+    {
+      "file": "major-2.jpg",
+      "sha256": "943d59101d2acb3c8abbb97e84265d822d9ee55d1c5a01691c8fe1bf9cc56498"
+    },
+    {
+      "file": "major-20.jpg",
+      "sha256": "6e1d034d52a325e2d674e99235e5c8924276f0ffad2029c9ef559bf2bcb718d4"
+    },
+    {
+      "file": "major-21.jpg",
+      "sha256": "18ee2e79ca0bd627bd5404a3d988a9c46986f0b9584b94a8b19699e309780248"
+    },
+    {
+      "file": "major-3.jpg",
+      "sha256": "392f06aadb9ec1310cfb709b17b16129e8f3f444e32ab7d7127037bc6fb307a9"
+    },
+    {
+      "file": "major-4.jpg",
+      "sha256": "5ea552a05a962b52ff74faa15738abdfb635b0848231f758c4b14413ce42d7d1"
+    },
+    {
+      "file": "major-5.jpg",
+      "sha256": "82d01e0baeaa98ba3fe212190589009d79882c84df7ed9f202d3df093c20fc74"
+    },
+    {
+      "file": "major-6.jpg",
+      "sha256": "e72aae86c0f65b30f79f4210da33d7abcf72cad92555bb3ad79da244fc931cb6"
+    },
+    {
+      "file": "major-7.jpg",
+      "sha256": "8f64931c775a61a80996280510fa061ed2e85384c2516974bc12a40dc862124b"
+    },
+    {
+      "file": "major-8.jpg",
+      "sha256": "a57cc20146f8266d1b9fbff92956232cbb5fc4e857cbfb0aa3721a7b30d29cd8"
+    },
+    {
+      "file": "major-9.jpg",
+      "sha256": "848c7427853265e8fbc7eea61782f4f52bd0b364142b833c3118196eb0ca524b"
+    },
+    {
+      "file": "pentacles-10.jpg",
+      "sha256": "9d0d6fdcb5077c36761cbaab834ebc887a804ca3b4a742d5c732bab76719d690"
+    },
+    {
+      "file": "pentacles-2.jpg",
+      "sha256": "846c94b297832711e67ef28e87102a52b5e178a9f2030962346ec6276ff67d5c"
+    },
+    {
+      "file": "pentacles-3.jpg",
+      "sha256": "bc18e9ed8a0afb9a243ba9a5c9bbb7c01dddea789f97772f38429a96b9c265ac"
+    },
+    {
+      "file": "pentacles-4.jpg",
+      "sha256": "ca54844ae8c432ddaeb6c5722671aa484d84ab48d102b11ad34a581ec351c826"
+    },
+    {
+      "file": "pentacles-5.jpg",
+      "sha256": "2903569c61f8d44f9c7996406bf22c474d9966be46d49ff2437f617c2bc322ac"
+    },
+    {
+      "file": "pentacles-6.jpg",
+      "sha256": "32d7a7738a80b8009e849afc0ff1f2aed359d06a62701d3f8614c67e91e35265"
+    },
+    {
+      "file": "pentacles-7.jpg",
+      "sha256": "8d29ef9dc554491585127d16111a65e431e3d154022ac87e51cf9fbd26120838"
+    },
+    {
+      "file": "pentacles-8.jpg",
+      "sha256": "e1d5f7f24f6654d6061ca18e0a35f92dbf64031a0728e2b9c83aceb3962ec68e"
+    },
+    {
+      "file": "pentacles-9.jpg",
+      "sha256": "553eb018dd8e9b36ec185f85ccd566e919d53e64ca16813c659ef75dea882d45"
+    },
+    {
+      "file": "pentacles-ace.jpg",
+      "sha256": "ab756d603c3733268636492489fb51141a12b0b83cd599d58f0e02bc4111a605"
+    },
+    {
+      "file": "pentacles-king.jpg",
+      "sha256": "d7b1c2383df6a4d426a509896284a88244d088b6aa7232fea22ee54d414424e9"
+    },
+    {
+      "file": "pentacles-knight.jpg",
+      "sha256": "889e9f1f56fc60a1fc0f1ce73b8030a7e3fd61ba18c4f2bf11f57f92dfcab2c0"
+    },
+    {
+      "file": "pentacles-page.jpg",
+      "sha256": "86933c3d54622ccdf831a7c30ae293411f71a90b70d10b04f2b874e6514647de"
+    },
+    {
+      "file": "pentacles-queen.jpg",
+      "sha256": "89fc17b0f7ccfbcf3dc636e675ecca469d9aeb6681f063b85f530733ab4de00d"
+    },
+    {
+      "file": "swords-10.jpg",
+      "sha256": "6d3e327d8500972f68ea14941f63b4ce1e75f9d111c89f83b6d417b89a7b5d20"
+    },
+    {
+      "file": "swords-2.jpg",
+      "sha256": "a979618dddc27482f09eefa3ad1956d226e1aa2eb9464cb361cdc4911aa17b8c"
+    },
+    {
+      "file": "swords-3.jpg",
+      "sha256": "e4597b0adea7ea5bdc623b30eaa74f088c74188372e41f5a1d0c6bd70d4c45f8"
+    },
+    {
+      "file": "swords-4.jpg",
+      "sha256": "6b255966679227db55a7a9ac30c7b65ea95aab56b4872b8a8f8bd063701aaa68"
+    },
+    {
+      "file": "swords-5.jpg",
+      "sha256": "2d42d279c5d0df8ad14cc672df4bf92cfc117b0ae05e0cffc332e4bbf2bf1432"
+    },
+    {
+      "file": "swords-6.jpg",
+      "sha256": "2a0f73ab63febe147d0b74dedc1487614bd967f555759b6873c973083d17f230"
+    },
+    {
+      "file": "swords-7.jpg",
+      "sha256": "6619b956492fe7bcf775e548727d5c9c767afac9e7f0e07e30f4d7ad7468c17e"
+    },
+    {
+      "file": "swords-8.jpg",
+      "sha256": "68f5e4c21d8fc1a116e9dbb07b6b948677c75978eda707fea4a5b570116c4837"
+    },
+    {
+      "file": "swords-9.jpg",
+      "sha256": "7aa3db8309dfea9e5692501048479c75e6a5c0fe7e676ac72d1e2057bef30021"
+    },
+    {
+      "file": "swords-ace.jpg",
+      "sha256": "6b4c95e7588892d4443ccd1cee27d99f1406a68a1d843dc35265584f4263957b"
+    },
+    {
+      "file": "swords-king.jpg",
+      "sha256": "d89ad7360f3f0dfd82b74603e3739b1e637e0951811fb9717d4c6b27432bb94c"
+    },
+    {
+      "file": "swords-knight.jpg",
+      "sha256": "9f69cf4848c71776bc3a810c1affbce6f25ffb46f52105e9aa4fc74074777137"
+    },
+    {
+      "file": "swords-page.jpg",
+      "sha256": "372c2e06c22e34a44cde6bb4b651d9de85c72376f63882d599699c3aed7b1c90"
+    },
+    {
+      "file": "swords-queen.jpg",
+      "sha256": "80d9b31780fc812c4d636cb131f53588171a05b24eb9e97e1683202fa2fc5ae0"
+    },
+    {
+      "file": "wands-10.jpg",
+      "sha256": "bd1f53b81d5faab47ebfe79cb6479100d55c7c1b3ae2bc2d044f939203678202"
+    },
+    {
+      "file": "wands-2.jpg",
+      "sha256": "bfbe921693b0adb6f8a6fc897bf6242b758e9221cd711866ab5988cc76099ec2"
+    },
+    {
+      "file": "wands-3.jpg",
+      "sha256": "2557f9506a50e0da282c26d1050df4041df17990c3b8a50a1e156c5e2be0db7c"
+    },
+    {
+      "file": "wands-4.jpg",
+      "sha256": "c7caf1094bf0d3ca39cdf0fe6d444d1d0c4770d1aa8c6375a21b880e2ae13ac6"
+    },
+    {
+      "file": "wands-5.jpg",
+      "sha256": "aa69896d38ddc55aff516588979a5b8dfe950b7004eb0395bba2a9cfad30b325"
+    },
+    {
+      "file": "wands-6.jpg",
+      "sha256": "9832a7a9548a39c4467b173c70da716955ba43793ad3f257b7646ccb3b1cf3a1"
+    },
+    {
+      "file": "wands-7.jpg",
+      "sha256": "2817846c60b8f903ad8ed1c0f89e3558b6eb4a25383c980d0842f508aff7a549"
+    },
+    {
+      "file": "wands-8.jpg",
+      "sha256": "c67505a7335e67d8e1b8e66ad7d4c1cfba16b2b4f9481069fdebb527dd26482a"
+    },
+    {
+      "file": "wands-9.jpg",
+      "sha256": "c525e53c54bfd82425a1f5f0337fd7d71d9c25440cd7d1bdb1dcd7973c3ddfa3"
+    },
+    {
+      "file": "wands-ace.jpg",
+      "sha256": "9a2735b1ef0aa91d1824a1d5f5bdab95a263ea39b11f37f68bdcba451bbba85e"
+    },
+    {
+      "file": "wands-king.jpg",
+      "sha256": "e717b3e7a10c8431f7b2f2ec76d8109980e913e2435632a566e013f083834344"
+    },
+    {
+      "file": "wands-knight.jpg",
+      "sha256": "cf444beb53e675491f295305f2a8e5786801c1bf7d22e3433fb0626fff7d1c25"
+    },
+    {
+      "file": "wands-page.jpg",
+      "sha256": "18e9ce227abf2d17b9945a8a65302a6b779f8d891aca263969a27e7c79abec78"
+    },
+    {
+      "file": "wands-queen.jpg",
+      "sha256": "b266aba9a1f06e31217413ae1c93d22b2f340ef2accd066f55b500df4f0c0ae4"
+    }
+  ]
+}

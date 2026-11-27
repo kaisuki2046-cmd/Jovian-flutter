@@ -1,0 +1,3235 @@
+{
+  "reference": "Swiss Ephemeris via swisseph-wasm 0.1.0 (dev-only), houses_armc and house_pos R",
+  "source": "https://www.astro.com/ftp/swisseph/doc/swisseph.htm",
+  "cases": [
+    {
+      "armc": 0,
+      "latitude": -60,
+      "obliquity": 23.4392911,
+      "cusps": [
+        55.43431434435769,
+        80.95097182890525,
+        131.99212824647947,
+        180,
+        203.6997018888887,
+        219.37095963679565,
+        235.4343143443577,
+        260.95097182890527,
+        311.99212824647947,
+        0,
+        23.699701888888704,
+        39.37095963679564
+      ],
+      "positions": [
+        {
+          "longitude": 0,
+          "latitude": -7,
+          "house": 10
+        },
+        {
+          "longitude": 0,
+          "latitude": 0,
+          "house": 10
+        },
+        {
+          "longitude": 0,
+          "latitude": 6,
+          "house": 9
+        },
+        {
+          "longitude": 30,
+          "latitude": -7,
+          "house": 11
+        },
+        {
+          "longitude": 30,
+          "latitude": 0,
+          "house": 11
+        },
+        {
+          "longitude": 30,
+          "latitude": 6,
+          "house": 11
+        },
+        {
+          "longitude": 97,
+          "latitude": -7,
+          "house": 2
+        },
+        {
+          "longitude": 97,
+          "latitude": 0,
+          "house": 2
+        },
+        {
+          "longitude": 97,
+          "latitude": 6,
+          "house": 2
+        },
+        {
+          "longitude": 120,
+          "latitude": -7,
+          "house": 2
+        },
+        {
+          "longitude": 120,
+          "latitude": 0,
+          "house": 2
+        },
+        {
+          "longitude": 120,
+          "latitude": 6,
+          "house": 2
+        },
+        {
+          "longitude": 179,
+          "latitude": -7,
+          "house": 3
+        },
+        {
+          "longitude": 179,
+          "latitude": 0,
+          "house": 3
+        },
+        {
+          "longitude": 179,
+          "latitude": 6,
+          "house": 4
+        },
+        {
+          "longitude": 250,
+          "latitude": -7,
+          "house": 8
+        },
+        {
+          "longitude": 250,
+          "latitude": 0,
+          "house": 7
+        },
+        {
+          "longitude": 250,
+          "latitude": 6,
+          "house": 7
+        },
+        {
+          "longitude": 359,
+          "latitude": -7,
+          "house": 10
+        },
+        {
+          "longitude": 359,
+          "latitude": 0,
+          "house": 9
+        },
+        {
+          "longitude": 359,
+          "latitude": 6,
+          "house": 9
+        }
+      ]
+    },
+    {
+      "armc": 41,
+      "latitude": -60,
+      "obliquity": 23.4392911,
+      "cusps": [
+        83.42060426224543,
+        129.75607715925395,
+        198.93684467150854,
+        223.4549096278969,
+        235.77454343432095,
+        246.7568206277046,
+        263.42060426224543,
+        309.75607715925395,
+        18.93684467150854,
+        43.4549096278969,
+        55.77454343432095,
+        66.7568206277046
+      ],
+      "positions": [
+        {
+          "longitude": 0,
+          "latitude": -7,
+          "house": 8
+        },
+        {
+          "longitude": 0,
+          "latitude": 0,
+          "house": 8
+        },
+        {
+          "longitude": 0,
+          "latitude": 6,
+          "house": 8
+        },
+        {
+          "longitude": 30,
+          "latitude": -7,
+          "house": 9
+        },
+        {
+          "longitude": 30,
+          "latitude": 0,
+          "house": 9
+        },
+        {
+          "longitude": 30,
+          "latitude": 6,
+          "house": 8
+        },
+        {
+          "longitude": 97,
+          "latitude": -7,
+          "house": 12
+        },
+        {
+          "longitude": 97,
+          "latitude": 0,
+          "house": 1
+        },
+        {
+          "longitude": 97,
+          "latitude": 6,
+          "house": 1
+        },
+        {
+          "longitude": 120,
+          "latitude": -7,
+          "house": 1
+        },
+        {
+          "longitude": 120,
+          "latitude": 0,
+          "house": 1
+        },
+        {
+          "longitude": 120,
+          "latitude": 6,
+          "house": 2
+        },
+        {
+          "longitude": 179,
+          "latitude": -7,
+          "house": 2
+        },
+        {
+          "longitude": 179,
+          "latitude": 0,
+          "house": 2
+        },
+        {
+          "longitude": 179,
+          "latitude": 6,
+          "house": 2
+        },
+        {
+          "longitude": 250,
+          "latitude": -7,
+          "house": 7
+        },
+        {
+          "longitude": 250,
+          "latitude": 0,
+          "house": 6
+        },
+        {
+          "longitude": 250,
+          "latitude": 6,
+          "house": 5
+        },
+        {
+          "longitude": 359,
+          "latitude": -7,
+          "house": 8
+        },
+        {
+          "longitude": 359,
+          "latitude": 0,
+          "house": 8
+        },
+        {
+          "longitude": 359,
+          "latitude": 6,
+          "house": 8
+        }
+      ]
+    },
+    {
+      "armc": 110,
+      "latitude": -60,
+      "obliquity": 23.4392911,
+      "cusps": [
+        243.1447621663624,
+        270.51753514942135,
+        280.64857386635265,
+        288.46602873695855,
+        299.1391785194356,
+        330.4964472399943,
+        63.1447621663624,
+        90.51753514942135,
+        100.64857386635265,
+        108.46602873695855,
+        119.13917851943557,
+        150.49644723999432
+      ],
+      "positions": [
+        {
+          "longitude": 0,
+          "latitude": -7,
+          "house": 6
+        },
+        {
+          "longitude": 0,
+          "latitude": 0,
+          "house": 6
+        },
+        {
+          "longitude": 0,
+          "latitude": 6,
+          "house": 5
+        },
+        {
+          "longitude": 30,
+          "latitude": -7,
+          "house": 7
+        },
+        {
+          "longitude": 30,
+          "latitude": 0,
+          "house": 6
+        },
+        {
+          "longitude": 30,
+          "latitude": 6,
+          "house": 6
+        },
+        {
+          "longitude": 97,
+          "latitude": -7,
+          "house": 9
+        },
+        {
+          "longitude": 97,
+          "latitude": 0,
+          "house": 8
+        },
+        {
+          "longitude": 97,
+          "latitude": 6,
+          "house": 7
+        },
+        {
+          "longitude": 120,
+          "latitude": -7,
+          "house": 10
+        },
+        {
+          "longitude": 120,
+          "latitude": 0,
+          "house": 11
+        },
+        {
+          "longitude": 120,
+          "latitude": 6,
+          "house": 12
+        },
+        {
+          "longitude": 179,
+          "latitude": -7,
+          "house": 11
+        },
+        {
+          "longitude": 179,
+          "latitude": 0,
+          "house": 12
+        },
+        {
+          "longitude": 179,
+          "latitude": 6,
+          "house": 12
+        },
+        {
+          "longitude": 250,
+          "latitude": -7,
+          "house": 12
+        },
+        {
+          "longitude": 250,
+          "latitude": 0,
+          "house": 1
+        },
+        {
+          "longitude": 250,
+          "latitude": 6,
+          "house": 1
+        },
+        {
+          "longitude": 359,
+          "latitude": -7,
+          "house": 6
+        },
+        {
+          "longitude": 359,
+          "latitude": 0,
+          "house": 6
+        },
+        {
+          "longitude": 359,
+          "latitude": 6,
+          "house": 5
+        }
+      ]
+    },
+    {
+      "armc": 181,
+      "latitude": -60,
+      "obliquity": 23.4392911,
+      "cusps": [
+        305.18727731522563,
+        321.28128903701753,
+        337.0861755674151,
+        1.0899187645630946,
+        49.367341735496666,
+        99.85015309141681,
+        125.18727731522563,
+        141.28128903701753,
+        157.08617556741513,
+        181.08991876456307,
+        229.36734173549664,
+        279.8501530914168
+      ],
+      "positions": [
+        {
+          "longitude": 0,
+          "latitude": -7,
+          "house": 4
+        },
+        {
+          "longitude": 0,
+          "latitude": 0,
+          "house": 3
+        },
+        {
+          "longitude": 0,
+          "latitude": 6,
+          "house": 3
+        },
+        {
+          "longitude": 30,
+          "latitude": -7,
+          "house": 4
+        },
+        {
+          "longitude": 30,
+          "latitude": 0,
+          "house": 4
+        },
+        {
+          "longitude": 30,
+          "latitude": 6,
+          "house": 4
+        },
+        {
+          "longitude": 97,
+          "latitude": -7,
+          "house": 6
+        },
+        {
+          "longitude": 97,
+          "latitude": 0,
+          "house": 5
+        },
+        {
+          "longitude": 97,
+          "latitude": 6,
+          "house": 5
+        },
+        {
+          "longitude": 120,
+          "latitude": -7,
+          "house": 7
+        },
+        {
+          "longitude": 120,
+          "latitude": 0,
+          "house": 6
+        },
+        {
+          "longitude": 120,
+          "latitude": 6,
+          "house": 6
+        },
+        {
+          "longitude": 179,
+          "latitude": -7,
+          "house": 9
+        },
+        {
+          "longitude": 179,
+          "latitude": 0,
+          "house": 9
+        },
+        {
+          "longitude": 179,
+          "latitude": 6,
+          "house": 10
+        },
+        {
+          "longitude": 250,
+          "latitude": -7,
+          "house": 11
+        },
+        {
+          "longitude": 250,
+          "latitude": 0,
+          "house": 11
+        },
+        {
+          "longitude": 250,
+          "latitude": 6,
+          "house": 11
+        },
+        {
+          "longitude": 359,
+          "latitude": -7,
+          "house": 4
+        },
+        {
+          "longitude": 359,
+          "latitude": 0,
+          "house": 3
+        },
+        {
+          "longitude": 359,
+          "latitude": 6,
+          "house": 3
+        }
+      ]
+    },
+    {
+      "armc": 271,
+      "latitude": -60,
+      "obliquity": 23.4392911,
+      "cusps": [
+        0.6224877440799053,
+        20.424280417220537,
+        47.9357349397436,
+        90.91749680212439,
+        133.62641675550424,
+        160.8881865506562,
+        180.6224877440799,
+        200.42428041722053,
+        227.9357349397436,
+        270.9174968021244,
+        313.62641675550424,
+        340.88818655065626
+      ],
+      "positions": [
+        {
+          "longitude": 0,
+          "latitude": -7,
+          "house": 12
+        },
+        {
+          "longitude": 0,
+          "latitude": 0,
+          "house": 12
+        },
+        {
+          "longitude": 0,
+          "latitude": 6,
+          "house": 1
+        },
+        {
+          "longitude": 30,
+          "latitude": -7,
+          "house": 2
+        },
+        {
+          "longitude": 30,
+          "latitude": 0,
+          "house": 2
+        },
+        {
+          "longitude": 30,
+          "latitude": 6,
+          "house": 2
+        },
+        {
+          "longitude": 97,
+          "latitude": -7,
+          "house": 4
+        },
+        {
+          "longitude": 97,
+          "latitude": 0,
+          "house": 4
+        },
+        {
+          "longitude": 97,
+          "latitude": 6,
+          "house": 4
+        },
+        {
+          "longitude": 120,
+          "latitude": -7,
+          "house": 4
+        },
+        {
+          "longitude": 120,
+          "latitude": 0,
+          "house": 4
+        },
+        {
+          "longitude": 120,
+          "latitude": 6,
+          "house": 4
+        },
+        {
+          "longitude": 179,
+          "latitude": -7,
+          "house": 7
+        },
+        {
+          "longitude": 179,
+          "latitude": 0,
+          "house": 6
+        },
+        {
+          "longitude": 179,
+          "latitude": 6,
+          "house": 6
+        },
+        {
+          "longitude": 250,
+          "latitude": -7,
+          "house": 9
+        },
+        {
+          "longitude": 250,
+          "latitude": 0,
+          "house": 9
+        },
+        {
+          "longitude": 250,
+          "latitude": 6,
+          "house": 9
+        },
+        {
+          "longitude": 359,
+          "latitude": -7,
+          "house": 12
+        },
+        {
+          "longitude": 359,
+          "latitude": 0,
+          "house": 12
+        },
+        {
+          "longitude": 359,
+          "latitude": 6,
+          "house": 1
+        }
+      ]
+    },
+    {
+      "armc": 0,
+      "latitude": -35,
+      "obliquity": 23.4392911,
+      "cusps": [
+        74.43606769259233,
+        104.09996303269459,
+        142.65600990562652,
+        180,
+        208.16600469981304,
+        231.0536408342393,
+        254.43606769259233,
+        284.0999630326946,
+        322.65600990562655,
+        0,
+        28.166004699813048,
+        51.05364083423931
+      ],
+      "positions": [
+        {
+          "longitude": 0,
+          "latitude": -7,
+          "house": 10
+        },
+        {
+          "longitude": 0,
+          "latitude": 0,
+          "house": 10
+        },
+        {
+          "longitude": 0,
+          "latitude": 6,
+          "house": 9
+        },
+        {
+          "longitude": 30,
+          "latitude": -7,
+          "house": 11
+        },
+        {
+          "longitude": 30,
+          "latitude": 0,
+          "house": 11
+        },
+        {
+          "longitude": 30,
+          "latitude": 6,
+          "house": 11
+        },
+        {
+          "longitude": 97,
+          "latitude": -7,
+          "house": 1
+        },
+        {
+          "longitude": 97,
+          "latitude": 0,
+          "house": 1
+        },
+        {
+          "longitude": 97,
+          "latitude": 6,
+          "house": 1
+        },
+        {
+          "longitude": 120,
+          "latitude": -7,
+          "house": 2
+        },
+        {
+          "longitude": 120,
+          "latitude": 0,
+          "house": 2
+        },
+        {
+          "longitude": 120,
+          "latitude": 6,
+          "house": 2
+        },
+        {
+          "longitude": 179,
+          "latitude": -7,
+          "house": 3
+        },
+        {
+          "longitude": 179,
+          "latitude": 0,
+          "house": 3
+        },
+        {
+          "longitude": 179,
+          "latitude": 6,
+          "house": 4
+        },
+        {
+          "longitude": 250,
+          "latitude": -7,
+          "house": 6
+        },
+        {
+          "longitude": 250,
+          "latitude": 0,
+          "house": 6
+        },
+        {
+          "longitude": 250,
+          "latitude": 6,
+          "house": 6
+        },
+        {
+          "longitude": 359,
+          "latitude": -7,
+          "house": 10
+        },
+        {
+          "longitude": 359,
+          "latitude": 0,
+          "house": 9
+        },
+        {
+          "longitude": 359,
+          "latitude": 6,
+          "house": 9
+        }
+      ]
+    },
+    {
+      "armc": 41,
+      "latitude": -35,
+      "obliquity": 23.4392911,
+      "cusps": [
+        113.19531076256092,
+        152.53278289770344,
+        194.06942015583192,
+        223.4549096278969,
+        245.14632708814224,
+        266.1449342890684,
+        293.1953107625609,
+        332.53278289770344,
+        14.06942015583195,
+        43.4549096278969,
+        65.14632708814226,
+        86.14493428906836
+      ],
+      "positions": [
+        {
+          "longitude": 0,
+          "latitude": -7,
+          "house": 8
+        },
+        {
+          "longitude": 0,
+          "latitude": 0,
+          "house": 8
+        },
+        {
+          "longitude": 0,
+          "latitude": 6,
+          "house": 8
+        },
+        {
+          "longitude": 30,
+          "latitude": -7,
+          "house": 9
+        },
+        {
+          "longitude": 30,
+          "latitude": 0,
+          "house": 9
+        },
+        {
+          "longitude": 30,
+          "latitude": 6,
+          "house": 9
+        },
+        {
+          "longitude": 97,
+          "latitude": -7,
+          "house": 12
+        },
+        {
+          "longitude": 97,
+          "latitude": 0,
+          "house": 12
+        },
+        {
+          "longitude": 97,
+          "latitude": 6,
+          "house": 12
+        },
+        {
+          "longitude": 120,
+          "latitude": -7,
+          "house": 12
+        },
+        {
+          "longitude": 120,
+          "latitude": 0,
+          "house": 1
+        },
+        {
+          "longitude": 120,
+          "latitude": 6,
+          "house": 1
+        },
+        {
+          "longitude": 179,
+          "latitude": -7,
+          "house": 2
+        },
+        {
+          "longitude": 179,
+          "latitude": 0,
+          "house": 2
+        },
+        {
+          "longitude": 179,
+          "latitude": 6,
+          "house": 2
+        },
+        {
+          "longitude": 250,
+          "latitude": -7,
+          "house": 5
+        },
+        {
+          "longitude": 250,
+          "latitude": 0,
+          "house": 5
+        },
+        {
+          "longitude": 250,
+          "latitude": 6,
+          "house": 5
+        },
+        {
+          "longitude": 359,
+          "latitude": -7,
+          "house": 8
+        },
+        {
+          "longitude": 359,
+          "latitude": 0,
+          "house": 8
+        },
+        {
+          "longitude": 359,
+          "latitude": 6,
+          "house": 8
+        }
+      ]
+    },
+    {
+      "armc": 110,
+      "latitude": -35,
+      "obliquity": 23.4392911,
+      "cusps": [
+        210.3714829331516,
+        245.53540672379845,
+        268.8333212754831,
+        288.46602873695855,
+        311.2429024018202,
+        345.30902199244446,
+        30.371482933151583,
+        65.53540672379847,
+        88.83332127548312,
+        108.46602873695855,
+        131.24290240182017,
+        165.30902199244446
+      ],
+      "positions": [
+        {
+          "longitude": 0,
+          "latitude": -7,
+          "house": 6
+        },
+        {
+          "longitude": 0,
+          "latitude": 0,
+          "house": 6
+        },
+        {
+          "longitude": 0,
+          "latitude": 6,
+          "house": 6
+        },
+        {
+          "longitude": 30,
+          "latitude": -7,
+          "house": 7
+        },
+        {
+          "longitude": 30,
+          "latitude": 0,
+          "house": 6
+        },
+        {
+          "longitude": 30,
+          "latitude": 6,
+          "house": 6
+        },
+        {
+          "longitude": 97,
+          "latitude": -7,
+          "house": 9
+        },
+        {
+          "longitude": 97,
+          "latitude": 0,
+          "house": 9
+        },
+        {
+          "longitude": 97,
+          "latitude": 6,
+          "house": 9
+        },
+        {
+          "longitude": 120,
+          "latitude": -7,
+          "house": 10
+        },
+        {
+          "longitude": 120,
+          "latitude": 0,
+          "house": 10
+        },
+        {
+          "longitude": 120,
+          "latitude": 6,
+          "house": 10
+        },
+        {
+          "longitude": 179,
+          "latitude": -7,
+          "house": 12
+        },
+        {
+          "longitude": 179,
+          "latitude": 0,
+          "house": 12
+        },
+        {
+          "longitude": 179,
+          "latitude": 6,
+          "house": 12
+        },
+        {
+          "longitude": 250,
+          "latitude": -7,
+          "house": 1
+        },
+        {
+          "longitude": 250,
+          "latitude": 0,
+          "house": 2
+        },
+        {
+          "longitude": 250,
+          "latitude": 6,
+          "house": 2
+        },
+        {
+          "longitude": 359,
+          "latitude": -7,
+          "house": 6
+        },
+        {
+          "longitude": 359,
+          "latitude": 0,
+          "house": 6
+        },
+        {
+          "longitude": 359,
+          "latitude": 6,
+          "house": 6
+        }
+      ]
+    },
+    {
+      "armc": 181,
+      "latitude": -35,
+      "obliquity": 23.4392911,
+      "cusps": [
+        286.4141140406059,
+        309.7835988067354,
+        332.7597867469183,
+        1.0899187645630946,
+        38.51376757445627,
+        76.89610552127726,
+        106.41411404060591,
+        129.78359880673543,
+        152.75978674691828,
+        181.08991876456307,
+        218.51376757445627,
+        256.89610552127726
+      ],
+      "positions": [
+        {
+          "longitude": 0,
+          "latitude": -7,
+          "house": 4
+        },
+        {
+          "longitude": 0,
+          "latitude": 0,
+          "house": 3
+        },
+        {
+          "longitude": 0,
+          "latitude": 6,
+          "house": 3
+        },
+        {
+          "longitude": 30,
+          "latitude": -7,
+          "house": 4
+        },
+        {
+          "longitude": 30,
+          "latitude": 0,
+          "house": 4
+        },
+        {
+          "longitude": 30,
+          "latitude": 6,
+          "house": 4
+        },
+        {
+          "longitude": 97,
+          "latitude": -7,
+          "house": 6
+        },
+        {
+          "longitude": 97,
+          "latitude": 0,
+          "house": 6
+        },
+        {
+          "longitude": 97,
+          "latitude": 6,
+          "house": 6
+        },
+        {
+          "longitude": 120,
+          "latitude": -7,
+          "house": 7
+        },
+        {
+          "longitude": 120,
+          "latitude": 0,
+          "house": 7
+        },
+        {
+          "longitude": 120,
+          "latitude": 6,
+          "house": 7
+        },
+        {
+          "longitude": 179,
+          "latitude": -7,
+          "house": 9
+        },
+        {
+          "longitude": 179,
+          "latitude": 0,
+          "house": 9
+        },
+        {
+          "longitude": 179,
+          "latitude": 6,
+          "house": 10
+        },
+        {
+          "longitude": 250,
+          "latitude": -7,
+          "house": 11
+        },
+        {
+          "longitude": 250,
+          "latitude": 0,
+          "house": 11
+        },
+        {
+          "longitude": 250,
+          "latitude": 6,
+          "house": 11
+        },
+        {
+          "longitude": 359,
+          "latitude": -7,
+          "house": 4
+        },
+        {
+          "longitude": 359,
+          "latitude": 0,
+          "house": 3
+        },
+        {
+          "longitude": 359,
+          "latitude": 6,
+          "house": 3
+        }
+      ]
+    },
+    {
+      "armc": 271,
+      "latitude": -35,
+      "obliquity": 23.4392911,
+      "cusps": [
+        0.8361102623123678,
+        26.619206478143383,
+        56.26516523979067,
+        90.91749680212439,
+        125.51727353731235,
+        155.08377568136893,
+        180.83611026231236,
+        206.61920647814338,
+        236.26516523979066,
+        270.9174968021244,
+        305.51727353731235,
+        335.08377568136893
+      ],
+      "positions": [
+        {
+          "longitude": 0,
+          "latitude": -7,
+          "house": 12
+        },
+        {
+          "longitude": 0,
+          "latitude": 0,
+          "house": 12
+        },
+        {
+          "longitude": 0,
+          "latitude": 6,
+          "house": 1
+        },
+        {
+          "longitude": 30,
+          "latitude": -7,
+          "house": 2
+        },
+        {
+          "longitude": 30,
+          "latitude": 0,
+          "house": 2
+        },
+        {
+          "longitude": 30,
+          "latitude": 6,
+          "house": 2
+        },
+        {
+          "longitude": 97,
+          "latitude": -7,
+          "house": 4
+        },
+        {
+          "longitude": 97,
+          "latitude": 0,
+          "house": 4
+        },
+        {
+          "longitude": 97,
+          "latitude": 6,
+          "house": 4
+        },
+        {
+          "longitude": 120,
+          "latitude": -7,
+          "house": 4
+        },
+        {
+          "longitude": 120,
+          "latitude": 0,
+          "house": 4
+        },
+        {
+          "longitude": 120,
+          "latitude": 6,
+          "house": 4
+        },
+        {
+          "longitude": 179,
+          "latitude": -7,
+          "house": 6
+        },
+        {
+          "longitude": 179,
+          "latitude": 0,
+          "house": 6
+        },
+        {
+          "longitude": 179,
+          "latitude": 6,
+          "house": 6
+        },
+        {
+          "longitude": 250,
+          "latitude": -7,
+          "house": 9
+        },
+        {
+          "longitude": 250,
+          "latitude": 0,
+          "house": 9
+        },
+        {
+          "longitude": 250,
+          "latitude": 6,
+          "house": 9
+        },
+        {
+          "longitude": 359,
+          "latitude": -7,
+          "house": 12
+        },
+        {
+          "longitude": 359,
+          "latitude": 0,
+          "house": 12
+        },
+        {
+          "longitude": 359,
+          "latitude": 6,
+          "house": 12
+        }
+      ]
+    },
+    {
+      "armc": 0,
+      "latitude": 0,
+      "obliquity": 23.4392911,
+      "cusps": [
+        90,
+        117.91054978805981,
+        147.81874083371574,
+        180,
+        212.18125916628426,
+        242.08945021194017,
+        270,
+        297.9105497880598,
+        327.81874083371576,
+        0,
+        32.18125916628427,
+        62.08945021194019
+      ],
+      "positions": [
+        {
+          "longitude": 0,
+          "latitude": -7,
+          "house": 10
+        },
+        {
+          "longitude": 0,
+          "latitude": 0,
+          "house": 10
+        },
+        {
+          "longitude": 0,
+          "latitude": 6,
+          "house": 9
+        },
+        {
+          "longitude": 30,
+          "latitude": -7,
+          "house": 11
+        },
+        {
+          "longitude": 30,
+          "latitude": 0,
+          "house": 10
+        },
+        {
+          "longitude": 30,
+          "latitude": 6,
+          "house": 10
+        },
+        {
+          "longitude": 97,
+          "latitude": -7,
+          "house": 1
+        },
+        {
+          "longitude": 97,
+          "latitude": 0,
+          "house": 1
+        },
+        {
+          "longitude": 97,
+          "latitude": 6,
+          "house": 1
+        },
+        {
+          "longitude": 120,
+          "latitude": -7,
+          "house": 2
+        },
+        {
+          "longitude": 120,
+          "latitude": 0,
+          "house": 2
+        },
+        {
+          "longitude": 120,
+          "latitude": 6,
+          "house": 2
+        },
+        {
+          "longitude": 179,
+          "latitude": -7,
+          "house": 3
+        },
+        {
+          "longitude": 179,
+          "latitude": 0,
+          "house": 3
+        },
+        {
+          "longitude": 179,
+          "latitude": 6,
+          "house": 4
+        },
+        {
+          "longitude": 250,
+          "latitude": -7,
+          "house": 6
+        },
+        {
+          "longitude": 250,
+          "latitude": 0,
+          "house": 6
+        },
+        {
+          "longitude": 250,
+          "latitude": 6,
+          "house": 6
+        },
+        {
+          "longitude": 359,
+          "latitude": -7,
+          "house": 10
+        },
+        {
+          "longitude": 359,
+          "latitude": 0,
+          "house": 9
+        },
+        {
+          "longitude": 359,
+          "latitude": 6,
+          "house": 9
+        }
+      ]
+    },
+    {
+      "armc": 41,
+      "latitude": 0,
+      "obliquity": 23.4392911,
+      "cusps": [
+        128.5742863029783,
+        159.4290730583584,
+        191.96196272307373,
+        223.4549096278969,
+        252.46792272171325,
+        280.1118458364365,
+        308.5742863029783,
+        339.4290730583584,
+        11.961962723073725,
+        43.4549096278969,
+        72.46792272171326,
+        100.11184583643652
+      ],
+      "positions": [
+        {
+          "longitude": 0,
+          "latitude": -7,
+          "house": 8
+        },
+        {
+          "longitude": 0,
+          "latitude": 0,
+          "house": 8
+        },
+        {
+          "longitude": 0,
+          "latitude": 6,
+          "house": 8
+        },
+        {
+          "longitude": 30,
+          "latitude": -7,
+          "house": 9
+        },
+        {
+          "longitude": 30,
+          "latitude": 0,
+          "house": 9
+        },
+        {
+          "longitude": 30,
+          "latitude": 6,
+          "house": 9
+        },
+        {
+          "longitude": 97,
+          "latitude": -7,
+          "house": 11
+        },
+        {
+          "longitude": 97,
+          "latitude": 0,
+          "house": 11
+        },
+        {
+          "longitude": 97,
+          "latitude": 6,
+          "house": 11
+        },
+        {
+          "longitude": 120,
+          "latitude": -7,
+          "house": 12
+        },
+        {
+          "longitude": 120,
+          "latitude": 0,
+          "house": 12
+        },
+        {
+          "longitude": 120,
+          "latitude": 6,
+          "house": 12
+        },
+        {
+          "longitude": 179,
+          "latitude": -7,
+          "house": 2
+        },
+        {
+          "longitude": 179,
+          "latitude": 0,
+          "house": 2
+        },
+        {
+          "longitude": 179,
+          "latitude": 6,
+          "house": 2
+        },
+        {
+          "longitude": 250,
+          "latitude": -7,
+          "house": 4
+        },
+        {
+          "longitude": 250,
+          "latitude": 0,
+          "house": 4
+        },
+        {
+          "longitude": 250,
+          "latitude": 6,
+          "house": 4
+        },
+        {
+          "longitude": 359,
+          "latitude": -7,
+          "house": 8
+        },
+        {
+          "longitude": 359,
+          "latitude": 0,
+          "house": 8
+        },
+        {
+          "longitude": 359,
+          "latitude": 6,
+          "house": 8
+        }
+      ]
+    },
+    {
+      "armc": 110,
+      "latitude": 0,
+      "obliquity": 23.4392911,
+      "cusps": [
+        201.63850281786057,
+        232.40880593259772,
+        260.8104863144878,
+        288.46602873695855,
+        317.5549653271034,
+        349.12121055581423,
+        21.63850281786057,
+        52.408805932597716,
+        80.81048631448778,
+        108.46602873695855,
+        137.5549653271034,
+        169.12121055581423
+      ],
+      "positions": [
+        {
+          "longitude": 0,
+          "latitude": -7,
+          "house": 6
+        },
+        {
+          "longitude": 0,
+          "latitude": 0,
+          "house": 6
+        },
+        {
+          "longitude": 0,
+          "latitude": 6,
+          "house": 6
+        },
+        {
+          "longitude": 30,
+          "latitude": -7,
+          "house": 7
+        },
+        {
+          "longitude": 30,
+          "latitude": 0,
+          "house": 7
+        },
+        {
+          "longitude": 30,
+          "latitude": 6,
+          "house": 7
+        },
+        {
+          "longitude": 97,
+          "latitude": -7,
+          "house": 9
+        },
+        {
+          "longitude": 97,
+          "latitude": 0,
+          "house": 9
+        },
+        {
+          "longitude": 97,
+          "latitude": 6,
+          "house": 9
+        },
+        {
+          "longitude": 120,
+          "latitude": -7,
+          "house": 10
+        },
+        {
+          "longitude": 120,
+          "latitude": 0,
+          "house": 10
+        },
+        {
+          "longitude": 120,
+          "latitude": 6,
+          "house": 10
+        },
+        {
+          "longitude": 179,
+          "latitude": -7,
+          "house": 12
+        },
+        {
+          "longitude": 179,
+          "latitude": 0,
+          "house": 12
+        },
+        {
+          "longitude": 179,
+          "latitude": 6,
+          "house": 12
+        },
+        {
+          "longitude": 250,
+          "latitude": -7,
+          "house": 2
+        },
+        {
+          "longitude": 250,
+          "latitude": 0,
+          "house": 2
+        },
+        {
+          "longitude": 250,
+          "latitude": 6,
+          "house": 2
+        },
+        {
+          "longitude": 359,
+          "latitude": -7,
+          "house": 6
+        },
+        {
+          "longitude": 359,
+          "latitude": 0,
+          "house": 6
+        },
+        {
+          "longitude": 359,
+          "latitude": 6,
+          "house": 6
+        }
+      ]
+    },
+    {
+      "armc": 181,
+      "latitude": 0,
+      "obliquity": 23.4392911,
+      "cusps": [
+        270.91749680212445,
+        298.86701835249323,
+        328.8611660819255,
+        1.0899187645630946,
+        33.220859835170245,
+        63.0435402393901,
+        90.91749680212445,
+        118.86701835249323,
+        148.8611660819255,
+        181.08991876456307,
+        213.22085983517024,
+        243.0435402393901
+      ],
+      "positions": [
+        {
+          "longitude": 0,
+          "latitude": -7,
+          "house": 4
+        },
+        {
+          "longitude": 0,
+          "latitude": 0,
+          "house": 3
+        },
+        {
+          "longitude": 0,
+          "latitude": 6,
+          "house": 3
+        },
+        {
+          "longitude": 30,
+          "latitude": -7,
+          "house": 4
+        },
+        {
+          "longitude": 30,
+          "latitude": 0,
+          "house": 4
+        },
+        {
+          "longitude": 30,
+          "latitude": 6,
+          "house": 4
+        },
+        {
+          "longitude": 97,
+          "latitude": -7,
+          "house": 7
+        },
+        {
+          "longitude": 97,
+          "latitude": 0,
+          "house": 7
+        },
+        {
+          "longitude": 97,
+          "latitude": 6,
+          "house": 7
+        },
+        {
+          "longitude": 120,
+          "latitude": -7,
+          "house": 7
+        },
+        {
+          "longitude": 120,
+          "latitude": 0,
+          "house": 8
+        },
+        {
+          "longitude": 120,
+          "latitude": 6,
+          "house": 8
+        },
+        {
+          "longitude": 179,
+          "latitude": -7,
+          "house": 9
+        },
+        {
+          "longitude": 179,
+          "latitude": 0,
+          "house": 9
+        },
+        {
+          "longitude": 179,
+          "latitude": 6,
+          "house": 10
+        },
+        {
+          "longitude": 250,
+          "latitude": -7,
+          "house": 12
+        },
+        {
+          "longitude": 250,
+          "latitude": 0,
+          "house": 12
+        },
+        {
+          "longitude": 250,
+          "latitude": 6,
+          "house": 12
+        },
+        {
+          "longitude": 359,
+          "latitude": -7,
+          "house": 4
+        },
+        {
+          "longitude": 359,
+          "latitude": 0,
+          "house": 3
+        },
+        {
+          "longitude": 359,
+          "latitude": 6,
+          "house": 3
+        }
+      ]
+    },
+    {
+      "armc": 271,
+      "latitude": 0,
+      "obliquity": 23.4392911,
+      "cusps": [
+        1.0899187645630646,
+        33.22085983517024,
+        63.0435402393901,
+        90.91749680212439,
+        118.86701835249323,
+        148.8611660819255,
+        181.08991876456307,
+        213.22085983517024,
+        243.0435402393901,
+        270.9174968021244,
+        298.86701835249323,
+        328.8611660819255
+      ],
+      "positions": [
+        {
+          "longitude": 0,
+          "latitude": -7,
+          "house": 1
+        },
+        {
+          "longitude": 0,
+          "latitude": 0,
+          "house": 12
+        },
+        {
+          "longitude": 0,
+          "latitude": 6,
+          "house": 12
+        },
+        {
+          "longitude": 30,
+          "latitude": -7,
+          "house": 1
+        },
+        {
+          "longitude": 30,
+          "latitude": 0,
+          "house": 1
+        },
+        {
+          "longitude": 30,
+          "latitude": 6,
+          "house": 1
+        },
+        {
+          "longitude": 97,
+          "latitude": -7,
+          "house": 4
+        },
+        {
+          "longitude": 97,
+          "latitude": 0,
+          "house": 4
+        },
+        {
+          "longitude": 97,
+          "latitude": 6,
+          "house": 4
+        },
+        {
+          "longitude": 120,
+          "latitude": -7,
+          "house": 4
+        },
+        {
+          "longitude": 120,
+          "latitude": 0,
+          "house": 5
+        },
+        {
+          "longitude": 120,
+          "latitude": 6,
+          "house": 5
+        },
+        {
+          "longitude": 179,
+          "latitude": -7,
+          "house": 6
+        },
+        {
+          "longitude": 179,
+          "latitude": 0,
+          "house": 6
+        },
+        {
+          "longitude": 179,
+          "latitude": 6,
+          "house": 7
+        },
+        {
+          "longitude": 250,
+          "latitude": -7,
+          "house": 9
+        },
+        {
+          "longitude": 250,
+          "latitude": 0,
+          "house": 9
+        },
+        {
+          "longitude": 250,
+          "latitude": 6,
+          "house": 9
+        },
+        {
+          "longitude": 359,
+          "latitude": -7,
+          "house": 1
+        },
+        {
+          "longitude": 359,
+          "latitude": 0,
+          "house": 12
+        },
+        {
+          "longitude": 359,
+          "latitude": 6,
+          "house": 12
+        }
+      ]
+    },
+    {
+      "armc": 0,
+      "latitude": 35,
+      "obliquity": 23.4392911,
+      "cusps": [
+        105.56393230740767,
+        128.9463591657607,
+        151.83399530018696,
+        180,
+        217.34399009437348,
+        255.90003696730543,
+        285.56393230740764,
+        308.94635916576067,
+        331.833995300187,
+        0,
+        37.343990094373474,
+        75.90003696730541
+      ],
+      "positions": [
+        {
+          "longitude": 0,
+          "latitude": -7,
+          "house": 10
+        },
+        {
+          "longitude": 0,
+          "latitude": 0,
+          "house": 10
+        },
+        {
+          "longitude": 0,
+          "latitude": 6,
+          "house": 9
+        },
+        {
+          "longitude": 30,
+          "latitude": -7,
+          "house": 10
+        },
+        {
+          "longitude": 30,
+          "latitude": 0,
+          "house": 10
+        },
+        {
+          "longitude": 30,
+          "latitude": 6,
+          "house": 10
+        },
+        {
+          "longitude": 97,
+          "latitude": -7,
+          "house": 12
+        },
+        {
+          "longitude": 97,
+          "latitude": 0,
+          "house": 12
+        },
+        {
+          "longitude": 97,
+          "latitude": 6,
+          "house": 12
+        },
+        {
+          "longitude": 120,
+          "latitude": -7,
+          "house": 1
+        },
+        {
+          "longitude": 120,
+          "latitude": 0,
+          "house": 1
+        },
+        {
+          "longitude": 120,
+          "latitude": 6,
+          "house": 1
+        },
+        {
+          "longitude": 179,
+          "latitude": -7,
+          "house": 3
+        },
+        {
+          "longitude": 179,
+          "latitude": 0,
+          "house": 3
+        },
+        {
+          "longitude": 179,
+          "latitude": 6,
+          "house": 4
+        },
+        {
+          "longitude": 250,
+          "latitude": -7,
+          "house": 5
+        },
+        {
+          "longitude": 250,
+          "latitude": 0,
+          "house": 5
+        },
+        {
+          "longitude": 250,
+          "latitude": 6,
+          "house": 5
+        },
+        {
+          "longitude": 359,
+          "latitude": -7,
+          "house": 10
+        },
+        {
+          "longitude": 359,
+          "latitude": 0,
+          "house": 9
+        },
+        {
+          "longitude": 359,
+          "latitude": 6,
+          "house": 9
+        }
+      ]
+    },
+    {
+      "armc": 41,
+      "latitude": 35,
+      "obliquity": 23.4392911,
+      "cusps": [
+        139.3972405179347,
+        163.63530338573207,
+        190.3975331488042,
+        223.4549096278969,
+        260.4284471841678,
+        292.9801594386198,
+        319.39724051793473,
+        343.6353033857321,
+        10.3975331488042,
+        43.4549096278969,
+        80.42844718416778,
+        112.98015943861981
+      ],
+      "positions": [
+        {
+          "longitude": 0,
+          "latitude": -7,
+          "house": 8
+        },
+        {
+          "longitude": 0,
+          "latitude": 0,
+          "house": 8
+        },
+        {
+          "longitude": 0,
+          "latitude": 6,
+          "house": 8
+        },
+        {
+          "longitude": 30,
+          "latitude": -7,
+          "house": 9
+        },
+        {
+          "longitude": 30,
+          "latitude": 0,
+          "house": 9
+        },
+        {
+          "longitude": 30,
+          "latitude": 6,
+          "house": 9
+        },
+        {
+          "longitude": 97,
+          "latitude": -7,
+          "house": 11
+        },
+        {
+          "longitude": 97,
+          "latitude": 0,
+          "house": 11
+        },
+        {
+          "longitude": 97,
+          "latitude": 6,
+          "house": 11
+        },
+        {
+          "longitude": 120,
+          "latitude": -7,
+          "house": 12
+        },
+        {
+          "longitude": 120,
+          "latitude": 0,
+          "house": 12
+        },
+        {
+          "longitude": 120,
+          "latitude": 6,
+          "house": 12
+        },
+        {
+          "longitude": 179,
+          "latitude": -7,
+          "house": 2
+        },
+        {
+          "longitude": 179,
+          "latitude": 0,
+          "house": 2
+        },
+        {
+          "longitude": 179,
+          "latitude": 6,
+          "house": 2
+        },
+        {
+          "longitude": 250,
+          "latitude": -7,
+          "house": 4
+        },
+        {
+          "longitude": 250,
+          "latitude": 0,
+          "house": 4
+        },
+        {
+          "longitude": 250,
+          "latitude": 6,
+          "house": 4
+        },
+        {
+          "longitude": 359,
+          "latitude": -7,
+          "house": 8
+        },
+        {
+          "longitude": 359,
+          "latitude": 0,
+          "house": 8
+        },
+        {
+          "longitude": 359,
+          "latitude": 6,
+          "house": 8
+        }
+      ]
+    },
+    {
+      "armc": 110,
+      "latitude": 35,
+      "obliquity": 23.4392911,
+      "cusps": [
+        196.6908033247924,
+        222.67240080299496,
+        253.13330074265463,
+        288.46602873695855,
+        322.6448071797195,
+        351.37454103068717,
+        16.690803324792398,
+        42.67240080299496,
+        73.13330074265463,
+        108.46602873695855,
+        142.64480717971952,
+        171.3745410306872
+      ],
+      "positions": [
+        {
+          "longitude": 0,
+          "latitude": -7,
+          "house": 6
+        },
+        {
+          "longitude": 0,
+          "latitude": 0,
+          "house": 6
+        },
+        {
+          "longitude": 0,
+          "latitude": 6,
+          "house": 6
+        },
+        {
+          "longitude": 30,
+          "latitude": -7,
+          "house": 7
+        },
+        {
+          "longitude": 30,
+          "latitude": 0,
+          "house": 7
+        },
+        {
+          "longitude": 30,
+          "latitude": 6,
+          "house": 7
+        },
+        {
+          "longitude": 97,
+          "latitude": -7,
+          "house": 9
+        },
+        {
+          "longitude": 97,
+          "latitude": 0,
+          "house": 9
+        },
+        {
+          "longitude": 97,
+          "latitude": 6,
+          "house": 9
+        },
+        {
+          "longitude": 120,
+          "latitude": -7,
+          "house": 10
+        },
+        {
+          "longitude": 120,
+          "latitude": 0,
+          "house": 10
+        },
+        {
+          "longitude": 120,
+          "latitude": 6,
+          "house": 10
+        },
+        {
+          "longitude": 179,
+          "latitude": -7,
+          "house": 12
+        },
+        {
+          "longitude": 179,
+          "latitude": 0,
+          "house": 12
+        },
+        {
+          "longitude": 179,
+          "latitude": 6,
+          "house": 12
+        },
+        {
+          "longitude": 250,
+          "latitude": -7,
+          "house": 2
+        },
+        {
+          "longitude": 250,
+          "latitude": 0,
+          "house": 2
+        },
+        {
+          "longitude": 250,
+          "latitude": 6,
+          "house": 2
+        },
+        {
+          "longitude": 359,
+          "latitude": -7,
+          "house": 6
+        },
+        {
+          "longitude": 359,
+          "latitude": 0,
+          "house": 6
+        },
+        {
+          "longitude": 359,
+          "latitude": 6,
+          "house": 6
+        }
+      ]
+    },
+    {
+      "armc": 181,
+      "latitude": 35,
+      "obliquity": 23.4392911,
+      "cusps": [
+        255.2887865324666,
+        285.10284291178084,
+        323.83197615131115,
+        1.0899187645630946,
+        29.09057997954517,
+        51.89084262294921,
+        75.28878653246659,
+        105.10284291178084,
+        143.83197615131115,
+        181.08991876456307,
+        209.0905799795452,
+        231.89084262294918
+      ],
+      "positions": [
+        {
+          "longitude": 0,
+          "latitude": -7,
+          "house": 4
+        },
+        {
+          "longitude": 0,
+          "latitude": 0,
+          "house": 3
+        },
+        {
+          "longitude": 0,
+          "latitude": 6,
+          "house": 3
+        },
+        {
+          "longitude": 30,
+          "latitude": -7,
+          "house": 5
+        },
+        {
+          "longitude": 30,
+          "latitude": 0,
+          "house": 5
+        },
+        {
+          "longitude": 30,
+          "latitude": 6,
+          "house": 5
+        },
+        {
+          "longitude": 97,
+          "latitude": -7,
+          "house": 7
+        },
+        {
+          "longitude": 97,
+          "latitude": 0,
+          "house": 7
+        },
+        {
+          "longitude": 97,
+          "latitude": 6,
+          "house": 7
+        },
+        {
+          "longitude": 120,
+          "latitude": -7,
+          "house": 8
+        },
+        {
+          "longitude": 120,
+          "latitude": 0,
+          "house": 8
+        },
+        {
+          "longitude": 120,
+          "latitude": 6,
+          "house": 8
+        },
+        {
+          "longitude": 179,
+          "latitude": -7,
+          "house": 9
+        },
+        {
+          "longitude": 179,
+          "latitude": 0,
+          "house": 9
+        },
+        {
+          "longitude": 179,
+          "latitude": 6,
+          "house": 10
+        },
+        {
+          "longitude": 250,
+          "latitude": -7,
+          "house": 12
+        },
+        {
+          "longitude": 250,
+          "latitude": 0,
+          "house": 12
+        },
+        {
+          "longitude": 250,
+          "latitude": 6,
+          "house": 12
+        },
+        {
+          "longitude": 359,
+          "latitude": -7,
+          "house": 4
+        },
+        {
+          "longitude": 359,
+          "latitude": 0,
+          "house": 3
+        },
+        {
+          "longitude": 359,
+          "latitude": 6,
+          "house": 3
+        }
+      ]
+    },
+    {
+      "armc": 271,
+      "latitude": 35,
+      "obliquity": 23.4392911,
+      "cusps": [
+        1.564927826387013,
+        43.36918690929491,
+        70.74357902855189,
+        90.91749680212439,
+        111.24656149409208,
+        139.17877106460492,
+        181.56492782638702,
+        223.3691869092949,
+        250.7435790285519,
+        270.9174968021244,
+        291.2465614940921,
+        319.1787710646049
+      ],
+      "positions": [
+        {
+          "longitude": 0,
+          "latitude": -7,
+          "house": 1
+        },
+        {
+          "longitude": 0,
+          "latitude": 0,
+          "house": 12
+        },
+        {
+          "longitude": 0,
+          "latitude": 6,
+          "house": 12
+        },
+        {
+          "longitude": 30,
+          "latitude": -7,
+          "house": 1
+        },
+        {
+          "longitude": 30,
+          "latitude": 0,
+          "house": 1
+        },
+        {
+          "longitude": 30,
+          "latitude": 6,
+          "house": 1
+        },
+        {
+          "longitude": 97,
+          "latitude": -7,
+          "house": 4
+        },
+        {
+          "longitude": 97,
+          "latitude": 0,
+          "house": 4
+        },
+        {
+          "longitude": 97,
+          "latitude": 6,
+          "house": 4
+        },
+        {
+          "longitude": 120,
+          "latitude": -7,
+          "house": 5
+        },
+        {
+          "longitude": 120,
+          "latitude": 0,
+          "house": 5
+        },
+        {
+          "longitude": 120,
+          "latitude": 6,
+          "house": 5
+        },
+        {
+          "longitude": 179,
+          "latitude": -7,
+          "house": 6
+        },
+        {
+          "longitude": 179,
+          "latitude": 0,
+          "house": 6
+        },
+        {
+          "longitude": 179,
+          "latitude": 6,
+          "house": 7
+        },
+        {
+          "longitude": 250,
+          "latitude": -7,
+          "house": 8
+        },
+        {
+          "longitude": 250,
+          "latitude": 0,
+          "house": 8
+        },
+        {
+          "longitude": 250,
+          "latitude": 6,
+          "house": 9
+        },
+        {
+          "longitude": 359,
+          "latitude": -7,
+          "house": 1
+        },
+        {
+          "longitude": 359,
+          "latitude": 0,
+          "house": 12
+        },
+        {
+          "longitude": 359,
+          "latitude": 6,
+          "house": 12
+        }
+      ]
+    },
+    {
+      "armc": 0,
+      "latitude": 60,
+      "obliquity": 23.4392911,
+      "cusps": [
+        124.56568565564231,
+        140.62904036320435,
+        156.3002981111113,
+        180,
+        228.00787175352053,
+        279.04902817109473,
+        304.5656856556423,
+        320.62904036320435,
+        336.30029811111126,
+        0,
+        48.00787175352053,
+        99.04902817109475
+      ],
+      "positions": [
+        {
+          "longitude": 0,
+          "latitude": -7,
+          "house": 10
+        },
+        {
+          "longitude": 0,
+          "latitude": 0,
+          "house": 10
+        },
+        {
+          "longitude": 0,
+          "latitude": 6,
+          "house": 9
+        },
+        {
+          "longitude": 30,
+          "latitude": -7,
+          "house": 10
+        },
+        {
+          "longitude": 30,
+          "latitude": 0,
+          "house": 10
+        },
+        {
+          "longitude": 30,
+          "latitude": 6,
+          "house": 10
+        },
+        {
+          "longitude": 97,
+          "latitude": -7,
+          "house": 12
+        },
+        {
+          "longitude": 97,
+          "latitude": 0,
+          "house": 11
+        },
+        {
+          "longitude": 97,
+          "latitude": 6,
+          "house": 11
+        },
+        {
+          "longitude": 120,
+          "latitude": -7,
+          "house": 1
+        },
+        {
+          "longitude": 120,
+          "latitude": 0,
+          "house": 12
+        },
+        {
+          "longitude": 120,
+          "latitude": 6,
+          "house": 12
+        },
+        {
+          "longitude": 179,
+          "latitude": -7,
+          "house": 3
+        },
+        {
+          "longitude": 179,
+          "latitude": 0,
+          "house": 3
+        },
+        {
+          "longitude": 179,
+          "latitude": 6,
+          "house": 4
+        },
+        {
+          "longitude": 250,
+          "latitude": -7,
+          "house": 5
+        },
+        {
+          "longitude": 250,
+          "latitude": 0,
+          "house": 5
+        },
+        {
+          "longitude": 250,
+          "latitude": 6,
+          "house": 5
+        },
+        {
+          "longitude": 359,
+          "latitude": -7,
+          "house": 10
+        },
+        {
+          "longitude": 359,
+          "latitude": 0,
+          "house": 9
+        },
+        {
+          "longitude": 359,
+          "latitude": 6,
+          "house": 9
+        }
+      ]
+    },
+    {
+      "armc": 41,
+      "latitude": 60,
+      "obliquity": 23.4392911,
+      "cusps": [
+        149.68766586644114,
+        167.46377888991162,
+        188.71260392135974,
+        223.4549096278969,
+        272.77210693102074,
+        308.17350128877285,
+        329.68766586644114,
+        347.4637788899116,
+        8.712603921359744,
+        43.4549096278969,
+        92.77210693102072,
+        128.17350128877283
+      ],
+      "positions": [
+        {
+          "longitude": 0,
+          "latitude": -7,
+          "house": 8
+        },
+        {
+          "longitude": 0,
+          "latitude": 0,
+          "house": 8
+        },
+        {
+          "longitude": 0,
+          "latitude": 6,
+          "house": 8
+        },
+        {
+          "longitude": 30,
+          "latitude": -7,
+          "house": 9
+        },
+        {
+          "longitude": 30,
+          "latitude": 0,
+          "house": 9
+        },
+        {
+          "longitude": 30,
+          "latitude": 6,
+          "house": 9
+        },
+        {
+          "longitude": 97,
+          "latitude": -7,
+          "house": 11
+        },
+        {
+          "longitude": 97,
+          "latitude": 0,
+          "house": 11
+        },
+        {
+          "longitude": 97,
+          "latitude": 6,
+          "house": 10
+        },
+        {
+          "longitude": 120,
+          "latitude": -7,
+          "house": 11
+        },
+        {
+          "longitude": 120,
+          "latitude": 0,
+          "house": 11
+        },
+        {
+          "longitude": 120,
+          "latitude": 6,
+          "house": 11
+        },
+        {
+          "longitude": 179,
+          "latitude": -7,
+          "house": 2
+        },
+        {
+          "longitude": 179,
+          "latitude": 0,
+          "house": 2
+        },
+        {
+          "longitude": 179,
+          "latitude": 6,
+          "house": 2
+        },
+        {
+          "longitude": 250,
+          "latitude": -7,
+          "house": 4
+        },
+        {
+          "longitude": 250,
+          "latitude": 0,
+          "house": 4
+        },
+        {
+          "longitude": 250,
+          "latitude": 6,
+          "house": 4
+        },
+        {
+          "longitude": 359,
+          "latitude": -7,
+          "house": 8
+        },
+        {
+          "longitude": 359,
+          "latitude": 0,
+          "house": 8
+        },
+        {
+          "longitude": 359,
+          "latitude": 6,
+          "house": 8
+        }
+      ]
+    },
+    {
+      "armc": 110,
+      "latitude": 60,
+      "obliquity": 23.4392911,
+      "cusps": [
+        192.43466638764548,
+        212.84959183909746,
+        242.90679543876797,
+        288.46602873695855,
+        328.46060943811153,
+        353.39743527746646,
+        12.434666387645507,
+        32.84959183909746,
+        62.90679543876797,
+        108.46602873695855,
+        148.4606094381115,
+        173.39743527746643
+      ],
+      "positions": [
+        {
+          "longitude": 0,
+          "latitude": -7,
+          "house": 6
+        },
+        {
+          "longitude": 0,
+          "latitude": 0,
+          "house": 6
+        },
+        {
+          "longitude": 0,
+          "latitude": 6,
+          "house": 6
+        },
+        {
+          "longitude": 30,
+          "latitude": -7,
+          "house": 7
+        },
+        {
+          "longitude": 30,
+          "latitude": 0,
+          "house": 7
+        },
+        {
+          "longitude": 30,
+          "latitude": 6,
+          "house": 8
+        },
+        {
+          "longitude": 97,
+          "latitude": -7,
+          "house": 9
+        },
+        {
+          "longitude": 97,
+          "latitude": 0,
+          "house": 9
+        },
+        {
+          "longitude": 97,
+          "latitude": 6,
+          "house": 9
+        },
+        {
+          "longitude": 120,
+          "latitude": -7,
+          "house": 10
+        },
+        {
+          "longitude": 120,
+          "latitude": 0,
+          "house": 10
+        },
+        {
+          "longitude": 120,
+          "latitude": 6,
+          "house": 10
+        },
+        {
+          "longitude": 179,
+          "latitude": -7,
+          "house": 12
+        },
+        {
+          "longitude": 179,
+          "latitude": 0,
+          "house": 12
+        },
+        {
+          "longitude": 179,
+          "latitude": 6,
+          "house": 12
+        },
+        {
+          "longitude": 250,
+          "latitude": -7,
+          "house": 3
+        },
+        {
+          "longitude": 250,
+          "latitude": 0,
+          "house": 3
+        },
+        {
+          "longitude": 250,
+          "latitude": 6,
+          "house": 3
+        },
+        {
+          "longitude": 359,
+          "latitude": -7,
+          "house": 6
+        },
+        {
+          "longitude": 359,
+          "latitude": 0,
+          "house": 6
+        },
+        {
+          "longitude": 359,
+          "latitude": 6,
+          "house": 6
+        }
+      ]
+    },
+    {
+      "armc": 181,
+      "latitude": 60,
+      "obliquity": 23.4392911,
+      "cusps": [
+        236.05706119360264,
+        261.76020033604567,
+        313.36885804799897,
+        1.0899187645630946,
+        24.48522327156593,
+        40.02332441093711,
+        56.057061193602635,
+        81.76020033604567,
+        133.36885804799897,
+        181.08991876456307,
+        204.4852232715659,
+        220.02332441093708
+      ],
+      "positions": [
+        {
+          "longitude": 0,
+          "latitude": -7,
+          "house": 4
+        },
+        {
+          "longitude": 0,
+          "latitude": 0,
+          "house": 3
+        },
+        {
+          "longitude": 0,
+          "latitude": 6,
+          "house": 3
+        },
+        {
+          "longitude": 30,
+          "latitude": -7,
+          "house": 5
+        },
+        {
+          "longitude": 30,
+          "latitude": 0,
+          "house": 5
+        },
+        {
+          "longitude": 30,
+          "latitude": 6,
+          "house": 5
+        },
+        {
+          "longitude": 97,
+          "latitude": -7,
+          "house": 8
+        },
+        {
+          "longitude": 97,
+          "latitude": 0,
+          "house": 8
+        },
+        {
+          "longitude": 97,
+          "latitude": 6,
+          "house": 8
+        },
+        {
+          "longitude": 120,
+          "latitude": -7,
+          "house": 8
+        },
+        {
+          "longitude": 120,
+          "latitude": 0,
+          "house": 8
+        },
+        {
+          "longitude": 120,
+          "latitude": 6,
+          "house": 8
+        },
+        {
+          "longitude": 179,
+          "latitude": -7,
+          "house": 9
+        },
+        {
+          "longitude": 179,
+          "latitude": 0,
+          "house": 9
+        },
+        {
+          "longitude": 179,
+          "latitude": 6,
+          "house": 10
+        },
+        {
+          "longitude": 250,
+          "latitude": -7,
+          "house": 2
+        },
+        {
+          "longitude": 250,
+          "latitude": 0,
+          "house": 1
+        },
+        {
+          "longitude": 250,
+          "latitude": 6,
+          "house": 1
+        },
+        {
+          "longitude": 359,
+          "latitude": -7,
+          "house": 4
+        },
+        {
+          "longitude": 359,
+          "latitude": 0,
+          "house": 3
+        },
+        {
+          "longitude": 359,
+          "latitude": 6,
+          "house": 3
+        }
+      ]
+    },
+    {
+      "armc": 271,
+      "latitude": 60,
+      "obliquity": 23.4392911,
+      "cusps": [
+        4.370102499504499,
+        69.77327763952013,
+        83.45676029345324,
+        90.91749680212439,
+        98.49663679082511,
+        112.99926742045761,
+        184.3701024995045,
+        249.77327763952013,
+        263.45676029345327,
+        270.9174968021244,
+        278.4966367908251,
+        292.9992674204576
+      ],
+      "positions": [
+        {
+          "longitude": 0,
+          "latitude": -7,
+          "house": 1
+        },
+        {
+          "longitude": 0,
+          "latitude": 0,
+          "house": 12
+        },
+        {
+          "longitude": 0,
+          "latitude": 6,
+          "house": 12
+        },
+        {
+          "longitude": 30,
+          "latitude": -7,
+          "house": 1
+        },
+        {
+          "longitude": 30,
+          "latitude": 0,
+          "house": 1
+        },
+        {
+          "longitude": 30,
+          "latitude": 6,
+          "house": 12
+        },
+        {
+          "longitude": 97,
+          "latitude": -7,
+          "house": 4
+        },
+        {
+          "longitude": 97,
+          "latitude": 0,
+          "house": 4
+        },
+        {
+          "longitude": 97,
+          "latitude": 6,
+          "house": 6
+        },
+        {
+          "longitude": 120,
+          "latitude": -7,
+          "house": 5
+        },
+        {
+          "longitude": 120,
+          "latitude": 0,
+          "house": 6
+        },
+        {
+          "longitude": 120,
+          "latitude": 6,
+          "house": 7
+        },
+        {
+          "longitude": 179,
+          "latitude": -7,
+          "house": 6
+        },
+        {
+          "longitude": 179,
+          "latitude": 0,
+          "house": 6
+        },
+        {
+          "longitude": 179,
+          "latitude": 6,
+          "house": 7
+        },
+        {
+          "longitude": 250,
+          "latitude": -7,
+          "house": 6
+        },
+        {
+          "longitude": 250,
+          "latitude": 0,
+          "house": 8
+        },
+        {
+          "longitude": 250,
+          "latitude": 6,
+          "house": 8
+        },
+        {
+          "longitude": 359,
+          "latitude": -7,
+          "house": 1
+        },
+        {
+          "longitude": 359,
+          "latitude": 0,
+          "house": 12
+        },
+        {
+          "longitude": 359,
+          "latitude": 6,
+          "house": 12
+        }
+      ]
+    }
+  ],
+  "swissVersion": "2.10.03",
+  "birthCases": [
+    {
+      "date": "1990-06-15T00:00:00Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "cusps": [
+        124.06447608404139,
+        146.5537658911275,
+        170.24323977891717,
+        201.01539690682617,
+        240.4521422555694,
+        276.9380322286088,
+        304.0644760840414,
+        326.5537658911275,
+        350.2432397789172,
+        21.015396906826165,
+        60.452142255569406,
+        96.93803222860878
+      ]
+    },
+    {
+      "date": "2024-03-20T03:06:00Z",
+      "latitude": 51.5,
+      "longitude": -0.12,
+      "cusps": [
+        281.3646242108364,
+        329.3995393598208,
+        21.456096945654686,
+        46.99042368667705,
+        62.82186652452168,
+        78.15882882473096,
+        101.36462421083638,
+        149.39953935982078,
+        201.45609694565468,
+        226.99042368667705,
+        242.82186652452168,
+        258.15882882473096
+      ]
+    },
+    {
+      "date": "2000-01-01T12:00:00Z",
+      "latitude": -33.87,
+      "longitude": 151.2,
+      "cusps": [
+        152.47512112687258,
+        196.84445734519153,
+        230.29058610175068,
+        253.08051838136828,
+        273.03314684008615,
+        296.8743415289981,
+        332.4751211268726,
+        16.84445734519153,
+        50.290586101750705,
+        73.08051838136828,
+        93.03314684008616,
+        116.87434152899814
+      ]
+    },
+    {
+      "date": "1960-12-10T22:30:00Z",
+      "latitude": -23.55,
+      "longitude": -46.63,
+      "cusps": [
+        89.65278117962431,
+        120.39107766870262,
+        156.79922493829412,
+        191.43696523019997,
+        219.63958595865537,
+        244.17752843942193,
+        269.6527811796243,
+        300.3910776687026,
+        336.7992249382941,
+        11.436965230199982,
+        39.63958595865537,
+        64.17752843942193
+      ]
+    }
+  ]
+}

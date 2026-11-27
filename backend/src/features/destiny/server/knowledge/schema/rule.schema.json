@@ -1,0 +1,344 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./rule.schema.json",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "method": {
+      "enum": [
+        "bazi",
+        "ziwei",
+        "western"
+      ]
+    },
+    "layer": {
+      "enum": [
+        "personality",
+        "events"
+      ]
+    },
+    "tradition": {
+      "type": "string",
+      "minLength": 1
+    },
+    "schemaVersion": {
+      "const": "1.1.0"
+    },
+    "applicability": {
+      "type": "object",
+      "properties": {
+        "chartScope": {
+          "enum": [
+            "natal",
+            "decade",
+            "annual",
+            "monthly",
+            "daily",
+            "hourly"
+          ]
+        },
+        "calculationProfile": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "chartScope",
+        "calculationProfile"
+      ],
+      "additionalProperties": false
+    },
+    "input": {
+      "type": "object",
+      "properties": {
+        "required": {
+          "type": "array",
+          "items": {
+            "$ref": "./fact.schema.json"
+          },
+          "minItems": 1
+        },
+        "anyOf": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "./fact.schema.json"
+            },
+            "minItems": 1
+          }
+        },
+        "mustBeAbsent": {
+          "type": "array",
+          "items": {
+            "$ref": "./fact.schema.json"
+          }
+        },
+        "relations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "enum": [
+                  "same_palace",
+                  "opposite_palace",
+                  "trine_palaces",
+                  "branch_opposition"
+                ]
+              },
+              "first": {
+                "$ref": "./fact.schema.json"
+              },
+              "second": {
+                "$ref": "./fact.schema.json"
+              }
+            },
+            "required": [
+              "type",
+              "first",
+              "second"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "thresholds": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fact": {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "const": "aspect_orb"
+                  },
+                  "first": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "second": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "aspect": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "kind",
+                  "first",
+                  "second",
+                  "aspect"
+                ],
+                "additionalProperties": false
+              },
+              "min": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 6
+              },
+              "max": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 6
+              }
+            },
+            "required": [
+              "fact",
+              "min",
+              "max"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "required",
+        "mustBeAbsent"
+      ],
+      "additionalProperties": false
+    },
+    "source": {
+      "$ref": "./source.schema.json"
+    },
+    "sourceRefs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "sourceId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "passageId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "supportType": {
+            "enum": [
+              "direct",
+              "context",
+              "counter_evidence"
+            ]
+          },
+          "supportNote": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "sourceId",
+          "passageId",
+          "supportType",
+          "supportNote"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "sourceCondition": {
+      "type": "object",
+      "properties": {
+        "literalConditions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "normalizedConditions": {
+          "type": "object"
+        },
+        "normalizationNote": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "literalConditions",
+        "normalizedConditions",
+        "normalizationNote"
+      ],
+      "additionalProperties": false
+    },
+    "verification": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "const": "checked_online_passage"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "status",
+        "version"
+      ],
+      "additionalProperties": false
+    },
+    "entry": {
+      "type": "object",
+      "properties": {
+        "topic": {
+          "enum": [
+            "综合",
+            "事业",
+            "爱情",
+            "学业",
+            "财富"
+          ]
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "reading": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "topic",
+        "keywords",
+        "reading"
+      ],
+      "additionalProperties": false
+    },
+    "reference": {
+      "type": "object",
+      "properties": {
+        "basis": {
+          "type": "string",
+          "minLength": 1
+        },
+        "limit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "originalTopic": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "basis",
+        "limit",
+        "originalTopic"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "id",
+    "method",
+    "layer",
+    "tradition",
+    "input",
+    "source",
+    "entry",
+    "reference"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "required": [
+          "schemaVersion"
+        ]
+      },
+      "then": {
+        "required": [
+          "applicability",
+          "sourceRefs",
+          "sourceCondition",
+          "verification"
+        ],
+        "properties": {
+          "source": {
+            "required": [
+              "editionId",
+              "sourceType",
+              "sourceLevel",
+            "accessedAt",
+              "digitizationSource",
+              "textStatus",
+              "rights"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

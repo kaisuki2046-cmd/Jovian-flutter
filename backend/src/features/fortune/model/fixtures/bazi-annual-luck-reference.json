@@ -1,0 +1,28 @@
+{
+  "profile": "smth-annual-luck-atomic-v1",
+  "reviewedOn": "2026-11-19",
+  "sources": [
+    {
+      "url": "https://zh.wikisource.org/w/index.php?oldid=761691&title=三命通會_(四庫全書本)/卷02",
+      "coincidence": "又如甲子流年又是甲子运谓之岁运并临独羊刃七煞为凶财官印绶亦吉。",
+      "wealth": "运支无财而运干是财亦可发财。"
+    },
+    {
+      "url": "https://zh.wikisource.org/w/index.php?oldid=657369&title=三命通會_(四庫全書本)/卷03",
+      "lu": "甲禄寅乙禄卯庚禄申辛禄酉壬禄亥癸禄子",
+      "blade": "羊刃常居禄前一辰",
+      "qualifier": "六甲生人逢乙卯丁卯为真羊刃，余卯为偏刃则轻。"
+    }
+  ],
+  "stems": ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"],
+  "luBranches": ["寅", "卯", "巳", "午", "巳", "午", "申", "酉", "亥", "子"],
+  "luNextBranches": ["卯", "辰", "午", "未", "午", "未", "酉", "戌", "子", "丑"],
+  "realExamples": {
+    "common": { "year": 1990, "month": 9, "day": 29, "hour": 12, "gender": 0 },
+    "builtLu": { "year": 1990, "month": 9, "day": 13, "hour": 12, "gender": 0 },
+    "coincidenceYear": 2004,
+    "sameStemOnlyYear": 2022,
+    "sameBranchOnlyYear": 2026,
+    "liChunCoincidenceStart": "2004-02-04T11:56:13.000Z"
+  }
+}

@@ -1,0 +1,11 @@
+[
+  {"date":"1919-08-09T14:51:00.000Z","latitude":4.45,"longitude":-162.88,"numbers":[24,25,26]},
+  {"date":"1976-04-14T14:40:00.000Z","latitude":7.1,"longitude":-16.15,"numbers":[12,14,52]},
+  {"date":"1944-03-07T08:05:00.000Z","latitude":35.87,"longitude":-140,"numbers":[15,52]},
+  {"date":"2006-11-17T20:24:00.000Z","latitude":15.35,"longitude":-69,"numbers":[13,16,52]},
+  {"date":"1923-02-13T15:14:00.000Z","latitude":-51.6,"longitude":53.27,"numbers":[14,18,52]},
+  {"date":"1929-03-10T04:51:00.000Z","latitude":-33.95,"longitude":110.76,"numbers":[21]},
+  {"date":"1907-02-25T10:03:00.000Z","latitude":-16.55,"longitude":-73.33,"numbers":[8]},
+  {"date":"1924-10-25T23:49:00.000Z","latitude":-33.29,"longitude":-6.92,"numbers":[12,19,52]},
+  {"date":"2008-03-22T05:59:00.000Z","latitude":46.39,"longitude":-131.84,"numbers":[8,17]}
+]

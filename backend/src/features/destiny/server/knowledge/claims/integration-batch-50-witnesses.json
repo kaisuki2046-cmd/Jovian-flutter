@@ -1,0 +1,561 @@
+{
+  "scanned": 2141,
+  "alternatives": 34,
+  "witnesses": [
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 0,
+      "proofs": [
+        {
+          "id": "ziwei-v3-xingjue-032-p1263-001",
+          "inputDigest": "b92a226348a5e33dac987713aa2de1bd5653e938e0cf5da8fef6e78af0975170"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 1,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p011-020",
+          "text": "庙旺，二人，不得力",
+          "inputDigest": "2b752225f276afc7cfc6f893c43e04e88c1f5397109a4bf5effe5f52d257e542"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 3,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p012-022",
+          "text": "入庙，吉",
+          "inputDigest": "b3d99b0dba55a955c4e3fcc37cda80e12925d7da1104b763934942df33b2f0f4"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 5,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p012-022",
+          "text": "不入庙，克",
+          "inputDigest": "f9533d46a6d643df1268e71469eacef04f727094d55367f3143c92ffe906679c"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 7,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p011-020",
+          "text": "陷，克，独",
+          "inputDigest": "81165564a82cfb4aaa0cdf65b853eaa714a553f3349bed9588bd9f3efea5dc30"
+        },
+        {
+          "id": "ziwei-v3-xingjue-032-p1263-001",
+          "inputDigest": "a13177b832ef6a66f1328c83af65316f3356c23a83e241a67e994f89b96cd4e8"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 9,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p018-020",
+          "text": "庙，权贵，武职",
+          "inputDigest": "9a0fa04bebbb0e0ddf8e4e289be5650893d5add9a748673ed83aa1ca736f1fa5"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 11,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p018-020",
+          "text": "陷，主不足，奔波度日",
+          "inputDigest": "5865d15568fab56b081cc12e0465a70dcb1e3479353a336820e982ca7358109a"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 8
+        },
+        "gender": "female"
+      },
+      "timeIndex": 2,
+      "proofs": [
+        {
+          "id": "ziwei-v2-guanlugong-p008-002",
+          "text": "天府入庙文武皆吉",
+          "inputDigest": "49fcf3df195cfe6deb0d395a95a42ff599b5b03c6164ffb659035dc97c307f3c"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 5,
+      "proofs": [
+        {
+          "id": "ziwei-v3-xingjue-049-p621-001",
+          "text": "妻宮巳地武破、相剋不和",
+          "inputDigest": "34967354f81fceebe1e615c27669e39b9320cf2492c19a870241a3b91f74587b"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 22
+        },
+        "gender": "female"
+      },
+      "timeIndex": 4,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p017-019",
+          "text": "入庙，平和",
+          "inputDigest": "f46c823ba7c3af4aaf2054b1687112f51e460fc4171580866eb3bf6e83a76f63"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 22
+        },
+        "gender": "female"
+      },
+      "timeIndex": 8,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p021-021",
+          "text": "庙，富贵",
+          "inputDigest": "f13dd38b8e4f4990f2d30c42d7adb61d56aa14fefb7faaac9b4173386f5e8dc8"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 22
+        },
+        "gender": "female"
+      },
+      "timeIndex": 10,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p017-019",
+          "text": "陷地，招怨",
+          "inputDigest": "d343abfdcd80812415a26a9e0144045e819ae4613228de57ac2573625b7dd0a8"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 2,
+          "day": 19
+        },
+        "gender": "female"
+      },
+      "timeIndex": 0,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p010-029",
+          "text": "庙旺，性刚不奈静，读书可贵",
+          "inputDigest": "d5d6c8f1c2d93d94c1bc3f127d3dcf07a78bcf18d211f69ca79858009551eef9"
+        },
+        {
+          "id": "ziwei-v2-jielan-101-p014-018",
+          "text": "入庙发财",
+          "inputDigest": "da10dc02109234e167f6fa0c268e23861e9875100f23138206d1aeb6b71e02d5"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 2,
+          "day": 19
+        },
+        "gender": "female"
+      },
+      "timeIndex": 2,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p018-026",
+          "text": "陷，冷职",
+          "inputDigest": "658b18c64a05a1408ea9d75dd7ecf1071d32218e003c2c77d7d27b490867c95c"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 2,
+          "day": 19
+        },
+        "gender": "female"
+      },
+      "timeIndex": 3,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p012-022",
+          "text": "不入庙，克",
+          "inputDigest": "65f08f45fa84c5e0477ff3725c7cf59eb5a9c5f187aeb9fda263138c98d8776c"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 2,
+          "day": 19
+        },
+        "gender": "female"
+      },
+      "timeIndex": 4,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p018-006",
+          "text": "庙，权贵",
+          "inputDigest": "6638455466eee0266f5f6cfa98d0901a41bb95bd84da83b767f444b612d5078c"
+        },
+        {
+          "id": "ziwei-v2-jielan-101-p014-018",
+          "text": "入庙发财",
+          "inputDigest": "0b29497d4d152696bf45571a18cffa72aab79fecce99cf63c8ceb059179681b7"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 2,
+          "day": 19
+        },
+        "gender": "female"
+      },
+      "timeIndex": 5,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p012-022",
+          "text": "入庙，吉",
+          "inputDigest": "3eafc728143f8f9eb1505f7c9cafe518779124371f29f944e838b2bab2ca0622"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 2,
+          "day": 19
+        },
+        "gender": "female"
+      },
+      "timeIndex": 8,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p018-006",
+          "text": "庙，权贵",
+          "inputDigest": "3ee83cacf9d910fd05959d364629df65e7a0e6cc0222580d7f7690fdf1f0096d"
+        },
+        {
+          "id": "ziwei-v2-jielan-101-p010-029",
+          "text": "庙旺，性刚不奈静，读书可贵",
+          "inputDigest": "bb661a36442b278c40e904d72ed43c27dc60cf7df579af3d40fe4d3b638fd8ed"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 2,
+          "day": 19
+        },
+        "gender": "female"
+      },
+      "timeIndex": 9,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p018-020",
+          "text": "陷，主不足，奔波度日",
+          "inputDigest": "42ab443cd50b03698e5648b40481a119cd641144d454aacc4328c53851379a98"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 2,
+          "day": 19
+        },
+        "gender": "female"
+      },
+      "timeIndex": 10,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p018-026",
+          "text": "陷，冷职",
+          "inputDigest": "be3aa185cbfd91dca8f6aa19c9b563612d35132cd5df7004b8d6b3aced4edda4"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 2,
+          "day": 19
+        },
+        "gender": "female"
+      },
+      "timeIndex": 11,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p018-020",
+          "text": "庙，权贵，武职",
+          "inputDigest": "c18377eedc98f3f3992f8b74e2b7771c7d5ecf402bbf06d8f6fc534f82937905"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 3,
+          "day": 18
+        },
+        "gender": "female"
+      },
+      "timeIndex": 2,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p011-020",
+          "text": "陷，克，独",
+          "inputDigest": "0cbd945626564fcc976ba1068e7f5d8f5a4f22ba3c9d23745c4bdb4598e95d98"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 3,
+          "day": 18
+        },
+        "gender": "female"
+      },
+      "timeIndex": 5,
+      "proofs": [
+        {
+          "id": "ziwei-v2-fuqigong-p101011-002",
+          "inputDigest": "999edb253995f7c33cfa2cd35eb38def1097162be06c7f0fc24f6d4b5af41fde"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 3,
+          "day": 18
+        },
+        "gender": "female"
+      },
+      "timeIndex": 8,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p011-020",
+          "text": "庙旺，二人，不得力",
+          "inputDigest": "78cee24ef656d5bac466c19a8eb1b84aac6d0648f3eae91b8af184e1f13c5cce"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 5,
+          "day": 20
+        },
+        "gender": "female"
+      },
+      "timeIndex": 4,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p017-019",
+          "text": "入庙，平和",
+          "inputDigest": "4c6f6fc48e92eee12ad1a7cfc21493b18d2ebfdc828e8dbdd9ed037683a2b3f2"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 5,
+          "day": 20
+        },
+        "gender": "female"
+      },
+      "timeIndex": 8,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p021-021",
+          "text": "庙，富贵",
+          "inputDigest": "56251e9144302b8d58951f1611ee3162aaa3c9ed4339864371b4ff64a5943c5e"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 5,
+          "day": 20
+        },
+        "gender": "female"
+      },
+      "timeIndex": 10,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p017-019",
+          "text": "陷地，招怨",
+          "inputDigest": "8329ee1cc3d315f7be2882886ea5b97402af41b8af027dc78d1a888799268af2"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 8,
+          "day": 26
+        },
+        "gender": "female"
+      },
+      "timeIndex": 1,
+      "proofs": [
+        {
+          "id": "ziwei-v3-xingjue-049-p621-001",
+          "text": "加四殺中二殺者不和",
+          "inputDigest": "452be4276722889c2d26154474e6d4d8cbb02e82138d4bad7e5ed2f3f8e557b3"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1981,
+          "month": 8,
+          "day": 18
+        },
+        "gender": "female"
+      },
+      "timeIndex": 8,
+      "proofs": [
+        {
+          "id": "ziwei-v2-c013-p101014-003",
+          "inputDigest": "f65950c051effe922d21042e4e454c539a82e84ad7a0a08f92a8ecaf86536355"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1983,
+          "month": 5,
+          "day": 31
+        },
+        "gender": "female"
+      },
+      "timeIndex": 4,
+      "proofs": [
+        {
+          "id": "ziwei-v2-c011-p101013-003",
+          "inputDigest": "0a9faf8dc669f6bd22903971727b5c0d59d337a5870f81f350cbfe77c094af66"
+        }
+      ]
+    }
+  ]
+}

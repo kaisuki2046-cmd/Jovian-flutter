@@ -1,0 +1,81 @@
+{
+  "baseline": "second integration batch",
+  "changes": [
+    {
+      "id": "ziwei-v2-minggong-p102000-001",
+      "method": "ziwei",
+      "conditions": [
+        "紫微守子位命宫",
+        "生年天干丁、己或庚"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p102000-002",
+      "method": "ziwei",
+      "conditions": [
+        "紫微守子位命宫",
+        "生年天干壬或癸"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p142000-003",
+      "method": "ziwei",
+      "conditions": [
+        "廉贞守寅位命宫",
+        "生年甲、庚或己"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v1-guancelu-001-p014-001",
+      "method": "ziwei",
+      "conditions": [
+        "本命破军守辰位身宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v1-guancelu-001-p062-001",
+      "method": "ziwei",
+      "conditions": [
+        "本命廉贞破军守卯位身宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v1-guancelu-001-p065-001",
+      "method": "ziwei",
+      "conditions": [
+        "本命天同天梁守申位命宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v3-xingjue-051-p656-001",
+      "method": "ziwei",
+      "conditions": [
+        "天府守财帛宫",
+        "与地劫同居"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-jielan-101-p015-024",
+      "method": "ziwei",
+      "conditions": [
+        "本命疾厄宫在戌，破军在此宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    }
+  ]
+}

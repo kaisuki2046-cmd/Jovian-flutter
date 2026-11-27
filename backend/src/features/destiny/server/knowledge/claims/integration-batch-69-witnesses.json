@@ -1,0 +1,39 @@
+{
+  "place": {
+    "latitude": 31.23,
+    "longitude": 121.47
+  },
+  "sourceRecords": 5,
+  "alternatives": 37,
+  "negative": {
+    "differentAttendants": "1900-01-31T04:15:00.000Z",
+    "allacciOnly": "1900-01-01T04:15:00.000Z"
+  },
+  "witnesses": [
+    {"instant":"1900-01-01T04:15:00.000Z","edition":"hubner_greek","proofs":[{"id":"astro-ptolemy-v3-parents-p008-001","inputDigest":"2e98ecfeebf47d48a05f481439baacae7d992239aa732f3ee14a3c21cea13ac8"},{"id":"astro-ptolemy-v3-parents-p009-001","inputDigest":"7c2875b82ada38cf1068a1348f63902a0a2180d33847ec93e40fefee50d3fff2"}]},
+    {"instant":"1900-01-01T04:15:00.000Z","edition":"allacci_latin","proofs":[{"id":"astro-ptolemy-v3-parents-p024-001","inputDigest":"f43775225febdea82ded345efce1dfce2f4d55a5c10c6a83f2f77d01359213f7"},{"id":"astro-ptolemy-v3-parents-p024-001","inputDigest":"b29857d1e8e62b9a1e517dd75dd1048a1bd149f2343e2c98b634678b106673d2"},{"id":"astro-ptolemy-v3-parents-p024-001","inputDigest":"3ad3811478633e04beecb2df701f4fb885e5fe184bd475675a39489a919d7168"}]},
+    {"instant":"1900-01-01T16:15:00.000Z","edition":"hubner_greek","proofs":[{"id":"astro-ptolemy-v3-parents-p008-001","inputDigest":"3cd4047afb0025a93667de00b0bf844826a2bb71e6a5b4295857b4ea185dc268"},{"id":"astro-ptolemy-v3-parents-p009-001","inputDigest":"05abe48cfb2e74e1d840840dc643660bdc88ea12238ff4d4b280ed7d46b3d9dd"}]},
+    {"instant":"1900-01-03T04:15:00.000Z","edition":"allacci_latin","proofs":[{"id":"astro-ptolemy-v3-parents-p024-001","inputDigest":"33662af7af47e3105f372cc44f511f1db6036d6bcd5cf230fe8c7a80344a1153"}]},
+    {"instant":"1900-01-29T04:15:00.000Z","edition":"allacci_latin","proofs":[{"id":"astro-ptolemy-v3-parents-p024-001","inputDigest":"1db44a54aef9d69fe39b6f967cef033bffa5f5f65074b5d886c4394e587b15fe"}]},
+    {"instant":"1900-01-31T04:15:00.000Z","edition":"hubner_greek","proofs":[{"id":"astro-ptolemy-v3-parents-p001-001","inputDigest":"2052a91c017b253a1f4f631b026dcfac4aa5670907a141f8db568b698c2fdecb"},{"id":"astro-ptolemy-v3-parents-p001-001","inputDigest":"ff6ffd3f4d0ea2d789426561b6f1e8cd971bf4d9268fe685147cec80c440e0af"}]},
+    {"instant":"1900-01-31T04:15:00.000Z","edition":"allacci_latin","proofs":[{"id":"astro-ptolemy-v3-parents-p024-001","inputDigest":"719d29624bbbc45b8b7c23318c258e8d5acf7fafc1c02349356a92fd88196b27"},{"id":"astro-ptolemy-v3-parents-p024-001","inputDigest":"0a08892356e8b69da9607c4a5aa4377b10c2bc399de536717087c80602265928"}]},
+    {"instant":"1900-02-02T04:15:00.000Z","edition":"hubner_greek","proofs":[{"id":"astro-ptolemy-v3-parents-p001-001","inputDigest":"df89c6850c835c561999280c59bb57cf648ed92d220a379381ba8365dffd2caf"}]},
+    {"instant":"1900-02-02T04:15:00.000Z","edition":"allacci_latin","proofs":[{"id":"astro-ptolemy-v3-parents-p024-001","inputDigest":"e141d7329c779ed08a368e90159680fe6ed6cb46a4851774819dac893bceb5d0"}]},
+    {"instant":"1900-06-22T04:15:00.000Z","edition":"allacci_latin","proofs":[{"id":"astro-ptolemy-v3-parents-p024-001","inputDigest":"e29a2228e10a2114cdf332700278b11739116e49ac0e0c52f042595501884cd4"}]},
+    {"instant":"1900-06-23T04:15:00.000Z","edition":"allacci_latin","proofs":[{"id":"astro-ptolemy-v3-parents-p024-001","inputDigest":"2be017638f72cd7dccacdf6dcd97c654fe566dcfe8b805feabc65fe11f165eae"}]},
+    {"instant":"1900-06-25T04:15:00.000Z","edition":"allacci_latin","proofs":[{"id":"astro-ptolemy-v3-parents-p024-001","inputDigest":"746452ab69c7fb8295354d573eb086820cb0eef3b96eb31c54d78befcaf7c196"}]},
+    {"instant":"1900-06-27T04:15:00.000Z","edition":"allacci_latin","proofs":[{"id":"astro-ptolemy-v3-parents-p024-001","inputDigest":"2975959fd34a7cfbf6434df7878a06d0a508b5ab9caa3d2a396f79e5b20d2f81"}]},
+    {"instant":"1900-10-24T04:15:00.000Z","edition":"hubner_greek","proofs":[{"id":"astro-ptolemy-v3-parents-p001-001","inputDigest":"a9980603a74a1e3347a1bd56988f3560d2709066c29583f21f641b43ffe9b2e9"}]},
+    {"instant":"1900-10-24T04:15:00.000Z","edition":"allacci_latin","proofs":[{"id":"astro-ptolemy-v3-parents-p024-001","inputDigest":"2bda02eafbefb16db4407114748b9de8301cfdb20340fcb292e5cf88da3fa106"},{"id":"astro-ptolemy-v3-parents-p024-001","inputDigest":"d705ef18e85ff7d6117350469f8d1c0acd47cf4b34cbccff086322bb661b028d"}]},
+    {"instant":"1900-10-26T04:15:00.000Z","edition":"allacci_latin","proofs":[{"id":"astro-ptolemy-v3-parents-p024-001","inputDigest":"fc960234260854f3be6d58a7794aff844194bfcf76c53d7cbd4c0f885faa257b"}]},
+    {"instant":"1900-11-10T04:15:00.000Z","edition":"allacci_latin","proofs":[{"id":"astro-ptolemy-v3-parents-p024-001","inputDigest":"49abb4f9a23bfe98e860fa8b51d4ae91d67a44eb78604e5f12fddb6f291bc10f"}]},
+    {"instant":"1900-11-15T04:15:00.000Z","edition":"hubner_greek","proofs":[{"id":"astro-ptolemy-v3-parents-p001-001","inputDigest":"4ce347db2d0207ea23e56e4c5bab8a3f944a40e3136041b8b30edf530f7c1f69"},{"id":"astro-ptolemy-v3-parents-p002-001","inputDigest":"2cbb4553bce87af61cb5656933cc69db24bf380f2e8dc6fd2ca75219407c9303"}]},
+    {"instant":"1900-11-18T04:15:00.000Z","edition":"hubner_greek","proofs":[{"id":"astro-ptolemy-v3-parents-p001-001","inputDigest":"7748c18bb52590d75505dbd0c5321f8af4d7745acbaacc2387105f3a756a1f94"}]},
+    {"instant":"1900-11-19T04:15:00.000Z","edition":"hubner_greek","proofs":[{"id":"astro-ptolemy-v3-parents-p001-001","inputDigest":"f76293eca096ae1b48d220f8a05cc3971f7444683245c54b39fe906fa914f66f"}]},
+    {"instant":"1900-12-15T04:15:00.000Z","edition":"hubner_greek","proofs":[{"id":"astro-ptolemy-v3-parents-p001-001","inputDigest":"f2049a08665f5c6b0117c9e4987d9cc60a69d36805bfc46fb7c549880437c098"},{"id":"astro-ptolemy-v3-parents-p001-001","inputDigest":"bc0728daabd09ce4f44450330849f1334ecfdb30e59648fe3a0aa8e5a9313afb"}]},
+    {"instant":"1900-12-18T04:15:00.000Z","edition":"hubner_greek","proofs":[{"id":"astro-ptolemy-v3-parents-p001-001","inputDigest":"9ea53ef3d3592d827e73d8f2684dd66f76657f71b3ecc05adceb182447a5c56e"},{"id":"astro-ptolemy-v3-parents-p001-001","inputDigest":"9aba0743d8f9fbb9fe47efe876818aa7d47f683e641a21a720fe06f660132d9a"},{"id":"astro-ptolemy-v3-parents-p001-001","inputDigest":"50cdbf8e8bfb4c7dab1137989811133ca5abee4b0d92ce195bad2bae798acecf"},{"id":"astro-ptolemy-v3-parents-p001-001","inputDigest":"3e980f57ef64bb1e2a12d94fb50c993f6e2eedcbe683beac23f59543f8905b7a"}]},
+    {"instant":"1901-01-17T04:15:00.000Z","edition":"hubner_greek","proofs":[{"id":"astro-ptolemy-v3-parents-p001-001","inputDigest":"8f5c8959496062167dfeeed5546a39e6fbebe1645d660d2bcd4a3a8a4f3dad30"}]},
+    {"instant":"1901-08-15T04:15:00.000Z","edition":"hubner_greek","proofs":[{"id":"astro-ptolemy-v3-parents-p001-001","inputDigest":"58edf40d474878b1b8dd862fc291f4e2f2ced773ebadb09f5fab4d9032250182"}]},
+    {"instant":"1906-01-26T04:15:00.000Z","edition":"hubner_greek","proofs":[{"id":"astro-ptolemy-v3-parents-p001-001","inputDigest":"87b1e98e0e3048922940dd1ab808d53c3a391450aeed784d76e0dceb29f7f267"}]}
+  ]
+}

@@ -1,0 +1,311 @@
+{
+  "profile": "bazi-explicit-stem-columns-and-element-exposure-v1",
+  "scanned": 183025,
+  "targetAlternatives": 32,
+  "witnesses": [
+    {
+      "date": "2026-09-12T16:00:00.000Z",
+      "localDate": "2026-09-13T00:00:00.000Z",
+      "timezoneOffsetHours": 8,
+      "proofs": [
+        {
+          "id": "qtbj-v5-c074-p003-401",
+          "inputDigest": "d497f21cf77261b0ca108918c258cef8d19db0463cca7fe5e76e9f0a5599e97f"
+        },
+        {
+          "id": "qtbj-v5-c074-p003-401",
+          "inputDigest": "33c32ff7363c1605c63f3c6ba2d0b9b2b5e632453173b22e0ae7d9aa46c2cdf7"
+        },
+        {
+          "id": "qtbj-v5-c074-p003-401",
+          "inputDigest": "871de825b0d110a702914364ee571ebc0b5b91caac413e9e989f3b6c023eb2b6"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-12T18:00:00.000Z",
+      "localDate": "2026-09-13T02:00:00.000Z",
+      "timezoneOffsetHours": 8,
+      "proofs": [
+        {
+          "id": "qtbj-v5-c074-p003-401",
+          "inputDigest": "9fba6a7f76f169616b0a1d7891f7a24c2d23cbd742fb0dbb56abd2fc4026f33b"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-12T20:00:00.000Z",
+      "localDate": "2026-09-13T04:00:00.000Z",
+      "timezoneOffsetHours": 8,
+      "proofs": [
+        {
+          "id": "qtbj-v5-c074-p003-401",
+          "inputDigest": "270abd56d7d827e5b001b4bd89d56fdfbad1d61b3bb8ac4e2a44a9269ebf3632"
+        },
+        {
+          "id": "qtbj-v5-c074-p003-401",
+          "inputDigest": "d0cba26b36450e30a4c4a9b562be8f4433e6914d8acf44e6d9c4215266988a74"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-13T14:00:00.000Z",
+      "localDate": "2026-09-13T22:00:00.000Z",
+      "timezoneOffsetHours": 8,
+      "proofs": [
+        {
+          "id": "qtbj-v5-c074-p003-401",
+          "inputDigest": "8a55b1bd61144f78b52c61cd7001b752cf4da40142a963a23cd45cd9909d8d96"
+        },
+        {
+          "id": "qtbj-v5-c074-p003-401",
+          "inputDigest": "5c77c3fda8a72eaa5293465a91120a3589aa1af08a2d96ec7d858a935590699f"
+        },
+        {
+          "id": "qtbj-v5-c074-p003-401",
+          "inputDigest": "8784ff15c230fe241f18997a9990858da125b22b22866104f6343e23d10fa6c8"
+        }
+      ]
+    },
+    {
+      "date": "2025-05-12T10:00:00.000Z",
+      "localDate": "2025-05-12T18:00:00.000Z",
+      "timezoneOffsetHours": 8,
+      "proofs": [
+        {
+          "id": "qtbj-v5-c082-p001-102",
+          "inputDigest": "cf3096d566518282a9b64a864b68b105a12e91f3c1807bc61741da77190c8fec"
+        }
+      ]
+    },
+    {
+      "date": "2023-04-13T08:00:00.000Z",
+      "localDate": "2023-04-13T16:00:00.000Z",
+      "timezoneOffsetHours": 8,
+      "proofs": [
+        {
+          "id": "qtbj-v5-c081-p002-101",
+          "inputDigest": "2ebc6cf6d214ea8b6136013b4fd79cfe7dcdd5fb591c200225e2b168e5009ce2"
+        }
+      ]
+    },
+    {
+      "date": "2023-07-15T20:00:00.000Z",
+      "localDate": "2023-07-16T04:00:00.000Z",
+      "timezoneOffsetHours": 8,
+      "proofs": [
+        {
+          "id": "qtbj-v2-c011-p002-301",
+          "inputDigest": "e5ce264b4fb113e9596adf5f072da22f58489964711e26660b97ac4e9185a07c"
+        }
+      ]
+    },
+    {
+      "date": "2023-07-16T02:00:00.000Z",
+      "localDate": "2023-07-16T10:00:00.000Z",
+      "timezoneOffsetHours": 8,
+      "proofs": [
+        {
+          "id": "qtbj-v2-c011-p002-301",
+          "inputDigest": "a71a051b27220a5eed769ca8dbf89323b49607445ab93de6db230f0e2aa95312"
+        }
+      ]
+    },
+    {
+      "date": "2023-08-13T16:00:00.000Z",
+      "localDate": "2023-08-14T00:00:00.000Z",
+      "timezoneOffsetHours": 8,
+      "proofs": [
+        {
+          "id": "qtbj-v2-c006-p001-002",
+          "inputDigest": "0b1cc9079102d1c5e52f1bd7b7d42d44f86eeeebcc6fefd0164856f35545e798"
+        }
+      ]
+    },
+    {
+      "date": "2020-08-08T16:00:00.000Z",
+      "localDate": "2020-08-09T00:00:00.000Z",
+      "timezoneOffsetHours": 8,
+      "proofs": [
+        {
+          "id": "qtbj-v2-c006-p001-002",
+          "inputDigest": "ab96c0683ebe4f54f3dbd609d3d8efe938ad0cf54e2b298d54d29b93e6d7cf3f"
+        }
+      ]
+    },
+    {
+      "date": "2020-09-07T16:00:00.000Z",
+      "localDate": "2020-09-08T00:00:00.000Z",
+      "timezoneOffsetHours": 8,
+      "proofs": [
+        {
+          "id": "qtbj-v2-c006-p001-002",
+          "inputDigest": "36d16e966e942d1c4a848f137e91cc69e0a9b23f1193b4e2b052227ccd1a16f1"
+        }
+      ]
+    },
+    {
+      "date": "2018-05-28T20:00:00.000Z",
+      "localDate": "2018-05-29T04:00:00.000Z",
+      "timezoneOffsetHours": 8,
+      "proofs": [
+        {
+          "id": "qtbj-v5-c082-p001-102",
+          "inputDigest": "341b533488956bbf9b508bb9dfc205272585fab7948c9d5b34247e4caace88f4"
+        }
+      ]
+    },
+    {
+      "date": "2017-06-02T20:00:00.000Z",
+      "localDate": "2017-06-03T04:00:00.000Z",
+      "timezoneOffsetHours": 8,
+      "proofs": [
+        {
+          "id": "qtbj-v5-c082-p001-102",
+          "inputDigest": "2af11b462a9f3497eed2d7f3650804ae204031da4bb1cd62e2a3213024c44f00"
+        }
+      ]
+    },
+    {
+      "date": "2017-09-09T20:00:00.000Z",
+      "localDate": "2017-09-10T04:00:00.000Z",
+      "timezoneOffsetHours": 8,
+      "proofs": [
+        {
+          "id": "qtbj-v5-c074-p003-401",
+          "inputDigest": "789d5464abd04b76824b8b18451a194a68de5f109480e637e564a3103a6f2f36"
+        }
+      ]
+    },
+    {
+      "date": "2017-09-10T14:00:00.000Z",
+      "localDate": "2017-09-10T22:00:00.000Z",
+      "timezoneOffsetHours": 8,
+      "proofs": [
+        {
+          "id": "qtbj-v5-c074-p003-401",
+          "inputDigest": "6da7a7a1a8df27b44e2a41fefcd7ceb33a63f6d05cdab1c3490e99c02a0a212f"
+        }
+      ]
+    },
+    {
+      "date": "2013-07-07T16:00:00.000Z",
+      "localDate": "2013-07-08T00:00:00.000Z",
+      "timezoneOffsetHours": 8,
+      "proofs": [
+        {
+          "id": "qtbj-v2-c011-p002-301",
+          "inputDigest": "0b0eb6d97759aa8bf818a83fca8230875610c57ba18301c891987985592a98a0"
+        }
+      ]
+    },
+    {
+      "date": "2013-08-06T16:00:00.000Z",
+      "localDate": "2013-08-07T00:00:00.000Z",
+      "timezoneOffsetHours": 8,
+      "proofs": [
+        {
+          "id": "qtbj-v2-c011-p002-301",
+          "inputDigest": "7bcc35038a0cc0d333b7ba18597047b97603a998f0d3c58cc99f3006dd670a1b"
+        }
+      ]
+    },
+    {
+      "date": "2010-09-16T16:00:00.000Z",
+      "localDate": "2010-09-17T00:00:00.000Z",
+      "timezoneOffsetHours": 8,
+      "proofs": [
+        {
+          "id": "qtbj-v5-c074-p003-401",
+          "inputDigest": "821838309993f58d6157b7a7e8e2ed6f6244cd9e472b6036f276974458761770"
+        }
+      ]
+    },
+    {
+      "date": "2010-09-16T18:00:00.000Z",
+      "localDate": "2010-09-17T02:00:00.000Z",
+      "timezoneOffsetHours": 8,
+      "proofs": [
+        {
+          "id": "qtbj-v5-c074-p003-401",
+          "inputDigest": "4496a0a8373f3978fab6007b4a4c4e1cf0ff456ca3b53889f080abddf9910ef7"
+        }
+      ]
+    },
+    {
+      "date": "2007-09-12T16:00:00.000Z",
+      "localDate": "2007-09-13T00:00:00.000Z",
+      "timezoneOffsetHours": 8,
+      "proofs": [
+        {
+          "id": "qtbj-v5-c074-p003-401",
+          "inputDigest": "fae958e3079e6be8b5f9ca3d9ac0fbc3a1d60fa36c142bc0f42e40172a24a051"
+        },
+        {
+          "id": "qtbj-v5-c074-p003-401",
+          "inputDigest": "8a73c115519d1a05b21470300cd6c10e672a2b06504c95a8347877023ae5882b"
+        }
+      ]
+    },
+    {
+      "date": "2007-09-12T18:00:00.000Z",
+      "localDate": "2007-09-13T02:00:00.000Z",
+      "timezoneOffsetHours": 8,
+      "proofs": [
+        {
+          "id": "qtbj-v5-c074-p003-401",
+          "inputDigest": "2b1a8ae954551762c475e95f3b74c339c87dbf2f9392d0ee8676f4033980786d"
+        }
+      ]
+    },
+    {
+      "date": "1987-10-07T16:00:00.000Z",
+      "localDate": "1987-10-08T00:00:00.000Z",
+      "timezoneOffsetHours": 8,
+      "proofs": [
+        {
+          "id": "qtbj-v5-c074-p003-401",
+          "inputDigest": "4a9374fcd00a5fa0315dd93ea921674e38da8f7d90ffb421abf2c4068b8a0519"
+        }
+      ]
+    },
+    {
+      "date": "1986-02-27T16:00:00.000Z",
+      "localDate": "1986-02-28T00:00:00.000Z",
+      "timezoneOffsetHours": 8,
+      "proofs": [
+        {
+          "id": "smth-v9-liuri-10-01-p007-101",
+          "inputDigest": "175e378e7cc37d9fcf718888b34e493b72592852c3965cc4aabad1133cda1928"
+        }
+      ]
+    },
+    {
+      "date": "1986-09-12T16:00:00.000Z",
+      "localDate": "1986-09-13T00:00:00.000Z",
+      "timezoneOffsetHours": 8,
+      "proofs": [
+        {
+          "id": "qtbj-v5-c074-p003-401",
+          "inputDigest": "04f3270d64ad197f176175b1fd1f4dd3d23c289c912fb3ec0acbd997f174e2be"
+        },
+        {
+          "id": "qtbj-v5-c074-p003-401",
+          "inputDigest": "c79a46d34cada9435d3989d9c807f21412de500da55107f546acf598cb887a3b"
+        }
+      ]
+    },
+    {
+      "date": "1971-09-11T16:00:00.000Z",
+      "localDate": "1971-09-12T00:00:00.000Z",
+      "timezoneOffsetHours": 8,
+      "proofs": [
+        {
+          "id": "qtbj-v5-c074-p003-401",
+          "inputDigest": "1911f7ca172ea20378acbdb37dc607c0dea3a2f127a8f4eec5ff09940885926d"
+        }
+      ]
+    }
+  ],
+  "missing": []
+}

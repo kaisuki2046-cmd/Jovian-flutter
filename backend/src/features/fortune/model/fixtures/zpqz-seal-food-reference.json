@@ -1,0 +1,393 @@
+{
+  "source": "https://www.ncc.com.tw/fate/paleo/bg/bg_034.htm",
+  "maBothRoutes": { "date": [1985, 8, 21], "hour": 16, "gender": 1, "year": 2060, "natal": ["乙丑", "甲申", "壬辰", "戊申"], "luck": "丙子" },
+  "hiddenAuthoritySeal": { "date": [1979, 1, 15], "hour": 18, "gender": 0, "year": 2004, "natal": ["戊午", "乙丑", "壬午", "己酉"], "luck": "壬戌" },
+  "printedCases": [
+    {
+      "id": "zhang",
+      "name": "张参政",
+      "pillars": [
+        "丙寅",
+        "戊戌",
+        "辛酉",
+        "戊子"
+      ]
+    },
+    {
+      "id": "zhu",
+      "name": "朱尚书",
+      "pillars": [
+        "丙戌",
+        "戊戌",
+        "辛未",
+        "壬辰"
+      ]
+    },
+    {
+      "id": "linhuai",
+      "name": "临淮侯",
+      "pillars": [
+        "乙亥",
+        "己卯",
+        "丁酉",
+        "壬寅"
+      ]
+    },
+    {
+      "id": "li",
+      "name": "李状元",
+      "pillars": [
+        "戊戌",
+        "乙卯",
+        "丙午",
+        "己亥"
+      ]
+    },
+    {
+      "id": "mao",
+      "name": "毛状元",
+      "pillars": [
+        "己巳",
+        "癸酉",
+        "癸未",
+        "庚申"
+      ]
+    },
+    {
+      "id": "ma",
+      "name": "马参政",
+      "pillars": [
+        "壬寅",
+        "戊申",
+        "壬辰",
+        "壬寅"
+      ]
+    },
+    {
+      "id": "wang",
+      "name": "汪侍郎",
+      "pillars": [
+        "辛酉",
+        "丙申",
+        "壬申",
+        "辛亥"
+      ]
+    },
+    {
+      "id": "wealth-seal",
+      "name": "某富翁子",
+      "pillars": [
+        "庚申",
+        "丙寅",
+        "丙申",
+        "乙未"
+      ]
+    },
+    {
+      "id": "officer-killer-seal",
+      "name": "官杀印例",
+      "pillars": [
+        "辛亥",
+        "庚子",
+        "甲辰",
+        "乙亥"
+      ]
+    },
+    {
+      "id": "cold-bing",
+      "name": "湿木丙火例",
+      "pillars": [
+        "壬子",
+        "癸卯",
+        "丙子",
+        "己亥"
+      ]
+    },
+    {
+      "id": "niu",
+      "name": "牛监薄",
+      "pillars": [
+        "庚寅",
+        "乙酉",
+        "癸亥",
+        "丙辰"
+      ]
+    },
+    {
+      "id": "jia-ji-seal",
+      "name": "甲己合原图",
+      "pillars": [
+        "己未",
+        "甲戌",
+        "辛未",
+        "癸巳"
+      ]
+    },
+    {
+      "id": "light-seal-wealth",
+      "name": "财旺煞印弱原图",
+      "pillars": [
+        "庚戌",
+        "戊子",
+        "甲戌",
+        "乙亥"
+      ]
+    },
+    {
+      "id": "lin-sen-you",
+      "name": "林森酉时图",
+      "pillars": ["戊辰", "甲寅", "丁卯", "己酉"]
+    },
+    {
+      "id": "lin-sen-shen",
+      "name": "林森申时异文",
+      "pillars": ["戊辰", "甲寅", "丁卯", "戊申"]
+    },
+    {
+      "id": "wealthy-son-wu-yin",
+      "name": "浙西富翁子戊寅异文",
+      "pillars": ["庚申", "戊寅", "丙申", "乙未"]
+    }
+  ],
+  "calendarExamples": {
+    "45": {
+      "date": [
+        1980,
+        3,
+        1
+      ],
+      "hour": 0,
+      "gender": 0,
+      "year": 1989,
+      "natal": [
+        "庚申",
+        "戊寅",
+        "癸酉",
+        "壬子"
+      ],
+      "luck": "丁丑"
+    },
+    "55": {
+      "date": [
+        1980,
+        3,
+        1
+      ],
+      "hour": 8,
+      "gender": 0,
+      "year": 1989,
+      "natal": [
+        "庚申",
+        "戊寅",
+        "癸酉",
+        "丙辰"
+      ],
+      "luck": "丁丑"
+    },
+    "119": {
+      "date": [
+        1980,
+        3,
+        5
+      ],
+      "hour": 4,
+      "gender": 0,
+      "year": 1990,
+      "natal": [
+        "庚申",
+        "戊寅",
+        "丁丑",
+        "壬寅"
+      ],
+      "luck": "丁丑"
+    },
+    "120": {
+      "date": [
+        1980,
+        9,
+        16
+      ],
+      "hour": 18,
+      "gender": 0,
+      "year": 2004,
+      "natal": [
+        "庚申",
+        "乙酉",
+        "壬辰",
+        "己酉"
+      ],
+      "luck": "壬午"
+    },
+    "121": {
+      "date": [
+        1980,
+        9,
+        16
+      ],
+      "hour": 18,
+      "gender": 0,
+      "year": 2004,
+      "natal": [
+        "庚申",
+        "乙酉",
+        "壬辰",
+        "己酉"
+      ],
+      "luck": "壬午"
+    },
+    "122": {
+      "date": [
+        2008,
+        3,
+        7
+      ],
+      "hour": 22,
+      "gender": 0,
+      "year": 2019,
+      "natal": [
+        "戊子",
+        "乙卯",
+        "丙午",
+        "己亥"
+      ],
+      "luck": "癸丑"
+    },
+    "123": {
+      "date": [
+        2008,
+        3,
+        7
+      ],
+      "hour": 22,
+      "gender": 0,
+      "year": 2019,
+      "natal": [
+        "戊子",
+        "乙卯",
+        "丙午",
+        "己亥"
+      ],
+      "luck": "癸丑"
+    },
+    "124": {
+      "date": [
+        2008,
+        3,
+        7
+      ],
+      "hour": 22,
+      "gender": 0,
+      "year": 2029,
+      "natal": [
+        "戊子",
+        "乙卯",
+        "丙午",
+        "己亥"
+      ],
+      "luck": "壬子"
+    },
+    "125": {
+      "date": [
+        1982,
+        9,
+        17
+      ],
+      "hour": 16,
+      "gender": 0,
+      "year": 1996,
+      "natal": [
+        "壬戌",
+        "己酉",
+        "癸卯",
+        "庚申"
+      ],
+      "luck": "丁未"
+    },
+    "126": {
+      "date": [
+        1982,
+        9,
+        6
+      ],
+      "hour": 0,
+      "gender": 0,
+      "year": 1993,
+      "natal": [
+        "壬戌",
+        "戊申",
+        "壬辰",
+        "庚子"
+      ],
+      "luck": "丁未"
+    },
+    "127": {
+      "date": [
+        1980,
+        3,
+        4
+      ],
+      "hour": 0,
+      "gender": 0,
+      "year": 1990,
+      "natal": [
+        "庚申",
+        "戊寅",
+        "丙子",
+        "戊子"
+      ],
+      "luck": "丁丑"
+    },
+    "128": {
+      "date": [
+        1980,
+        3,
+        4
+      ],
+      "hour": 6,
+      "gender": 0,
+      "year": 2030,
+      "natal": [
+        "庚申",
+        "戊寅",
+        "丙子",
+        "辛卯"
+      ],
+      "luck": "癸酉"
+    },
+    "129": {
+      "date": [
+        1980,
+        1,
+        8
+      ],
+      "hour": 0,
+      "gender": 0,
+      "year": 2020,
+      "natal": [
+        "己未",
+        "丁丑",
+        "庚辰",
+        "丙子"
+      ],
+      "luck": "辛巳"
+    },
+    "130": {
+      "date": [
+        1980,
+        3,
+        4
+      ],
+      "hour": 0,
+      "gender": 0,
+      "year": 2030,
+      "natal": [
+        "庚申",
+        "戊寅",
+        "丙子",
+        "戊子"
+      ],
+      "luck": "癸酉"
+    }
+  },
+  "note": "Source diagrams are literal transcriptions. The wealthy-son year/month stem mismatch is retained, not repaired. Modern calendar witnesses verify structure and upstream luck tables, not historical identities or outcomes."
+}

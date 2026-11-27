@@ -1,0 +1,187 @@
+{
+  "baseline": "fourth integration batch",
+  "changes": [
+    {
+      "id": "ziwei-v2-c003-p101015-001",
+      "method": "ziwei",
+      "conditions": [
+        "本命兄弟宫有原书并列的文昌或文曲"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-fuqigong-p101019-001",
+      "method": "ziwei",
+      "conditions": [
+        "本命夫妻宫见原句并列的左辅或右弼"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-fuqigong-p101022-001",
+      "method": "ziwei",
+      "conditions": [
+        "本命夫妻宫见原句并列的天魁或天钺"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-c009-p101004-001",
+      "method": "ziwei",
+      "conditions": [
+        "本命奴仆宫武曲在旺宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-c009-p101008-001",
+      "method": "ziwei",
+      "conditions": [
+        "本命奴仆宫太阴居庙地"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-c009-p101015-001",
+      "method": "ziwei",
+      "conditions": [
+        "本命奴仆宫文昌入庙且独守"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-c011-p101014-001",
+      "method": "ziwei",
+      "conditions": [
+        "本命田宅宫在子或午，破军在此宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-c011-p101016-001",
+      "method": "ziwei",
+      "conditions": [
+        "本命田宅宫文曲居旺地"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-caibogong-p101008-001",
+      "method": "ziwei",
+      "conditions": [
+        "本命财帛宫在寅或申，廉贞在此宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-caibogong-p101018-001",
+      "method": "ziwei",
+      "conditions": [
+        "本命财帛宫在子或午，破军在此宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-caibogong-p101024-001",
+      "method": "ziwei",
+      "conditions": [
+        "本命财帛宫在辰、戌、丑或未，擎羊在此宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-caibogong-p101027-001",
+      "method": "ziwei",
+      "conditions": [
+        "本命财帛宫铃星入庙且独守"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-jielan-101-p017-006",
+      "method": "ziwei",
+      "conditions": [
+        "奴仆宫太阳在庙旺"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v3-xingjue-018-p538-001",
+      "method": "ziwei",
+      "conditions": [
+        "文曲居命在庙旺"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-c003-p101013-002",
+      "method": "ziwei",
+      "conditions": [
+        "本命兄弟宫在子、午、寅或申，七杀在此宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-169-p001-009",
+      "method": "ziwei",
+      "conditions": [
+        "按原篇女命取法，本命七杀居旺地"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v5-jielan-234-p001-014",
+      "method": "ziwei",
+      "conditions": [
+        "本命巨门居庙地"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    }
+  ],
+  "deferred": [
+    {
+      "id": "ziwei-v2-c011-p101004-001",
+      "conditions": [
+        "本命田宅宫武曲独守旺地"
+      ],
+      "status": "unmapped",
+      "reason": "different_chart_tradition",
+      "reviewNote": "原句为武曲单居旺地。现行 iztro 2.6.5 明度表的武曲旺位在午、子，此两位必同天府，不能同时满足独守正曜一颗。未将原书旺地擅自改成庙旺；本条待核其他明度口径。"
+    },
+    {
+      "id": "ziwei-v2-guanlugong-p101026-001",
+      "conditions": [
+        "本命官禄宫铃星独守且居旺宫"
+      ],
+      "status": "unmapped",
+      "reason": "different_chart_tradition",
+      "reviewNote": "原句为铃星独守旺宫。现行 iztro 2.6.5 铃星明度表只有庙、利、陷、得，没有旺。不能补造旺事实或把旺宫直接扩大为庙旺，本条待核原书明度口径。"
+    },
+    {
+      "id": "ziwei-v4-jielan-176-p001-001",
+      "conditions": [
+        "文昌在命宫且处旺地"
+      ],
+      "status": "unmapped",
+      "reason": "different_chart_tradition",
+      "reviewNote": "原句为文昌坐命旺宫临。现行 iztro 2.6.5 文昌明度表只有陷、利、得、庙，没有旺。未将旺地直接改成庙旺，本条待核原书明度口径。"
+    }
+  ]
+}

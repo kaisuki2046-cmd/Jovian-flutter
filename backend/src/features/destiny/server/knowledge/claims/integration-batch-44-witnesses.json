@@ -1,0 +1,335 @@
+{
+  "scanned": 56737,
+  "alternatives": 42,
+  "witnesses": [
+    {
+      "date": "1950-01-01T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-wealth-duration-p007-001",
+          "inputDigest": "256b014663846ced502fe06f13f04753e7b702ec1faf696ba35c8215b9d2d03f"
+        },
+        {
+          "id": "astro-lilly-v3-wealth-duration-p007-001",
+          "inputDigest": "74a64e862673b6b3049fb6f74e4bb520e0c2dd7a5c4f64034d0140d8f9e450a3"
+        }
+      ]
+    },
+    {
+      "date": "1950-01-01T14:00:00.000Z",
+      "latitude": 39.9,
+      "longitude": 116.4,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-wealth-duration-p006-001",
+          "inputDigest": "b1fb112889705d2d217faf9c23077802c91b87fb32bebb6cd1db671bbb707456"
+        },
+        {
+          "id": "astro-lilly-v3-friends-p020-001",
+          "inputDigest": "aae6165f9cfd2003211dda40309428c2691c72009cb14e44bc8ae0da6a3f46b6"
+        },
+        {
+          "id": "astro-lilly-v3-friends-p020-001",
+          "inputDigest": "afff70312aa466329aff7b39ee92ee55708abde937347cdb9e0cc7dea174ef34"
+        }
+      ]
+    },
+    {
+      "date": "1950-01-01T20:00:00.000Z",
+      "latitude": 39.9,
+      "longitude": 116.4,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-wealth-duration-p006-001",
+          "inputDigest": "b9c8b90950b6a7aaf153325b6926144f35410e2f3ce68b8673f1e724f50a93fb"
+        }
+      ]
+    },
+    {
+      "date": "1950-01-09T06:00:00.000Z",
+      "latitude": -33.9,
+      "longitude": 151.2,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-friends-p044-001",
+          "inputDigest": "26965d40998ed1377f584379ccbe147714fb7467d0884de353f147e48893ae67"
+        },
+        {
+          "id": "astro-lilly-v3-friends-p044-001",
+          "inputDigest": "7ff0c68d526a64d72bfce6b210e71d351e83d60b7d5562ef625bdc98b43ef10a"
+        }
+      ]
+    },
+    {
+      "date": "1950-01-11T04:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-friends-p043-001",
+          "inputDigest": "66b4842906db0587d060acfc77e10f2a20e0374467614e0027460fa9629450a8"
+        },
+        {
+          "id": "astro-lilly-v3-friends-p043-001",
+          "inputDigest": "04a4cc671b960d1607162732f86dc403abcb5d190fbaf0ab578f62db4db67d99"
+        }
+      ]
+    },
+    {
+      "date": "1950-09-12T20:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "acf20c4598cccf8ebbeb4165baad4f3c3b8f8338e6741ad39c317e1bb03cc19b"
+        }
+      ]
+    },
+    {
+      "date": "1950-09-14T00:00:00.000Z",
+      "latitude": 39.9,
+      "longitude": 116.4,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "0cb7e8504ef92a963dbf2e71689d2284a180f9e8da46322bbc7de6349c6d438e"
+        },
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "f2fc5433ff72f0e8c67b86e6df7406f2703770a208783d6d0134ceb75822d10d"
+        },
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "7ffa8cc6c83db39f3a91c7b9d76162a0e57819ef282ea33acfd8ba5b5ce1ece5"
+        }
+      ]
+    },
+    {
+      "date": "1951-04-14T18:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "608a1d6223ef44ae343e3bfdd01f9d9a3d502d8ea489e1dfc19cc5a2fd56e1f3"
+        },
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "089cc5722d20c9f8749729a50910f4aa8e2763e7627859bd6e90dfce88148e33"
+        }
+      ]
+    },
+    {
+      "date": "1952-11-28T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "ad880183f2822972b8666f0ddf16b7b26cc992d1ec24098258ebd52b5a20b938"
+        },
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "b8799b5a8e34dc5e85cf4b33a125fa288b5845180451449c729a578977df04ae"
+        },
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "56d867134895e23ed2647c524893c574003f0afc22cf8c055c3f3881d0462deb"
+        },
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "d9f3dc015e30c6fea1214c4c7bb35ca7c1191678189566ee8f3f5fb1373ea17c"
+        }
+      ]
+    },
+    {
+      "date": "1953-12-31T04:00:00.000Z",
+      "latitude": 39.9,
+      "longitude": 116.4,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "5a357040752b95bc30335249eefde9a015b37b873addd71319e2b3ef32be4431"
+        },
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "71b4f64a69ccb26c946357a68fb395fd8bb4de8db62b5a2b0e9c12dd4722c789"
+        }
+      ]
+    },
+    {
+      "date": "1954-02-21T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "85dfe60d99de75d50c4ff64f80e93c367896c6d83b478e41fec42233091fe138"
+        },
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "e50868bce66c05263202e5613b91e0a5dcb04dae061ee5812f04aaae6c65cbf6"
+        }
+      ]
+    },
+    {
+      "date": "1955-08-03T06:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "203c171cd3805567a6b1de38be6bb683049f5cc14a7ebc4731e486eed4f81f9f"
+        }
+      ]
+    },
+    {
+      "date": "1955-08-03T10:00:00.000Z",
+      "latitude": -33.9,
+      "longitude": 151.2,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "676966747d7a5d3c401f7202d003097e247821e969a53b88e355234c21f6523e"
+        }
+      ]
+    },
+    {
+      "date": "1957-03-17T00:00:00.000Z",
+      "latitude": 39.9,
+      "longitude": 116.4,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "5c046c8cef6fd050168e4c29bc057395f53bbd35e09aec7c43578c394b22e276"
+        },
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "2853091cff538816fb69f9a20959ebd03af4b316289fbb772dbd2b572ca4206b"
+        }
+      ]
+    },
+    {
+      "date": "1961-06-26T20:00:00.000Z",
+      "latitude": 39.9,
+      "longitude": 116.4,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "d75b3165df147caa9607b0f5ff6d43d7862238c67bd0f9a27b2431a127a7ebc8"
+        }
+      ]
+    },
+    {
+      "date": "1961-06-28T00:00:00.000Z",
+      "latitude": -33.9,
+      "longitude": 151.2,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "3b5da021e36ad906747dabf2f59dee2b86a5d3eedcd7316376656631aff428ba"
+        }
+      ]
+    },
+    {
+      "date": "1962-02-09T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "cb2a2a6b36dec9ad253b0eda2ee1b4ccd35764e7f4d015fa2b3b9426e21d2c21"
+        },
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "7f16a39557493a2e75eae4386797b8d4c05031cef6ed2d4cbb3b4fe82e88db88"
+        },
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "bb6df0bd4ba5f621cbf3194b6b518fc76c326d0c7ff8159eed23cc7ffed2eb61"
+        },
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "241cc90cc386645e835f516a5c2bfe58d1b0a37182ea35912378be9a75b28cbd"
+        }
+      ]
+    },
+    {
+      "date": "1969-07-24T00:00:00.000Z",
+      "latitude": 39.9,
+      "longitude": 116.4,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "195fd8e1f3f008daaae4c0a4151f08047a30ce82636b992930ad9e7ad48c05c3"
+        },
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "8fb8fdc3df71c4a877fe908e26cf5e4ae8896c37558d92f2a0f115675d896c55"
+        }
+      ]
+    },
+    {
+      "date": "1970-05-04T20:00:00.000Z",
+      "latitude": 39.9,
+      "longitude": 116.4,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "822ae3a3b4673f9ed96fc266b5a1ed00b91784eeec64e7e85dfb66b3b945c069"
+        }
+      ]
+    },
+    {
+      "date": "1970-05-06T00:00:00.000Z",
+      "latitude": -33.9,
+      "longitude": 151.2,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "75bbfdf57c943d2fc527fdcf945a6f7890efc6487106a4bf4c04c19bf4e79fe0"
+        }
+      ]
+    },
+    {
+      "date": "1975-10-15T00:00:00.000Z",
+      "latitude": 39.9,
+      "longitude": 116.4,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "3a6ebc1b779a50c23e37178b34e772a978b3efefcd3e09f127b5e54fd5f7b57a"
+        }
+      ]
+    },
+    {
+      "date": "1975-10-15T04:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "ec899837a16c0ea70b51e48eb6649f622a5b06086c136e50a94a9c863747df3d"
+        }
+      ]
+    },
+    {
+      "date": "1975-11-22T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "44d2f44f97cea4c87fcc31cd89ce1b575c6619082e7562b98a4fec2b79cf17ad"
+        },
+        {
+          "id": "astro-lilly-v3-health-servants-p009-001",
+          "inputDigest": "ff085fd5485cf2795f78fb9642548051f394d485830b5073102028c53066cc77"
+        }
+      ]
+    }
+  ]
+}

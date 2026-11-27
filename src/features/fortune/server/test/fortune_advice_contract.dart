@@ -116,7 +116,7 @@ void _equal(Object? actual, Object? expected, String label) {
 }
 
 Future<FortuneJson> _legacyResults(String path) async {
-  final root = Directory.fromUri(Platform.script.resolve('../../../../../../'));
+  final root = Directory.fromUri(Platform.script.resolve('../../../../../backend/'));
   final process = await Process.start('node', [
     '--input-type=module',
     '--eval',

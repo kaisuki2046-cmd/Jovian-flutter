@@ -1,0 +1,122 @@
+{
+  "baseline": "thirteenth integration batch",
+  "profile": "lilly-1659-p104-receptions-v1",
+  "changes": [
+    {
+      "id": "astro-lilly-v3-wit-p006-001",
+      "method": "western",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unsupported_calculation_profile",
+      "conditions": [
+        "月亮按入庙或擢升接纳水星。"
+      ],
+      "remainingAlternatives": 0,
+      "inputs": 2,
+      "addedInputDigests": [
+        "ca541d6413f5f69a24b74022e9bd162c092ce6b6588acf40b6035ad7f0b6acda",
+        "1acb2324a19fca5050594a74444f27c09e1072520ac5dc4067df415bc97da7f1"
+      ]
+    },
+    {
+      "id": "astro-lilly-v3-travel-p007-001",
+      "method": "western",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unsupported_calculation_profile",
+      "conditions": [
+        "太阳处月亮或水星的庙、与其发生本质接纳，或与之同体合相。"
+      ],
+      "remainingAlternatives": 1,
+      "inputs": 6,
+      "addedInputDigests": [
+        "475bf7b36dfc1e369f6c6c70e28b09cd2e9ffb60b914542ae87de712593fe137",
+        "4f11228e3a6bd8530d63570e10c0be09a6b00cc178aa2fe541af9435ea498c9a",
+        "1c7027d49f21473d8272a95e2b6db59de604ce617674583531abae98e60d29d4",
+        "412425e88c9c2ca0e8702455aa07ec60941f800e970821e6ad03abbc6ade8d96",
+        "469434124ec2718fd5937538b2d9737878696eb8188dbb02de60f1a7eb9107ee",
+        "ae7022d6538da85880a8ee487492bf643a920191ea29526123c50db0e4d3b79b"
+      ]
+    },
+    {
+      "id": "astro-lilly-v3-family-p009-001",
+      "method": "western",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unsupported_calculation_profile",
+      "conditions": [
+        "第四宫主与上升主有本句所称Reception，或彼此形成拱相／六合；本句未重写mutual，不用只有互容的窄定义替代一般接纳。"
+      ],
+      "remainingAlternatives": 1,
+      "inputs": 4,
+      "addedInputDigests": [
+        "5cc3046e6a56330fa574bca714e2e719878154fdc4250104127a5a91c5766da3",
+        "d920823b13d97c8d910a0f7ba93408a008c26084bd2daaa699f6fd7081e223d0",
+        "64402aa8b54ea2faf9d3c925af4a9da4d311bb905c80a53c060aa34852a45e74",
+        "a4dad45bbcfd17d0847d58070ebc06f63c0c9baac7aff2ca1348b808abedaacc"
+      ]
+    },
+    {
+      "id": "astro-lilly-v3-mines-p002-001",
+      "method": "western",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unsupported_calculation_profile",
+      "conditions": [
+        "四宫主与太阳、月亮、太阳定位星或月亮定位星互容。四个角色各自可匹配，也可由旧字段提供已核定的同一命题。"
+      ],
+      "remainingAlternatives": 0,
+      "inputs": 8,
+      "addedInputDigests": [
+        "fdc67b95fa890c1c0248c2c8b1992f7ee7137a738da13f260878500828b17ee9",
+        "da6cb1598b7b78f0090516d525f9a85f54bbca06e64f012ba549e78fd616dc54",
+        "bf0eda8634481936067f081e0c762248cb39fa0fdd6d8fe57b1ec7d97390f756",
+        "9c5b80b1b740b999423c40d1b7609549a41e80db747a62737676382f6bce6d33"
+      ]
+    },
+    {
+      "id": "astro-lilly-v3-relatives-p012-001",
+      "method": "western",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unsupported_calculation_profile",
+      "conditions": [
+        "第一与第三宫主按莉莉本章取用的尊贵构成双向接纳。"
+      ],
+      "remainingAlternatives": 0,
+      "inputs": 1,
+      "addedInputDigests": [
+        "092fb23e74502198162c25db0ba76cf2a979f4f3849e5cce1b788d2bbbcf1fbb"
+      ]
+    }
+  ],
+  "extended": [
+    {
+      "id": "astro-lilly-v3-travel-p002-001",
+      "method": "western",
+      "previousStatus": "indexed",
+      "status": "indexed",
+      "conditions": [
+        "远行检查中，月亮和水星彼此互容或者合相。"
+      ],
+      "previousRemainingAlternatives": 1,
+      "remainingAlternatives": 0,
+      "inputs": 3,
+      "addedInputDigests": [
+        "1a014adca0839faf02e8d1315e6179869f9b5d976ed6d86a18da908cf66fdcbd"
+      ]
+    }
+  ],
+  "deferred": [
+    {
+      "id": "astro-lilly-v3-spouse-description-p051-001",
+      "reason": "The receiver scope of both bodies in Saturn terms remains under source review; no guessed conjunction-term mapping."
+    }
+  ],
+  "boundaries": [
+    "Do not substitute mutual reception for an unspecified general reception.",
+    "House lords and luminary dispositors mean traditional domicile lords.",
+    "No applications, paired charts, active role contexts or historical cases implicitly enabled."
+  ],
+  "actualNewUniqueAlternatives": 18
+}

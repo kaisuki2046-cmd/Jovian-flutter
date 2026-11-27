@@ -1,0 +1,695 @@
+{
+  "sources": {
+    "plateScript": "https://plate.ziwei-yun.com/js/v3/insert-plate-actions.js",
+    "plateScriptHash": "b9a5e15daf1217469818d3858b50eb7e14ef2c6dc4fa08ec758b13f6b4f9c127",
+    "apiScript": "https://plate.ziwei-yun.com/js/v3/api.js",
+    "apiScriptHash": "40f2acf9425a9085e86bd48fe8d1490083ef0514f6e6f16a4324c8c2670dcf04",
+    "calendarAPI": "https://plate-api.ziwei-yun.com/api/v1/calendar/convert",
+    "plateAPI": "https://plate-api.ziwei-yun.com/api/v1/plate",
+    "retrieved": "2026-11-18",
+    "note": "Synthetic example only. Factual calendar, transformation and palace reference values; no API or network required by runtime/tests."
+  },
+  "table": {
+    "甲": [
+      "廉贞",
+      "破军",
+      "武曲",
+      "太阳"
+    ],
+    "乙": [
+      "天机",
+      "天梁",
+      "紫微",
+      "太阴"
+    ],
+    "丙": [
+      "天同",
+      "天机",
+      "文昌",
+      "廉贞"
+    ],
+    "丁": [
+      "太阴",
+      "天同",
+      "天机",
+      "巨门"
+    ],
+    "戊": [
+      "贪狼",
+      "太阴",
+      "右弼",
+      "天机"
+    ],
+    "己": [
+      "武曲",
+      "贪狼",
+      "天梁",
+      "文曲"
+    ],
+    "庚": [
+      "太阳",
+      "武曲",
+      "天府",
+      "天同"
+    ],
+    "辛": [
+      "巨门",
+      "太阳",
+      "文曲",
+      "文昌"
+    ],
+    "壬": [
+      "天梁",
+      "紫微",
+      "左辅",
+      "武曲"
+    ],
+    "癸": [
+      "破军",
+      "巨门",
+      "太阴",
+      "贪狼"
+    ]
+  },
+  "months": [
+    {
+      "year": 2025,
+      "month": 1,
+      "leap": false,
+      "pillar": "戊寅",
+      "date": "2025-01-29"
+    },
+    {
+      "year": 2025,
+      "month": 2,
+      "leap": false,
+      "pillar": "己卯",
+      "date": "2025-02-28"
+    },
+    {
+      "year": 2025,
+      "month": 3,
+      "leap": false,
+      "pillar": "庚辰",
+      "date": "2025-03-29"
+    },
+    {
+      "year": 2025,
+      "month": 4,
+      "leap": false,
+      "pillar": "辛巳",
+      "date": "2025-04-28"
+    },
+    {
+      "year": 2025,
+      "month": 5,
+      "leap": false,
+      "pillar": "壬午",
+      "date": "2025-05-27"
+    },
+    {
+      "year": 2025,
+      "month": 6,
+      "leap": false,
+      "pillar": "癸未",
+      "date": "2025-06-25"
+    },
+    {
+      "year": 2025,
+      "month": 6,
+      "leap": true,
+      "pillar": "癸未",
+      "date": "2025-07-25"
+    },
+    {
+      "year": 2025,
+      "month": 7,
+      "leap": false,
+      "pillar": "甲申",
+      "date": "2025-08-23"
+    },
+    {
+      "year": 2025,
+      "month": 8,
+      "leap": false,
+      "pillar": "乙酉",
+      "date": "2025-09-22"
+    },
+    {
+      "year": 2025,
+      "month": 9,
+      "leap": false,
+      "pillar": "丙戌",
+      "date": "2025-10-21"
+    },
+    {
+      "year": 2025,
+      "month": 10,
+      "leap": false,
+      "pillar": "丁亥",
+      "date": "2025-11-20"
+    },
+    {
+      "year": 2025,
+      "month": 11,
+      "leap": false,
+      "pillar": "戊子",
+      "date": "2025-12-20"
+    },
+    {
+      "year": 2025,
+      "month": 12,
+      "leap": false,
+      "pillar": "己丑",
+      "date": "2026-01-19"
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "leap": false,
+      "pillar": "庚寅",
+      "date": "2026-02-17"
+    },
+    {
+      "year": 2026,
+      "month": 2,
+      "leap": false,
+      "pillar": "辛卯",
+      "date": "2026-03-19"
+    },
+    {
+      "year": 2026,
+      "month": 3,
+      "leap": false,
+      "pillar": "壬辰",
+      "date": "2026-04-17"
+    },
+    {
+      "year": 2026,
+      "month": 4,
+      "leap": false,
+      "pillar": "癸巳",
+      "date": "2026-05-17"
+    },
+    {
+      "year": 2026,
+      "month": 5,
+      "leap": false,
+      "pillar": "甲午",
+      "date": "2026-06-15"
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "leap": false,
+      "pillar": "乙未",
+      "date": "2026-07-14"
+    },
+    {
+      "year": 2026,
+      "month": 7,
+      "leap": false,
+      "pillar": "丙申",
+      "date": "2026-08-13"
+    },
+    {
+      "year": 2026,
+      "month": 8,
+      "leap": false,
+      "pillar": "丁酉",
+      "date": "2026-09-11"
+    },
+    {
+      "year": 2026,
+      "month": 9,
+      "leap": false,
+      "pillar": "戊戌",
+      "date": "2026-10-10"
+    },
+    {
+      "year": 2026,
+      "month": 10,
+      "leap": false,
+      "pillar": "己亥",
+      "date": "2026-11-09"
+    },
+    {
+      "year": 2026,
+      "month": 11,
+      "leap": false,
+      "pillar": "庚子",
+      "date": "2026-12-09"
+    },
+    {
+      "year": 2026,
+      "month": 12,
+      "leap": false,
+      "pillar": "辛丑",
+      "date": "2027-01-08"
+    }
+  ],
+  "days": [
+    {
+      "year": 2026,
+      "month": 1,
+      "day": 1,
+      "pillar": "壬戌",
+      "date": "2026-02-17"
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "day": 2,
+      "pillar": "癸亥",
+      "date": "2026-02-18"
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "day": 3,
+      "pillar": "甲子",
+      "date": "2026-02-19"
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "day": 4,
+      "pillar": "乙丑",
+      "date": "2026-02-20"
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "day": 5,
+      "pillar": "丙寅",
+      "date": "2026-02-21"
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "day": 6,
+      "pillar": "丁卯",
+      "date": "2026-02-22"
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "day": 7,
+      "pillar": "戊辰",
+      "date": "2026-02-23"
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "day": 8,
+      "pillar": "己巳",
+      "date": "2026-02-24"
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "day": 9,
+      "pillar": "庚午",
+      "date": "2026-02-25"
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "day": 10,
+      "pillar": "辛未",
+      "date": "2026-02-26"
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "day": 11,
+      "pillar": "壬申",
+      "date": "2026-02-27"
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "day": 12,
+      "pillar": "癸酉",
+      "date": "2026-02-28"
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "day": 13,
+      "pillar": "甲戌",
+      "date": "2026-03-01"
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "day": 14,
+      "pillar": "乙亥",
+      "date": "2026-03-02"
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "day": 15,
+      "pillar": "丙子",
+      "date": "2026-03-03"
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "day": 16,
+      "pillar": "丁丑",
+      "date": "2026-03-04"
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "day": 17,
+      "pillar": "戊寅",
+      "date": "2026-03-05"
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "day": 18,
+      "pillar": "己卯",
+      "date": "2026-03-06"
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "day": 19,
+      "pillar": "庚辰",
+      "date": "2026-03-07"
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "day": 20,
+      "pillar": "辛巳",
+      "date": "2026-03-08"
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "day": 21,
+      "pillar": "壬午",
+      "date": "2026-03-09"
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "day": 22,
+      "pillar": "癸未",
+      "date": "2026-03-10"
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "day": 23,
+      "pillar": "甲申",
+      "date": "2026-03-11"
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "day": 24,
+      "pillar": "乙酉",
+      "date": "2026-03-12"
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "day": 25,
+      "pillar": "丙戌",
+      "date": "2026-03-13"
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "day": 26,
+      "pillar": "丁亥",
+      "date": "2026-03-14"
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "day": 27,
+      "pillar": "戊子",
+      "date": "2026-03-15"
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "day": 28,
+      "pillar": "己丑",
+      "date": "2026-03-16"
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "day": 29,
+      "pillar": "庚寅",
+      "date": "2026-03-17"
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "day": 30,
+      "pillar": "辛卯",
+      "date": "2026-03-18"
+    }
+  ],
+  "natal": {
+    "solarDate": "1990-05-05",
+    "hour": "12:00",
+    "timeIndex": 6,
+    "gender": "女",
+    "birthLunar": {
+      "year": 1990,
+      "month": 4,
+      "day": 11,
+      "hour": "午"
+    },
+    "palaces": [
+      {
+        "branch": "丑",
+        "name": "福德",
+        "stem": "己",
+        "minorAges": [
+          4,
+          16,
+          28,
+          40,
+          52,
+          64,
+          76,
+          88
+        ],
+        "stars": [
+          "天梁"
+        ]
+      },
+      {
+        "branch": "亥",
+        "name": "命宫",
+        "stem": "丁",
+        "minorAges": [
+          6,
+          18,
+          30,
+          42,
+          54,
+          66,
+          78,
+          90
+        ],
+        "stars": [
+          "巨门"
+        ]
+      },
+      {
+        "branch": "午",
+        "name": "疾厄",
+        "stem": "壬",
+        "minorAges": [
+          11,
+          23,
+          35,
+          47,
+          59,
+          71,
+          83,
+          95
+        ],
+        "stars": [
+          "破军"
+        ]
+      },
+      {
+        "branch": "卯",
+        "name": "官禄",
+        "stem": "己",
+        "minorAges": [
+          2,
+          14,
+          26,
+          38,
+          50,
+          62,
+          74,
+          86
+        ],
+        "stars": [
+          "天同"
+        ]
+      },
+      {
+        "branch": "子",
+        "name": "父母",
+        "stem": "戊",
+        "minorAges": [
+          5,
+          17,
+          29,
+          41,
+          53,
+          65,
+          77,
+          89
+        ],
+        "stars": [
+          "廉贞",
+          "天相"
+        ]
+      },
+      {
+        "branch": "寅",
+        "name": "田宅",
+        "stem": "戊",
+        "minorAges": [
+          3,
+          15,
+          27,
+          39,
+          51,
+          63,
+          75,
+          87
+        ],
+        "stars": [
+          "七杀"
+        ]
+      },
+      {
+        "branch": "巳",
+        "name": "迁移",
+        "stem": "辛",
+        "minorAges": [
+          12,
+          24,
+          36,
+          48,
+          60,
+          72,
+          84,
+          96
+        ],
+        "stars": [
+          "太阳"
+        ]
+      },
+      {
+        "branch": "戌",
+        "name": "兄弟",
+        "stem": "丙",
+        "minorAges": [
+          7,
+          19,
+          31,
+          43,
+          55,
+          67,
+          79,
+          91
+        ],
+        "stars": [
+          "贪狼"
+        ]
+      },
+      {
+        "branch": "未",
+        "name": "财帛",
+        "stem": "癸",
+        "minorAges": [
+          10,
+          22,
+          34,
+          46,
+          58,
+          70,
+          82,
+          94
+        ],
+        "stars": [
+          "天机"
+        ]
+      },
+      {
+        "branch": "申",
+        "name": "子女",
+        "stem": "甲",
+        "minorAges": [
+          9,
+          21,
+          33,
+          45,
+          57,
+          69,
+          81,
+          93
+        ],
+        "stars": [
+          "紫微",
+          "天府"
+        ]
+      },
+      {
+        "branch": "辰",
+        "name": "仆役",
+        "stem": "庚",
+        "minorAges": [
+          1,
+          13,
+          25,
+          37,
+          49,
+          61,
+          73,
+          85
+        ],
+        "stars": [
+          "武曲"
+        ]
+      },
+      {
+        "branch": "酉",
+        "name": "夫妻",
+        "stem": "乙",
+        "minorAges": [
+          8,
+          20,
+          32,
+          44,
+          56,
+          68,
+          80,
+          92
+        ],
+        "stars": [
+          "太阴"
+        ]
+      }
+    ]
+  }
+}

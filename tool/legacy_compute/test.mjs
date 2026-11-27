@@ -7,7 +7,7 @@ import { extname, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { frontendRoot, legacyRoot } from './paths.mjs';
 
-const dependencies = resolve(process.env.JOVIAN_LEGACY_NODE_ROOT ?? legacyRoot);
+const dependencies = legacyRoot;
 const browserDependencies = resolve(process.env.JOVIAN_BROWSER_TEST_ROOT ?? dependencies);
 const { chromium } = createRequire(join(browserDependencies, 'package.json'))('playwright-core');
 const worker = await readFile(join(frontendRoot, 'web', 'legacy-compute.js'));

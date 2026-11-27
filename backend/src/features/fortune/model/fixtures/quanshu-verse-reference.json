@@ -1,0 +1,171 @@
+{
+  "reviewedOn": "2026-11-19",
+  "sources": [
+    {
+      "url": "https://zh.wikisource.org/w/index.php?oldid=1963110&title=紫微斗數全書/卷二",
+      "cacheSHA256": "1e255c6ae99e6f89ae124ab342554ef1347fc8e68fb8908cba7290d1a38cbb72",
+      "note": "Reviewed fixed-revision cached transcription and current primary text; not a printed facsimile."
+    },
+    {
+      "url": "https://zh.wikisource.org/wiki/紫微斗數全書/卷一#問太陽所主若何？",
+      "note": "Yuchan explicitly named phases are separate from the preceding song and cannot complete 暗度."
+    },
+    {
+      "url": "https://zh.wikisource.org/wiki/紫微斗數全書/卷三",
+      "note": "Explicit summary cells retained separately; wording equality is not semantic equivalence."
+    }
+  ],
+  "grades": {
+    "太阳": [
+      "陷",
+      "陷",
+      "旺",
+      "庙",
+      "旺",
+      "旺",
+      "旺",
+      "得地",
+      "得地",
+      "和平",
+      "陷",
+      "陷"
+    ],
+    "武曲": [
+      "旺",
+      "庙",
+      "得地",
+      "利益",
+      "庙",
+      "和平",
+      "旺",
+      "庙",
+      "得地",
+      "利益",
+      "庙",
+      "和平"
+    ],
+    "破军": [
+      "庙",
+      "旺",
+      "得地",
+      "陷",
+      "旺",
+      null,
+      "庙",
+      "旺",
+      "得地",
+      "陷",
+      "旺",
+      null
+    ]
+  },
+  "solarPhases": {
+    "子": "失辉",
+    "丑": null,
+    "寅": "初升",
+    "卯": "初升",
+    "辰": "升殿",
+    "巳": "升殿",
+    "午": "中天",
+    "未": "偏垣",
+    "申": "偏垣",
+    "酉": "西没",
+    "戌": "失辉",
+    "亥": "失辉"
+  },
+  "passages": [
+    {
+      "knowledgeId": "ziwei-fortune-v1-year-love-ziwei-quanshu-v2-archive-sun-limit-p059-001",
+      "sourceHash": "328e7ea9a04291add0ef33208cfcb539d720359cde7a78dccf299474b95bf901"
+    },
+    {
+      "knowledgeId": "ziwei-fortune-v1-year-wealth-ziwei-quanshu-v2-archive-wuqu-limit-p059-001",
+      "sourceHash": "b81b9b208eebf7fa64d7d53c003dd023eec57e5bcc91404173e37d38f3f5bc24"
+    },
+    {
+      "knowledgeId": "ziwei-fortune-v1-year-career-ziwei-quanshu-v2-archive-pojun-limit-p059-001",
+      "sourceHash": "4855021c52d3112b9a641b7cdaa7e9722c822b470347e39bbfc65d9305ce99dc"
+    },
+    {
+      "knowledgeId": "ziwei-fortune-v1-year-wealth-quanshu-interpretation-expansion-p020-001",
+      "sourceHash": "4bdde62ab109dad6d75c9224095e3be7de1860aec9ffb37b01a6145866db4090"
+    }
+  ],
+  "examples": {
+    "poNotTemple": {
+      "dateStr": "1990-01-05",
+      "timeIndex": 1,
+      "gender": "男",
+      "year": 2026,
+      "scope": "decadal",
+      "lunarYear": 2025,
+      "focusBranch": "酉"
+    },
+    "wuNotTemple": {
+      "dateStr": "1990-01-05",
+      "timeIndex": 2,
+      "gender": "男",
+      "year": 2026,
+      "scope": "decadal",
+      "lunarYear": 2025,
+      "focusBranch": "申"
+    },
+    "wuDecadal": {
+      "dateStr": "1990-01-05",
+      "timeIndex": 6,
+      "gender": "女",
+      "year": 2026,
+      "scope": "decadal",
+      "lunarYear": 2025,
+      "focusBranch": "戌"
+    },
+    "sunOneLimit": {
+      "dateStr": "1990-01-05",
+      "timeIndex": 9,
+      "gender": "男",
+      "year": 2026,
+      "scope": "decadal",
+      "lunarYear": 2025,
+      "focusBranch": "丑"
+    },
+    "sunChou": {
+      "dateStr": "1990-01-05",
+      "timeIndex": 9,
+      "gender": "男",
+      "year": 2026,
+      "scope": "decadal",
+      "lunarYear": 2025,
+      "focusBranch": "丑"
+    },
+    "poTemple": {
+      "dateStr": "1990-03-05",
+      "timeIndex": 0,
+      "gender": "女",
+      "year": 2026,
+      "scope": "decadal",
+      "lunarYear": 2025,
+      "focusBranch": "子"
+    },
+    "wuMinor": {
+      "dateStr": "1990-05-05",
+      "timeIndex": 2,
+      "gender": "男",
+      "year": 2026,
+      "scope": "minor",
+      "lunarYear": 2026,
+      "focusBranch": "辰"
+    }
+  },
+  "branchExamples": {
+    "sunClear": { "dateStr": "1990-01-05", "timeIndex": 0, "gender": "女", "year": 2030 },
+    "sunTaboo": { "dateStr": "1990-01-05", "timeIndex": 0, "gender": "女", "year": 2001 },
+    "sunFallen": { "dateStr": "1990-01-05", "timeIndex": 4, "gender": "女", "year": 2002 },
+    "sunDark": { "dateStr": "1991-02-16", "timeIndex": 2, "gender": "女", "year": 2008 },
+    "sunMissingFireBell": { "dateStr": "1991-02-16", "timeIndex": 1, "gender": "女", "year": 2008 },
+    "wuPlain": { "dateStr": "1990-01-05", "timeIndex": 0, "gender": "女", "year": 1999 },
+    "wuNearChang": { "dateStr": "1990-05-05", "timeIndex": 7, "gender": "女", "year": 2002 },
+    "poSupport": { "dateStr": "1989-05-01", "timeIndex": 4, "gender": "女", "year": 1998 },
+    "poPlain": { "dateStr": "1947-02-05", "timeIndex": 7, "gender": "女", "year": 1966 },
+    "poAdverse": { "dateStr": "1990-01-05", "timeIndex": 6, "gender": "女", "year": 2008 }
+  }
+}

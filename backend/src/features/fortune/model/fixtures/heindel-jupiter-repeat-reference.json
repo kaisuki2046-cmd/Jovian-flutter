@@ -1,0 +1,42 @@
+{
+  "source": "https://rosicrucian.com/mos/moseng09.htm",
+  "birthAt": "1990-05-14T04:00:00.000Z",
+  "natalSunLongitude": 53.109940695999896,
+  "passes": [
+    {
+      "at": "2025-10-06T14:50:53.364Z",
+      "direction": "direct"
+    },
+    {
+      "at": "2025-12-17T11:14:36.978Z",
+      "direction": "retrograde"
+    },
+    {
+      "at": "2026-05-26T20:13:04.073Z",
+      "direction": "direct"
+    }
+  ],
+  "turns": [
+    {
+      "at": "2025-02-04T09:39:08.327Z",
+      "longitude": 71.27782327313878,
+      "directionAfter": "direct"
+    },
+    {
+      "at": "2025-11-11T16:45:02.087Z",
+      "longitude": 115.1516547356569,
+      "directionAfter": "retrograde"
+    },
+    {
+      "at": "2026-03-11T03:26:40.158Z",
+      "longitude": 105.0866730333571,
+      "directionAfter": "direct"
+    },
+    {
+      "at": "2026-12-13T00:58:53.533Z",
+      "longitude": 147.02415218693216,
+      "directionAfter": "retrograde"
+    }
+  ],
+  "referenceKind": "modern-ephemeris-regression-not-an-original-book-example"
+}

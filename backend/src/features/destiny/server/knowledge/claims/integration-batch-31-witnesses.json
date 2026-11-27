@@ -1,0 +1,797 @@
+{
+  "profile": "ptolemy-classification-references-v1",
+  "scanned": 53,
+  "targetCells": 61,
+  "witnesses": [
+    {
+      "date": "1990-01-01T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-5-p003-001",
+          "planet": "Sun",
+          "target": "planet",
+          "key": "sun",
+          "sect": "both",
+          "dimension": "planet_nature",
+          "values": [
+            "common"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-7-p001-001",
+          "planet": "Sun",
+          "target": "planet",
+          "key": "sun",
+          "sect": "both",
+          "dimension": "planet_sect_affinity",
+          "values": [
+            "diurnal"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-zodiac-types-p002-001",
+          "planet": "Sun",
+          "target": "sign",
+          "key": "capricorn",
+          "sect": "both",
+          "dimension": "sign_mode",
+          "values": [
+            "solstitial"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-12-p002-001",
+          "planet": "Sun",
+          "target": "sign",
+          "key": "capricorn",
+          "sect": "both",
+          "dimension": "sign_polarity",
+          "values": [
+            "feminine"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-18-p004-001",
+          "planet": "Sun",
+          "target": "sign",
+          "key": "capricorn",
+          "sect": "night",
+          "dimension": "triplicity_rulers",
+          "values": [
+            "moon"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-5-p001-001",
+          "planet": "Moon",
+          "target": "planet",
+          "key": "moon",
+          "sect": "both",
+          "dimension": "planet_nature",
+          "values": [
+            "beneficent"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-7-p002-001",
+          "planet": "Moon",
+          "target": "planet",
+          "key": "moon",
+          "sect": "both",
+          "dimension": "planet_sect_affinity",
+          "values": [
+            "nocturnal"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-zodiac-types-p004-001",
+          "planet": "Moon",
+          "target": "sign",
+          "key": "aquarius",
+          "sect": "both",
+          "dimension": "sign_mode",
+          "values": [
+            "solid"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-12-p001-001",
+          "planet": "Moon",
+          "target": "sign",
+          "key": "aquarius",
+          "sect": "both",
+          "dimension": "sign_polarity",
+          "values": [
+            "masculine"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-18-p006-001",
+          "planet": "Moon",
+          "target": "sign",
+          "key": "aquarius",
+          "sect": "night",
+          "dimension": "triplicity_rulers",
+          "values": [
+            "mercury"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-5-p003-001",
+          "planet": "Mercury",
+          "target": "planet",
+          "key": "mercury",
+          "sect": "both",
+          "dimension": "planet_nature",
+          "values": [
+            "common"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-5-p001-001",
+          "planet": "Venus",
+          "target": "planet",
+          "key": "venus",
+          "sect": "both",
+          "dimension": "planet_nature",
+          "values": [
+            "beneficent"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-7-p002-001",
+          "planet": "Venus",
+          "target": "planet",
+          "key": "venus",
+          "sect": "both",
+          "dimension": "planet_sect_affinity",
+          "values": [
+            "nocturnal"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-5-p002-001",
+          "planet": "Mars",
+          "target": "planet",
+          "key": "mars",
+          "sect": "both",
+          "dimension": "planet_nature",
+          "values": [
+            "maleficent"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-7-p002-001",
+          "planet": "Mars",
+          "target": "planet",
+          "key": "mars",
+          "sect": "both",
+          "dimension": "planet_sect_affinity",
+          "values": [
+            "nocturnal"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-zodiac-types-p005-001",
+          "planet": "Mars",
+          "target": "sign",
+          "key": "sagittarius",
+          "sect": "both",
+          "dimension": "sign_mode",
+          "values": [
+            "bicorporeal"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-12-p001-001",
+          "planet": "Mars",
+          "target": "sign",
+          "key": "sagittarius",
+          "sect": "both",
+          "dimension": "sign_polarity",
+          "values": [
+            "masculine"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-18-p002-001",
+          "planet": "Mars",
+          "target": "sign",
+          "key": "sagittarius",
+          "sect": "night",
+          "dimension": "triplicity_rulers",
+          "values": [
+            "jupiter"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-5-p001-001",
+          "planet": "Jupiter",
+          "target": "planet",
+          "key": "jupiter",
+          "sect": "both",
+          "dimension": "planet_nature",
+          "values": [
+            "beneficent"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-7-p001-001",
+          "planet": "Jupiter",
+          "target": "planet",
+          "key": "jupiter",
+          "sect": "both",
+          "dimension": "planet_sect_affinity",
+          "values": [
+            "diurnal"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-zodiac-types-p002-001",
+          "planet": "Jupiter",
+          "target": "sign",
+          "key": "cancer",
+          "sect": "both",
+          "dimension": "sign_mode",
+          "values": [
+            "solstitial"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-12-p002-001",
+          "planet": "Jupiter",
+          "target": "sign",
+          "key": "cancer",
+          "sect": "both",
+          "dimension": "sign_polarity",
+          "values": [
+            "feminine"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-18-p008-001",
+          "planet": "Jupiter",
+          "target": "sign",
+          "key": "cancer",
+          "sect": "night",
+          "dimension": "triplicity_rulers",
+          "values": [
+            "moon",
+            "mars"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-5-p002-001",
+          "planet": "Saturn",
+          "target": "planet",
+          "key": "saturn",
+          "sect": "both",
+          "dimension": "planet_nature",
+          "values": [
+            "maleficent"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-7-p001-001",
+          "planet": "Saturn",
+          "target": "planet",
+          "key": "saturn",
+          "sect": "both",
+          "dimension": "planet_sect_affinity",
+          "values": [
+            "diurnal"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "1990-01-01T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-18-p003-001",
+          "planet": "Sun",
+          "target": "sign",
+          "key": "capricorn",
+          "sect": "day",
+          "dimension": "triplicity_rulers",
+          "values": [
+            "venus"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-zodiac-types-p005-001",
+          "planet": "Moon",
+          "target": "sign",
+          "key": "pisces",
+          "sect": "both",
+          "dimension": "sign_mode",
+          "values": [
+            "bicorporeal"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-12-p002-001",
+          "planet": "Moon",
+          "target": "sign",
+          "key": "pisces",
+          "sect": "both",
+          "dimension": "sign_polarity",
+          "values": [
+            "feminine"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-18-p007-001",
+          "planet": "Moon",
+          "target": "sign",
+          "key": "pisces",
+          "sect": "day",
+          "dimension": "triplicity_rulers",
+          "values": [
+            "venus",
+            "mars"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-18-p005-001",
+          "planet": "Venus",
+          "target": "sign",
+          "key": "aquarius",
+          "sect": "day",
+          "dimension": "triplicity_rulers",
+          "values": [
+            "saturn"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-18-p001-001",
+          "planet": "Mars",
+          "target": "sign",
+          "key": "sagittarius",
+          "sect": "day",
+          "dimension": "triplicity_rulers",
+          "values": [
+            "sun"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-18-p007-001",
+          "planet": "Jupiter",
+          "target": "sign",
+          "key": "cancer",
+          "sect": "day",
+          "dimension": "triplicity_rulers",
+          "values": [
+            "venus",
+            "mars"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "1990-01-08T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-zodiac-types-p005-001",
+          "planet": "Moon",
+          "target": "sign",
+          "key": "gemini",
+          "sect": "both",
+          "dimension": "sign_mode",
+          "values": [
+            "bicorporeal"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-12-p001-001",
+          "planet": "Moon",
+          "target": "sign",
+          "key": "gemini",
+          "sect": "both",
+          "dimension": "sign_polarity",
+          "values": [
+            "masculine"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-18-p006-001",
+          "planet": "Moon",
+          "target": "sign",
+          "key": "gemini",
+          "sect": "night",
+          "dimension": "triplicity_rulers",
+          "values": [
+            "mercury"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "1990-01-08T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-18-p005-001",
+          "planet": "Moon",
+          "target": "sign",
+          "key": "gemini",
+          "sect": "day",
+          "dimension": "triplicity_rulers",
+          "values": [
+            "saturn"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "1990-01-15T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-zodiac-types-p005-001",
+          "planet": "Moon",
+          "target": "sign",
+          "key": "virgo",
+          "sect": "both",
+          "dimension": "sign_mode",
+          "values": [
+            "bicorporeal"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-12-p002-001",
+          "planet": "Moon",
+          "target": "sign",
+          "key": "virgo",
+          "sect": "both",
+          "dimension": "sign_polarity",
+          "values": [
+            "feminine"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-18-p004-001",
+          "planet": "Moon",
+          "target": "sign",
+          "key": "virgo",
+          "sect": "night",
+          "dimension": "triplicity_rulers",
+          "values": [
+            "moon"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "1990-01-15T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-18-p003-001",
+          "planet": "Moon",
+          "target": "sign",
+          "key": "virgo",
+          "sect": "day",
+          "dimension": "triplicity_rulers",
+          "values": [
+            "venus"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "1990-01-29T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-18-p008-001",
+          "planet": "Moon",
+          "target": "sign",
+          "key": "pisces",
+          "sect": "night",
+          "dimension": "triplicity_rulers",
+          "values": [
+            "moon",
+            "mars"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "1990-03-12T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-zodiac-types-p003-001",
+          "planet": "Moon",
+          "target": "sign",
+          "key": "libra",
+          "sect": "both",
+          "dimension": "sign_mode",
+          "values": [
+            "equinoctial"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-12-p001-001",
+          "planet": "Moon",
+          "target": "sign",
+          "key": "libra",
+          "sect": "both",
+          "dimension": "sign_polarity",
+          "values": [
+            "masculine"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-18-p005-001",
+          "planet": "Moon",
+          "target": "sign",
+          "key": "libra",
+          "sect": "day",
+          "dimension": "triplicity_rulers",
+          "values": [
+            "saturn"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "1990-03-26T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-zodiac-types-p003-001",
+          "planet": "Sun",
+          "target": "sign",
+          "key": "aries",
+          "sect": "both",
+          "dimension": "sign_mode",
+          "values": [
+            "equinoctial"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-12-p001-001",
+          "planet": "Sun",
+          "target": "sign",
+          "key": "aries",
+          "sect": "both",
+          "dimension": "sign_polarity",
+          "values": [
+            "masculine"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-18-p002-001",
+          "planet": "Sun",
+          "target": "sign",
+          "key": "aries",
+          "sect": "night",
+          "dimension": "triplicity_rulers",
+          "values": [
+            "jupiter"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "1990-03-26T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-18-p001-001",
+          "planet": "Sun",
+          "target": "sign",
+          "key": "aries",
+          "sect": "day",
+          "dimension": "triplicity_rulers",
+          "values": [
+            "sun"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "1990-04-09T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-18-p006-001",
+          "planet": "Moon",
+          "target": "sign",
+          "key": "libra",
+          "sect": "night",
+          "dimension": "triplicity_rulers",
+          "values": [
+            "mercury"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-zodiac-types-p004-001",
+          "planet": "Mercury",
+          "target": "sign",
+          "key": "taurus",
+          "sect": "both",
+          "dimension": "sign_mode",
+          "values": [
+            "solid"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-12-p002-001",
+          "planet": "Mercury",
+          "target": "sign",
+          "key": "taurus",
+          "sect": "both",
+          "dimension": "sign_polarity",
+          "values": [
+            "feminine"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-18-p004-001",
+          "planet": "Mercury",
+          "target": "sign",
+          "key": "taurus",
+          "sect": "night",
+          "dimension": "triplicity_rulers",
+          "values": [
+            "moon"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "1990-04-09T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-18-p003-001",
+          "planet": "Mercury",
+          "target": "sign",
+          "key": "taurus",
+          "sect": "day",
+          "dimension": "triplicity_rulers",
+          "values": [
+            "venus"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "1990-05-28T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-zodiac-types-p004-001",
+          "planet": "Moon",
+          "target": "sign",
+          "key": "leo",
+          "sect": "both",
+          "dimension": "sign_mode",
+          "values": [
+            "solid"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-12-p001-001",
+          "planet": "Moon",
+          "target": "sign",
+          "key": "leo",
+          "sect": "both",
+          "dimension": "sign_polarity",
+          "values": [
+            "masculine"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-18-p001-001",
+          "planet": "Moon",
+          "target": "sign",
+          "key": "leo",
+          "sect": "day",
+          "dimension": "triplicity_rulers",
+          "values": [
+            "sun"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "1990-06-04T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-zodiac-types-p004-001",
+          "planet": "Moon",
+          "target": "sign",
+          "key": "scorpio",
+          "sect": "both",
+          "dimension": "sign_mode",
+          "values": [
+            "solid"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-12-p002-001",
+          "planet": "Moon",
+          "target": "sign",
+          "key": "scorpio",
+          "sect": "both",
+          "dimension": "sign_polarity",
+          "values": [
+            "feminine"
+          ]
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-18-p007-001",
+          "planet": "Moon",
+          "target": "sign",
+          "key": "scorpio",
+          "sect": "day",
+          "dimension": "triplicity_rulers",
+          "values": [
+            "venus",
+            "mars"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "1990-06-25T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-18-p002-001",
+          "planet": "Moon",
+          "target": "sign",
+          "key": "leo",
+          "sect": "night",
+          "dimension": "triplicity_rulers",
+          "values": [
+            "jupiter"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "1990-07-02T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-18-p008-001",
+          "planet": "Moon",
+          "target": "sign",
+          "key": "scorpio",
+          "sect": "night",
+          "dimension": "triplicity_rulers",
+          "values": [
+            "moon",
+            "mars"
+          ]
+        }
+      ]
+    }
+  ],
+  "missing": []
+}

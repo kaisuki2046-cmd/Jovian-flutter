@@ -14,7 +14,7 @@ process.stdout.write(JSON.stringify({ legacy, recognized, token: tokenHash(token
 ''';
 
 Future<void> main() async {
-  final root = Platform.script.resolve('../../../../../../');
+  final root = Platform.script.resolve('../../../../../backend/');
   final passwords = AccountPasswords();
   const sample = '离线测试Password8';
   final generated = await passwords.hash(sample);

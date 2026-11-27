@@ -1,0 +1,19 @@
+{
+  "source": "https://zh.wikisource.org/wiki/紫微斗數全書/卷二",
+  "basis": "安天马论本生年支；截路与旬中空亡均论本生年；双宫不强分正副星",
+  "cutPairsByStem": {"甲": "申酉", "己": "申酉", "乙": "午未", "庚": "午未", "丙": "辰巳", "辛": "辰巳", "丁": "寅卯", "壬": "寅卯", "戊": "子丑", "癸": "子丑"},
+  "xunPairsByHead": {"甲子": "戌亥", "甲寅": "子丑", "甲辰": "寅卯", "甲午": "辰巳", "甲申": "午未", "甲戌": "申酉"},
+  "horseByYearBranch": {"寅": "申", "午": "申", "戌": "申", "申": "寅", "子": "寅", "辰": "寅", "巳": "亥", "酉": "亥", "丑": "亥", "亥": "巳", "卯": "巳", "未": "巳"},
+  "cases": {
+    "cut": {"dateStr": "2014-05-05", "timeIndex": 2, "gender": "女", "year": 2028, "birthYearPillar": "甲午", "horse": "申", "cutAtHorse": true, "xunAtHorse": false},
+    "xun": {"dateStr": "2019-05-05", "timeIndex": 2, "gender": "女", "year": 2025, "birthYearPillar": "己亥", "horse": "巳", "cutAtHorse": false, "xunAtHorse": true},
+    "minor": {"dateStr": "2014-05-05", "timeIndex": 3, "gender": "女", "year": 2022, "birthYearPillar": "甲午", "horse": "申", "natalChang": "未"},
+    "xingShaTogether": {"dateStr":"1991-10-15","timeIndex":5,"gender":"女","year":2001},
+    "xingShaOtherYear": {"dateStr":"1991-10-15","timeIndex":5,"gender":"女","year":2002},
+    "xingOnly": {"dateStr":"1989-04-15","timeIndex":0,"gender":"女","year":2007},
+    "tuoluoTogether": {"dateStr":"1993-02-15","timeIndex":0,"gender":"女","year":2007},
+    "tuoluoOpposed": {"dateStr":"1989-02-15","timeIndex":0,"gender":"女","year":2007},
+    "robberyOnly": {"dateStr":"1989-01-15","timeIndex":3,"gender":"女","year":1998}
+  },
+  "note": "Calendar cases are modern independent test witnesses, not claims of historical identity or predicted events."
+}

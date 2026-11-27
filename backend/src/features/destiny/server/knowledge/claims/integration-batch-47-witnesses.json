@@ -1,0 +1,805 @@
+{
+  "scanned": 6013,
+  "alternatives": 51,
+  "witnesses": [
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 0,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p018-019",
+          "text": "庙，权贵",
+          "inputDigest": "4047352c8d8b8a2b1f48e98b2546d596f7279b3907515cd3305eab8586883e43"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 2,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p014-016",
+          "text": "陷地，破耗不一，闹中进财",
+          "inputDigest": "17ef73cdfa30d54201ff537be30d10a85c9d0f53667ebf68b6fbb092867cbfbd"
+        },
+        {
+          "id": "ziwei-v2-jielan-101-p018-016",
+          "inputDigest": "77592e5b76d4610d6d5dab1ef95535b74221dd3e01e68ea77092a5926006fd1a"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 3,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p017-003",
+          "text": "入庙，旺相",
+          "inputDigest": "80fc5fed6c4a683e2810c8c3d604ed409866673c85b4c13cc460ac7d6a0245d4"
+        },
+        {
+          "id": "ziwei-v2-jielan-101-p018-015",
+          "text": "庙，权贵，食禄千钟，常人富足",
+          "inputDigest": "1ea86489049f4d8b9eca116148acd6708c6ad46ee736698db23e2985c64c9f4b"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 6,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p014-012",
+          "text": "庙旺，富贵财多",
+          "inputDigest": "8397b437a68340ad8b32d7954d54f8bfe180ddb1ef7b14494bbe017a8f31b248"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 7,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p014-003",
+          "text": "入庙化吉，闹中进财，白手成家",
+          "inputDigest": "d1b0762efa53093e6702ac727fc684c4c23cebefe2dfa667301c02f2ab60d104"
+        },
+        {
+          "id": "ziwei-v2-jielan-101-p014-004",
+          "text": "四库之地，吉",
+          "inputDigest": "0a902006c23e02820b9101071b93ceed3402baa285e0ef275d7980b673c3cb31"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 8,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p014-012",
+          "text": "庙旺，富贵财多",
+          "inputDigest": "0f416ed891782b507f2a835c7596ed0ff8fe5272d7ea8a0ba0cd7f86660d7b99"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 9,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p018-001",
+          "text": "陷地，吏曹",
+          "inputDigest": "882d129717d21cb18e0a193b7c3c8cdec363e7ed8085d8949a43cdb16285884b"
+        },
+        {
+          "id": "ziwei-v2-jielan-101-p019-006",
+          "text": "入庙，自置",
+          "inputDigest": "4b2d09acb8163a80accbd02afc377bf47699f38a3978af6dd3343d3c9cd87d36"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 10,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p014-004",
+          "text": "四库之地，吉",
+          "inputDigest": "b518c2f48a4c52744dc67c97ef8523c50dc9c614c9b034d0b4b5b69ab118de81"
+        },
+        {
+          "id": "ziwei-v2-jielan-101-p018-003",
+          "text": "庙，富贵不小",
+          "inputDigest": "3a92ef3430d222769eb91a338a0763d9d1e2df2d452e5363903198e8e690e979"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 11,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p019-009",
+          "text": "入庙，自置",
+          "inputDigest": "02333cd0e69f0c0a9c83a9d030ddbda4314797a572d531b8c9e6ecd551340a77"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 4
+        },
+        "gender": "female"
+      },
+      "timeIndex": 1,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p014-006",
+          "text": "入庙，闹中进财",
+          "inputDigest": "410cda80f337ded3806403421abdf3de1d39a9bb44b5d7e2afbed3a04876290d"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 4
+        },
+        "gender": "female"
+      },
+      "timeIndex": 2,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p019-002",
+          "text": "庙旺，始终如一",
+          "inputDigest": "50f85462d47375ee20a4e2ed8969b473931105e1cb6b46f1bd4912ed810753bb"
+        },
+        {
+          "id": "ziwei-v2-jielan-101-p014-014",
+          "text": "入庙，财帛成就",
+          "inputDigest": "c3abd87b47968ce80cf7facbf510d5908a08f611e755d51cc4fbfcf0687525cb"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 4
+        },
+        "gender": "female"
+      },
+      "timeIndex": 3,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p018-011",
+          "text": "入庙，权贵，文武之才",
+          "inputDigest": "49fcf3df195cfe6deb0d395a95a42ff599b5b03c6164ffb659035dc97c307f3c"
+        },
+        {
+          "id": "ziwei-v2-jielan-101-p019-008",
+          "text": "陷，无",
+          "inputDigest": "e6e60a07f670c4609ec5c456011f5b5eb010e8d4d93447cc5983b6110e29631f"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 4
+        },
+        "gender": "female"
+      },
+      "timeIndex": 4,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p018-009",
+          "text": "陷，不久",
+          "inputDigest": "4e8201e8cf557af4e9e022fa131f1bf94eabbd063a73945019f2e6a7d174f987"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 4
+        },
+        "gender": "female"
+      },
+      "timeIndex": 5,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p014-012",
+          "text": "陷地，成败不一，终不聚财",
+          "inputDigest": "138b30cebd7f73ce4cc4ef0aca79c3daa7408e7e5409e3cb66b04f89cc16648c"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 7
+        },
+        "gender": "female"
+      },
+      "timeIndex": 0,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p019-006",
+          "text": "陷地，不成家",
+          "inputDigest": "ff687ed43f907ddfc85839f9cf21079f4fa8ed039dbd60d95a54128c2ddc624a"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 7
+        },
+        "gender": "female"
+      },
+      "timeIndex": 4,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p019-012",
+          "text": "入庙，有分",
+          "inputDigest": "18130330600571541131c0ff7a5eeb30cdd171d18318505cc515ecf01ebe4a3a"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 10
+        },
+        "gender": "female"
+      },
+      "timeIndex": 1,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p018-014",
+          "text": "入庙，武职",
+          "inputDigest": "26085da21216ba03dd03d8288410e17c1cb4bcfc02f1f5e944885237ed23ab70"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 10
+        },
+        "gender": "female"
+      },
+      "timeIndex": 7,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p017-011",
+          "text": "入庙，旺相",
+          "inputDigest": "cdf8d1a6b0e44c6fd40812c5020077b97168a23fd3e81348032909f4c0395ac5"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 10
+        },
+        "gender": "female"
+      },
+      "timeIndex": 8,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p019-001",
+          "text": "如陷地，无分",
+          "inputDigest": "5f543cb1569280875a56b0cb3f8cd65db1f756660aff20715e8d669189d70aee"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 13
+        },
+        "gender": "female"
+      },
+      "timeIndex": 0,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p019-012",
+          "text": "陷，无",
+          "inputDigest": "41aebe57f68a9f4bcf7016ced3fe96969d4c04c0db01fa12c001e0fb14d1affe"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 13
+        },
+        "gender": "female"
+      },
+      "timeIndex": 9,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p019-002",
+          "text": "庙旺，始终如一",
+          "inputDigest": "3e3f6ed036f5ed80a657943522bc0740953f30dde4db75a06cfa84915016a76a"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 16
+        },
+        "gender": "female"
+      },
+      "timeIndex": 0,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p018-014",
+          "text": "陷，奔波",
+          "inputDigest": "4f9f66afefe8ce973d4840457ec5166a6d95726881d2e9d79ebfac4145791b2f"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 16
+        },
+        "gender": "female"
+      },
+      "timeIndex": 1,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p019-004",
+          "text": "入庙亦自置",
+          "inputDigest": "923a29842b8f1863bee3134b5bcb0adbe32747d0645cfc63f8e38e6b189e550a"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 16
+        },
+        "gender": "female"
+      },
+      "timeIndex": 5,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p018-012",
+          "text": "入庙，权贵",
+          "inputDigest": "3e82d46012ae39d944b19a6706eeb2b537ba997ee2b4947fbd5b7cf2a54b4723"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 19
+        },
+        "gender": "female"
+      },
+      "timeIndex": 2,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p019-013",
+          "inputDigest": "66914bed2b13a7549f16679347bf8a7f80f4d419198dfca1b9677597ec6e3b73"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 22
+        },
+        "gender": "female"
+      },
+      "timeIndex": 10,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p017-003",
+          "text": "陷地，无力",
+          "inputDigest": "df2776cbf03ea1f60ea64a2a6f0a5801c787415aba02189b414b37e06d06da45"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 25
+        },
+        "gender": "female"
+      },
+      "timeIndex": 9,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p014-008",
+          "text": "陷地，劳碌生财",
+          "inputDigest": "47bdbdf94034be7f2f7c62053de662189066599066bd85fc1ef5bd878de5f8c5"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 25
+        },
+        "gender": "female"
+      },
+      "timeIndex": 11,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p018-001",
+          "text": "入庙，贵格",
+          "inputDigest": "05c7087335d561aa82a41739626ea60b00f35e30105ce3058800bc57a67c4018"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 28
+        },
+        "gender": "female"
+      },
+      "timeIndex": 1,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p019-008",
+          "text": "入庙，多得祖业",
+          "inputDigest": "318184eb29a27e991019d197ba9682eacd9d02ff5e9472f1e0d3f6022555df5c"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 2,
+          "day": 18
+        },
+        "gender": "female"
+      },
+      "timeIndex": 0,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p014-015",
+          "text": "陷地，破耗不一，闹中进财",
+          "inputDigest": "b659abad9f0739d3405b8b6e64110e79666b54f3c0d451f68b10dc6199415008"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 2,
+          "day": 18
+        },
+        "gender": "female"
+      },
+      "timeIndex": 1,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p018-005",
+          "text": "庙，文武才",
+          "inputDigest": "bf698586787eb156a46b3027c9100f1d44a2e0845c5ae09419114a05e89cee1a"
+        },
+        {
+          "id": "ziwei-v2-jielan-101-p014-015",
+          "text": "入庙，丰阜成聚",
+          "inputDigest": "d091102f7c10dc05682f2abfb595be28ab2da95fa5de6bf3809dd4df73df25d8"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 2,
+          "day": 18
+        },
+        "gender": "female"
+      },
+      "timeIndex": 6,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p014-004",
+          "text": "四库之地，吉",
+          "inputDigest": "436f21039e0c6f2fb1607d1e5668861a0cf92e90841b20a0cf9b5b4337af07ea"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 2,
+          "day": 18
+        },
+        "gender": "female"
+      },
+      "timeIndex": 9,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p014-016",
+          "text": "入庙，丰阜成聚",
+          "inputDigest": "10b6aa7eaf7b5b01db4bfac0795d1f5aca68ad81aa8601361269ef95ab087b67"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 2,
+          "day": 21
+        },
+        "gender": "female"
+      },
+      "timeIndex": 9,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p014-003",
+          "text": "入庙化吉，闹中进财，白手成家",
+          "inputDigest": "36f4fc28a38b8a7bd5c8a821bcd6739687dadebeaf4edf09919d33dd45571330"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 2,
+          "day": 24
+        },
+        "gender": "female"
+      },
+      "timeIndex": 7,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p018-010",
+          "text": "入庙，文武三品职",
+          "inputDigest": "d225eba2d0abb41a6cb99a57aaa2491d50071ce49b1bbb75fa79622d154ab548"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 3,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 1,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p018-008",
+          "text": "陷，不利",
+          "inputDigest": "5debfac1914a8490e68205cdb6d40a69fb74a8dfd1db1f60bd8b57ca6aa03cdd"
+        },
+        {
+          "id": "ziwei-v2-jielan-101-p018-013",
+          "text": "陷，平常",
+          "inputDigest": "f77a6a41a583570b4c72c30bf95b28abc35b5ddf95b257ca2995ba0df5e4a430"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 3,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 2,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p017-011",
+          "text": "陷地，无力",
+          "inputDigest": "88173322d88d3086bb356bc92d2850ca10abffe0196bd3c8df218f414ff9d527"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 3,
+          "day": 19
+        },
+        "gender": "female"
+      },
+      "timeIndex": 3,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p014-005",
+          "text": "见地空，财不聚",
+          "inputDigest": "dfeab2ea9820166683b70a9bfd0291195fc8828b0adf30847752b982d12a01f1"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 5,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 3,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p018-010",
+          "text": "陷地，吏曹",
+          "inputDigest": "17517d038b8c54ba2c0512fbf0f9583c922dfaaf9743f49d8ff370e4e1156fdc"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 5,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 6,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p014-004",
+          "text": "四库之地，吉",
+          "inputDigest": "aeb9da4c1f70821f0dfe4726c74d86dd4f1fd1998b1e4b51e446585d0958c24e"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 5,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 7,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p014-009",
+          "text": "陷地，破耗",
+          "inputDigest": "247b252be3d456a6e309a1d2d3627b818c5f62a184e0f7b7c53f5498903c27f3"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1984,
+          "month": 2,
+          "day": 12
+        },
+        "gender": "female"
+      },
+      "timeIndex": 0,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p014-003",
+          "text": "入庙化吉，闹中进财，白手成家",
+          "inputDigest": "479190bf223ec1cf3a69ba78f05186f6796a96e072ca603d11bb51665c9fb9ff"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,4016 @@
+{
+  "scanned": 57815,
+  "alternatives": 443,
+  "witnesses": [
+    {
+      "birthTime": "1900-01-06T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-301",
+          "text": null,
+          "digest": "502fdebd1469d2df63e8977b3cea456e9a07cd059bd78576a04341a6ed2cf7a7"
+        },
+        {
+          "id": "qtbj-v5-c078-p002-301",
+          "text": null,
+          "digest": "ba6e4ec4ff4b942880bcc587d76e024723461fbb70dd4f370a8c27080c60528f"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-01-07T04:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-301",
+          "text": null,
+          "digest": "c3cb1a79796981499b35e947086608d183c2bf5eea30c0832cb68061fffec421"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-01-07T06:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-301",
+          "text": null,
+          "digest": "3c3cafae7d911fb12880c7d7a1df4e1d782b85aa33fbed0280fcd563cedeb17b"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-01-07T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-301",
+          "text": null,
+          "digest": "c1f7b62dc24fca1a07ca7f6d7c3f3852b0dbd775f3b8ee24a8251c8d51c30e6b"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-01-07T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-301",
+          "text": null,
+          "digest": "ea2b08b9c12b8a4da852c6f0b5d41434a9e7f391145118b2b8e1525d04d4952f"
+        },
+        {
+          "id": "qtbj-v5-c078-p002-301",
+          "text": null,
+          "digest": "5ce42a64f82939ce8cc61a25740d3883b1baeb80f9f3380185cbe208f487a7cd"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-01-13T00:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c029-p001-101",
+          "text": "甲藏则秀才而已",
+          "digest": "413bf6a4abea6a8a8464e58466e75eff9c4e05df3e2ac2f4375ff30161f4103e"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-01-14T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c055-p001-101",
+          "text": "有甲无丙者，清贫",
+          "digest": "62d207dcd6992dcf203567f42632b7c05ac7a56aa993a0e4639690a97629941c"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-01-15T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c055-p001-101",
+          "text": "有甲无丙者，清贫",
+          "digest": "8fdde85d769e580aceb63c38b5945d32fcaf629e26a04240cef1bdaf59c56654"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-02-08T04:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "有庚丙戊三者齐透，科甲功名",
+          "digest": "494b686cc27b397d93069d7b51ca295856caa63c3eeab257d33a277dbf395c18"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-02-09T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c004-p001-001",
+          "text": "癸藏丙透，名寒木向阳，主大富贵。",
+          "digest": "b02f1895b52f63f420dbafeb5fa8980e2ce39688a41bd779c19af3989c24913d"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-02-19T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c004-p001-001",
+          "text": "癸藏丙透，名寒木向阳，主大富贵。",
+          "digest": "27ea37b1dcde9070ef67aa5357ae95019035689a737202c6d07a95a5a1db162f"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-03-09T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c097-p002-101",
+          "text": "或戊辛不透，有庚出干者，主富。",
+          "digest": "bce4e60ac9528cf6cc02309aad602ae1e49051b7a66f67e4caa75f8da7c6f47e"
+        },
+        {
+          "id": "qtbj-v6-c097-p002-101",
+          "text": "或戊辛不透，有庚出干者，主富。",
+          "digest": "60387859df1584439af278f3fb2cd56ff08d3ddb548598ed9671505d9f1a450d"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-04-12T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c019-p001-101",
+          "text": "有甲无壬，劳碌浊富",
+          "digest": "1d3693fee9d89509d3166af7b56f000f4f3458806e589ac458057009f1028637"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-04-13T04:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c019-p001-101",
+          "text": "有甲无壬，劳碌浊富",
+          "digest": "0822420bfdbc4f3dd79715dbb7bb0f38cd0d92fc30f3fdd65623c29f0c678f12"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-04-13T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c019-p001-101",
+          "text": "壬藏无甲，一介寒儒。",
+          "digest": "30a841bbf6ba33e0f161b2cc7c23d7e4cde4386d555e1e91e7de9683ecd314d4"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-04-22T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c019-p001-101",
+          "text": "有甲无壬，劳碌浊富",
+          "digest": "ab52c118744edde22561105385c5a6b1514c2c3585e901ca52d0c1d116289646"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-04-23T00:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c019-p001-101",
+          "text": "壬透甲藏，富大贵小",
+          "digest": "fb6e7b569274619b329b25024de7ae765f5cabfab381d3a861c76a7879de56de"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-05-08T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c082-p003-401",
+          "text": "若壬水藏亥，戊不出干，亦主上达",
+          "digest": "a8394037e7d4818d2dfbbb09c33d45b7e5469f20b87c05d484dca71ae107d437"
+        },
+        {
+          "id": "qtbj-v5-c082-p003-401",
+          "text": "若壬水藏亥，戊不出干，亦主上达",
+          "digest": "4ea07eac9309480d5d6c03f6a05b26e7b10e18532b1baf2f7641e7dda55bd144"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-05-10T22:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c005-p004-002",
+          "text": "癸水不出，虽有庚金丁火，不过富中取贵异途官职而已。",
+          "digest": "b94be2b4a776ae401cd1a3c28a6de295e117bde53577d7e14093575a25615da1"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-05-13T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c021-p002-101",
+          "text": "或无壬水，癸亦姑用，见庚透癸，不富必贵。",
+          "digest": "d946be0885d3bedf3f55f33675fa84bc5522d4b434d18da24e951835ec89ebf5"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-07-14T00:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c050-p002-101",
+          "text": "癸丙两透，科甲中人",
+          "digest": "cb0b7bd9a804654db01aec9d11459c3d38e9522d0e0bfa3014dd223318eb9797"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-08-08T22:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c006-p001-001",
+          "text": null,
+          "digest": "971e4bde2544d10c18bb1c22546228534752c6c215e84b77b80272bce3ec4300"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-08-10T06:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c013-p003-301",
+          "text": "无丙、有癸透者，不失刀笔门户。",
+          "digest": "f8a98ce8fdee00fdb99ee44bbd181b4a5f6dbb1dfcbddf9bb626275298c3fe4a"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-08-12T04:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c036-p002-101",
+          "text": "或见甲庚丙皆透，必主科甲",
+          "digest": "eb9883a60d16bb0a9b03ef44f2d56081bb08fda6d25b4c4727e874ca20deba9f"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-08-14T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c073-p001-101",
+          "text": "有甲无丁是平人",
+          "digest": "89d40f70c5aa7647e909790fd2900f9ba13f275ea1b1d642e2c20109ba580d62"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-08-14T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c073-p001-101",
+          "text": "如得丁甲两透，定步青云",
+          "digest": "e24cf95aaaa2dd4bbc6cbfc29e2179bf990e45ca160378c4fc968cbdd07625fa"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-08-14T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c073-p001-101",
+          "text": "有甲无丁是平人",
+          "digest": "92fc8b3d770151932b6d29e8a134fd42ae593139732b063ec6fd0ae47f8855c0"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-08-15T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c073-p001-101",
+          "text": "有甲无丁是平人",
+          "digest": "a538db8f501e63d465de6508c9dd7cfe33f52f0925a7f652db785dd49caea25e"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-09-13T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c060-p006-401",
+          "text": "八月支成金局，无丙丁出救，此人零丁孤苦",
+          "digest": "98e87236d54c912be9bb442e208cad9daa627d57667744f49c713077f97f14ef"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-09-17T22:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c007-p002-001",
+          "text": "一丁一庚，科甲定显。",
+          "digest": "59acdc54b7b36a7862f239f15b17d2054cce08a361aaa1badc3e17f36f15fdca"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-10-10T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c026-p002-102",
+          "text": null,
+          "digest": "d0ec532c086529b5353bb828bdb7bef37651ddf119b56b9245828a2d2b080cf1"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-12-09T00:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c028-p002-101",
+          "text": "壬戊两透，科甲可许",
+          "digest": "480b40906a455dd54af09a40b353578f4c03808331dd91a5a89fbdbf11713ce6"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-12-11T00:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c055-p001-101",
+          "text": "有丙无甲者，豪富",
+          "digest": "1357c0a6136c769efb7dcc1dd8853350b6bd4aabbbac5a79292cc1d458fbff70"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-12-11T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c055-p001-101",
+          "text": "有丙无甲者，豪富",
+          "digest": "fa50497b89e98e4e513012357339cab431089160ec2663205736c37c84ac6767"
+        }
+      ]
+    },
+    {
+      "birthTime": "1900-12-11T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c055-p001-101",
+          "text": "有甲无丙者，清贫",
+          "digest": "840326256c2409e4dd02fcea1296733d9d77168d6449df68ae42a267c261da42"
+        }
+      ]
+    },
+    {
+      "birthTime": "1901-01-08T00:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c029-p001-101",
+          "text": "或无甲得一壬透，富中取贵。",
+          "digest": "c89c044df1170bf413516437d1813f01b83d669bc72b99d9a386b3612b5767e1"
+        }
+      ]
+    },
+    {
+      "birthTime": "1901-01-10T00:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c055-p001-101",
+          "text": "有丙无甲者，豪富",
+          "digest": "359a45de1ff1f506b9a5ec63833f95eb1fcc3d6b6f58c22f77dbc46fba71a3d4"
+        }
+      ]
+    },
+    {
+      "birthTime": "1901-01-10T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c055-p001-101",
+          "text": "有丙无甲者，豪富",
+          "digest": "2d5428a7fde1483958d561cbec50ad60bf00b21004f7a3739a0826da80ff6d18"
+        }
+      ]
+    },
+    {
+      "birthTime": "1901-01-22T12:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-101",
+          "text": "有丙丁无甲者，白手成家，刀笔亨通",
+          "digest": "07511f9609d506a6f27b89aff5eae3b7ee35117df467f94c9d712ee4cf1e1957"
+        }
+      ]
+    },
+    {
+      "birthTime": "1901-01-31T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-101",
+          "text": "有丙丁无甲者，白手成家，刀笔亨通",
+          "digest": "748845f422b65ae5ca6a4635e9d1d5fc7c45c126846f63ed6f1f835f0ec8e28f"
+        }
+      ]
+    },
+    {
+      "birthTime": "1901-02-01T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-101",
+          "text": "有丙丁无甲者，白手成家，刀笔亨通",
+          "digest": "f9f0d7d9714016f6daa2420817dd018e27bb8328258a4c00323add2011d94963"
+        }
+      ]
+    },
+    {
+      "birthTime": "1901-02-01T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-301",
+          "text": null,
+          "digest": "495ca491554a132116ca759689af8fda5a722ecc7e7978d2415b7e6d95ce4fc7"
+        }
+      ]
+    },
+    {
+      "birthTime": "1901-02-01T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-301",
+          "text": null,
+          "digest": "3c08c909255435797f2177590c4137c3b7ee5ee54b7b3abc5b0d83ed0ba8df0a"
+        }
+      ]
+    },
+    {
+      "birthTime": "1901-02-04T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c004-p001-001",
+          "text": "癸藏丙透，名寒木向阳，主大富贵。",
+          "digest": "b4008f37e8702dc84f13d312493333118fbc2605e9ff85f9549cfee269e8a0ca"
+        }
+      ]
+    },
+    {
+      "birthTime": "1901-02-12T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "即一庚透，贡监有之。",
+          "digest": "d690e6fd5748312a70be97e927b9441bc9e9f24c73afd67ac2f8663c6ad7affe"
+        }
+      ]
+    },
+    {
+      "birthTime": "1901-03-15T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c097-p002-101",
+          "text": "戊辛两透，雁塔题名",
+          "digest": "42ab3ed3c5391be13a49a22c599e4c40531e874f1d893af20867afb9d37b67e2"
+        },
+        {
+          "id": "qtbj-v6-c097-p002-101",
+          "text": "戊辛两透，雁塔题名",
+          "digest": "724880dadbcf904bb2aedd5b9de9c33258ded5fce9cee688d90a6059b6ddb240"
+        }
+      ]
+    },
+    {
+      "birthTime": "1901-04-03T06:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c080-p004-101",
+          "text": "无庚平人。",
+          "digest": "b84d30223735f3af3e675bfe5139426368c5c8b703bf73e384491c0d66a782b2"
+        }
+      ]
+    },
+    {
+      "birthTime": "1901-04-07T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c019-p001-101",
+          "text": "壬透甲藏，富大贵小",
+          "digest": "90b2d4d82b1ccfdc6a5bab85b8d121fa1bbc3a6ab44915927316c04ee7f468c7"
+        }
+      ]
+    },
+    {
+      "birthTime": "1901-04-08T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c019-p001-101",
+          "text": "壬透甲藏，富大贵小",
+          "digest": "7857ad782ae983b0ee35769cd4394089a15e04006e408c3e911d2668fe77abf7"
+        }
+      ]
+    },
+    {
+      "birthTime": "1901-04-17T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c019-p001-101",
+          "text": "壬透甲藏，富大贵小",
+          "digest": "f1f41816d6a3423e860748e88837f5226e05b464d75e792dadc7153b8acf1044"
+        }
+      ]
+    },
+    {
+      "birthTime": "1901-05-07T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c021-p002-101",
+          "text": "或无壬水，癸亦姑用，见庚透癸，不富必贵。",
+          "digest": "2f584d7542e8ef13369bcb775caea5b3cc60dd9679dc8d4bbfadc09a0c767db2"
+        }
+      ]
+    },
+    {
+      "birthTime": "1901-06-01T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c082-p003-401",
+          "text": "若壬水藏亥，戊不出干，亦主上达",
+          "digest": "878be82600b78b1d5d79313afac50e17b350cc066a3b4f5aeb7e073efa656926"
+        }
+      ]
+    },
+    {
+      "birthTime": "1901-06-02T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c082-p003-401",
+          "text": "若壬水藏亥，戊不出干，亦主上达",
+          "digest": "db8e698cd3b100de94797d871e9978a7b7c93b0b888e460389dd1aff71c80432"
+        }
+      ]
+    },
+    {
+      "birthTime": "1901-08-09T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c073-p001-101",
+          "text": "若有丁无甲为俊秀",
+          "digest": "b310ce21651ecb455e00cc4126fff7b121dc4134cad88a9184bbf24ddaaefffd"
+        }
+      ]
+    },
+    {
+      "birthTime": "1901-08-10T04:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c073-p001-101",
+          "text": "若有丁无甲为俊秀",
+          "digest": "12d99bb77b78637a04953c4d31a645feade5f13fd168ed03f688315cd00b4011"
+        }
+      ]
+    },
+    {
+      "birthTime": "1901-08-10T06:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c073-p001-101",
+          "text": "若有丁无甲为俊秀",
+          "digest": "5e1d974ed721f1e95a4c4d0a8729daa3403821d0034e5139c22c9de558a95d52"
+        }
+      ]
+    },
+    {
+      "birthTime": "1901-08-10T12:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c073-p001-101",
+          "text": "若有丁无甲为俊秀",
+          "digest": "8591ad026ee57f4ee601e989adaa5ab5e408c34aaa96fd04246841bfe4a72df9"
+        }
+      ]
+    },
+    {
+      "birthTime": "1901-08-19T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c073-p001-101",
+          "text": "若有丁无甲为俊秀",
+          "digest": "b241cc2bd8165aa122035da836b240243f4a7662942204521af02e4a09a6f009"
+        }
+      ]
+    },
+    {
+      "birthTime": "1901-09-13T04:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c007-p002-001",
+          "text": "一丁一庚，科甲定显。",
+          "digest": "9c9c3d594a76c431561fdef344ffd907b44dde62686cad8c18c32cc3fa00f9eb"
+        }
+      ]
+    },
+    {
+      "birthTime": "1901-10-16T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c053-p002-401",
+          "text": "或无丙有癸，不见甲透者，衣衿小富",
+          "digest": "f9dcd4d77515fab23e5409da30806a3a9533e85cba7c699d694a88e1bac67c99"
+        },
+        {
+          "id": "qtbj-v4-c053-p002-401",
+          "text": "或无丙有癸，不见甲透者，衣衿小富",
+          "digest": "75c257f01a79b5884b88ac39a1488da98a3e124feff6f071b891117efcb2a7f5"
+        },
+        {
+          "id": "qtbj-v4-c053-p002-401",
+          "text": "或无丙有癸，不见甲透者，衣衿小富",
+          "digest": "ccca257999b4e868f8adf9f6d99aa5e129f6df20d04b7c0821f11694abb0a757"
+        }
+      ]
+    },
+    {
+      "birthTime": "1901-10-16T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c053-p002-401",
+          "text": "或无丙有癸，不见甲透者，衣衿小富",
+          "digest": "1b738273ecf31f9da4194fb56a98723aa36fd91e3dd60d7a3e25d36597d5feb9"
+        },
+        {
+          "id": "qtbj-v4-c053-p002-401",
+          "text": "或无丙有癸，不见甲透者，衣衿小富",
+          "digest": "f63083d9d57e03d782daa3670e6726d67f71db3a98e3332c405a5534ac7329bd"
+        }
+      ]
+    },
+    {
+      "birthTime": "1901-11-05T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c053-p002-401",
+          "text": "或无丙有癸，不见甲透者，衣衿小富",
+          "digest": "b9a8fe03eba7f294b8004b422b7ea1b3c9143825a6972e50afa83d35d790f656"
+        }
+      ]
+    },
+    {
+      "birthTime": "1902-02-07T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "即一庚透，贡监有之。",
+          "digest": "e587cc94fa3ee150d3818949f61c29ba9a546ccc2b22fedc0d19191a60f29419"
+        }
+      ]
+    },
+    {
+      "birthTime": "1902-02-20T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c010-p001-301",
+          "text": "或有丙无癸门户阐扬。",
+          "digest": "06694a10f8c17592eb9290130ac9daa209bdaa939fbac8ba7e05ca8c12270fb7"
+        },
+        {
+          "id": "qtbj-v2-c010-p001-301",
+          "text": "或有丙无癸门户阐扬。",
+          "digest": "2d20c508c033a856c3a5206c8cd70c43026e74a32f1057847be35a7ccbb45f36"
+        },
+        {
+          "id": "qtbj-v2-c010-p001-301",
+          "text": "或有丙无癸门户阐扬。",
+          "digest": "166d2563c6621da459f8d2135c1769a81554cb7b2fc7dd570d34e581035b8161"
+        }
+      ]
+    },
+    {
+      "birthTime": "1902-02-21T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c010-p001-301",
+          "text": "或有丙无癸门户阐扬。",
+          "digest": "28706b66aa1b240794f8cf5a1239a878f2b39cfdb6bd7e9c1fab4c58cbdd8ff3"
+        }
+      ]
+    },
+    {
+      "birthTime": "1902-02-21T12:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c010-p001-301",
+          "text": "或有丙无癸门户阐扬。",
+          "digest": "09a298660f876ccc1f4f13c1779d45f4cc27c08383ed76417930022cdceb3e63"
+        }
+      ]
+    },
+    {
+      "birthTime": "1902-05-15T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "3e10b007ff7abc016686786e4dd32c63c879537388960eb141cef561c5356a6f"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "3c51c23ceba0b1fa5a5a964aed92a25201f97a8cd2b6ff74a81b4dcb7d3714c7"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "7f044664206f98c2fb129c441af68e11e7d0b7808801171587efd400896da858"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "53b26ca78386227e3ac1c3216d4f28378a2bc4d4165cdcf481efb6ae0997ef35"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "8aa72ac77c04937b520b09b9b34608ad3c210921b7bbd865043ca573ae99dddb"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "7cf011343ec9e6ae2a85502112214ae477f7d674ed4d0a7ff6510d9bc3d762d6"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "983315c2eea32db108f55af55e3b8a122154338a1f54d70bb3e7a2b52670cee4"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "238d6fd355f398a8b8469965dd154268af1f09724f662b429b641ef57521ccd7"
+        }
+      ]
+    },
+    {
+      "birthTime": "1902-05-16T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "910880bc39e652571f57bdc445f8682a14f0c3cc4e66062790a270447d5d909d"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "3b5701ca501c1c34daa9add914bad2eb15922b86f8578ad0bf7fde22e69b3534"
+        }
+      ]
+    },
+    {
+      "birthTime": "1902-05-16T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "d062014d05b3ba9a2a07f46a55754f43774e496740f90dd367b6c4a23e72590b"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "e06ca8603df90e64d41f7362b3e56bf2c50cd3de07defe1d682cfc50426e8633"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "13fbb4f94c92a9d4ad23529d81c9df26105ff2cd39012601f9919fe23c9572a5"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "a4cda209621910dd9e81cc9b4a8afa24f55236d0c6bff1d21b8dd384b3ec6d95"
+        }
+      ]
+    },
+    {
+      "birthTime": "1902-05-16T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "92abb814f7aa094f7fc0c132c9768b7bb1ceddf8e37b86cf2c557099fc0ec6ea"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "5b22487d6b8c35c51a2e9b8949a823c5cb7f5311be5c17aa376f0812c75e8b47"
+        }
+      ]
+    },
+    {
+      "birthTime": "1902-06-14T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "ec5b6266612475e8e9ce2348b78c6d6bbd00204ebcafc28a3228024d9f885d06"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "22b9f2286b82719aef360d836a97afa62be173733a724c8b38109159bcc18335"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "36f6437425393c2703bdc0eb0df45148d966dfae8b6dea644e4f7fdeefb7d415"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "438c4bb8e70d294e3bad3bad9dc37aa13f8b03cbd8f3e3a86ab2e18f05cf13c9"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "3459bdd9083302eaedf5f8b7ed092457fcbd84c8aba69feb927e66a128463391"
+        }
+      ]
+    },
+    {
+      "birthTime": "1902-06-15T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "c6e5e7ce866ba0c9c50eb7729726d0f71aafd33882e2c00b39973dcc0afc9801"
+        }
+      ]
+    },
+    {
+      "birthTime": "1902-06-15T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "7b73cfda5d86378ff652fe3910049680ea01e478b50e79ab52cd4a33bc3930c2"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "c7d5f4891e591d3a48752c536e98e8dc58f87cabed791edc17b74812f148b9b6"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "4fd16ffc2291033f887348fbfa4f035164edd7518b508d349bad553d8a1f0cf0"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "31417a589f8387557ff25a557f600a430c3dac00b8a65605bb99d4ccf30c8e23"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "88f4335dc8cc8542bada082d87cc0d7644e7d116731964490fcf92d256d00af0"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "65142ac428a49c1689a193bc6528142615c59d10a0c70bb3d5b548a39e08d321"
+        }
+      ]
+    },
+    {
+      "birthTime": "1902-06-15T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "e524bc2ceb56b74599a3f5f554856fe6577cdaf17f5c909cac0db4c539537a2e"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "da7d3beefbbaa0a0d74303318f727ef88f10a6f0d301b0c5d1d3ebeea467a96b"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "f5db6e9eb57cfcbfe21acefa9080287a8d9dcb0243ebc1a4c078b12cbbbc77e6"
+        }
+      ]
+    },
+    {
+      "birthTime": "1902-07-14T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "cf89a40b9bccbcafda8996f90667eb3831f496aeb3059b5b157130d35aaa2ba0"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "623dc0666b34f43dfedecfc0e0b102787524ecfefbec8e4eb298696b32082c2e"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "d58c25c042aaca12cab047d0dfec1e9b835fa5db6762b8c3c0dbd48b718a433d"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "337540a5c83ce1262dab79c8e95f8bd61648f229c3315e65033ab7d324a7bca4"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "afc888efa67855310699560ec624b250cd5b850b509a9ae4649f5e239b79133f"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "d9b7862aa7bd47722c9918cd3ab77497e913c421c4092489dc64168c1c7b6b88"
+        }
+      ]
+    },
+    {
+      "birthTime": "1902-07-15T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "c312e112072b74a64c1ab1b5a6441b5defc47c3e8e41b259c909d122268f96a8"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "4e9613d1bd356254282bf5bff9efd409401e1befe1c16113fb1e021c9efac393"
+        }
+      ]
+    },
+    {
+      "birthTime": "1902-07-15T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "db79a505d28fb9f0549e0c44fa8bf4faab1e6f7e256b1d0a41ac2d5b34a74acb"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "041faa3a7a0a6d880fc36612def5257795d08fc916933251a8866f42a2dcae9c"
+        }
+      ]
+    },
+    {
+      "birthTime": "1902-07-15T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "ba07e9b246b7b845e8eac3287a2fa4cab823c64302012be0f5dac21e22c259bc"
+        }
+      ]
+    },
+    {
+      "birthTime": "1902-08-24T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c073-p001-101",
+          "text": "有甲无丁是平人",
+          "digest": "c3c64a88f6a423b5481ac538d85f1e196c1fcf202576c422bdf702b69b78fb81"
+        }
+      ]
+    },
+    {
+      "birthTime": "1902-09-03T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c073-p001-101",
+          "text": "有甲无丁是平人",
+          "digest": "7361605d21cfd5c565b914bd52fcc2c98a792fff257bb8c00471c0161906f52a"
+        }
+      ]
+    },
+    {
+      "birthTime": "1902-11-10T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c054-p004-401",
+          "text": null,
+          "digest": "f7a35be91f2f8feb085dea6a709dd60c0a1ac6416bb4cdb410d1afa4e5686938"
+        }
+      ]
+    },
+    {
+      "birthTime": "1902-11-11T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c054-p004-401",
+          "text": null,
+          "digest": "c5cd9d55e9e56ba812f896954685be425231e1cc13064d095b79768fcd7a52dc"
+        }
+      ]
+    },
+    {
+      "birthTime": "1902-12-08T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c028-p002-101",
+          "text": "壬戊两透，科甲可许",
+          "digest": "7814472b119753003b2b582f17973ba993d824e7e678413d74a718e245b2b0a8"
+        },
+        {
+          "id": "qtbj-v3-c028-p002-101",
+          "text": "壬戊两透，科甲可许",
+          "digest": "3b5f8f4e3e69e3220535b898c3f8afa2eeabb17d208023f708801fd32975a24e"
+        }
+      ]
+    },
+    {
+      "birthTime": "1903-01-07T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c029-p001-101",
+          "text": "甲藏则秀才而已",
+          "digest": "f984a73cdaf8d7fdf54f20cd5a28addff43621e2b69c159231bbfa84cb5d3910"
+        }
+      ]
+    },
+    {
+      "birthTime": "1903-01-07T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c029-p001-101",
+          "text": "甲藏则秀才而已",
+          "digest": "427b6123d9200d07c632e6cd0b1204e0508d857814e53b06efaf7d19a33e130b"
+        }
+      ]
+    },
+    {
+      "birthTime": "1903-01-08T00:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c029-p001-101",
+          "text": "甲藏则秀才而已",
+          "digest": "b84351c075f8cdb8c6a2391699b13ead73e18720e99816486dc0744b603d7aa0"
+        }
+      ]
+    },
+    {
+      "birthTime": "1903-01-08T04:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c029-p001-101",
+          "text": "壬甲两透，科甲堪宜",
+          "digest": "534a06634e432998c61d4c1c3ed305afaffa18c7d441a65e402c8ec43f8c12c2"
+        }
+      ]
+    },
+    {
+      "birthTime": "1903-01-08T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c029-p001-101",
+          "text": "甲藏则秀才而已",
+          "digest": "5d7b74ce2b0c1b956f77a7d145c9d9017f737e3be4f371f8c461ebe41e931d58"
+        }
+      ]
+    },
+    {
+      "birthTime": "1903-01-09T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c055-p005-101",
+          "text": "或二癸透月时，名为争合，终属劳碌之人",
+          "digest": "b63c3b6d238b7b08eb4fe6298bdddacf5896cf7e7eb27d111a7c3cbdeeea9e4b"
+        }
+      ]
+    },
+    {
+      "birthTime": "1903-02-05T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c010-p001-301",
+          "text": "丙癸两透，科甲定然",
+          "digest": "eab4a0b9b85295384c51ca7436b771a4ad5de8d54036d3dcb270efe0581f1913"
+        }
+      ]
+    },
+    {
+      "birthTime": "1903-03-24T06:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c080-p004-101",
+          "text": "无庚平人。",
+          "digest": "b4aac3dcedb6b337c22fe32dd53f6caf8cd6788f7693d6f09b5db3e48d8f6f09"
+        }
+      ]
+    },
+    {
+      "birthTime": "1903-04-04T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c097-p002-101",
+          "text": "戊透辛藏，亦有恩诰",
+          "digest": "ad356f6d16fd710cb3e584d916f1aaf3058551b5575ea67fef34f1c62b6b8b15"
+        }
+      ]
+    },
+    {
+      "birthTime": "1903-04-25T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c004-p010-001",
+          "text": "若有壬癸破火，堪作秀才。",
+          "digest": "ba6fe3d040155159795874f94b1910c4148d60926046f7629320f6a40f92f8a9"
+        }
+      ]
+    },
+    {
+      "birthTime": "1903-05-17T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c021-p002-101",
+          "text": "或无壬水，癸亦姑用，见庚透癸，不富必贵。",
+          "digest": "3f92f2021b5a731d3371a087fd5e6697091e947cc4eeb9d098a3d5c67ced2277"
+        }
+      ]
+    },
+    {
+      "birthTime": "1903-07-09T00:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c050-p002-101",
+          "text": "癸丙两透，科甲中人",
+          "digest": "bfc3c4b228bb8b5a061a4591009f9b869423417c33eb03f2e2e742fd9edeb9f6"
+        }
+      ]
+    },
+    {
+      "birthTime": "1903-08-13T22:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c006-p001-001",
+          "text": null,
+          "digest": "6472c9919a4efe3c494616c586d0a91e5fc74ad26333a16c47b2f44dbfb0aaa4"
+        }
+      ]
+    },
+    {
+      "birthTime": "1903-08-14T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c013-p003-301",
+          "text": "无丙、有癸透者，不失刀笔门户。",
+          "digest": "bd06fc987f6ea8fe64df64f99cac95bea22de939c64319d8f4fdd3ee73ffdb26"
+        }
+      ]
+    },
+    {
+      "birthTime": "1903-10-07T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c060-p006-401",
+          "text": "八月支成金局，无丙丁出救，此人零丁孤苦",
+          "digest": "4ace8821a49d7e35dd66eddf8cbc444acd2acf96d0f5c9ee503f5621d043cc03"
+        }
+      ]
+    },
+    {
+      "birthTime": "1903-10-26T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c053-p002-401",
+          "text": "或无丙有癸，不见甲透者，衣衿小富",
+          "digest": "95d17ea08be1abb10c4f8a3efd72bd180a7af51d8db514055f2754d160c617e7"
+        }
+      ]
+    },
+    {
+      "birthTime": "1903-12-17T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c077-p001-101",
+          "text": "即无丙火，亦有衣衿",
+          "digest": "a3e2ae6b487273d010b55068cc0888d5eb8764c0b1eb0ac3e3cbfa1e73e79bd4"
+        }
+      ]
+    },
+    {
+      "birthTime": "1903-12-25T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c055-p001-101",
+          "text": "有甲无丙者，清贫",
+          "digest": "c5861f3a84fea12025c433a9abd2f526197a156a4d2714cf0451637ab5637788"
+        }
+      ]
+    },
+    {
+      "birthTime": "1903-12-27T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c077-p001-101",
+          "text": "或丁甲两透，丙在支中，必主科甲",
+          "digest": "e74c7813e299306ec1994192d1b42eb3301d30526536b63c1a9c08b6b37ed3e7"
+        }
+      ]
+    },
+    {
+      "birthTime": "1904-02-02T00:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c029-p001-101",
+          "text": "甲藏则秀才而已",
+          "digest": "eb4ccffc4b70b69fc8b6baf3eded2d00b8e144e2b01ccf2ba561808d477871de"
+        }
+      ]
+    },
+    {
+      "birthTime": "1904-02-07T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "或庚戊藏支，丙坐寅支者，亦有恩诰",
+          "digest": "a09d46785f2ad9eb00aebf44e27a2cbadf270a24f9584e6a18e580655133a3cb"
+        },
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "或庚戊藏支，丙坐寅支者，亦有恩诰",
+          "digest": "ec1971a41861b413822b1a769eb31926b3f8c6599baa81cb705ce21a2c682723"
+        }
+      ]
+    },
+    {
+      "birthTime": "1904-02-07T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "或庚戊藏支，丙坐寅支者，亦有恩诰",
+          "digest": "e474441a67cdc6177376a08a740e9f313c58e3659ecce8d5d07fd901d85a096f"
+        }
+      ]
+    },
+    {
+      "birthTime": "1904-02-08T00:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "或庚戊藏支，丙坐寅支者，亦有恩诰",
+          "digest": "ccbad717f0d82d4638dcae801d78cf7e9c1222c9f9e0b3c26a0e9dbc955c9dbc"
+        }
+      ]
+    },
+    {
+      "birthTime": "1904-02-08T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "或庚戊藏支，丙坐寅支者，亦有恩诰",
+          "digest": "7cadd40184fac05657bb9e0cc8cdcca6990cb0d36b34dcf3d18773147f708da1"
+        },
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "或庚戊藏支，丙坐寅支者，亦有恩诰",
+          "digest": "e8fd51517480b543d993646c5ed014d0e6d02496f9649c702afe98553bf96632"
+        },
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "或庚戊藏支，丙坐寅支者，亦有恩诰",
+          "digest": "5094ed37aa6b56099cfd861a18639afcb9c0d802c042382da2bdf83beabfe8e3"
+        }
+      ]
+    },
+    {
+      "birthTime": "1904-02-09T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c004-p001-001",
+          "text": "癸藏丙透，名寒木向阳，主大富贵。",
+          "digest": "283bcc3e0623f0fef955e9b5d685532b124426be2c7c6e713e706ac019770a0a"
+        },
+        {
+          "id": "qtbj-v2-c004-p001-001",
+          "text": "癸藏丙透，名寒木向阳，主大富贵。",
+          "digest": "65ac881a78258a107430338f874efd5bd11e1cc5fe11981e3988f7a632ec5387"
+        }
+      ]
+    },
+    {
+      "birthTime": "1904-02-09T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c004-p001-001",
+          "text": "癸藏丙透，名寒木向阳，主大富贵。",
+          "digest": "a84bd141d8a781fd1838e0c3737879fab9a5842c8cabf362cd55cbf96309f4b3"
+        }
+      ]
+    },
+    {
+      "birthTime": "1904-02-09T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c004-p001-001",
+          "text": "癸藏丙透，名寒木向阳，主大富贵。",
+          "digest": "6a77c10f18c17f501cb5da12ce29e585fbf94d489ef35208a3bb5c71154b15e6"
+        }
+      ]
+    },
+    {
+      "birthTime": "1904-02-10T00:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c004-p001-001",
+          "text": "癸藏丙透，名寒木向阳，主大富贵。",
+          "digest": "72bcebc2d263036ca579009c18ffa84811e5693100ded66ddcf00b08d5707908"
+        }
+      ]
+    },
+    {
+      "birthTime": "1904-02-11T06:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c010-p001-301",
+          "text": "丙癸两透，科甲定然",
+          "digest": "7bdd65cfddd73a467aa49c2303c12be74f19a5ff2419b06c00e9c28a16c1f95e"
+        }
+      ]
+    },
+    {
+      "birthTime": "1904-02-28T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "或庚戊藏支，丙坐寅支者，亦有恩诰",
+          "digest": "428bf37091a2d3d58b7843594e7a20836e53169763c4bb54ca9ac456f0d840c4"
+        }
+      ]
+    },
+    {
+      "birthTime": "1904-03-07T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c068-p002-101",
+          "text": null,
+          "digest": "3127d47b9654836e0c0e22c522df6ee9a8e610ecb9687ae3b22a36152fca2bd9"
+        }
+      ]
+    },
+    {
+      "birthTime": "1904-03-07T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c068-p002-101",
+          "text": null,
+          "digest": "56be863fcd4f7c6213cd4fb876435635bf65dbd8a46163cd4eb5f1e1bcc33788"
+        },
+        {
+          "id": "qtbj-v5-c068-p002-101",
+          "text": null,
+          "digest": "506ce72a97a60acc3a4559f67d08b595db36fc190e31d17d993916084ee6b29b"
+        }
+      ]
+    },
+    {
+      "birthTime": "1904-03-26T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c068-p002-101",
+          "text": null,
+          "digest": "82af6255ea97ea1c073a6e87c34f334a4cf4ff5bb1bc5adb036d1e3f77495c0f"
+        }
+      ]
+    },
+    {
+      "birthTime": "1904-03-26T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c068-p002-101",
+          "text": null,
+          "digest": "d81979610b29b0ef0fb5813e7a888c6e90d16998eedb0a0ba7d308b7aba334b6"
+        }
+      ]
+    },
+    {
+      "birthTime": "1904-03-27T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c068-p002-101",
+          "text": null,
+          "digest": "0a511c204d12d93ca835eef99aa393e6b69aac41dccf9705f3926a76c292feee"
+        }
+      ]
+    },
+    {
+      "birthTime": "1904-04-11T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c019-p001-101",
+          "text": "有甲无壬，劳碌浊富",
+          "digest": "2a9e880de42753b53368bd84a23e17dbcb7e8c3e1ff499a43cf76d7cd5fab823"
+        }
+      ]
+    },
+    {
+      "birthTime": "1904-07-12T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c050-p002-101",
+          "text": "或有癸无丙，见甲可许秀才",
+          "digest": "35e54b0b57079e1e7821de00fba21b91fd0a82b9b9bf4aadfbac2171f1fb0f1b"
+        }
+      ]
+    },
+    {
+      "birthTime": "1904-08-13T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c073-p001-101",
+          "text": "有甲无丁是平人",
+          "digest": "e7d9b795fab8094a880dd27d24420c06ac5268ead8c18df4a488bfd71c54ca6b"
+        }
+      ]
+    },
+    {
+      "birthTime": "1904-08-13T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c073-p001-101",
+          "text": "如得丁甲两透，定步青云",
+          "digest": "04281b9c61521c97d0f6fc5aaecaacc5e9ca7ec4e01af78175851dc219502709"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-01-07T00:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c029-p001-101",
+          "text": "壬甲两透，科甲堪宜",
+          "digest": "33e8261b65776dc630a281e65604714439b996b5ffb97f4375c57e28535f1ac0"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-01-08T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c055-p001-101",
+          "text": "有甲无丙者，清贫",
+          "digest": "56cbc1ce12e846de0c00a25a26dbe8cb1321eacac8cad20d343b45b06d385373"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-01-10T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-301",
+          "text": null,
+          "digest": "ec5390d130da6b276d6b11e8786b0cb2a79a0640b0ecf1e6873d874e018780f9"
+        },
+        {
+          "id": "qtbj-v5-c078-p002-301",
+          "text": null,
+          "digest": "5c6e9b419c502c233b3c253fc71e7773203c6dedb72445230ceb720a482483c7"
+        },
+        {
+          "id": "qtbj-v5-c078-p002-301",
+          "text": null,
+          "digest": "81ade4f7894fe82f5c2600795b600cfbb8cce91672c0b9890bdf229f379b6d8d"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-01-11T04:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-301",
+          "text": null,
+          "digest": "36dce4a1509797b50abf79e390dbd5c63a9bbde2babf347f2997dd5e88a15bd6"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-01-11T06:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-301",
+          "text": null,
+          "digest": "5d96bca1ed7273f3da5e447a0f26af618e07b8be2725a681ac80894e62292ea0"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-01-30T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-301",
+          "text": null,
+          "digest": "3ee07c94681a594ffe3a935225e241e53eebdc40db3525815cc44102f745a31a"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-01-31T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-301",
+          "text": null,
+          "digest": "a10e90a5ccde8213bdd3ce46095dd832e68dc4a729e86f5d213a6b6dd4673809"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-01-31T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-301",
+          "text": null,
+          "digest": "a5faf2b89094171de05e13c5af169dca25f7ec0bdab85bbdc9f4b8b611e12ad1"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-02-04T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c010-p001-301",
+          "text": "或有丙无癸门户阐扬。",
+          "digest": "ee23444c2fcc204c083fcd313d4c9d450c91f9e71fa0374abfde9989c3b2af1e"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-03-05T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c004-p001-001",
+          "text": "癸藏丙透，名寒木向阳，主大富贵。",
+          "digest": "b8a600bdd52afc6ac758a3ab7a3bb39c4c2c0dc5cf082c6418028bc5ba5926a6"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-03-09T22:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c046-p001-101",
+          "text": null,
+          "digest": "815a55a663d4aed79a320626d5ba8fbc7555055b3fa61b5665de225a8f977ba3"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-03-10T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c046-p001-101",
+          "text": null,
+          "digest": "7f317416f7ae8f2405620a6d1cca54a42e322b45ca519e74d089d40a84ed957a"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-03-13T06:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c080-p004-101",
+          "text": "有庚富贵",
+          "digest": "27a719b1b45aa5764d7ba1dab2d7a919fda5b69c5e5ecfa046b8d1df86ac43d2"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-04-02T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c080-p004-101",
+          "text": "有庚富贵",
+          "digest": "fa71a68dff238af993533582eaa104598b57f2924bb8364019039e20a125f468"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-04-26T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c019-p001-101",
+          "text": "壬藏无甲，一介寒儒。",
+          "digest": "24c0dbf1141524b33e9be7d82b21db1253cf547c47f933fa943863a40c606ba8"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-05-10T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "6cf018e3a71fd3d56273da208a1406952a3e34d15321db2aea3c09023db45f35"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "428895fddb8b33b07d83fb13729b66ff1c758397d6a268ce54329c1481b739b1"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-05-10T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "65877e5f7e85dc4639047b5602f0568b04c7db6b536a9afd65150c5116c71165"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-05-11T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c082-p003-401",
+          "text": "若壬水藏亥，戊不出干，亦主上达",
+          "digest": "3c063d1f66b36e8b0885d583a83a106154832f463e1e1bb4da93b35fcff352c5"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-05-12T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c082-p003-401",
+          "text": "若壬水藏亥，戊不出干，亦主上达",
+          "digest": "e7386af839cf2edf189e43f3932a246ab3bac24cfae62133f3048b4907fd8e41"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-05-30T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "bc9c7bceca37ff55afb5895fb662954496a06a23f3aebac52a9e31f1cd12a153"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "f9ba26d0594924f6b37a8b0d8298166c04c40955d910e6b68ce71a153be85de8"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-05-30T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "10ec5ec37dcf2df6ca24790c7571fc18aee53a343fc55cbf6010154a051d68b8"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-06-08T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "547b7af6a92e804b040987f1dd49b55e588b03b649bd3f020ce0fe51e8ce5b89"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "2b524fa3d8e119e18d1dbb6bc8144c25751bc6f7b0acdac6cafe2a93f15fea93"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "a0794bd4f4449fb6089cb9387a02ef3bdcb102c4d118899ad36d7616388d4a24"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-06-09T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "28a87e34cb1069eb44f548aaca43292f6cd2a1bd5c8ff3a51f546e5d5cad8b80"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-06-09T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "6fb7e0bc284aa0b896a0ea9d441ead5532d1fbbde223c0c94d7bcd70c97e9045"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "aeb1e598e74b42b19959b9dc10de2eed9cc5c90e8280ea433a49af961dc24238"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-06-09T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "4dbd0498dc6720707a2894214e1487214ac496d7f048348a41464a37adefeba3"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-06-28T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "2872e8fb8fb9772550175f6a8c8c8d28c63c2cf5bdf8ad45876e8f58695ed182"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "1087e09cbe943d443cdcc4d1cb8d1f931333cbdd767a69c3948fff9c97d29281"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "dd4450404af3300e4ea2e8a82e3d386131c36e6a63d625f0e91fada88d3a35b2"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-06-29T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "8582425bb7864a424e71a87201c7e488eaccb62726908a26feaaeeff64327fec"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-09-16T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c060-p006-401",
+          "text": "八月支成金局，无丙丁出救，此人零丁孤苦",
+          "digest": "b904b2e3c47e8550b8739c32be3c90924a4e948736553c34839c87e4efc90ac6"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-10-25T22:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c053-p002-401",
+          "text": "若癸甲全无，虽有丙火，亦属平常，或为僧道。",
+          "digest": "4f84f1917c4919da610830d281f05f597becbfe26394bc63417cc94c291134d3"
+        },
+        {
+          "id": "qtbj-v4-c053-p002-401",
+          "text": "若癸甲全无，虽有丙火，亦属平常，或为僧道。",
+          "digest": "2fee3b409c8308d576a552963d3d1d6baa6f7609f3f1c5d7a65e4721401d2328"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-10-26T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c053-p002-401",
+          "text": "若癸甲全无，虽有丙火，亦属平常，或为僧道。",
+          "digest": "255e432950664ba01411cd796a88cc96b4a38326c3bac42e7234eff67cd0f541"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-12-14T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c055-p001-101",
+          "text": "有丙无甲者，豪富",
+          "digest": "1ec0b91389a64286985737e2fb3ba4166abce418f386b094dab345cf4f30189e"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-01-13T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c055-p001-101",
+          "text": "有丙无甲者，豪富",
+          "digest": "5898fe0ccc115a6b531df8f1c4017dcb3f8c802f087bb77bb14355570669833e"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-01-15T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-101",
+          "text": "有丙丁无甲者，白手成家，刀笔亨通",
+          "digest": "6baf76a768f06cc7170a7a931c45244c6e51d9ef24b3de0af5dfc8e90a504443"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-01-16T04:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-101",
+          "text": "有丙丁无甲者，白手成家，刀笔亨通",
+          "digest": "8a32184eb56c1012d5d17eb348539bba10fd14fdc13879de8b7eb6ad14ed194d"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-01-16T06:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-101",
+          "text": "有丙丁无甲者，白手成家，刀笔亨通",
+          "digest": "d82c79d28344c66e26964b9a0b8e12eb23ba859fac7a18b87c90db2ad70f17b9"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-01-16T12:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-101",
+          "text": "有丙丁无甲者，白手成家，刀笔亨通",
+          "digest": "cef5eb1d17fabf659c3eb7c97f8461ff910d3ee39fac5e38bbed59d7268ca85c"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-01-25T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-101",
+          "text": "有丙丁无甲者，白手成家，刀笔亨通",
+          "digest": "96743cfb4cf6e9d5c27ebb389b1879751aacfe8b9c7f137fecaddcbe544b24ae"
+        },
+        {
+          "id": "qtbj-v5-c078-p002-101",
+          "text": "有丙丁无甲者，白手成家，刀笔亨通",
+          "digest": "b0fdc7a95a36da808c55e5cdd82b7bd76e90c942ccce640fb051f3e42ecaf12f"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-01-26T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-101",
+          "text": "有丙丁无甲者，白手成家，刀笔亨通",
+          "digest": "70a5c84531d32db853dc29b44ed904967e775d47096e852c03f41f2e81ce1181"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-02-07T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "有庚丙戊三者齐透，科甲功名",
+          "digest": "85748ee9a4396645fa69111cb90015f925011e12f49ee559d0fb826f98bda09e"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-02-08T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c004-p001-001",
+          "text": "癸藏丙透，名寒木向阳，主大富贵。",
+          "digest": "13722faf4a602590956578779911387dd23170e3b620eec39f538fe5f477c289"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-02-08T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c004-p001-001",
+          "text": "癸藏丙透，名寒木向阳，主大富贵。",
+          "digest": "e2300a76617c7848380bd08db7175b2a4ef987b367e43b21f4e7e0a6d7e6b7bc"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-02-09T00:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c004-p001-001",
+          "text": "癸藏丙透，名寒木向阳，主大富贵。",
+          "digest": "3207be67f51afb6f1dda03515014acef86d833f217d21009d202559fbf962736"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-02-09T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c010-p001-301",
+          "text": "或有丙无癸门户阐扬。",
+          "digest": "9a4b22ea4d1c11128893eb9a87da35acc40766308293c6ac635a24636d95a2fc"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-02-10T06:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c010-p001-301",
+          "text": "丙癸两透，科甲定然",
+          "digest": "d70225e04672dacd281be6e2c8cf4ea03ae79b979f55e49dc8a388fdd83c5374"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-02-28T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c004-p001-001",
+          "text": "癸藏丙透，名寒木向阳，主大富贵。",
+          "digest": "c99b034ed3cab1872b8fa0c184345e9dd96d438c21304c40b956b0f81dad9592"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-03-01T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c010-p001-301",
+          "text": "或有丙无癸门户阐扬。",
+          "digest": "62fe4ab2bdd25a1a2ba1ad107501ae06f15f2730b10d019cecf3df44b5e2c84c"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-03-14T22:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c046-p001-101",
+          "text": null,
+          "digest": "0fb8276f68b27aca6304a6908941f64838e9a2e328c5c5861160b7750e816f76"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-03-28T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c080-p004-101",
+          "text": "无庚平人。",
+          "digest": "6beaa7f1fc159cfbb6dedb65c0efc002a8e2df2363f640d38d0d0382a7c35066"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-04-01T22:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c018-p005-301",
+          "text": "或月时见二辛卯，日乃丙子，名为争合，年不透丁制辛",
+          "digest": "65b6fbf94e17dedae8c49ea749236d8784df120dc8b97cf8f171f8724ead5aba"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-04-09T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c004-p010-001",
+          "text": "若有壬癸破火，堪作秀才。",
+          "digest": "a0e368c188c8ea370487230912cdb6b250181c63bc85c33f179753f3f7dec817"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-06-23T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "7a23400b4e9c56933dc76335b2c540fbbf7b7f4a484506206d5d27c0ec7fa75b"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-06-24T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "db73363938fc3036b1345e947fa3312355be63054a2ec8af14171abb10d912cf"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "97a9c36916d9f96de509bb2a85821cbd39a7def28ea4e69211086904053c05d0"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-06-24T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "c7683d3e43e600de803a0fae73e9fac3740b81c9c14f1053531aac258798c847"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-07-12T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c050-p002-101",
+          "text": "癸丙两透，科甲中人",
+          "digest": "6a1bcb437e6a6d8996b2ec5390c95895d8d0609ed4bf87b013614d54d1e7e0f5"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-07-14T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "bd7757f062da45a605f3015f80e2a3a4b84c0b9ab40e8962bb44e86cb49ba580"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "604cfa4175f29c3a15419494ca8fad438664461154c94cc0aa1ce24d000887ed"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-07-14T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "244f1cefedbc3054f726571e6f166c1556aa91040ca09b2bdd6d0131bf1e347e"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-07-24T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "e83fd114bcccf401193298e0574ccd3838bd9665565068781df6d643d76b2714"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "50fdba5d76e8c9bbda1a994f43553980d64a12e7fe7cb2ce2a86e41357ea08e8"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-07-24T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "0bdcb0edc2ebc14fc9ae08a8bf1688bc7f0ae99609d3f5aed533ae49d0344778"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-08-23T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c073-p001-101",
+          "text": "若有丁无甲为俊秀",
+          "digest": "507ebd8a86e06cedea95773aa99a0c0b11c69886b6f6abc451fc164bf7df91bf"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-09-02T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c073-p001-101",
+          "text": "若有丁无甲为俊秀",
+          "digest": "b113f8a2a3b8bf48bb194b7ba9161e77b9699f92856e260c3123906473d5cf56"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-10-20T22:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c053-p002-401",
+          "text": "若癸甲全无，虽有丙火，亦属平常，或为僧道。",
+          "digest": "242b33a5f413dec15068edd91d8837a1f36e4757c149cc8015de8a3bea0c450e"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-12-09T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c055-p001-101",
+          "text": "有丙无甲者，豪富",
+          "digest": "954e4acd236a3ce405de922c57060549993c88be15952d0da9558ce0a70e70dc"
+        }
+      ]
+    },
+    {
+      "birthTime": "1907-01-08T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c055-p001-101",
+          "text": "有丙无甲者，豪富",
+          "digest": "fe43fb0f3ee4c4f4648327c89f61746b355e980d0f49df52a96fab8fc250619c"
+        }
+      ]
+    },
+    {
+      "birthTime": "1907-01-10T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-101",
+          "text": "有丙丁无甲者，白手成家，刀笔亨通",
+          "digest": "f53cda55a903a6bc6b01f581bd1a875b4a3e8dbece9c28020d7ba17ea6881299"
+        },
+        {
+          "id": "qtbj-v5-c078-p002-101",
+          "text": "有丙丁无甲者，白手成家，刀笔亨通",
+          "digest": "09c42563fdd5bc997069d6ec868c8869601f127c271a9ed56a7235bc997d6895"
+        }
+      ]
+    },
+    {
+      "birthTime": "1907-01-10T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-101",
+          "text": "有丙丁无甲者，白手成家，刀笔亨通",
+          "digest": "f27e8fcd561adde5baaaa40bfcf4cb45117bb6f3ba813c656e430073d8598ad3"
+        }
+      ]
+    },
+    {
+      "birthTime": "1907-01-11T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-101",
+          "text": "有丙丁无甲者，白手成家，刀笔亨通",
+          "digest": "874bd4488d8f22a3578f9bf9de2470066f2e10847a144139b5c99a078185d2fc"
+        }
+      ]
+    },
+    {
+      "birthTime": "1907-01-11T04:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-101",
+          "text": "有丙丁无甲者，白手成家，刀笔亨通",
+          "digest": "94edb7357e47a953934a91b4174d037a79aa6fe453c6eb727b0d65c47dfeb104"
+        }
+      ]
+    },
+    {
+      "birthTime": "1907-01-11T06:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-101",
+          "text": "有丙丁无甲者，白手成家，刀笔亨通",
+          "digest": "7a15ba2d5dc36cdf5d5e4ab2d8445fa7b9648c144352f931bc54de823bea9b4c"
+        }
+      ]
+    },
+    {
+      "birthTime": "1907-01-11T12:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-101",
+          "text": "有丙丁无甲者，白手成家，刀笔亨通",
+          "digest": "1b2313e99a8701002653c36ef8041592f418164465559322e49f93cefaaa5d99"
+        }
+      ]
+    },
+    {
+      "birthTime": "1907-01-20T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-101",
+          "text": "有丙丁无甲者，白手成家，刀笔亨通",
+          "digest": "5c6d280f43c0a4adec5d89c3c36f19841aee0d5b876431ff0b2240d18cc56702"
+        }
+      ]
+    },
+    {
+      "birthTime": "1907-03-12T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c068-p002-101",
+          "text": null,
+          "digest": "36bbcb45e3c865ebcf569b8748c12e93e767fd7bcec85ca9a514c1c31538fda7"
+        },
+        {
+          "id": "qtbj-v5-c068-p002-101",
+          "text": null,
+          "digest": "eb72214e8c20f072f714b1b0841f2f1f4732a1a08e48bac0178451772bea9f04"
+        }
+      ]
+    },
+    {
+      "birthTime": "1907-03-13T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c080-p004-101",
+          "text": "无庚平人。",
+          "digest": "33af346c45cd7db19bff90016cdae15d982096855d8e05ee7f934cfadb31935b"
+        }
+      ]
+    },
+    {
+      "birthTime": "1907-04-02T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c080-p004-101",
+          "text": "有庚富贵",
+          "digest": "3524d0d44dac3d7fc1d66b88fcbaa46996813b118255a1b67a039c0c5ab65542"
+        }
+      ]
+    },
+    {
+      "birthTime": "1907-04-06T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c019-p001-101",
+          "text": "有甲无壬，劳碌浊富",
+          "digest": "29e6a34d7cc13325b3c12f8177dd181325540ac1b9212a00cf5fd776776e4e29"
+        }
+      ]
+    },
+    {
+      "birthTime": "1907-05-15T04:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c005-p004-002",
+          "text": "癸水不出，虽有庚金丁火，不过富中取贵异途官职而已。",
+          "digest": "439e819411a33fa9cc84a1b4a66ea5aa91cc26cd04eb2e4ceb3f2ef668e7cee8"
+        }
+      ]
+    },
+    {
+      "birthTime": "1907-06-18T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "22a2b6c4fd993c501a7d22f2797ea078274818d61d2e9a1598e895bef3f900cf"
+        }
+      ]
+    },
+    {
+      "birthTime": "1907-08-09T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c073-p001-101",
+          "text": "如得丁甲两透，定步青云",
+          "digest": "6b6097644393661265a699d135ef65f679c915504dd14c6e9c50a38bdcd6bcdb"
+        }
+      ]
+    },
+    {
+      "birthTime": "1907-08-13T04:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c006-p001-001",
+          "text": null,
+          "digest": "ce71682d55361576374a2eb0f37832cfe9eec86345edc6106fe4718a4b2a6ffb"
+        }
+      ]
+    },
+    {
+      "birthTime": "1907-08-18T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c073-p001-101",
+          "text": "若有丁无甲为俊秀",
+          "digest": "7b89752278805d0d89b7197ec956f370d71f9bd5664888186b4e05e4c1913a3d"
+        },
+        {
+          "id": "qtbj-v5-c073-p001-101",
+          "text": "若有丁无甲为俊秀",
+          "digest": "06e96dc286d47470bc8f876383bce37cca8cc8cb5e5c805e293dc6f7b6cc1d68"
+        }
+      ]
+    },
+    {
+      "birthTime": "1907-09-12T04:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c007-p002-001",
+          "text": "一丁一庚，科甲定显。",
+          "digest": "99b5808639a744787d73130e85a3d98c8d13a2dac8794ed78441a390e9300924"
+        }
+      ]
+    },
+    {
+      "birthTime": "1907-12-17T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c077-p001-101",
+          "text": "即无丙火，亦有衣衿",
+          "digest": "b7a1771f2992e8aef9fff871182b1ae5f1df1cbab18379626ec8e848185ea3fb"
+        }
+      ]
+    },
+    {
+      "birthTime": "1907-12-22T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c028-p002-101",
+          "text": "无戊见己，异路功名。",
+          "digest": "0c5cef72e4d6e6565bcda4fd6187cf81eb17775766a73f83d67e7be24d9dec0e"
+        }
+      ]
+    },
+    {
+      "birthTime": "1908-01-15T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-101",
+          "text": "有丙丁无甲者，白手成家，刀笔亨通",
+          "digest": "7aeeff67c0c2f03df3dade9d55d51af57081ccb50e04e5773484ca0e7a954747"
+        },
+        {
+          "id": "qtbj-v5-c078-p002-101",
+          "text": "有丙丁无甲者，白手成家，刀笔亨通",
+          "digest": "bdda7be160e198788ff98e5edfee5a3ad6fae9a9f5ea4d30a91ca03637392c22"
+        }
+      ]
+    },
+    {
+      "birthTime": "1908-01-16T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-101",
+          "text": "有丙丁无甲者，白手成家，刀笔亨通",
+          "digest": "cd892f11a51326ae4b1bb91217ee51aeb521a7e2fd3c7f29aa69dbe838f13154"
+        },
+        {
+          "id": "qtbj-v5-c078-p002-101",
+          "text": "有丙丁无甲者，白手成家，刀笔亨通",
+          "digest": "bef0afc77ccbff79f9d21b92dbf9307b8e5a2e0fd2264440e60972cdadacc740"
+        }
+      ]
+    },
+    {
+      "birthTime": "1908-01-16T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-301",
+          "text": null,
+          "digest": "19a38dbe71bcb6ebdf25722fc75c237e9c7630bf19ebfc97710284b3a65ae5d9"
+        },
+        {
+          "id": "qtbj-v5-c078-p002-301",
+          "text": null,
+          "digest": "1ace7fe709c6160828a86b6ecb3a71f9fc1c464ec8d7a9c6374123a19a64d232"
+        }
+      ]
+    },
+    {
+      "birthTime": "1908-01-16T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-301",
+          "text": null,
+          "digest": "773f3d97ec6a90c37ccc69c49e154d2a4875b9459a48a48c3f7ce76ac4f27287"
+        },
+        {
+          "id": "qtbj-v5-c078-p002-301",
+          "text": null,
+          "digest": "a39ecea58ec3cd97fc7fa1586284ad26e68d571aa6619b9fe7900fed72a62b25"
+        }
+      ]
+    },
+    {
+      "birthTime": "1908-03-07T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c097-p002-101",
+          "text": "戊透辛藏，亦有恩诰",
+          "digest": "8a5341577b90d363cc82cea3b9d5e927919e4c6389b89eb252159bc0aa091187"
+        }
+      ]
+    },
+    {
+      "birthTime": "1908-03-07T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c097-p002-101",
+          "text": "戊辛两透，雁塔题名",
+          "digest": "159444be0785d417220d16ab7819b7245edf8d5ea95233a9949655b922812523"
+        }
+      ]
+    },
+    {
+      "birthTime": "1908-03-08T10:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c097-p002-101",
+          "text": "戊透辛藏，亦有恩诰",
+          "digest": "2b5c7ef78dcd34fcb7dff90cbbbcebda65ad7b384f45dfc2d656c6ec2c971457"
+        }
+      ]
+    },
+    {
+      "birthTime": "1908-03-08T12:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c097-p002-101",
+          "text": "戊透辛藏，亦有恩诰",
+          "digest": "f6285148ff050154a68198a5341b08642c9617ff4e26d41ce8eb573b60f04f9b"
+        }
+      ]
+    },
+    {
+      "birthTime": "1908-03-17T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c080-p004-101",
+          "text": "有庚富贵",
+          "digest": "76fa57bab3fceacf658a7dd6f6279fda92b96f37aab230bb4e59cad1e8cc2cfa"
+        }
+      ]
+    },
+    {
+      "birthTime": "1908-04-10T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c019-p001-101",
+          "text": "壬藏无甲，一介寒儒。",
+          "digest": "87bf973b48ad6e0fef98c01ff6518431a63fb20e6fca8ed5dda9d59beac7a5ff"
+        }
+      ]
+    },
+    {
+      "birthTime": "1908-05-09T04:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c005-p004-002",
+          "text": "癸水不出，虽有庚金丁火，不过富中取贵异途官职而已。",
+          "digest": "31e517df190204011b8b27080367b435519a872ed328b4100aa5d804b81b56ae"
+        }
+      ]
+    },
+    {
+      "birthTime": "1908-05-13T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "202ea7d936bdf5c34150e3238e4740930039015f1e80719148d7f542399a43c6"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "7455cec23d6a9544cde065736d71fa4231e0ba24d5d16e1579acd0a905474346"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "9009f02575adde1820bab39d38d6f9710abd2ea95b7c7f29a763477acf7ae3a1"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "a033411e3bbaab649f55c9b415ef8cd5efc8b30c54acdd62dba35c6e895b1de3"
+        }
+      ]
+    },
+    {
+      "birthTime": "1908-05-14T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "0b0c99228e195afc733a64b6885b0c4b10406d092fcb234a6608c14cd60a609a"
+        }
+      ]
+    },
+    {
+      "birthTime": "1908-06-12T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "8b03f8106d354ac0114b54b12a36418d6ebbf3514392b4830b66ccd2834a92e1"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "253b3ef8edadc1f195203d36bc04560f48f4e24b850cefe68c5d999210a4dbb2"
+        }
+      ]
+    },
+    {
+      "birthTime": "1908-06-13T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "7230f81ad3995c6479a99ed7f46a1c3ac3e2f30bbb52a928e5900ba16abc13c8"
+        }
+      ]
+    },
+    {
+      "birthTime": "1908-07-12T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "0c3304e8d76e36b3df890bc4ff50c5efb65b1ff6460e43a10740dcccf770340c"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "40f35a8537ae8117e1e6fba78db2dc9af76209f0c933c4011e5617dfeb2faafc"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "784bd645c1b95b0c1fb28e723d02f1c300cfef814b0ede7df3ea0283491eb80d"
+        }
+      ]
+    },
+    {
+      "birthTime": "1908-07-13T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "0ee1227a940a34e2151f26357dec7b46a605fab2f422fc29a5e7bd2c3beb0bc8"
+        }
+      ]
+    },
+    {
+      "birthTime": "1908-11-18T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c054-p004-401",
+          "text": null,
+          "digest": "62f29ab2e8bd5e34b128e5232d488fe180e3ec38e28b502cdc5fa9ad8a56fdc0"
+        }
+      ]
+    },
+    {
+      "birthTime": "1908-11-19T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c054-p004-401",
+          "text": null,
+          "digest": "850f2639246e0d4c53d13368967f12699884c1e0bb36b7dd1a6b8d851a1049df"
+        }
+      ]
+    },
+    {
+      "birthTime": "1908-12-17T00:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c028-p002-101",
+          "text": "壬戊两透，科甲可许",
+          "digest": "86dbdf20eba69a33ae478659492d18752f89cc6697cd6b1b2f9df3d59793ddd7"
+        }
+      ]
+    },
+    {
+      "birthTime": "1909-02-11T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "或庚戊藏支，丙坐寅支者，亦有恩诰",
+          "digest": "7a4c8eaa6c2c5c41b036b0526abdbbdb778db8a9d973fdf8977a1fb182e935de"
+        }
+      ]
+    },
+    {
+      "birthTime": "1909-02-12T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c004-p001-001",
+          "text": "癸藏丙透，名寒木向阳，主大富贵。",
+          "digest": "f65a7f242d7e0120c773abe7c79f2a565b9ef0df2a6fdc230def23544b8a6e8c"
+        }
+      ]
+    },
+    {
+      "birthTime": "1909-02-13T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c010-p001-301",
+          "text": "或有丙无癸门户阐扬。",
+          "digest": "3af6f505c805b676cf25441527488a4b6930ffd0746cd5efbd8007666b3d370f"
+        }
+      ]
+    },
+    {
+      "birthTime": "1909-03-03T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "或庚戊藏支，丙坐寅支者，亦有恩诰",
+          "digest": "16dd0b3e0c6ec402bfd54d6e72b0adf9a0f06fc650792ed2ec671cb0962809c6"
+        }
+      ]
+    },
+    {
+      "birthTime": "1909-03-04T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c004-p001-001",
+          "text": "癸藏丙透，名寒木向阳，主大富贵。",
+          "digest": "8077d5a230fd2b088e397fc883ce1e702bdb32057fe15b38572730b6f4c5ae91"
+        }
+      ]
+    },
+    {
+      "birthTime": "1909-03-13T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c097-p002-101",
+          "text": "戊透辛藏，亦有恩诰",
+          "digest": "868b506dca07f7f3bc8922d03408644c3f87ec68844580cbf5000d23591e8c65"
+        }
+      ]
+    },
+    {
+      "birthTime": "1909-09-26T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c060-p006-401",
+          "text": "八月支成金局，无丙丁出救，此人零丁孤苦",
+          "digest": "3b7e2d918bea8f2a26e1b89848e49b3616ba865e92fffc183524beb4c1863094"
+        }
+      ]
+    },
+    {
+      "birthTime": "1909-10-14T22:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c053-p002-401",
+          "text": "无癸丙，有甲者，衣食而已",
+          "digest": "f0104821ed554a8c4c398dd6d62100610cb33003f5241c351a04f98d0b0e85f5"
+        }
+      ]
+    },
+    {
+      "birthTime": "1909-12-13T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c055-p001-101",
+          "text": "有丙无甲者，豪富",
+          "digest": "54ae59a1ff92febefd7f9815586089ca1da5fe81d8412b1c90afd479b9374f3f"
+        }
+      ]
+    },
+    {
+      "birthTime": "1910-01-14T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-101",
+          "text": "有丙丁无甲者，白手成家，刀笔亨通",
+          "digest": "9260f24174ce5bf7378ae6a955ed8398730a26ba557ffc2326fe44da8c7f30f4"
+        }
+      ]
+    },
+    {
+      "birthTime": "1910-01-15T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-101",
+          "text": "有丙丁无甲者，白手成家，刀笔亨通",
+          "digest": "9f79060bbffa22cd4ed46bfa44070cf2e77470f9efe4b12ffbd6f18ca2fd9083"
+        }
+      ]
+    },
+    {
+      "birthTime": "1910-03-07T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c080-p004-101",
+          "text": "有庚富贵",
+          "digest": "c75c20b3e301fe97fe0c155edd2307b8793130756338dfc05d6ed4bd65bfc623"
+        }
+      ]
+    },
+    {
+      "birthTime": "1910-03-08T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c097-p002-101",
+          "text": "戊透辛藏，亦有恩诰",
+          "digest": "ddfe25a11c09f85517bb9fd295a45c77c412c17f1aa48463ea7ade458784d4b7"
+        }
+      ]
+    },
+    {
+      "birthTime": "1910-07-02T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "448e10fb4e7a2b03c878695f70186f46e91fef40e9ae821039aecec127bd6926"
+        }
+      ]
+    },
+    {
+      "birthTime": "1911-01-09T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-101",
+          "text": "有丙丁无甲者，白手成家，刀笔亨通",
+          "digest": "9d797f2ea905a7b743d9ce5e379b3000e85a0bf63b956e8995f59212e275bf7f"
+        }
+      ]
+    },
+    {
+      "birthTime": "1911-01-10T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-101",
+          "text": "有丙丁无甲者，白手成家，刀笔亨通",
+          "digest": "40b8cc7270b33f732e9086ac6779321c8dcfc4719d35978b764a2afbf7fddeb4"
+        }
+      ]
+    },
+    {
+      "birthTime": "1911-01-10T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-301",
+          "text": null,
+          "digest": "fe2d4c05424727066e528adbc95a57992920c0c29e9f34a7f821a01525cde5c7"
+        }
+      ]
+    },
+    {
+      "birthTime": "1911-01-10T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-301",
+          "text": null,
+          "digest": "39be3c8f9a41692f93c862f1add24d2169c4ec145fd0c1c797735651ae9fba09"
+        }
+      ]
+    },
+    {
+      "birthTime": "1911-03-12T06:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c080-p004-101",
+          "text": "有庚富贵",
+          "digest": "88a54440190458f1fc145f6ec4287744513249da03445eb745a476147474ebb8"
+        }
+      ]
+    },
+    {
+      "birthTime": "1911-03-22T06:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c080-p004-101",
+          "text": "无庚平人。",
+          "digest": "901ed7b1f78eff4bb0592fad22c0eb14c50c08989bcf0b7bb0f1c1f1390cd565"
+        },
+        {
+          "id": "qtbj-v5-c080-p004-101",
+          "text": "无庚平人。",
+          "digest": "7b0fe865f58e61b747ddcdb9c0d3876eab01bed22cd2a0758c97782851b50204"
+        }
+      ]
+    },
+    {
+      "birthTime": "1911-04-06T00:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c019-p001-101",
+          "text": "壬透甲藏，富大贵小",
+          "digest": "ccc32619d31fb3e904f2ad1bfa543d8dcd2b038e7c854f98d32af8bed3bc5212"
+        },
+        {
+          "id": "qtbj-v3-c019-p001-101",
+          "text": "壬透甲藏，富大贵小",
+          "digest": "84507bce99aa4cf0267305315f21afc16885b58e1665ed6abd2b6f1aab11cf4f"
+        }
+      ]
+    },
+    {
+      "birthTime": "1911-05-10T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c082-p003-401",
+          "text": "若壬水藏亥，戊不出干，亦主上达",
+          "digest": "a8795fd4b777c29c5e7b054abaab7334dc176fe29270f32658c53c931581e73f"
+        },
+        {
+          "id": "qtbj-v5-c082-p003-401",
+          "text": "若壬水藏亥，戊不出干，亦主上达",
+          "digest": "e46a82daff55e0b15ac93961a4754fcead7faf5b149afd113fadc216a1649a97"
+        }
+      ]
+    },
+    {
+      "birthTime": "1911-05-11T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c082-p003-401",
+          "text": "若壬水藏亥，戊不出干，亦主上达",
+          "digest": "ca8fc9c356a23bdb926cb5e28e3eefe0c6d2e76ba4b4ab7b8c1970794b395583"
+        }
+      ]
+    },
+    {
+      "birthTime": "1911-06-07T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "9ec4c4fec12478f7bb359e43cac1218a68af055b28b6901195b94a7df73bee20"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "0f6751f0a2b477d265328b483d01ed85ec15ec654ba1fcf8bf35df1ab85b591e"
+        }
+      ]
+    },
+    {
+      "birthTime": "1911-06-08T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "601989c1171dc4c47baa0fabf0e03401ecfeb30b984d609722187bd3da85c0e4"
+        }
+      ]
+    },
+    {
+      "birthTime": "1911-06-27T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "7a124ba5cc52a4c5f3b92326cb590ec7683f8400ab2c3df9e867f9fced5ecffa"
+        }
+      ]
+    },
+    {
+      "birthTime": "1911-07-27T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "febe2dd0908cb90cfb07007d4469af0c682c34fc0738b864cf0cd4805c55d993"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "f088fc4a4cdbddf7ce0aa019f7dd6931a79df073ed59c8c2100eea4f682051ad"
+        }
+      ]
+    },
+    {
+      "birthTime": "1911-07-28T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "fd268fd6324b43ad21ef1aacae343c1c5536e87927aa7897235f8dd0bd4a674a"
+        }
+      ]
+    },
+    {
+      "birthTime": "1911-08-17T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c073-p001-101",
+          "text": "有甲无丁是平人",
+          "digest": "a561e5b5b45db5a00d02d3e2953351ca7a9a2eddc1e68ff061760782712981b4"
+        }
+      ]
+    },
+    {
+      "birthTime": "1911-10-14T22:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c053-p002-401",
+          "text": "无癸丙，有甲者，衣食而已",
+          "digest": "042ccee17da0a925f39b8fa0ae4c58cfd363eb7a27abb7a691a0ecc20281a44f"
+        }
+      ]
+    },
+    {
+      "birthTime": "1911-12-13T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c055-p001-101",
+          "text": "有甲无丙者，清贫",
+          "digest": "cfe98b7afa40ea2ffc14d70faa2c814b4a52ddc7fb2a5cf1d7abe27dbfe73d9a"
+        }
+      ]
+    },
+    {
+      "birthTime": "1912-02-03T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-301",
+          "text": null,
+          "digest": "03bd951972b6b7c975bdeb263007ee7ae756f50bb8877d82d09b98b2ee83237f"
+        }
+      ]
+    },
+    {
+      "birthTime": "1912-10-08T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c053-p002-401",
+          "text": "或无丙有癸，不见甲透者，衣衿小富",
+          "digest": "4efa1f4c7ab6080276ba4bc6a85fd858b1a5646741f8b05359bec694136c4a63"
+        }
+      ]
+    },
+    {
+      "birthTime": "1912-12-25T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c028-p002-101",
+          "text": "无戊见己，异路功名。",
+          "digest": "6eba424c0ab3f444edd48b5fc02929cba8689321217b88a52479a99e80972d33"
+        }
+      ]
+    },
+    {
+      "birthTime": "1913-01-14T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c029-p001-101",
+          "text": "或无甲得一壬透，富中取贵。",
+          "digest": "3ea5d823ef327055fc5f20f7779b0d05caf7533840b2e6f7323cc4887fbbb6fc"
+        }
+      ]
+    },
+    {
+      "birthTime": "1913-03-12T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c097-p002-101",
+          "text": "戊透辛藏，亦有恩诰",
+          "digest": "b9506679bf4b7fe33f2d4d22a02aa6a6786698d22f753b1c121b7b0553437683"
+        }
+      ]
+    },
+    {
+      "birthTime": "1913-09-15T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c060-p006-401",
+          "text": "八月支成金局，无丙丁出救，此人零丁孤苦",
+          "digest": "587a9bdb46fed8ce08764bebd765f20b7f81e25f955a8d3b74c958363cef1791"
+        }
+      ]
+    },
+    {
+      "birthTime": "1913-09-25T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c060-p006-401",
+          "text": "八月支成金局，无丙丁出救，此人零丁孤苦",
+          "digest": "0e85f1abf8fd65dc37c8d6ce3b6c5fe07ee4807512e8d2e148a3f4ad7367de4a"
+        }
+      ]
+    },
+    {
+      "birthTime": "1914-02-05T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "或庚戊藏支，丙坐寅支者，亦有恩诰",
+          "digest": "c26fed71339fef77f226d74c3033635d43ec320435d5f343d948684b06a439ec"
+        }
+      ]
+    },
+    {
+      "birthTime": "1914-02-14T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "或庚戊藏支，丙坐寅支者，亦有恩诰",
+          "digest": "7ff47c930b0b0641f406f126172aff79413b68d1068d9ec9f8f45f893f48ee1d"
+        }
+      ]
+    },
+    {
+      "birthTime": "1914-04-09T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c019-p001-101",
+          "text": "有甲无壬，劳碌浊富",
+          "digest": "bd8c67a5f1f1fcc8fff5f5f4dd573f9f13160126fe71fbd805bb9a2b72f5c5aa"
+        }
+      ]
+    },
+    {
+      "birthTime": "1916-02-06T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c004-p001-001",
+          "text": "癸藏丙透，名寒木向阳，主大富贵。",
+          "digest": "05678079bc76384ebffbc170f5284beeb81fe99fd46ab7f6720d47d95c4e5e40"
+        }
+      ]
+    },
+    {
+      "birthTime": "1917-01-07T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-101",
+          "text": "有丙丁无甲者，白手成家，刀笔亨通",
+          "digest": "0aa3ae7eb71e59c31d2a67b97f273e94ac44ce772907f42d21f56a43387a0d4a"
+        }
+      ]
+    },
+    {
+      "birthTime": "1917-03-09T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c068-p002-101",
+          "text": null,
+          "digest": "8cce01714619be66130a2f3c991b277085e28d38960010aa6c1c36e7dbe14868"
+        }
+      ]
+    },
+    {
+      "birthTime": "1917-07-16T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "0cae7a489f87c7888246cb6f21031535000dfee89a4632df0601a0f72e431d66"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "2fb04b1447f5300b4b84d68fe09fa70c83ecd7599ae28f5681671f3dbd119b5f"
+        }
+      ]
+    },
+    {
+      "birthTime": "1917-07-16T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "77280866793f90d602e96b7a3c85e2772cfcd817252bcadd1c41611ab69ce901"
+        }
+      ]
+    },
+    {
+      "birthTime": "1917-12-14T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c077-p001-101",
+          "text": "或丁甲两透，丙在支中，必主科甲",
+          "digest": "912473bbdc910d1cc32fe6832a41812e2ee3052fb27eb8d7594ea5a32f6513ba"
+        },
+        {
+          "id": "qtbj-v5-c077-p001-101",
+          "text": "或丁甲两透，丙在支中，必主科甲",
+          "digest": "69b03ca1d796921bf43c81009bc01cd6c890159342f280e9711f7bde2f894006"
+        }
+      ]
+    },
+    {
+      "birthTime": "1918-01-12T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-101",
+          "text": "有丙丁无甲者，白手成家，刀笔亨通",
+          "digest": "644afad95d4d91453a0195e80fee1e362b611c2634ff58f01dd6419fa404a163"
+        }
+      ]
+    },
+    {
+      "birthTime": "1919-01-08T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-301",
+          "text": null,
+          "digest": "ce5cb4cd1865f8ac8c413b33eb814fa30d36556f6c1e0e45d514b5ec9329db87"
+        }
+      ]
+    },
+    {
+      "birthTime": "1919-01-08T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-301",
+          "text": null,
+          "digest": "0cebd5c0e4dcfc912b1008f57c67372352b4fdc869b961e8c3c5c0ec643febfc"
+        }
+      ]
+    },
+    {
+      "birthTime": "1922-08-09T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c073-p001-101",
+          "text": "若有丁无甲为俊秀",
+          "digest": "e267bb92b369f414b38aaa1ae1691a49b9cd6048bb51d27ef49a722d7703a900"
+        }
+      ]
+    },
+    {
+      "birthTime": "1924-02-05T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c004-p001-001",
+          "text": "癸藏丙透，名寒木向阳，主大富贵。",
+          "digest": "6313698200e2ce33e0cfc0df1d0b16078261daee5678d01e16456776e53c2f72"
+        }
+      ]
+    },
+    {
+      "birthTime": "1926-04-06T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c019-p001-101",
+          "text": "壬透甲藏，富大贵小",
+          "digest": "b4864953e1d402034ef2b1ad4330d92c902eeb3ce360b1d27f4575a9c536e843"
+        }
+      ]
+    },
+    {
+      "birthTime": "1926-04-07T00:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c019-p001-101",
+          "text": "壬透甲藏，富大贵小",
+          "digest": "f83c9f6cfe4450c08120834488080c4c01ba4286fc66b758f1fa39d11ec1f10e"
+        }
+      ]
+    },
+    {
+      "birthTime": "1926-07-08T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "b20420790c6a202868dc24de9f04bb0b8bd1eb90c9970d617685fbf299029cd7"
+        }
+      ]
+    },
+    {
+      "birthTime": "1928-10-14T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c053-p002-401",
+          "text": "或无丙有癸，不见甲透者，衣衿小富",
+          "digest": "18790d64d2289958c111b14cb3d6b348eea83a855fec9db8f4a9a670e83b84b2"
+        }
+      ]
+    },
+    {
+      "birthTime": "1929-02-05T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "或庚戊藏支，丙坐寅支者，亦有恩诰",
+          "digest": "c844e21e196710e44ca3e24b059ff3aa42c4e08a59455361e7830fa4a54e6510"
+        }
+      ]
+    },
+    {
+      "birthTime": "1929-02-05T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "或庚戊藏支，丙坐寅支者，亦有恩诰",
+          "digest": "1397b658a1a9af153ea3c5065bc9cbeab7e7a3d96a9464fb1d41c53a7d6881de"
+        }
+      ]
+    },
+    {
+      "birthTime": "1929-02-06T00:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "或庚戊藏支，丙坐寅支者，亦有恩诰",
+          "digest": "f80313fdf6b6e1a2e38484021eab51e1d6d78412268a124f79041cb99f6f7e88"
+        }
+      ]
+    },
+    {
+      "birthTime": "1929-02-06T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "或庚戊藏支，丙坐寅支者，亦有恩诰",
+          "digest": "31ea91426a41598a9656d03402ea3731a77f5c28242b74ab0eb671374e1df0a2"
+        }
+      ]
+    },
+    {
+      "birthTime": "1929-02-15T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "或庚戊藏支，丙坐寅支者，亦有恩诰",
+          "digest": "13cc2733df05d9fdab65e52ae3f686272c329bbdf36fd0753f50315a58dd966b"
+        }
+      ]
+    },
+    {
+      "birthTime": "1929-02-25T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "或庚戊藏支，丙坐寅支者，亦有恩诰",
+          "digest": "c2f98c61d5bb5815a2f014ad7b0cc99774a4c284c424dd77266891a3d18b8a68"
+        }
+      ]
+    },
+    {
+      "birthTime": "1929-03-06T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c068-p002-101",
+          "text": null,
+          "digest": "031630630eb8ec1036effa1860f0e55cca7efca0c7cca4409ed53e8eacc48f01"
+        }
+      ]
+    },
+    {
+      "birthTime": "1929-11-08T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c054-p004-401",
+          "text": null,
+          "digest": "81992a6d597bdbc4907b5c7a8bc90eff1a98d79d27042dae71099c08f9a7c1da"
+        }
+      ]
+    },
+    {
+      "birthTime": "1929-11-09T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c054-p004-401",
+          "text": null,
+          "digest": "41515f22691c4b983e1203a6edd87e552cd0b5e4ae7b2e4a0b1d304000ca8c1b"
+        }
+      ]
+    },
+    {
+      "birthTime": "1929-11-28T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c054-p004-401",
+          "text": null,
+          "digest": "c96a5034226d2c335d0b05052b2824fadf05d65cd39f3d7968e1b4f05201bafb"
+        }
+      ]
+    },
+    {
+      "birthTime": "1930-01-09T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-101",
+          "text": "有丙丁无甲者，白手成家，刀笔亨通",
+          "digest": "79b7a5906b920b6728a385fb3052658f83f82ee21f753bfe04ab62d816b16119"
+        }
+      ]
+    },
+    {
+      "birthTime": "1932-05-07T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "1d93e878409d902a2ce6574d09f2816b05d8af27df7e6f7a3ad13dba37f774a4"
+        }
+      ]
+    },
+    {
+      "birthTime": "1932-06-06T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "75951ca0a0abd330c69d311f40aa3181cb75d06a1b76f2f65bf7b61dcc334d85"
+        }
+      ]
+    },
+    {
+      "birthTime": "1932-07-06T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "6749eb50a34d8f051acf543a646979df5d0bdae98c255721345f8b4a6ce61ade"
+        }
+      ]
+    },
+    {
+      "birthTime": "1934-02-10T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "或庚戊藏支，丙坐寅支者，亦有恩诰",
+          "digest": "4d998ad7992386c81d27c423d38ac73c87f06d8897aac6a19e0d8a9155007610"
+        }
+      ]
+    },
+    {
+      "birthTime": "1934-03-01T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "或庚戊藏支，丙坐寅支者，亦有恩诰",
+          "digest": "f10222d45838a1c12f37a7000574849370516ccc4b4fb4e554a599ea0876a9af"
+        }
+      ]
+    },
+    {
+      "birthTime": "1934-10-13T22:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c053-p002-401",
+          "text": "无癸丙，有甲者，衣食而已",
+          "digest": "9947ad1c26614afa2b1a25b903ca4f6d0c93a13de85ae90bd71a99c0178fc960"
+        }
+      ]
+    },
+    {
+      "birthTime": "1935-01-23T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-301",
+          "text": null,
+          "digest": "251396b6b2bd9e55f7cebd5dc7a324f81ba4c899a55fed6cdbd7b96e1ba21595"
+        }
+      ]
+    },
+    {
+      "birthTime": "1935-05-22T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "b5df06adcca960d6ae143cd210aaa1d9ed77ab4ef71cb5392e6369ec3a8bae5a"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "e36c3c4c9a33ecd971ec009c3a4c832fdb1f15c5d123eef8b7c8b66bf445d5ed"
+        },
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "12ab11caa3295bc11ba57227ffafce60bf4ba81979ba8bfa3f22c605fc21279b"
+        }
+      ]
+    },
+    {
+      "birthTime": "1935-05-23T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "f6d43ddc7b1470d0cfa57d5c2344007129bc90eecf85a69f4c7828fb680ecb2d"
+        }
+      ]
+    },
+    {
+      "birthTime": "1936-02-11T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c004-p001-001",
+          "text": "癸藏丙透，名寒木向阳，主大富贵。",
+          "digest": "598a85b5848a464244cf0597f088db7e405f7cba958202604d5be95808c29ff3"
+        },
+        {
+          "id": "qtbj-v2-c004-p001-001",
+          "text": "癸藏丙透，名寒木向阳，主大富贵。",
+          "digest": "cc3718ce8c35d091439b390b09e673a6b4b41c086353662c222b7dc529327bec"
+        }
+      ]
+    },
+    {
+      "birthTime": "1938-07-05T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "fd512b91c7f687c67fad55dac795fd0e510eb69e3828bc647b4076e8f697e9e0"
+        }
+      ]
+    },
+    {
+      "birthTime": "1938-12-13T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c077-p001-101",
+          "text": "或丁甲两透，丙在支中，必主科甲",
+          "digest": "7705546f6b038d04361f3751b48195b3a010482741703a31833e5b1d99da7570"
+        }
+      ]
+    },
+    {
+      "birthTime": "1939-04-04T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c080-p004-101",
+          "text": "无庚平人。",
+          "digest": "fca0db3c5b74d83e577a87d4d91b05260c051a590aff46d9ebfc8eb08ad0f424"
+        }
+      ]
+    },
+    {
+      "birthTime": "1940-03-09T06:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c080-p004-101",
+          "text": "有庚富贵",
+          "digest": "b03a46775088de699763e0c0855b81edd86b52851c0200ef2dbc5b6fc563cd55"
+        }
+      ]
+    },
+    {
+      "birthTime": "1942-07-14T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "24497a8e406badad1e0e49d03c71f2c9f26fcbc72e57804df4ef577704597965"
+        }
+      ]
+    },
+    {
+      "birthTime": "1943-01-07T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c029-p001-101",
+          "text": "甲藏则秀才而已",
+          "digest": "26dffaba9eb869bc6a0b1be7faaa12eb523b930e96c6d4e0ee44eb1b08b8238e"
+        }
+      ]
+    },
+    {
+      "birthTime": "1943-04-03T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c080-p004-101",
+          "text": "无庚平人。",
+          "digest": "bd7e570211cd3fcab28cefcd0c2e797fec270e7470fd106a39b06100f4489332"
+        }
+      ]
+    },
+    {
+      "birthTime": "1944-02-07T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "或庚戊藏支，丙坐寅支者，亦有恩诰",
+          "digest": "577d0f00d76565c2fd3447713dff470c667457409729b6f11773013b06e27dc7"
+        },
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "或庚戊藏支，丙坐寅支者，亦有恩诰",
+          "digest": "59169e4f5a615250e8ccaae81c1e787d914226d5d2142b40e5d2fa61e5020f16"
+        }
+      ]
+    },
+    {
+      "birthTime": "1944-02-07T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "或庚戊藏支，丙坐寅支者，亦有恩诰",
+          "digest": "37e45221dfa6e62d46f669577dec0f78c6d166b6170c508d305b014872d38756"
+        }
+      ]
+    },
+    {
+      "birthTime": "1944-02-08T00:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "或庚戊藏支，丙坐寅支者，亦有恩诰",
+          "digest": "52c2d85af127f0faecdf827fbb76ec404c2892e7f8e1132bd30799c505f97e93"
+        }
+      ]
+    },
+    {
+      "birthTime": "1944-02-08T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "或庚戊藏支，丙坐寅支者，亦有恩诰",
+          "digest": "d9f168786954523ace210923de0f1e592d59f34c81f6da73cc2429fcd343d154"
+        }
+      ]
+    },
+    {
+      "birthTime": "1944-02-27T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "或庚戊藏支，丙坐寅支者，亦有恩诰",
+          "digest": "9d2a91ce7eb7738b690dab718a358f6ad4636c278389fdea6c58c297d4986717"
+        }
+      ]
+    },
+    {
+      "birthTime": "1944-03-06T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c068-p002-101",
+          "text": null,
+          "digest": "a654dd7e86dfd578775dc6056271d06771cc68719c053764c86144f45758d043"
+        }
+      ]
+    },
+    {
+      "birthTime": "1944-03-06T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c068-p002-101",
+          "text": null,
+          "digest": "096f3bc7bd5ccd470d00e323ffe51ece0e039703d184f65dc2d7e60d66b021e9"
+        }
+      ]
+    },
+    {
+      "birthTime": "1944-03-07T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c068-p002-101",
+          "text": null,
+          "digest": "269e8876b22488b09228ab43ca58ad7a98608ef412c743560abdc0db113e0e7e"
+        }
+      ]
+    },
+    {
+      "birthTime": "1947-01-20T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-101",
+          "text": "有丙丁无甲者，白手成家，刀笔亨通",
+          "digest": "341331736f0e7f9687adb4137607b44d51536a766deaa0cb4b9d36342c3571d0"
+        }
+      ]
+    },
+    {
+      "birthTime": "1947-06-08T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "7519742af9830a1622038b4a3e0c0d4d2dc0d25afb000acaad4007100472837b"
+        }
+      ]
+    },
+    {
+      "birthTime": "1948-01-15T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-301",
+          "text": null,
+          "digest": "5d53a19344a49f79983e9692c9680514c8d590abd6d89cf0cdee9bde6a633941"
+        }
+      ]
+    },
+    {
+      "birthTime": "1949-02-12T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c004-p001-001",
+          "text": "癸藏丙透，名寒木向阳，主大富贵。",
+          "digest": "faef0d5c8cfbe4135594bbaa204ccb8a4cf5c7f01627c734c12578972bd3123b"
+        }
+      ]
+    },
+    {
+      "birthTime": "1949-10-05T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c060-p006-401",
+          "text": "八月支成金局，无丙丁出救，此人零丁孤苦",
+          "digest": "6901a5eefe5888b17635d89f3f345e5ed44a691bfc8adbc8a940ce58946219ba"
+        }
+      ]
+    },
+    {
+      "birthTime": "1949-10-06T10:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c060-p006-401",
+          "text": "八月支成金局，无丙丁出救，此人零丁孤苦",
+          "digest": "1835e82ec1e4a10c966b0d9b900c67539b697682e5b7038bccce3d0a7e3f0a16"
+        }
+      ]
+    },
+    {
+      "birthTime": "1950-06-12T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "a0eaaac1974810e0dd4731d22f80e66afd9ab68d5a076f0b1f74653287a83ef3"
+        }
+      ]
+    },
+    {
+      "birthTime": "1953-04-12T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c004-p010-001",
+          "text": "若有壬癸破火，堪作秀才。",
+          "digest": "05db01f676f9b3cbb8e9d464c11fb088b0b8b0f8969c6e7c3f99404691caee79"
+        }
+      ]
+    },
+    {
+      "birthTime": "1953-10-04T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c060-p006-401",
+          "text": "八月支成金局，无丙丁出救，此人零丁孤苦",
+          "digest": "14ff3569b8cb93ff75be73d9e7d8da183215f60cf01ded5c97efff9a9b996511"
+        }
+      ]
+    },
+    {
+      "birthTime": "1953-10-05T10:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c060-p006-401",
+          "text": "八月支成金局，无丙丁出救，此人零丁孤苦",
+          "digest": "3b9053bdd3eb0a573b9bed35d5dd8c9e7582808084dff46ea73b658250d32861"
+        }
+      ]
+    },
+    {
+      "birthTime": "1953-12-14T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c077-p001-101",
+          "text": "或丁甲两透，丙在支中，必主科甲",
+          "digest": "821ecc1e58324e48a0353cab7d9cd91ec8543ac212ef489761904e7b5cbdc464"
+        }
+      ]
+    },
+    {
+      "birthTime": "1955-01-08T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-301",
+          "text": null,
+          "digest": "059a86c7848c64c4571b920a48105c7024fd0970bf0f6ea9ca04e294d55c351e"
+        }
+      ]
+    },
+    {
+      "birthTime": "1956-04-06T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v2-c004-p010-001",
+          "text": "若有壬癸破火，堪作秀才。",
+          "digest": "295a973e4f48f5ed9f606ea96e431dfbd2aed6107a47fd2d34591d6e385d6443"
+        }
+      ]
+    },
+    {
+      "birthTime": "1956-06-10T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "415f58bee5916c35ebfd551fe08b4690b314d4606a1a879f9e4909ac8b5305ba"
+        }
+      ]
+    },
+    {
+      "birthTime": "1956-07-10T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "5ac2dc7e39d7e72b25b3b772b6ffbef388cec9482e8b3b0495424eacae9f6097"
+        }
+      ]
+    },
+    {
+      "birthTime": "1958-03-06T04:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c097-p002-101",
+          "text": "戊透辛藏，亦有恩诰",
+          "digest": "218c9489ec17d3f7d3d2d7e5edd658c26a41e3642138cf377f5542b02ae69db6"
+        }
+      ]
+    },
+    {
+      "birthTime": "1962-12-05T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c054-p004-401",
+          "text": null,
+          "digest": "1b0264f3326f33e38273353ed4e8e9ce9f5dc690d1d1d51fb1f6587154823c91"
+        }
+      ]
+    },
+    {
+      "birthTime": "1975-05-01T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c032-p002-301",
+          "text": null,
+          "digest": "637776d222900a39deae73770762ecb3a126d959cfbee6d5267947d71e034864"
+        }
+      ]
+    },
+    {
+      "birthTime": "1989-03-02T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "或庚戊藏支，丙坐寅支者，亦有恩诰",
+          "digest": "65d268d130bb990cd927a40471171b6513dda1435bad8e0e5c22ed36b962fab6"
+        }
+      ]
+    },
+    {
+      "birthTime": "1989-08-06T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "d6b225d71a4a30f98d74e7cb45b5946c3bf17eea031b30083c2b5a8b3508a2b8"
+        }
+      ]
+    },
+    {
+      "birthTime": "1996-02-02T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-301",
+          "text": null,
+          "digest": "2295924725d5c946770471461aa2e0d3a9338fd4210291495676d7313ac10299"
+        }
+      ]
+    },
+    {
+      "birthTime": "2004-02-22T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "或庚戊藏支，丙坐寅支者，亦有恩诰",
+          "digest": "970f597d13f735ad9f16d93cf4682375f2a60290c0debc60418cc76af393cebb"
+        }
+      ]
+    },
+    {
+      "birthTime": "2004-04-02T06:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c080-p004-101",
+          "text": "有庚富贵",
+          "digest": "240373d8760f08bed0ce9baa6cdf0062fa6164b01a134ec4d849e47d1b7face5"
+        }
+      ]
+    },
+    {
+      "birthTime": "2007-06-03T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "641362d5f99a250099bec1e58767e5f3df702b78e54e6eb9266f84dbd670cd4a"
+        }
+      ]
+    },
+    {
+      "birthTime": "2007-08-02T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "fee210b7bea9b455c8eb95f1059954f819d33af2fc8b43cfaebb44393506a8e5"
+        }
+      ]
+    },
+    {
+      "birthTime": "2015-04-21T14:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v3-c032-p002-301",
+          "text": null,
+          "digest": "5b53e530160b9f9178514109424b34980060c896253e15812e95958c8a6ee618"
+        }
+      ]
+    },
+    {
+      "birthTime": "2019-04-03T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c080-p004-101",
+          "text": "无庚平人。",
+          "digest": "565766cb12864499c4db4aff774aea8199cee68c99aae54b66855a53384ae6ef"
+        }
+      ]
+    },
+    {
+      "birthTime": "2019-04-03T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c080-p004-101",
+          "text": "有庚富贵",
+          "digest": "b12deb2dfc1e1a950e418e34751b10154c7754b89d89aed1353e0d0e919d2c69"
+        }
+      ]
+    },
+    {
+      "birthTime": "2019-04-03T22:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c080-p004-101",
+          "text": "无庚平人。",
+          "digest": "0b2d83fbbb1fcc21e342ed8fc9d6d1e9d6abc1a992eb9d0d4c693efb85a651dc"
+        }
+      ]
+    },
+    {
+      "birthTime": "2019-04-04T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c080-p004-101",
+          "text": "有庚富贵",
+          "digest": "49283093891ff5695389182911c748e6663d5021ff30f40908fc40f17d3be44f"
+        }
+      ]
+    },
+    {
+      "birthTime": "2019-04-04T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c080-p004-101",
+          "text": "有庚富贵",
+          "digest": "1cc49f6a94ca0be5c4ac15d763216f78924be980fdd4c1ad98a0baca0aee002b"
+        }
+      ]
+    },
+    {
+      "birthTime": "2019-12-06T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c054-p004-401",
+          "text": null,
+          "digest": "0b25fcc37ef02fe39cc725c9b8137cbeb80366c2fc7119ad3660576153e48fa0"
+        }
+      ]
+    },
+    {
+      "birthTime": "2025-05-29T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c059-p003-401",
+          "text": null,
+          "digest": "81d02211074d65c82a6acfa8cc7eadf2544924d48321d8b491646bcaee7f35cf"
+        }
+      ]
+    },
+    {
+      "birthTime": "2025-10-06T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c060-p006-401",
+          "text": "八月支成金局，无丙丁出救，此人零丁孤苦",
+          "digest": "c816dc5a81f7831f9f18f83e3a4f0a077918acb4881ff45bea73eb9c6cc16f64"
+        }
+      ]
+    },
+    {
+      "birthTime": "1606-01-17T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c078-p002-101",
+          "text": "有丙丁无甲者，白手成家，刀笔亨通",
+          "digest": "b3636484a18e03f3cd1071fd1668a6bc0cf27ad254e34e3f7716183aec55b529"
+        }
+      ]
+    },
+    {
+      "birthTime": "1607-03-14T16:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c080-p004-101",
+          "text": "无庚平人。",
+          "digest": "c02b0d9799a5ca53ba2418cd58da143ca5355d99c4ab401604d599637ea65425"
+        }
+      ]
+    },
+    {
+      "birthTime": "1607-03-14T20:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c080-p004-101",
+          "text": "有庚富贵",
+          "digest": "6ba570641446b983c6e00d8cbcb351d6b54391f6c36536d8dbab84e5e4ccb1ca"
+        }
+      ]
+    },
+    {
+      "birthTime": "1607-03-14T22:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c080-p004-101",
+          "text": "无庚平人。",
+          "digest": "ece4dfefad5dec69021f84faa4718dcf8bd2df9fc679b9cfb373f87b040a5e90"
+        }
+      ]
+    },
+    {
+      "birthTime": "1607-03-15T02:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c080-p004-101",
+          "text": "有庚富贵",
+          "digest": "8321cf7efb74c9b6547678fe8e1263043f620d80cd7fa2dfa1b626ad8fc300e0"
+        }
+      ]
+    },
+    {
+      "birthTime": "1607-03-15T08:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v5-c080-p004-101",
+          "text": "有庚富贵",
+          "digest": "7818a56756fccc3f4e83d3be01ee3c8faabb27197b385ba2e647bee66ff1048c"
+        }
+      ]
+    },
+    {
+      "birthTime": "1609-09-17T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v4-c060-p006-401",
+          "text": "八月支成金局，无丙丁出救，此人零丁孤苦",
+          "digest": "82cdcc49d4b6eb0d6e91d3807a3579f2cbf925e98c53c3e2e567f4cab6a17739"
+        }
+      ]
+    },
+    {
+      "birthTime": "1629-02-07T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "或庚戊藏支，丙坐寅支者，亦有恩诰",
+          "digest": "75dd3637af69479e400629a8b4d89b3491b7fd0b24b9dbb63e55297a28a07f34"
+        }
+      ]
+    },
+    {
+      "birthTime": "1644-02-09T18:00:00.000Z",
+      "proofs": [
+        {
+          "id": "qtbj-v6-c096-p001-101",
+          "text": "或庚戊藏支，丙坐寅支者，亦有恩诰",
+          "digest": "df70806c35ec8126b27bfbd29d183a75b03bd74c84dafa7833868d276a71a837"
+        }
+      ]
+    }
+  ]
+}

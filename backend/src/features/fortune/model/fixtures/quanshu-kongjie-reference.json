@@ -1,0 +1,46 @@
+{
+  "profile": "quanshu-kongjie-hour-four-flying-v1",
+  "reviewedOn": "2026-11-19",
+  "sources": [
+    {
+      "url": "https://zh.wikisource.org/w/index.php?oldid=1963110&title=紫微斗數全書/卷二",
+      "placement": "亥上起子顺安劫，逆向便是天空乡。",
+      "examples": "如子时生者劫空俱在亥宫。若丑时生者劫顺在子宫，空逆在戌宫。若午时生者，劫空俱在巳上安之。",
+      "fourFlying": "流年太岁前二位是丧门，后二位是吊客，丧门对照安白虎，吊客对照安官府。",
+      "unresolved": "太岁二限遇逢，有正曜星加吉者平安。"
+    },
+    {
+      "url": "https://zh.wikisource.org/w/index.php?oldid=7913704&title=紫微斗數全書/卷一",
+      "unresolved": "二星守身命，遇吉则吉，遇凶则凶。如四杀冲照。"
+    }
+  ],
+  "hourBranches": ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"],
+  "skyBranches": ["亥", "戌", "酉", "申", "未", "午", "巳", "辰", "卯", "寅", "丑", "子"],
+  "robberyBranches": ["亥", "子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌"],
+  "fourFlyingExamples": [
+    { "year": 2020, "yearBranch": "子", "placements": [{ "name": "丧门", "branch": "寅" }, { "name": "吊客", "branch": "戌" }, { "name": "白虎", "branch": "申" }, { "name": "官府", "branch": "辰" }] },
+    { "year": 2021, "yearBranch": "丑", "placements": [{ "name": "丧门", "branch": "卯" }, { "name": "吊客", "branch": "亥" }, { "name": "白虎", "branch": "酉" }, { "name": "官府", "branch": "巳" }] }
+  ],
+  "realExamples": [
+    { "dateStr": "1990-05-05", "timeIndex": 2, "gender": "女", "year": 2021 },
+    { "dateStr": "1990-05-05", "timeIndex": 2, "gender": "女", "year": 2029 },
+    { "dateStr": "1990-05-05", "timeIndex": 0, "gender": "女", "year": 2023 },
+    { "dateStr": "1990-05-05", "timeIndex": 0, "gender": "女", "year": 2019 }
+  ],
+  "limitExamples": {
+    "sharedFourFlying": { "dateStr": "1990-05-05", "timeIndex": 0, "gender": "女", "year": 1995 },
+    "splitWithoutSupport": { "dateStr": "1990-05-05", "timeIndex": 1, "gender": "女", "year": 2054 },
+    "annualShaOnly": { "dateStr": "1990-05-05", "timeIndex": 0, "gender": "女", "year": 2053 },
+    "boshiOnly": { "dateStr": "1990-05-05", "timeIndex": 2, "gender": "女", "year": 2015 },
+    "robberyAlone": { "dateStr": "1990-05-05", "timeIndex": 1, "gender": "女", "year": 2030 },
+    "aspectRobberyGuard": { "dateStr": "1990-05-05", "timeIndex": 2, "gender": "女", "year": 2015 },
+    "aspectSkyGuard": { "dateStr": "1990-05-05", "timeIndex": 3, "gender": "女", "year": 2034 },
+    "aspectUnrelatedPartner": { "dateStr": "1990-05-05", "timeIndex": 2, "gender": "女", "year": 1997 },
+    "taiSuiOpposesWithoutNamedSha": { "dateStr": "1990-05-05", "timeIndex": 3, "gender": "女", "year": 2004 },
+    "skySupportAtDecadalPartner": { "dateStr": "1989-02-15", "timeIndex": 3, "gender": "女", "year": 2012 },
+    "skySupportAtMinorPartner": { "dateStr": "1993-02-15", "timeIndex": 0, "gender": "男", "year": 2025 },
+    "skyPartnerSupportSeparated": { "dateStr": "1990-02-15", "timeIndex": 3, "gender": "女", "year": 2028 },
+    "annualSkyOnly": { "dateStr": "1990-05-05", "timeIndex": 0, "gender": "男", "year": 1995 },
+    "threeLayersAtSky": { "dateStr": "1990-05-05", "timeIndex": 0, "gender": "女", "year": 2055 }
+  }
+}

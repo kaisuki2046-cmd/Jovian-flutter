@@ -1,0 +1,395 @@
+{
+  "scanned": 75600,
+  "alternatives": 27,
+  "edges": {
+    "冬至": {
+      "birthTime": "2019-12-22T04:19:28.000Z",
+      "ids": []
+    },
+    "秋分": {
+      "birthTime": "1903-09-24T05:43:41.000Z",
+      "ids": [
+        "qtbj-v2-c013-p008-001"
+      ]
+    }
+  },
+  "witnesses": [
+    {
+      "birthTime": "1901-10-03T18:00:00.000Z",
+      "pillars": [
+        "辛丑",
+        "丁酉",
+        "乙卯",
+        "丁丑"
+      ],
+      "proofs": [
+        {
+          "id": "qtbj-v2-c013-p008-001",
+          "text": "若有癸无丙，名利虚花。",
+          "digest": "0a70de9dab037a16b73f60d1501ecbd35c699a72b10561f780f77cc5a04f699e"
+        },
+        {
+          "id": "qtbj-v2-c013-p008-001",
+          "text": "若有癸无丙，名利虚花。",
+          "digest": "ffe4e72a7a7920c38e34b15b893c26a487d109d2d5f5955f2c95c2dc1d2a4efb"
+        }
+      ]
+    },
+    {
+      "birthTime": "1901-10-04T00:00:00.000Z",
+      "pillars": [
+        "辛丑",
+        "丁酉",
+        "乙卯",
+        "庚辰"
+      ],
+      "proofs": [
+        {
+          "id": "qtbj-v2-c013-p008-001",
+          "text": "若有癸无丙，名利虚花。",
+          "digest": "bf5c63891ffe78bfcbe061786e3feb98380470fbd610686eac5f8c92710f3620"
+        }
+      ]
+    },
+    {
+      "birthTime": "1901-10-04T06:00:00.000Z",
+      "pillars": [
+        "辛丑",
+        "丁酉",
+        "乙卯",
+        "癸未"
+      ],
+      "proofs": [
+        {
+          "id": "qtbj-v2-c013-p008-001",
+          "text": "若有癸无丙，名利虚花。",
+          "digest": "a8494241681255d9ca0b500e6e444255f4aec2893e9b35ea7f58c62126db1db8"
+        }
+      ]
+    },
+    {
+      "birthTime": "1902-09-28T20:00:00.000Z",
+      "pillars": [
+        "壬寅",
+        "己酉",
+        "乙卯",
+        "戊寅"
+      ],
+      "proofs": [
+        {
+          "id": "qtbj-v2-c013-p008-001",
+          "text": "生秋分後，有丙无癸，亦略富贵。",
+          "digest": "155e790e9099a07c9f3d943268e0b7e0a420b43805b5b3c6828f6fdc78ad1e10"
+        },
+        {
+          "id": "qtbj-v2-c013-p008-001",
+          "text": "生秋分後，有丙无癸，亦略富贵。",
+          "digest": "21645680756912f4f7b90dcbf45480f081c6477975ef49eaee822f2e92d97b49"
+        }
+      ]
+    },
+    {
+      "birthTime": "1902-09-29T02:00:00.000Z",
+      "pillars": [
+        "壬寅",
+        "己酉",
+        "乙卯",
+        "辛巳"
+      ],
+      "proofs": [
+        {
+          "id": "qtbj-v2-c013-p008-001",
+          "text": "生秋分後，有丙无癸，亦略富贵。",
+          "digest": "96225860771c06b71e84d9c963158e09f19ffe420a8746c569b4202a32a36aff"
+        }
+      ]
+    },
+    {
+      "birthTime": "1902-09-29T12:00:00.000Z",
+      "pillars": [
+        "壬寅",
+        "己酉",
+        "乙卯",
+        "丙戌"
+      ],
+      "proofs": [
+        {
+          "id": "qtbj-v2-c013-p008-001",
+          "text": "生秋分後，有丙无癸，亦略富贵。",
+          "digest": "7b35f5106865301ae8ebf6d834a8cdc18469d0fa831fec2c1a8606c842a486a6"
+        }
+      ]
+    },
+    {
+      "birthTime": "1903-09-24T06:00:00.000Z",
+      "pillars": [
+        "癸卯",
+        "辛酉",
+        "乙卯",
+        "癸未"
+      ],
+      "proofs": [
+        {
+          "id": "qtbj-v2-c013-p008-001",
+          "text": "若有癸无丙，名利虚花。",
+          "digest": "80d59932d541f023f97cd467299caac11abb7312069941fd625bd485b5ff7b4b"
+        }
+      ]
+    },
+    {
+      "birthTime": "1903-09-24T12:00:00.000Z",
+      "pillars": [
+        "癸卯",
+        "辛酉",
+        "乙卯",
+        "丙戌"
+      ],
+      "proofs": [
+        {
+          "id": "qtbj-v2-c013-p006-001",
+          "text": null,
+          "digest": "43eee0190e73e78a2e1c21dc872d5567ce65621a32c7d75b0082c7cb2e1698a9"
+        },
+        {
+          "id": "qtbj-v2-c013-p009-301",
+          "text": null,
+          "digest": "43eee0190e73e78a2e1c21dc872d5567ce65621a32c7d75b0082c7cb2e1698a9"
+        }
+      ]
+    },
+    {
+      "birthTime": "1903-10-03T18:00:00.000Z",
+      "pillars": [
+        "癸卯",
+        "辛酉",
+        "乙丑",
+        "丁丑"
+      ],
+      "proofs": [
+        {
+          "id": "qtbj-v2-c013-p008-001",
+          "text": "若有癸无丙，名利虚花。",
+          "digest": "761601fae0838be07e2ec750db9ce2c0e2dbaef46d4172f82d63b78075497861"
+        }
+      ]
+    },
+    {
+      "birthTime": "1904-09-27T16:00:00.000Z",
+      "pillars": [
+        "甲辰",
+        "癸酉",
+        "乙丑",
+        "丙子"
+      ],
+      "proofs": [
+        {
+          "id": "qtbj-v2-c013-p006-001",
+          "text": null,
+          "digest": "035177453e94b26ece1ae95f0889e99785faaeb06394eb8a594d39350408a768"
+        },
+        {
+          "id": "qtbj-v2-c013-p009-301",
+          "text": null,
+          "digest": "035177453e94b26ece1ae95f0889e99785faaeb06394eb8a594d39350408a768"
+        }
+      ]
+    },
+    {
+      "birthTime": "1904-09-27T18:00:00.000Z",
+      "pillars": [
+        "甲辰",
+        "癸酉",
+        "乙丑",
+        "丁丑"
+      ],
+      "proofs": [
+        {
+          "id": "qtbj-v2-c013-p008-001",
+          "text": "若有癸无丙，名利虚花。",
+          "digest": "b95aa41efd5cd0f97f01ce3c52eb11e2f6f533e2b9b7b6c7c5ae689ba8388a12"
+        },
+        {
+          "id": "qtbj-v2-c013-p008-001",
+          "text": "若有癸无丙，名利虚花。",
+          "digest": "26ef6f93d8efeab2d31e187c5974cfffe85e82b55f073fb16d562feaa4df3e80"
+        }
+      ]
+    },
+    {
+      "birthTime": "1905-10-02T20:00:00.000Z",
+      "pillars": [
+        "乙巳",
+        "乙酉",
+        "乙亥",
+        "戊寅"
+      ],
+      "proofs": [
+        {
+          "id": "qtbj-v2-c013-p008-001",
+          "text": "生秋分後，有丙无癸，亦略富贵。",
+          "digest": "fa08d05bc7ad99d288d7e2e858566b34c919c2d3e06411e814845694de3fcc86"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-09-27T20:00:00.000Z",
+      "pillars": [
+        "丙午",
+        "丁酉",
+        "乙亥",
+        "戊寅"
+      ],
+      "proofs": [
+        {
+          "id": "qtbj-v2-c013-p008-001",
+          "text": "生秋分後，有丙无癸，亦略富贵。",
+          "digest": "fb6103173ef1263962e20afbd7a8becec49bec15dff25a34ae3de68949e18b86"
+        }
+      ]
+    },
+    {
+      "birthTime": "1906-09-28T06:00:00.000Z",
+      "pillars": [
+        "丙午",
+        "丁酉",
+        "乙亥",
+        "癸未"
+      ],
+      "proofs": [
+        {
+          "id": "qtbj-v2-c013-p006-001",
+          "text": null,
+          "digest": "16aad32768f38bcb818f5411ddadd12deeafc6cf6b918209e63f64d9d0f4a7fd"
+        }
+      ]
+    },
+    {
+      "birthTime": "1910-10-06T20:00:00.000Z",
+      "pillars": [
+        "庚戌",
+        "乙酉",
+        "乙巳",
+        "戊寅"
+      ],
+      "proofs": [
+        {
+          "id": "qtbj-v2-c013-p008-001",
+          "text": "生秋分後，有丙无癸，亦略富贵。",
+          "digest": "6f0e4923ad057550e9d186a7325940c29cd2f6dd1d9b92b6ce45d0023d74690f"
+        }
+      ]
+    },
+    {
+      "birthTime": "1912-10-05T18:00:00.000Z",
+      "pillars": [
+        "壬子",
+        "己酉",
+        "乙卯",
+        "丁丑"
+      ],
+      "proofs": [
+        {
+          "id": "qtbj-v2-c013-p008-001",
+          "text": "若有癸无丙，名利虚花。",
+          "digest": "c9e07fd893b6d8a577da7a0c27d5650e2060e9070263f1dc390485979c905b2b"
+        }
+      ]
+    },
+    {
+      "birthTime": "1919-12-29T14:00:00.000Z",
+      "pillars": [
+        "己未",
+        "丙子",
+        "乙卯",
+        "丁亥"
+      ],
+      "proofs": [
+        {
+          "id": "qtbj-v2-c014-p008-001",
+          "text": null,
+          "digest": "8b65d713c931e1ff1b536ddb41dda534e7facac5cf29dd64c5f8446b74aebf83"
+        }
+      ]
+    },
+    {
+      "birthTime": "1939-12-24T14:00:00.000Z",
+      "pillars": [
+        "己卯",
+        "丙子",
+        "乙未",
+        "丁亥"
+      ],
+      "proofs": [
+        {
+          "id": "qtbj-v2-c014-p008-001",
+          "text": null,
+          "digest": "3033ee5c1278800a040b09bfe9c9a3feb42942ff241573dd01a85604c5ee8954"
+        }
+      ]
+    },
+    {
+      "birthTime": "1980-01-02T22:00:00.000Z",
+      "pillars": [
+        "己未",
+        "丙子",
+        "乙亥",
+        "己卯"
+      ],
+      "proofs": [
+        {
+          "id": "qtbj-v2-c014-p008-001",
+          "text": null,
+          "digest": "3ba91bad233e6a262bba516b5f918861831373acb6e03457ca5c0ff096b822cc"
+        }
+      ]
+    },
+    {
+      "birthTime": "2019-12-23T22:00:00.000Z",
+      "pillars": [
+        "己亥",
+        "丙子",
+        "乙未",
+        "己卯"
+      ],
+      "proofs": [
+        {
+          "id": "qtbj-v2-c014-p008-001",
+          "text": null,
+          "digest": "be974dbb4bac4dc1266956eb6409d1cb5a975e3dde2badee3eeffded494a09c5"
+        }
+      ]
+    },
+    {
+      "birthTime": "2060-01-03T06:00:00.000Z",
+      "pillars": [
+        "己卯",
+        "丙子",
+        "乙亥",
+        "癸未"
+      ],
+      "proofs": [
+        {
+          "id": "qtbj-v2-c014-p008-001",
+          "text": null,
+          "digest": "882720a353802d8d76b46892629a181800e6c319686cf8990c079a88a48d30fd"
+        }
+      ]
+    },
+    {
+      "birthTime": "2079-12-29T06:00:00.000Z",
+      "pillars": [
+        "己亥",
+        "丙子",
+        "乙卯",
+        "癸未"
+      ],
+      "proofs": [
+        {
+          "id": "qtbj-v2-c014-p008-001",
+          "text": null,
+          "digest": "de14fffc8d9788b3d3cede60567254cca5dc2a85d115cac2db6b0c04cefa9320"
+        }
+      ]
+    }
+  ]
+}

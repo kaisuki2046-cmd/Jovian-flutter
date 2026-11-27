@@ -1,0 +1,251 @@
+{
+  "scanned": 7524,
+  "alternatives": 14,
+  "witnesses": [
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 11,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p011-036",
+          "inputDigest": "197ea3d91f3d48c7f74eea710063a4f101a4fc690bf93dd7b688b3b1cc8afe18"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 8
+        },
+        "gender": "female"
+      },
+      "timeIndex": 8,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p018-007",
+          "inputDigest": "1db0f58334e3094bb3c26c7103c5e4942e2d3f73fa0c2cdfc74662e6abbe0bdf"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 0,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p011-034",
+          "inputDigest": "fe7ce849520f45f3794b4de1615dfb1c3684711ec7df053b23ee110f6333344a"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 22
+        },
+        "gender": "female"
+      },
+      "timeIndex": 3,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p013-018",
+          "text": "加曲府左右，贵",
+          "inputDigest": "6aa4ce143c8e3c63990c138901085b2d659098c59949b5ab37379d89cd708618"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 22
+        },
+        "gender": "female"
+      },
+      "timeIndex": 7,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p013-016",
+          "text": "加曲左右，贵，得力",
+          "inputDigest": "f9c4bf15e113ffbdf3ba3668893f8ae6797bdfdcd4abb8926fa5443836583f31"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 29
+        },
+        "gender": "female"
+      },
+      "timeIndex": 1,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p013-009",
+          "text": "加七杀曲，主二人，宜庶出",
+          "inputDigest": "41164413e8886cac68843c57a807dd7f747c79362db5ac54a0e4751a9a851ee3"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 29
+        },
+        "gender": "female"
+      },
+      "timeIndex": 3,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p013-008",
+          "text": "七杀，偏生",
+          "inputDigest": "d366e98c1e41a13d8a8a4b1504639280e6b166f2edfba7421bb94f4ceae9709e"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 2,
+          "day": 5
+        },
+        "gender": "female"
+      },
+      "timeIndex": 1,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p013-028",
+          "inputDigest": "4b51dfea532682f64ce078ee3f3def05e246114a7478b99631ff0aefd4ab8dc2"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 2,
+          "day": 5
+        },
+        "gender": "female"
+      },
+      "timeIndex": 3,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p013-012",
+          "text": "见同左右，亲子得力，庶出送老",
+          "inputDigest": "02b3daefac211fb40793fbf63568e88bb01892a73081beaad715c854bf25a123"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 3,
+          "day": 25
+        },
+        "gender": "female"
+      },
+      "timeIndex": 2,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p011-028",
+          "inputDigest": "601a92840e6583e3b14227841983b449e3895738f4ce2423a5481edc047730ce"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 7,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 5,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p018-004",
+          "text": "入庙，遇太阴，权贵，大臣职",
+          "inputDigest": "7632231f0e7a5a4f9632b0ebe6e65d2c514bf4a2cedb1e71e13ffa67ce82dfab"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 11,
+          "day": 11
+        },
+        "gender": "female"
+      },
+      "timeIndex": 1,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p011-018",
+          "text": "加府曲左右，得力",
+          "inputDigest": "489593dca7ca1bb93a8d4fac89a16693cd2cfed200f18fbfb4cd4ad82a0dbec1"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1981,
+          "month": 12,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 10,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p018-024",
+          "inputDigest": "cf4e3156f31e493118d2943b32eeb65bef28edf63dd949de20eb3d2846c63d32"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1991,
+          "month": 10,
+          "day": 22
+        },
+        "gender": "female"
+      },
+      "timeIndex": 8,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p018-007",
+          "inputDigest": "6fae5903b5ea409e4328ae998fba20023e204744c8a86d81e39ad54e7c59e33e"
+        }
+      ]
+    }
+  ]
+}

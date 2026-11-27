@@ -1,0 +1,264 @@
+{
+  "profile": "ziwei-explicit-single-seat-and-body-placement-v1",
+  "scanned": 4680,
+  "targetAlternatives": 19,
+  "witnesses": [
+    {
+      "profile": {
+        "date": {
+          "year": 1984,
+          "month": 1,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 1,
+      "proofs": [
+        {
+          "id": "ziwei-v1-zhuxing-wenda-p168000-001",
+          "inputDigest": "aa59a25024b26fe93009bbdedea0c0cdd7d5707e548efa8d40d5e3fcfdc87263"
+        },
+        {
+          "id": "ziwei-v4-jielan-222-p001-001",
+          "inputDigest": "aa59a25024b26fe93009bbdedea0c0cdd7d5707e548efa8d40d5e3fcfdc87263"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1984,
+          "month": 5,
+          "day": 8
+        },
+        "gender": "female"
+      },
+      "timeIndex": 3,
+      "proofs": [
+        {
+          "id": "ziwei-v2-xingjue-026-p438-001",
+          "inputDigest": "bf0b8a18e6fa33cd2f5a516d9bcb4f72b71698688a7da6ac7926f9f006ccaa94"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1984,
+          "month": 9,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 1,
+      "proofs": [
+        {
+          "id": "ziwei-v2-xingjue-026-p438-001",
+          "inputDigest": "50f4be4ceb0513349cbbdf8bb4941323082cb68a462fe9350f68c824a2e1ffe8"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1984,
+          "month": 9,
+          "day": 28
+        },
+        "gender": "female"
+      },
+      "timeIndex": 0,
+      "proofs": [
+        {
+          "id": "ziwei-v1-zhuxing-wenda-p168000-001",
+          "inputDigest": "c978b77f318c9b2ed0063b7f2236327e82d62d29b2baa0335b1d62858851c611"
+        },
+        {
+          "id": "ziwei-v4-jielan-222-p001-001",
+          "inputDigest": "c978b77f318c9b2ed0063b7f2236327e82d62d29b2baa0335b1d62858851c611"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1984,
+          "month": 9,
+          "day": 28
+        },
+        "gender": "female"
+      },
+      "timeIndex": 1,
+      "proofs": [
+        {
+          "id": "ziwei-v1-zhuxing-wenda-p168000-001",
+          "inputDigest": "882702af330c60a410b1ef83c8eb26e2399474dc8a7b2f440ec6efc2aaecc488"
+        },
+        {
+          "id": "ziwei-v4-jielan-222-p001-001",
+          "inputDigest": "882702af330c60a410b1ef83c8eb26e2399474dc8a7b2f440ec6efc2aaecc488"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1984,
+          "month": 9,
+          "day": 28
+        },
+        "gender": "female"
+      },
+      "timeIndex": 2,
+      "proofs": [
+        {
+          "id": "ziwei-v1-zhuxing-wenda-p168000-001",
+          "inputDigest": "f81a0adc011b0b1a388beb2034d49394335d0d54a20a4b64c954e744ce987da3"
+        },
+        {
+          "id": "ziwei-v4-jielan-222-p001-001",
+          "inputDigest": "f81a0adc011b0b1a388beb2034d49394335d0d54a20a4b64c954e744ce987da3"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1984,
+          "month": 9,
+          "day": 28
+        },
+        "gender": "female"
+      },
+      "timeIndex": 3,
+      "proofs": [
+        {
+          "id": "ziwei-v1-zhuxing-wenda-p168000-001",
+          "inputDigest": "b0f066664df998943e8058eef7f63d711560028ba25ab4abdb0c303450fd038c"
+        },
+        {
+          "id": "ziwei-v4-jielan-222-p001-001",
+          "inputDigest": "b0f066664df998943e8058eef7f63d711560028ba25ab4abdb0c303450fd038c"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1984,
+          "month": 9,
+          "day": 28
+        },
+        "gender": "female"
+      },
+      "timeIndex": 4,
+      "proofs": [
+        {
+          "id": "ziwei-v1-zhuxing-wenda-p168000-001",
+          "inputDigest": "8267d2d7b206327750e5ae7e5366a3410d6048e37fbf067a01e09c5245438e7b"
+        },
+        {
+          "id": "ziwei-v4-jielan-222-p001-001",
+          "inputDigest": "8267d2d7b206327750e5ae7e5366a3410d6048e37fbf067a01e09c5245438e7b"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1984,
+          "month": 9,
+          "day": 28
+        },
+        "gender": "female"
+      },
+      "timeIndex": 5,
+      "proofs": [
+        {
+          "id": "ziwei-v1-zhuxing-wenda-p168000-001",
+          "inputDigest": "b532f3aa301051f0d770be13280fb2a057b19365b111024d180e467308f4e7d8"
+        },
+        {
+          "id": "ziwei-v4-jielan-222-p001-001",
+          "inputDigest": "b532f3aa301051f0d770be13280fb2a057b19365b111024d180e467308f4e7d8"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1985,
+          "month": 2,
+          "day": 8
+        },
+        "gender": "female"
+      },
+      "timeIndex": 5,
+      "proofs": [
+        {
+          "id": "ziwei-v2-xingjue-026-p438-001",
+          "inputDigest": "6a7db1ee9a30f1dd4920a9e16c4071ee44954f789d5857cc45657c8025ae95bf"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1986,
+          "month": 7,
+          "day": 22
+        },
+        "gender": "female"
+      },
+      "timeIndex": 8,
+      "proofs": [
+        {
+          "id": "ziwei-v2-xingjue-026-p438-001",
+          "inputDigest": "4062943255f44dfa4de99456c8c59b84cb4e676f747b9088268abce92e7e3705"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1987,
+          "month": 3,
+          "day": 8
+        },
+        "gender": "female"
+      },
+      "timeIndex": 10,
+      "proofs": [
+        {
+          "id": "ziwei-v2-xingjue-026-p438-001",
+          "inputDigest": "0ef6e52b85b29649970f670f3319ab76b1cdc75060abea0a1923c943a4f550dc"
+        }
+      ]
+    }
+  ],
+  "missing": [],
+  "excludedByChart": [
+    {
+      "id": "ziwei-v2-xingjue-026-p438-001",
+      "digest": "68d7d5f88df2d0fdc7378671f80222ed3bb7fe3eb560d536c3dfb77da345544c",
+      "required": [
+        {
+          "kind": "body_palace",
+          "palace": "命宫"
+        },
+        {
+          "kind": "palace_core_star_count",
+          "palace": "命宫",
+          "count": 1
+        },
+        {
+          "kind": "palace_star",
+          "palace": "命宫",
+          "star": "地空",
+          "scope": "origin"
+        }
+      ],
+      "reason": "earth_void_and_earth_robbery_share_life_body_at_zi_or_wu_hour"
+    }
+  ]
+}

@@ -746,8 +746,8 @@ const englishInterfaceStrings = <String, String>{
       'The nickname or email is already in use. Update it and request a new email code.',
   '当前邮箱注册服务暂不可用。': 'Email registration is currently unavailable.',
   '当前暂不支持手机号注册，请使用邮箱。': 'Phone registration is unavailable. Use email instead.',
-  '请在本机 virtual-auth-provider/inbox 查找最新 TXT。':
-      'Check virtual-auth-provider/inbox on this device for the latest text file.',
+  '请在本机模拟认证服务的收件箱查找最新验证码。':
+      'Check the local test authentication inbox for the latest code.',
   '协议与政策': 'Agreements and policies',
   '查看现行版本和确认记录': 'View current versions and acceptance history',
   '确认退出': 'Sign out',

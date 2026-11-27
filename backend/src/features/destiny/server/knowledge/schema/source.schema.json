@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./source.schema.json",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "author": {
+      "type": "string",
+      "minLength": 1
+    },
+    "edition": {
+      "type": "string",
+      "minLength": 1
+    },
+    "editionId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sourceType": {
+      "enum": [
+        "classical_text",
+        "historical_book",
+        "technical_document",
+        "reference_project"
+      ]
+    },
+    "sourceLevel": {
+      "type": "string",
+      "minLength": 1
+    },
+    "publicationYear": {
+      "type": "integer"
+    },
+    "accessedAt": {
+      "type": "string",
+      "format": "date"
+    },
+    "digitizationSource": {
+      "type": "string",
+      "minLength": 1
+    },
+    "textStatus": {
+      "type": "string",
+      "minLength": 1
+    },
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https?://"
+    },
+    "alternateUrl": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https?://"
+    },
+    "passageId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "locator": {
+      "type": "string",
+      "minLength": 1
+    },
+    "excerpt": {
+      "type": "string"
+    },
+    "rights": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "minLength": 1
+        },
+        "quotePolicy": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "status",
+        "quotePolicy"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "id",
+    "title",
+    "author",
+    "edition",
+    "url",
+    "passageId",
+    "locator"
+  ],
+  "additionalProperties": false
+}

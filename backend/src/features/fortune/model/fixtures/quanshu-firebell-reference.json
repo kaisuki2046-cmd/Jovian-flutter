@@ -1,0 +1,42 @@
+{
+  "reviewedOn": "2026-11-19",
+  "sourceURL": "https://zh.wikisource.org/w/index.php?oldid=1963110&title=紫微斗數全書/卷二",
+  "qualityURL": "https://zh.wikisource.org/w/index.php?oldid=2268626&title=紫微斗數全書/卷三",
+  "parallelVerseURL": "https://www.shidianguji.com/zh/mid-page/7356346222820769842",
+  "note": "仅核两份数字录文的火铃年支宫位组；未核原刊影印，未将引擎的按生时顺推归给原文。",
+  "anchorPairsByBirthYear": ["寅戌", "卯戌", "丑卯", "酉戌", "寅戌", "卯戌", "丑卯", "酉戌", "寅戌", "卯戌", "丑卯", "酉戌"],
+  "fireBellGradesByBranch": ["陷", "地", "庙", null, "陷", "地", "庙", null, "陷", "地", "庙", null],
+  "examples": [
+    { "n": 1, "dateStr": "1990-01-05", "timeIndex": 0, "gender": "女", "year": 2026 },
+    { "n": 3, "dateStr": "1990-01-05", "timeIndex": 1, "gender": "女", "year": 2026 },
+    { "n": 12, "dateStr": "1990-01-01", "timeIndex": 8, "gender": "女", "year": 2031 },
+    { "n": 27, "dateStr": "1990-01-05", "timeIndex": 3, "gender": "男", "year": 2026 },
+    { "n": 28, "dateStr": "1991-02-16", "timeIndex": 2, "gender": "女", "year": 1998 },
+    { "n": 30, "dateStr": "1990-01-05", "timeIndex": 7, "gender": "男", "year": 2026 },
+    { "n": 31, "dateStr": "1991-02-16", "timeIndex": 0, "gender": "女", "year": 2000 },
+    { "n": 37, "dateStr": "1990-01-05", "timeIndex": 0, "gender": "男", "year": 2026 },
+    { "n": 49, "dateStr": "1990-02-25", "timeIndex": 6, "gender": "女", "year": 2021 }
+  ],
+  "verseSamples": {
+    "jiFallenSha": { "dateStr": "1990-05-15", "timeIndex": 4, "gender": "女", "year": 1996 },
+    "jiSupported": { "dateStr": "1990-05-15", "timeIndex": 5, "gender": "女", "year": 2005 },
+    "jiSongOnlyGrade": { "dateStr": "1991-05-15", "timeIndex": 5, "gender": "女", "year": 2006 },
+    "xiangTempleAid": { "dateStr": "1991-11-15", "timeIndex": 0, "gender": "女", "year": 2003 },
+    "xiangFallenLianPoYangTuo": { "dateStr": "1990-03-15", "timeIndex": 10, "gender": "女", "year": 2003 },
+    "xiangFallenOpposed": { "dateStr": "1991-05-15", "timeIndex": 5, "gender": "女", "year": 2007 },
+    "tongTrineOnly": { "dateStr": "1991-02-15", "timeIndex": 8, "gender": "女", "year": 2001 },
+    "tongRobberyOpposition": { "dateStr": "1991-02-16", "timeIndex": 1, "gender": "女", "year": 1998 },
+    "tongSkyOpposition": { "dateStr": "1991-05-05", "timeIndex": 11, "gender": "女", "year": 2003 },
+    "tongNatalJiOpposition": { "dateStr": "1971-02-15", "timeIndex": 10, "gender": "女", "year": 1990 },
+    "tongYearJiOpposition": { "dateStr": "1988-05-15", "timeIndex": 8, "gender": "女", "year": 2019 },
+    "yinClear": { "dateStr": "1990-05-05", "timeIndex": 0, "gender": "女", "year": 2004 },
+    "yinSingle": { "dateStr": "1990-05-05", "timeIndex": 1, "gender": "女", "year": 2004 },
+    "yinBoth": { "dateStr": "1990-05-05", "timeIndex": 2, "gender": "女", "year": 1997 },
+    "yinReverseFire": { "dateStr": "1965-06-23", "timeIndex": 9, "gender": "女", "year": 2004 },
+    "bellSupported": { "dateStr": "1990-05-05", "timeIndex": 0, "gender": "女", "year": 2003 },
+    "bellWithoutNamedSupport": { "dateStr": "1990-05-05", "timeIndex": 1, "gender": "女", "year": 1994 },
+    "bellTanlangTrine": { "dateStr": "1947-06-21", "timeIndex": 1, "gender": "女", "year": 1961 },
+    "jielanBellTanlangOpposition": { "dateStr": "1949-05-05", "timeIndex": 2, "gender": "女", "year": 1963 },
+    "bellOtherHelpersOnly": { "dateStr": "1947-02-05", "timeIndex": 6, "gender": "女", "year": 1968 }
+  }
+}

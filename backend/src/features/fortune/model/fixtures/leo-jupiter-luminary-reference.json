@@ -1,0 +1,16 @@
+{
+  "source": "https://iapsop.com/ssoc/1906__leo___the_progressed_horoscope.pdf#page=208",
+  "printedPage": 198,
+  "scanSha256": "653f3af2f914811d19a63482cc69aa0e1952112ab295eeff13b81ff44536425e",
+  "sunBirth": "1990-07-16T04:00:00.000Z",
+  "sunLongitude": 113.38225540946985,
+  "moonLongitudeAtSunBirth": 32.67340061659502,
+  "moonBirth": "1990-07-22T00:00:00.000Z",
+  "moonLongitude": 117.3385563661358,
+  "directPass": "2025-10-09T05:06:15.635Z",
+  "retrogradePass": "2025-12-14T20:44:03.282Z",
+  "firstEpisodeStart": "2025-08-29T07:18:02.375Z",
+  "januaryEpisodeExit": "2026-01-31T19:09:22.823Z",
+  "moonDirectPass": "2026-06-17T13:30:52.365Z",
+  "referenceKind": "modern-regression-ephemeris-dates-not-a-printed-historical-example"
+}

@@ -1,0 +1,560 @@
+{
+  "profile": "lilly-1647-essential-prose-v2",
+  "reviewedOn": "2026-11-19",
+  "primaryTable": "https://iiif.wellcomecollection.org/image/b30338724_0138.jp2/full/2000,/0/default.jpg",
+  "catalogue": "https://wellcomecollection.org/works/s7z7c46y",
+  "otherFacsimile": "https://archive.org/details/ca-william-lilly/page/n125/mode/1up",
+  "transcription": "https://krasiancientastrology.com/wp-content/uploads/2016/11/CA-I-copy.pdf#page=124",
+  "returns": "https://krasiancientastrology.com/wp-content/uploads/2016/11/CA-III.pdf#page=252",
+  "rows": [
+    {
+      "sign": 0,
+      "house": "Mars",
+      "exaltation": "Sun",
+      "triplicity": [
+        "Sun",
+        "Jupiter"
+      ],
+      "terms": [
+        [
+          "Jupiter",
+          6
+        ],
+        [
+          "Venus",
+          14
+        ],
+        [
+          "Mercury",
+          21
+        ],
+        [
+          "Mars",
+          26
+        ],
+        [
+          "Saturn",
+          30
+        ]
+      ],
+      "faces": [
+        "Mars",
+        "Sun",
+        "Venus"
+      ]
+    },
+    {
+      "sign": 1,
+      "house": "Venus",
+      "exaltation": "Moon",
+      "triplicity": [
+        "Venus",
+        "Moon"
+      ],
+      "terms": [
+        [
+          "Venus",
+          8
+        ],
+        [
+          "Mercury",
+          15
+        ],
+        [
+          "Jupiter",
+          22
+        ],
+        [
+          "Saturn",
+          26
+        ],
+        [
+          "Mars",
+          30
+        ]
+      ],
+      "faces": [
+        "Mercury",
+        "Moon",
+        "Saturn"
+      ]
+    },
+    {
+      "sign": 2,
+      "house": "Mercury",
+      "exaltation": null,
+      "triplicity": [
+        "Saturn",
+        "Mercury"
+      ],
+      "terms": [
+        [
+          "Mercury",
+          7
+        ],
+        [
+          "Jupiter",
+          14
+        ],
+        [
+          "Venus",
+          21
+        ],
+        [
+          "Saturn",
+          25
+        ],
+        [
+          "Mars",
+          30
+        ]
+      ],
+      "faces": [
+        "Jupiter",
+        "Mars",
+        "Sun"
+      ]
+    },
+    {
+      "sign": 3,
+      "house": "Moon",
+      "exaltation": "Jupiter",
+      "triplicity": [
+        "Mars",
+        "Mars"
+      ],
+      "terms": [
+        [
+          "Mars",
+          6
+        ],
+        [
+          "Jupiter",
+          13
+        ],
+        [
+          "Mercury",
+          20
+        ],
+        [
+          "Venus",
+          27
+        ],
+        [
+          "Saturn",
+          30
+        ]
+      ],
+      "faces": [
+        "Venus",
+        "Mercury",
+        "Moon"
+      ]
+    },
+    {
+      "sign": 4,
+      "house": "Sun",
+      "exaltation": null,
+      "triplicity": [
+        "Sun",
+        "Jupiter"
+      ],
+      "terms": [
+        [
+          "Saturn",
+          6
+        ],
+        [
+          "Mercury",
+          13
+        ],
+        [
+          "Venus",
+          19
+        ],
+        [
+          "Jupiter",
+          25
+        ],
+        [
+          "Mars",
+          30
+        ]
+      ],
+      "faces": [
+        "Saturn",
+        "Jupiter",
+        "Mars"
+      ]
+    },
+    {
+      "sign": 5,
+      "house": "Mercury",
+      "exaltation": "Mercury",
+      "triplicity": [
+        "Venus",
+        "Moon"
+      ],
+      "terms": [
+        [
+          "Mercury",
+          7
+        ],
+        [
+          "Venus",
+          13
+        ],
+        [
+          "Jupiter",
+          18
+        ],
+        [
+          "Saturn",
+          24
+        ],
+        [
+          "Mars",
+          30
+        ]
+      ],
+      "faces": [
+        "Sun",
+        "Venus",
+        "Mercury"
+      ]
+    },
+    {
+      "sign": 6,
+      "house": "Venus",
+      "exaltation": "Saturn",
+      "triplicity": [
+        "Saturn",
+        "Mercury"
+      ],
+      "terms": [
+        [
+          "Saturn",
+          6
+        ],
+        [
+          "Venus",
+          11
+        ],
+        [
+          "Jupiter",
+          19
+        ],
+        [
+          "Venus",
+          24
+        ],
+        [
+          "Mars",
+          30
+        ]
+      ],
+      "faces": [
+        "Moon",
+        "Saturn",
+        "Jupiter"
+      ],
+      "resolvedTerms": [
+        [
+          "Saturn",
+          6
+        ],
+        [
+          "Venus",
+          11
+        ],
+        [
+          "Jupiter",
+          19
+        ],
+        [
+          "Mercury",
+          24
+        ],
+        [
+          "Mars",
+          30
+        ]
+      ]
+    },
+    {
+      "sign": 7,
+      "house": "Mars",
+      "exaltation": null,
+      "triplicity": [
+        "Mars",
+        "Mars"
+      ],
+      "terms": [
+        [
+          "Mars",
+          6
+        ],
+        [
+          "Jupiter",
+          14
+        ],
+        [
+          "Venus",
+          21
+        ],
+        [
+          "Mercury",
+          27
+        ],
+        [
+          "Saturn",
+          30
+        ]
+      ],
+      "faces": [
+        "Mars",
+        "Sun",
+        "Venus"
+      ]
+    },
+    {
+      "sign": 8,
+      "house": "Jupiter",
+      "exaltation": null,
+      "triplicity": [
+        "Sun",
+        "Jupiter"
+      ],
+      "terms": [
+        [
+          "Jupiter",
+          8
+        ],
+        [
+          "Venus",
+          14
+        ],
+        [
+          "Mercury",
+          19
+        ],
+        [
+          "Saturn",
+          25
+        ],
+        [
+          "Mars",
+          30
+        ]
+      ],
+      "faces": [
+        "Mercury",
+        "Moon",
+        "Saturn"
+      ],
+      "resolvedTerms": [
+        [
+          "Jupiter",
+          8
+        ],
+        [
+          "Venus",
+          14
+        ],
+        [
+          "Mercury",
+          20
+        ],
+        [
+          "Saturn",
+          25
+        ],
+        [
+          "Mars",
+          30
+        ]
+      ]
+    },
+    {
+      "sign": 9,
+      "house": "Saturn",
+      "exaltation": "Mars",
+      "triplicity": [
+        "Venus",
+        "Moon"
+      ],
+      "terms": [
+        [
+          "Venus",
+          6
+        ],
+        [
+          "Mercury",
+          12
+        ],
+        [
+          "Jupiter",
+          19
+        ],
+        [
+          "Mars",
+          25
+        ],
+        [
+          "Saturn",
+          30
+        ]
+      ],
+      "faces": [
+        "Jupiter",
+        "Mars",
+        "Sun"
+      ]
+    },
+    {
+      "sign": 10,
+      "house": "Saturn",
+      "exaltation": null,
+      "triplicity": [
+        "Saturn",
+        "Mercury"
+      ],
+      "terms": [
+        [
+          "Saturn",
+          6
+        ],
+        [
+          "Mercury",
+          12
+        ],
+        [
+          "Venus",
+          20
+        ],
+        [
+          "Jupiter",
+          25
+        ],
+        [
+          "Mars",
+          30
+        ]
+      ],
+      "faces": [
+        "Venus",
+        "Mercury",
+        "Moon"
+      ]
+    },
+    {
+      "sign": 11,
+      "house": "Jupiter",
+      "exaltation": "Venus",
+      "triplicity": [
+        "Mars",
+        "Mars"
+      ],
+      "terms": [
+        [
+          "Venus",
+          8
+        ],
+        [
+          "Jupiter",
+          14
+        ],
+        [
+          "Mercury",
+          20
+        ],
+        [
+          "Mars",
+          26
+        ],
+        [
+          "Saturn",
+          30
+        ]
+      ],
+      "faces": [
+        "Saturn",
+        "Jupiter",
+        "Mars"
+      ]
+    }
+  ],
+  "differences": {
+    "taurus": "Wellcome 所核表金牛土星界限为26；另一副本和转录为20，出现22到20的非递增。金牛20度以后保留版本不确定，不从本表参考界主确认界内尊贵。 本轮用同书土星与火星正文复核，运行界限取22至26为土星、26至30为火星，差异保留但不再视为该区间计算未知。",
+    "libra": "所核两份1647影印的第四界为金星24，World Astrology转录为水星24。天秤19至24度保留未知，不静默换成通行水星表。 本轮用同书水星正文复核为第20至第24度水星；原表terms原格仍保留，resolvedTerms另列正文核定表。",
+    "nodes": "表中双子北交、射手南交的擢升标示保留来源记录，本批仅对七曜计算，不扩展到交点或外行星。",
+    "sagittarius": "水星正文第15至第20度、土星从第21度，运行二十度交界；原表十九度交界仍保留。",
+    "gemini": "金星正文到第20度，土星从第22度，原表金星到第21度，剩余第21度缺口保持未知。"
+  },
+  "realChart": {
+    "birthAt": "1990-06-15T04:00:00.000Z",
+    "armc": 100,
+    "latitude": 30,
+    "year": 2026
+  },
+  "proseResolution": {
+    "saturn": {
+      "url": "https://krasiancientastrology.com/wp-content/uploads/2016/11/CA-I-copy.pdf#page=77",
+      "printedPage": 57,
+      "taurusOrdinals": [
+        23,
+        24,
+        25,
+        26
+      ],
+      "sagittariusOrdinals": [
+        21,
+        22,
+        23,
+        24,
+        25
+      ]
+    },
+    "mars": {
+      "url": "https://krasiancientastrology.com/wp-content/uploads/2016/11/CA-I-copy.pdf#page=85",
+      "printedPage": 65,
+      "taurusOrdinals": [
+        27,
+        28,
+        29,
+        30
+      ]
+    },
+    "mercury": {
+      "url": "https://krasiancientastrology.com/wp-content/uploads/2016/11/CA-I-copy.pdf#page=97",
+      "printedPage": 77,
+      "libraOrdinals": [
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "sagittariusOrdinals": [
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ]
+    },
+    "venusGemini": {
+      "printedPage": 73,
+      "ordinals": [
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "remainingGapOrdinal": 21
+    }
+  }
+}

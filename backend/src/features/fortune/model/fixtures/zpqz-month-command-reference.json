@@ -1,0 +1,273 @@
+{
+  "sources": [
+    "https://www.ncc.com.tw/fate/paleo/bg/bg_034.htm",
+    "https://www.ncc.com.tw/fate/paleo/bg/bg_035.htm",
+    "https://zh.wikisource.org/wiki/三命通會/卷三"
+  ],
+  "luByStem": {
+    "甲": "寅",
+    "乙": "卯",
+    "丙": "巳",
+    "丁": "午",
+    "戊": "巳",
+    "己": "午",
+    "庚": "申",
+    "辛": "酉",
+    "壬": "亥",
+    "癸": "子"
+  },
+  "bladeByYangStem": {
+    "甲": "卯",
+    "丙": "午",
+    "戊": "午",
+    "庚": "酉",
+    "壬": "子"
+  },
+  "gaoPrinted": [
+    "庚子",
+    "甲申",
+    "庚子",
+    "甲申"
+  ],
+  "negativeHiddenPeer": {
+    "date": [
+      1992,
+      4,
+      9
+    ],
+    "hour": 18,
+    "gender": 0,
+    "year": 2054,
+    "natal": [
+      "壬申",
+      "甲辰",
+      "乙卯",
+      "乙酉"
+    ],
+    "luck": "丁酉"
+  },
+  "calendarExamples": {
+    "51": {
+      "date": [
+        1980,
+        3,
+        12
+      ],
+      "hour": 16,
+      "gender": 0,
+      "year": 1983,
+      "natal": [
+        "庚申",
+        "己卯",
+        "甲申",
+        "壬申"
+      ],
+      "luck": "戊寅"
+    },
+    "52": {
+      "date": [
+        1980,
+        3,
+        12
+      ],
+      "hour": 16,
+      "gender": 0,
+      "year": 2013,
+      "natal": [
+        "庚申",
+        "己卯",
+        "甲申",
+        "壬申"
+      ],
+      "luck": "乙亥"
+    },
+    "53": {
+      "date": [
+        1980,
+        3,
+        2
+      ],
+      "hour": 16,
+      "gender": 0,
+      "year": 2070,
+      "natal": [
+        "庚申",
+        "戊寅",
+        "甲戌",
+        "壬申"
+      ],
+      "luck": "己巳"
+    },
+    "59": {
+      "date": [
+        1984,
+        9,
+        3
+      ],
+      "hour": 16,
+      "gender": 0,
+      "year": 2004,
+      "natal": [
+        "甲子",
+        "壬申",
+        "庚子",
+        "甲申"
+      ],
+      "luck": "庚午"
+    },
+    "61": {
+      "date": [
+        1980,
+        3,
+        12
+      ],
+      "hour": 16,
+      "gender": 0,
+      "year": 1993,
+      "natal": [
+        "庚申",
+        "己卯",
+        "甲申",
+        "壬申"
+      ],
+      "luck": "丁丑"
+    },
+    "62": {
+      "date": [
+        1980,
+        3,
+        2
+      ],
+      "hour": 16,
+      "gender": 0,
+      "year": 1990,
+      "natal": [
+        "庚申",
+        "戊寅",
+        "甲戌",
+        "壬申"
+      ],
+      "luck": "丁丑"
+    },
+    "67": {
+      "date": [
+        1981,
+        9,
+        13
+      ],
+      "hour": 16,
+      "gender": 1,
+      "year": 1984,
+      "natal": [
+        "辛酉",
+        "丁酉",
+        "甲午",
+        "壬申"
+      ],
+      "luck": "丙申"
+    },
+    "68": {
+      "date": [
+        1981,
+        9,
+        13
+      ],
+      "hour": 16,
+      "gender": 0,
+      "year": 2011,
+      "natal": [
+        "辛酉",
+        "丁酉",
+        "甲午",
+        "壬申"
+      ],
+      "luck": "庚子"
+    },
+    "69": {
+      "date": [
+        1980,
+        9,
+        8
+      ],
+      "hour": 16,
+      "gender": 0,
+      "year": 1981,
+      "natal": [
+        "庚申",
+        "乙酉",
+        "甲申",
+        "壬申"
+      ],
+      "luck": "甲申"
+    },
+    "70": {
+      "date": [
+        1980,
+        9,
+        8
+      ],
+      "hour": 16,
+      "gender": 0,
+      "year": 2011,
+      "natal": [
+        "庚申",
+        "乙酉",
+        "甲申",
+        "壬申"
+      ],
+      "luck": "辛巳"
+    },
+    "145": {
+      "date": [
+        1980,
+        3,
+        22
+      ],
+      "hour": 16,
+      "gender": 0,
+      "year": 1986,
+      "natal": [
+        "庚申",
+        "己卯",
+        "甲午",
+        "壬申"
+      ],
+      "luck": "戊寅"
+    },
+    "146": {
+      "date": [
+        1981,
+        9,
+        10
+      ],
+      "hour": 16,
+      "gender": 0,
+      "year": 2022,
+      "natal": [
+        "辛酉",
+        "丁酉",
+        "辛卯",
+        "丙申"
+      ],
+      "luck": "辛丑"
+    },
+    "148": {
+      "date": [
+        1980,
+        3,
+        2
+      ],
+      "hour": 16,
+      "gender": 0,
+      "year": 2030,
+      "natal": [
+        "庚申",
+        "戊寅",
+        "甲戌",
+        "壬申"
+      ],
+      "luck": "癸酉"
+    }
+  },
+  "note": "Source Lu glyphs 已/巳 and 已/己 are read by their explicit stem/branch roles; only the ten coordinates are supplemental. Modern calendar witnesses verify predicates and uniquely recomputed luck tables, not historical identities or outcomes."
+}

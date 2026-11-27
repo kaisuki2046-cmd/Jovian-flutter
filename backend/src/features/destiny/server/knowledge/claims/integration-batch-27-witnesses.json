@@ -1,0 +1,100 @@
+{
+  "profile": "lilly-essential-dignity-aggregates-v1",
+  "scanned": 4979,
+  "targetAlternatives": 9,
+  "witnesses": [
+    {
+      "date": "1970-01-01T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-spouse-description-p017-001",
+          "inputDigest": "da30401cba2782f13868455953bae6b473a76ad9ba741160056babb3cafd00fa"
+        },
+        {
+          "id": "astro-lilly-v3-spouse-description-p017-001",
+          "inputDigest": "89257749b5245bd8ee094e01a28c809f25973ad1c4646ec6d4ee2f61216b22f5"
+        }
+      ]
+    },
+    {
+      "date": "1970-01-05T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-general-fortune-p001-001",
+          "inputDigest": "56bef41ef855c7ee03517be621a2541902aef7549189468f3b91d7c86767af57"
+        }
+      ]
+    },
+    {
+      "date": "1970-01-15T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-general-fortune-p001-001",
+          "inputDigest": "2ec2d62d3a4cc8fcd2d0643a4d7559c57126846aabeb105f0e75fe8a691bafea"
+        }
+      ]
+    },
+    {
+      "date": "1970-01-17T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-travel-p008-001",
+          "inputDigest": "e24097d69f70c792dc07d7d14130575080ee28ceffb07fa7b59fc73f43cc8fbe"
+        }
+      ]
+    },
+    {
+      "date": "1970-06-30T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-travel-p008-001",
+          "inputDigest": "ca541d6413f5f69a24b74022e9bd162c092ce6b6588acf40b6035ad7f0b6acda"
+        }
+      ]
+    },
+    {
+      "date": "1970-08-17T06:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-religion-dreams-p002-001",
+          "inputDigest": "f19b1eeb675e2b1c83997270f3a7c2c4b3b8b5722554bb400b188ef559ba59f2"
+        }
+      ]
+    },
+    {
+      "date": "1973-05-29T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-spouse-description-p051-001",
+          "inputDigest": "b324d4d7e824c24f537c2f1b0af2aaed71da9567e4b6e1622f06d9f1b9228192"
+        },
+        {
+          "id": "astro-lilly-v3-spouse-description-p051-001",
+          "inputDigest": "28c3508cd7fe00e503983e6af20ec37ae91cdfd4667822891451c68379c0efe0"
+        }
+      ]
+    }
+  ],
+  "missing": []
+}

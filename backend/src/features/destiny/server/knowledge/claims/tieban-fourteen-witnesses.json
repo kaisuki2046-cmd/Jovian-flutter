@@ -1,0 +1,299 @@
+{
+  "scanned": 143000,
+  "witnesses": [
+    {
+      "birthDate": "1924-06-15T16:00:00.000Z",
+      "gender": "男",
+      "queryTimePillar": "己巳",
+      "age": 29,
+      "proofs": [
+        {
+          "id": "tbss14-v9-clauses-p09760-001",
+          "axis": "fourteen_personality",
+          "clauseId": 9760
+        }
+      ]
+    },
+    {
+      "birthDate": "1924-06-15T16:00:00.000Z",
+      "gender": "男",
+      "queryTimePillar": "己巳",
+      "age": 20,
+      "proofs": [
+        {
+          "id": "tbss14-v10-clauses-p10043-001",
+          "axis": "fourteen_annual_corrected",
+          "clauseId": 10043,
+          "age": 20
+        }
+      ]
+    },
+    {
+      "birthDate": "1997-05-08T04:00:00.000Z",
+      "gender": "女",
+      "queryTimePillar": "戊辰",
+      "age": 18,
+      "proofs": [
+        {
+          "id": "tbss14-v10-clauses-p10407-001",
+          "axis": "fourteen_annual",
+          "clauseId": 10407,
+          "age": 18
+        }
+      ]
+    },
+    {
+      "birthDate": "2009-05-24T04:00:00.000Z",
+      "gender": "女",
+      "queryTimePillar": "壬申",
+      "age": 29,
+      "proofs": [
+        {
+          "id": "tbss14-v8-clauses-p08102-001",
+          "axis": "fourteen_siblings",
+          "clauseId": 8102
+        }
+      ]
+    },
+    {
+      "birthDate": "2009-05-24T04:00:00.000Z",
+      "gender": "女",
+      "queryTimePillar": "壬申",
+      "age": 40,
+      "proofs": [
+        {
+          "id": "tbss14-v10-clauses-p10143-001",
+          "axis": "fourteen_annual_corrected",
+          "clauseId": 10143,
+          "age": 40
+        }
+      ]
+    },
+    {
+      "birthDate": "2009-05-24T04:00:00.000Z",
+      "gender": "女",
+      "queryTimePillar": "壬申",
+      "age": 56,
+      "proofs": [
+        {
+          "id": "tbss14-v5-clauses-p05488-001",
+          "axis": "fourteen_annual_corrected",
+          "clauseId": 5488,
+          "age": 56
+        }
+      ]
+    },
+    {
+      "birthDate": "1951-05-08T04:00:00.000Z",
+      "gender": "女",
+      "queryTimePillar": "戊辰",
+      "age": 64,
+      "proofs": [
+        {
+          "id": "tbss14-v6-clauses-p06957-001",
+          "axis": "fourteen_annual_corrected",
+          "clauseId": 6957,
+          "age": 64
+        }
+      ]
+    },
+    {
+      "birthDate": "1943-03-26T08:00:00.000Z",
+      "gender": "女",
+      "queryTimePillar": "壬戌",
+      "age": 29,
+      "proofs": [
+        {
+          "id": "tbss14-v4-clauses-p04241-001",
+          "axis": "fourteen_annual_corrected",
+          "clauseId": 4241,
+          "age": 29
+        }
+      ]
+    },
+    {
+      "birthDate": "1907-01-12T12:00:00.000Z",
+      "gender": "男",
+      "queryTimePillar": "甲子",
+      "age": 38,
+      "proofs": [
+        {
+          "id": "tbss14-v4-clauses-p04693-001",
+          "axis": "fourteen_annual_corrected",
+          "clauseId": 4693,
+          "age": 38
+        }
+      ]
+    },
+    {
+      "birthDate": "2019-11-14T08:00:00.000Z",
+      "gender": "男",
+      "queryTimePillar": "甲午",
+      "age": 20,
+      "proofs": [
+        {
+          "id": "tbss14-v9-clauses-p09181-001",
+          "axis": "fourteen_annual",
+          "clauseId": 9181,
+          "age": 20
+        }
+      ]
+    },
+    {
+      "birthDate": "2019-11-14T08:00:00.000Z",
+      "gender": "男",
+      "queryTimePillar": "甲午",
+      "age": 24,
+      "proofs": [
+        {
+          "id": "tbss14-v12-clauses-p12048-001",
+          "axis": "fourteen_annual_corrected",
+          "clauseId": 12048,
+          "age": 24
+        }
+      ]
+    },
+    {
+      "birthDate": "1903-09-04T20:00:00.000Z",
+      "gender": "男",
+      "queryTimePillar": "壬申",
+      "age": 29,
+      "proofs": [
+        {
+          "id": "tbss14-v7-clauses-p07947-001",
+          "axis": "fourteen_siblings",
+          "clauseId": 7947
+        }
+      ]
+    },
+    {
+      "birthDate": "1903-09-04T20:00:00.000Z",
+      "gender": "男",
+      "queryTimePillar": "壬申",
+      "age": 51,
+      "proofs": [
+        {
+          "id": "tbss14-v3-clauses-p03795-001",
+          "axis": "fourteen_annual",
+          "clauseId": 3795,
+          "age": 51
+        }
+      ]
+    },
+    {
+      "birthDate": "1965-05-20T20:00:00.000Z",
+      "gender": "女",
+      "queryTimePillar": "壬子",
+      "age": 44,
+      "proofs": [
+        {
+          "id": "tbss14-v6-clauses-p06630-001",
+          "axis": "fourteen_annual_corrected",
+          "clauseId": 6630,
+          "age": 44
+        }
+      ]
+    },
+    {
+      "birthDate": "2017-01-12T04:00:00.000Z",
+      "gender": "女",
+      "queryTimePillar": "丙子",
+      "age": 30,
+      "proofs": [
+        {
+          "id": "tbss14-v5-clauses-p05627-001",
+          "axis": "fourteen_annual_corrected",
+          "clauseId": 5627,
+          "age": 30
+        }
+      ]
+    },
+    {
+      "birthDate": "1921-05-28T20:00:00.000Z",
+      "gender": "女",
+      "queryTimePillar": "壬子",
+      "age": 56,
+      "proofs": [
+        {
+          "id": "tbss14-v5-clauses-p05306-001",
+          "axis": "fourteen_annual_corrected",
+          "clauseId": 5306,
+          "age": 56
+        }
+      ]
+    },
+    {
+      "birthDate": "1903-09-16T20:00:00.000Z",
+      "gender": "男",
+      "queryTimePillar": "戊申",
+      "age": 29,
+      "proofs": [
+        {
+          "id": "tbss14-v9-clauses-p09361-001",
+          "axis": "fourteen_wealth",
+          "clauseId": 9361
+        }
+      ]
+    },
+    {
+      "birthDate": "1965-11-14T16:00:00.000Z",
+      "gender": "男",
+      "queryTimePillar": "丙寅",
+      "age": 29,
+      "proofs": [
+        {
+          "id": "tbss14-v11-clauses-p11880-001",
+          "axis": "fourteen_career",
+          "clauseId": 11880
+        }
+      ]
+    },
+    {
+      "birthDate": "1991-09-04T12:00:00.000Z",
+      "gender": "女",
+      "queryTimePillar": "丙申",
+      "age": 29,
+      "proofs": [
+        {
+          "id": "tbss14-v10-clauses-p10096-001",
+          "axis": "fourteen_personality",
+          "clauseId": 10096
+        }
+      ]
+    },
+    {
+      "birthDate": "1905-09-04T04:00:00.000Z",
+      "gender": "男",
+      "queryTimePillar": "壬申",
+      "age": 29,
+      "proofs": [
+        {
+          "id": "tbss14-v6-clauses-p06640-001",
+          "axis": "fourteen_wealth",
+          "clauseId": 6640
+        }
+      ]
+    },
+    {
+      "birthDate": "1915-09-08T12:00:00.000Z",
+      "gender": "女",
+      "queryTimePillar": "甲子",
+      "age": 29,
+      "proofs": [
+        {
+          "id": "tbss14-v5-clauses-p05821-001",
+          "axis": "fourteen_career",
+          "clauseId": 5821
+        }
+      ]
+    }
+  ],
+  "pending": [],
+  "mismatch": {
+    "birthDate": "1939-03-02T08:00:00.000Z",
+    "gender": "女",
+    "queryTimePillar": "戊午",
+    "age": 29,
+    "clauseId": 5272
+  }
+}

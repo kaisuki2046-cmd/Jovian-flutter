@@ -1,0 +1,875 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./fact.schema.json",
+  "oneOf": [
+    {
+      "type": "object", "properties": { "kind": { "const": "western_lilly_dignified_count" },
+        "count": { "type": "integer", "minimum": 0, "maximum": 7 }, "profile": { "const": "lilly-1659-p104-v1" } },
+      "required": ["kind", "count", "profile"], "additionalProperties": false
+    },
+    {
+      "type": "object", "properties": { "kind": { "const": "planet_daily_motion" },
+        "planet": { "enum": ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"] },
+        "signedDegrees": { "type": "number", "minimum": -32, "maximum": 32 } },
+      "required": ["kind", "planet", "signedDegrees"], "additionalProperties": false
+    },
+    {
+      "type": "object", "properties": { "kind": { "const": "western_lilly_solar_state" },
+        "selector": { "enum": ["moon", "mercury", "venus", "mars", "jupiter", "saturn", "house_1_ruler", "house_5_ruler"] },
+        "condition": { "enum": ["combust", "under_beams", "cazimi", "free_of_beams", "oriental", "occidental"] },
+        "matches": { "type": "boolean" }, "profile": { "const": "lilly-1647-solar-proximity-v1" } },
+      "required": ["kind", "selector", "condition", "matches", "profile"], "additionalProperties": false
+    },
+    {
+      "type": "object", "properties": { "kind": { "const": "western_lilly_speed_state" },
+        "selector": { "enum": ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn"] },
+        "condition": { "enum": ["swift", "slow"] }, "matches": { "type": "boolean" },
+        "profile": { "const": "lilly-1647-mean-daily-motion-v1" } },
+      "required": ["kind", "selector", "condition", "matches", "profile"], "additionalProperties": false
+    },
+    {
+      "type": "object", "properties": { "kind": { "const": "western_lilly_sign_class" },
+        "selector": { "enum": ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "house_7_cusp", "house_11_cusp", "house_7_ruler", "venus_dispositor"] },
+        "classification": { "enum": ["movable", "fixed", "common", "fire", "earth", "air", "water", "tropic", "human", "profession_quadrupedal", "selected"] },
+        "matches": { "type": "boolean" }, "profile": { "const": "lilly-1647-explicit-sign-classes-v1" } },
+      "required": ["kind", "selector", "classification", "matches", "profile"], "additionalProperties": false
+    },
+    {
+      "type": "object", "properties": { "kind": { "const": "western_lilly_profession_ruler" },
+        "planet": { "enum": ["Mercury", "Venus", "Mars"] }, "role": { "enum": ["member", "sole"] },
+        "matches": { "type": "boolean" }, "profile": { "const": "lilly-1647-profession-first-two-v1" } },
+      "required": ["kind", "planet", "role", "matches", "profile"], "additionalProperties": false
+    },
+    {
+      "type": "object", "properties": { "kind": { "const": "western_lilly_reception" },
+        "first": { "type": "string", "pattern": "^(sun|moon|mercury|venus|mars|jupiter|saturn|house_([1-9]|1[0-2])_ruler|sun_dispositor|moon_dispositor)$" },
+        "second": { "type": "string", "pattern": "^(sun|moon|mercury|venus|mars|jupiter|saturn|house_([1-9]|1[0-2])_ruler|sun_dispositor|moon_dispositor)$" },
+        "reception": { "enum": ["domicile", "exaltation", "triplicity", "term", "face", "mutual", "mutual_domicile"] },
+        "matches": { "type": "boolean" }, "profile": { "const": "lilly-1659-p104-v1" } },
+      "required": ["kind", "first", "second", "reception", "matches", "profile"], "additionalProperties": false
+    },
+    {
+      "type": "object", "properties": { "kind": { "const": "western_lilly_dignity" },
+        "planet": { "enum": ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"] },
+        "dignity": { "enum": ["domicile", "exaltation", "triplicity", "term", "face", "detriment", "fall", "peregrine"] },
+        "matches": { "type": "boolean" }, "profile": { "const": "lilly-1659-p104-v1" } },
+      "required": ["kind", "planet", "dignity", "matches", "profile"], "additionalProperties": false
+    },
+    {
+      "type": "object", "properties": { "kind": { "const": "palace_source_brightness" },
+        "palace": { "const": "命宫" }, "star": { "enum": ["紫微", "天机", "太阳", "武曲", "天同", "廉贞", "天府", "太阴", "贪狼", "巨门", "天相", "天梁", "七杀", "破军", "文昌", "文曲"] },
+        "branch": { "enum": ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"] },
+        "scope": { "const": "origin" }, "brightness": { "enum": ["庙", "旺", "得", "利", "平", "不", "陷"] }, "profile": { "const": "quanshu-v2-minggong-table-1963110" } },
+      "required": ["kind", "palace", "star", "branch", "scope", "brightness", "profile"], "additionalProperties": false
+    },
+    {
+      "type": "object", "properties": { "kind": { "const": "western_lilly_aspect" },
+        "table": { "enum": ["main", "other"] }, "first": { "type": "string", "pattern": "^(sun|moon|mercury|venus|mars|jupiter|saturn|house_([1-9]|1[0-2])_ruler)$" },
+        "second": { "type": "string", "pattern": "^(sun|moon|mercury|venus|mars|jupiter|saturn|house_([1-9]|1[0-2])_ruler)$" },
+        "aspect": { "enum": ["conjunction", "sextile", "square", "trine", "opposition", "friendly", "any"] }, "matches": { "type": "boolean" } },
+      "required": ["kind", "table", "first", "second", "aspect", "matches"], "additionalProperties": false
+    },
+    {
+      "type": "object", "properties": { "kind": { "const": "planet_longitude" },
+        "planet": { "type": "string", "minLength": 1 }, "longitude": { "type": "number", "minimum": 0, "exclusiveMaximum": 360 } },
+      "required": ["kind", "planet", "longitude"], "additionalProperties": false
+    },
+    {
+      "type": "object", "properties": { "kind": { "const": "western_profile_cusp_longitude" }, "profile": { "const": "regiomontanus" },
+        "house": { "type": "integer", "minimum": 1, "maximum": 12 }, "longitude": { "type": "number", "minimum": 0, "exclusiveMaximum": 360 } },
+      "required": ["kind", "profile", "house", "longitude"], "additionalProperties": false
+    },
+    {
+      "type": "object", "properties": { "kind": { "const": "western_lilly_ruleset" }, "ruleset": { "const": "lilly-1647-longitude-five-degree-v1" } },
+      "required": ["kind", "ruleset"], "additionalProperties": false
+    },
+    {
+      "type": "object", "properties": { "kind": { "const": "western_lilly_house_ruler" },
+        "house": { "type": "integer", "minimum": 1, "maximum": 12 }, "planet": { "enum": ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"] } },
+      "required": ["kind", "house", "planet"], "additionalProperties": false
+    },
+    {
+      "type": "object", "properties": { "kind": { "const": "western_lilly_planet_house" },
+        "house": { "type": "integer", "minimum": 1, "maximum": 12 }, "planet": { "enum": ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"] } },
+      "required": ["kind", "house", "planet"], "additionalProperties": false
+    },
+    {
+      "type": "object", "properties": { "kind": { "const": "western_lilly_ruler_house" },
+        "house": { "type": "integer", "minimum": 1, "maximum": 12 }, "placedIn": { "type": "integer", "minimum": 1, "maximum": 12 } },
+      "required": ["kind", "house", "placedIn"], "additionalProperties": false
+    },
+    {
+      "type": "object", "properties": { "kind": { "const": "western_profile_system" }, "profile": { "const": "regiomontanus" } },
+      "required": ["kind", "profile"], "additionalProperties": false
+    },
+    {
+      "type": "object", "properties": { "kind": { "const": "western_profile_house_sign" }, "profile": { "const": "regiomontanus" },
+        "house": { "type": "integer", "minimum": 1, "maximum": 12 }, "sign": { "type": "string", "minLength": 1 } },
+      "required": ["kind", "profile", "house", "sign"], "additionalProperties": false
+    },
+    {
+      "type": "object", "properties": { "kind": { "const": "western_profile_planet_house" }, "profile": { "const": "regiomontanus" },
+        "house": { "type": "integer", "minimum": 1, "maximum": 12 }, "planet": { "type": "string", "minLength": 1 } },
+      "required": ["kind", "profile", "planet", "house"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "natal_daylight" }, "sect": { "enum": ["day", "night"] } },
+      "required": ["kind", "sect"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "natal_ziwei_hour" }, "branch": { "enum": ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"] } },
+      "required": ["kind", "branch"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "natal_ziwei_time_band" }, "branch": { "enum": ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"] },
+        "band": { "enum": ["early", "middle", "late"] } },
+      "required": ["kind", "branch", "band"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "palace_sector_all_benefic" }, "palace": { "type": "string", "minLength": 1 } },
+      "required": ["kind", "palace"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "palace_major_state" }, "palace": { "type": "string", "minLength": 1 },
+        "state": { "enum": ["庙旺化吉", "庙旺", "入庙", "陷地"] } },
+      "required": ["kind", "palace", "state"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "palace_body_star_group" }, "group": { "enum": ["六吉", "四煞"] } },
+      "required": ["kind", "group"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "palace_sector_benefic_count" }, "palace": { "type": "string", "minLength": 1 },
+        "count": { "type": "integer", "minimum": 0, "maximum": 6 } },
+      "required": ["kind", "palace", "count"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "palace_sector_malefic_count" }, "palace": { "type": "string", "minLength": 1 },
+        "count": { "type": "integer", "minimum": 0, "maximum": 4 } },
+      "required": ["kind", "palace", "count"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "palace_sector_star" }, "palace": { "type": "string", "minLength": 1 },
+        "star": { "type": "string", "minLength": 1 } },
+      "required": ["kind", "palace", "star"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "palace_core_star_count" }, "palace": { "type": "string", "minLength": 1 },
+        "count": { "type": "integer", "minimum": 0 } },
+      "required": ["kind", "palace", "count"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "bazi_ten_god_structure" }, "name": { "type": "string", "minLength": 1 } },
+      "required": ["kind", "name"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "bazi_stem_combination" }, "first": { "enum": ["year", "month", "day", "hour"] },
+        "second": { "enum": ["year", "month", "day", "hour"] } },
+      "required": ["kind", "first", "second"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "bazi_hidden_god_phase" }, "position": { "enum": ["year", "month", "day", "hour"] },
+        "tenGod": { "type": "string", "minLength": 1 },
+        "phase": { "enum": ["长生", "沐浴", "冠带", "临官", "帝旺", "衰", "病", "死", "墓", "绝", "胎", "养"] },
+        "anchor": { "enum": ["host", "month"] } },
+      "required": ["kind", "position", "tenGod", "phase", "anchor"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "bazi_natal_configuration" }, "name": { "type": "string", "minLength": 1 } },
+      "required": ["kind", "name"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "bazi_own_stem_phase" }, "position": { "enum": ["year", "month", "day", "hour"] },
+        "phase": { "enum": ["长生", "沐浴", "冠带", "临官", "帝旺", "衰", "病", "死", "墓", "绝", "胎", "养"] } },
+      "required": ["kind", "position", "phase"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "bazi_day_master_season" }, "season": { "enum": ["旺", "相", "休", "囚", "死"] } },
+      "required": ["kind", "season"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "bazi_element_balance" }, "element": { "enum": ["木", "火", "土", "金", "水"] },
+        "band": { "enum": ["旺", "弱", "过盛", "少量"] }, "profile": { "const": "weighted-element-balance-v1" } },
+      "required": ["kind", "element", "band", "profile"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "bazi_natal_element" }, "element": { "enum": ["木", "火", "土", "金", "水"] } },
+      "required": ["kind", "element"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "bazi_nayin_school" }, "position": { "enum": ["month", "day", "hour"] },
+        "school": { "enum": ["真学堂", "真词馆"] } },
+      "required": ["kind", "position", "school"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "bazi_nayin_phase" }, "position": { "enum": ["year", "month", "day", "hour"] },
+        "phase": { "enum": ["长生", "沐浴", "冠带", "临官", "帝旺", "衰", "病", "死", "墓", "绝", "胎", "养"] } },
+      "required": ["kind", "position", "phase"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "bazi_branch_relation" }, "relation": { "enum": ["六合", "六冲", "六害", "相破", "相刑", "自刑", "三刑", "三合", "互换空亡"] },
+        "first": { "enum": ["year", "month", "day", "hour"] }, "second": { "enum": ["year", "month", "day", "hour"] } },
+      "required": ["kind", "relation", "first", "second"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "bazi_stem_transformation" }, "pair": { "type": "string", "minLength": 2, "maxLength": 2 },
+        "element": { "enum": ["木", "火", "土", "金", "水"] } },
+      "required": ["kind", "pair", "element"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "bazi_ten_god_strength" }, "group": { "enum": ["财星", "官星", "官杀", "七杀", "印星", "比劫", "食神", "伤官"] },
+        "profile": { "const": "anchored-weighted-ten-god-v1" }, "strength": { "enum": ["旺", "过盛"] } },
+      "required": ["kind", "group", "profile", "strength"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "bazi_ten_god_count" }, "tenGod": { "type": "string", "minLength": 1 },
+        "count": { "type": "integer", "minimum": 0, "maximum": 4 } },
+      "required": ["kind", "tenGod", "count"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "bazi_month_pattern" }, "name": { "type": "string", "minLength": 1 },
+        "result": { "enum": ["见配合", "待配合", "见干扰"] } },
+      "required": ["kind", "name", "result"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "ziwei_daozang_input" },
+        "yearBranch": { "enum": ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"] },
+        "month": { "type": "integer", "minimum": 1, "maximum": 12 }, "day": { "type": "integer", "minimum": 1, "maximum": 30 },
+        "hour": { "type": "integer", "minimum": 0, "maximum": 11 }, "leap": { "type": "boolean" } },
+      "required": ["kind", "yearBranch", "month", "day", "hour", "leap"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "daozang_star_branch" }, "star": { "type": "string", "minLength": 1 },
+        "branch": { "enum": ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"] } },
+      "required": ["kind", "star", "branch"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "daozang_palace_star" }, "star": { "type": "string", "minLength": 1 },
+        "palace": { "type": "string", "minLength": 1 }, "relation": { "enum": ["occupies", "opposite", "trine"] } },
+      "required": ["kind", "palace", "star", "relation"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "daozang_palace_star_count" }, "palace": { "type": "string", "minLength": 1 },
+        "count": { "type": "integer", "minimum": 0, "maximum": 19 } },
+      "required": ["kind", "palace", "count"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "bazi_element_temperament" }, "element": { "enum": ["木", "火", "土", "金", "水"] },
+        "classification": { "enum": ["旺相", "休囚", "太过", "不及"] }, "profile": { "const": "element-weighted-temperament-v1" } },
+      "required": ["kind", "element", "classification", "profile"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "enum": ["palace_boshi_star", "palace_suiqian_star", "palace_jiangqian_star"] }, "palace": { "type": "string", "minLength": 1 },
+        "star": { "type": "string", "minLength": 1 } },
+      "required": ["kind", "palace", "star"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "natal_classical_region" }, "zone": { "enum": ["豫", "冀", "扬", "徐", "雍"] } },
+      "required": ["kind", "zone"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "bazi_previous_qi" }, "term": { "enum": ["大寒", "雨水", "春分", "谷雨", "小满", "夏至", "大暑", "处暑", "秋分", "霜降", "小雪", "冬至"] } },
+      "required": ["kind", "term"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "bazi_fetal_month" }, "ganZhi": { "type": "string", "pattern": "^[甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥]$" } },
+      "required": ["kind", "ganZhi"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "bazi_solar_month_xun" }, "band": { "const": "early" } },
+      "required": ["kind", "band"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "ziwei_eight_seats" } },
+      "required": ["kind"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "ziwei_life_body_clash" } },
+      "required": ["kind"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "natal_ziwei_life_phase" },
+        "phase": { "enum": ["长生", "沐浴", "冠带", "临官", "帝旺", "衰", "病", "死", "墓", "绝", "胎", "养"] } },
+      "required": ["kind", "phase"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "ziwei_grade" }, "dimension": { "enum": ["star", "number"] },
+        "grade": { "enum": ["上", "中", "下"] } },
+      "required": ["kind", "dimension", "grade"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "palace_mutagen_brightness" }, "palace": { "type": "string", "minLength": 1 },
+        "change": { "enum": ["禄", "权", "科", "忌"] }, "brightness": { "enum": ["庙", "旺", "陷"] } },
+      "required": ["kind", "palace", "change", "brightness"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "enum": ["branch_ten_god", "branch_main_ten_god"] },
+        "position": { "enum": ["year", "month", "day", "hour"] }, "tenGod": { "type": "string", "minLength": 1 } },
+      "required": ["kind", "position", "tenGod"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "natal_year_nayin_element" }, "element": { "enum": ["木", "火", "土", "金", "水"] } },
+      "required": ["kind", "element"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "natal_ziwei_bureau" }, "bureau": { "enum": ["水二局", "木三局", "金四局", "土五局", "火六局"] } },
+      "required": ["kind", "bureau"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "palace_origin_star_count" }, "palace": { "type": "string", "minLength": 1 },
+        "count": { "type": "integer", "minimum": 0, "maximum": 128 } },
+      "required": ["kind", "palace", "count"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "western_zodiac" }, "zodiac": { "const": "tropical" } },
+      "required": ["kind", "zodiac"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "western_house_system" }, "houseSystem": { "const": "whole_sign" } },
+      "required": ["kind", "houseSystem"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "western_sect" }, "sect": { "enum": ["day", "night"] } },
+      "required": ["kind", "sect"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": { "kind": { "const": "angle_sign" }, "angle": { "enum": ["ascendant", "mc"] }, "sign": { "type": "string", "minLength": 1 } },
+      "required": ["kind", "angle", "sign"], "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": { "const": "pillar_xun" },
+        "position": { "enum": ["year", "month", "day", "hour"] },
+        "head": { "enum": ["甲子", "甲戌", "甲申", "甲午", "甲辰", "甲寅"] }
+      },
+      "required": ["kind", "position", "head"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "pillar"
+        },
+        "position": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ganZhi": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "kind",
+        "position",
+        "ganZhi"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "branch"
+        },
+        "position": {
+          "type": "string",
+          "minLength": 1
+        },
+        "branch": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "kind",
+        "position",
+        "branch"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "stem_ten_god"
+        },
+        "position": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tenGod": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "kind",
+        "position",
+        "tenGod"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "hidden_ten_god"
+        },
+        "position": {
+          "type": "string",
+          "minLength": 1
+        },
+        "stem": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tenGod": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "kind",
+        "position",
+        "stem",
+        "tenGod"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "shen_sha"
+        },
+        "position": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "kind",
+        "position",
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "palace_branch"
+        },
+        "palace": {
+          "type": "string",
+          "minLength": 1
+        },
+        "branch": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "kind",
+        "palace",
+        "branch"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "palace_star"
+        },
+        "palace": {
+          "type": "string",
+          "minLength": 1
+        },
+        "star": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "enum": [
+            "origin",
+            "decadal",
+            "yearly",
+            "monthly",
+            "daily",
+            "hourly"
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "palace",
+        "star",
+        "scope"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": { "const": "palace_brightness" },
+        "palace": { "type": "string", "minLength": 1 },
+        "star": { "type": "string", "minLength": 1 },
+        "scope": { "enum": ["origin", "decadal", "yearly", "monthly", "daily", "hourly"] },
+        "brightness": { "enum": ["庙", "旺", "得", "利", "平", "不", "闲", "陷"] }
+      },
+      "required": ["kind", "palace", "star", "scope", "brightness"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {"const":"pillar_nayin"},
+        "position": {"enum":["year","month","day","hour"]},
+        "name": {"type":"string","minLength":1}
+      },
+      "required": ["kind","position","name"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {"const":"day_stem_phase"},
+        "position": {"enum":["year","month","day","hour"]},
+        "phase": {"enum":["长生","沐浴","冠带","临官","帝旺","衰","病","死","墓","绝","胎","养"]}
+      },
+      "required": ["kind","position","phase"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {"const":"day_master_strength"},
+        "result": {"enum":["偏弱","偏强","相对均衡"]},
+        "profile": {"const":"monthly-weighted-strength-v1"}
+      },
+      "required": ["kind","result","profile"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {"const":"star_mutagen"},
+        "palace": {"type":"string","minLength":1},
+        "star": {"type":"string","minLength":1},
+        "change": {"enum":["禄","权","科","忌"]},
+        "scope": {"enum":["origin","decadal","yearly","monthly","daily","hourly"]}
+      },
+      "required": ["kind","palace","star","change","scope"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {"const":"body_palace"},
+        "palace": {"type":"string","minLength":1}
+      },
+      "required": ["kind","palace"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {"const":"palace_main_count"},
+        "palace": {"type":"string","minLength":1},
+        "count": {"type":"integer","minimum":0,"maximum":14}
+      },
+      "required": ["kind","palace","count"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {"const":"natal_gender"},
+        "gender": {"enum":["男","女"]}
+      },
+      "required": ["kind","gender"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {"const":"natal_year_stem"},
+        "stem": {"type":"string","minLength":1}
+      },
+      "required": ["kind","stem"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {"const":"natal_year_branch"},
+        "branch": {"type":"string","minLength":1}
+      },
+      "required": ["kind","branch"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {"const":"natal_lunar_month"},
+        "month": {"type":"integer","minimum":1,"maximum":12},
+        "leap": {"type":"boolean"}
+      },
+      "required": ["kind","month","leap"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {"const":"bazi_decadal_range"},
+        "ganZhi": {"type":"string","pattern":"^[甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥]$"},
+        "startAge": {"type":"integer","minimum":1,"maximum":116},
+        "endAge": {"type":"integer","minimum":10,"maximum":125}
+      },
+      "required": ["kind","ganZhi","startAge","endAge"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {"const":"ziwei_decadal_range"},
+        "palace": {"type":"string","minLength":1},
+        "startAge": {"type":"integer","minimum":2,"maximum":116},
+        "endAge": {"type":"integer","minimum":11,"maximum":125}
+      },
+      "required": ["kind","palace","startAge","endAge"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {"const":"palace_relation"},
+        "anchor": {"type":"string","minLength":1},
+        "target": {"type":"string","minLength":1},
+        "relation": {"enum":["opposite","trine","adjacent"]}
+      },
+      "required": ["kind","anchor","target","relation"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "planet_sign"
+        },
+        "planet": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sign": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "kind",
+        "planet",
+        "sign"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "planet_house"
+        },
+        "planet": {
+          "type": "string",
+          "minLength": 1
+        },
+        "house": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 12
+        }
+      },
+      "required": [
+        "kind",
+        "planet",
+        "house"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "aspect"
+        },
+        "first": {
+          "type": "string",
+          "minLength": 1
+        },
+        "second": {
+          "type": "string",
+          "minLength": 1
+        },
+        "aspect": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "kind",
+        "first",
+        "second",
+        "aspect"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "aspect_orb"
+        },
+        "first": {
+          "type": "string",
+          "minLength": 1
+        },
+        "second": {
+          "type": "string",
+          "minLength": 1
+        },
+        "aspect": {
+          "type": "string",
+          "minLength": 1
+        },
+        "orb": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 6
+        }
+      },
+      "required": [
+        "kind",
+        "first",
+        "second",
+        "aspect",
+        "orb"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "stem"
+        },
+        "position": {
+          "type": "string",
+          "minLength": 1
+        },
+        "stem": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "kind",
+        "position",
+        "stem"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "palace_mutagen"
+        },
+        "palace": {
+          "type": "string",
+          "minLength": 1
+        },
+        "change": {
+          "enum": [
+            "禄",
+            "权",
+            "科",
+            "忌"
+          ]
+        },
+        "scope": {
+          "enum": [
+            "origin",
+            "decadal",
+            "yearly",
+            "monthly",
+            "daily",
+            "hourly"
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "palace",
+        "change",
+        "scope"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

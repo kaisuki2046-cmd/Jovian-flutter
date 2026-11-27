@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "importedAt": "2026-11-18T06:27:44.650Z",
+  "digestFormat": "utf8-lf-without-bom",
+  "total": 11162,
+  "catalogs": {
+    "western": {
+      "count": 1619,
+      "previousCount": 413,
+      "sha256": "a9a92c652ad33d6400685649e3ba4910d17b33c19348ba99549da5c59a880346",
+      "added": 3592,
+      "removed": 2386,
+      "status": {
+        "indexed": 1065,
+        "case_indexed": 156,
+        "unmapped": 398
+      },
+      "reasons": {
+        "unsupported_calculation_profile": 398
+      },
+      "machineStatus": {
+        "ready": 1609,
+        "reference_only": 9,
+        "review_required": 1
+      },
+      "revisedConditions": 19,
+      "calculationReferenceSources": 402,
+      "historicalAphorismSources": 228,
+      "revisedEvidence": 24
+    },
+    "ziwei": {
+      "count": 4209,
+      "previousCount": 989,
+      "sha256": "4eb7f8dc0b14ab881db4e186340241c55b48c861808bdbae8eef1033d1112d25",
+      "added": 4827,
+      "removed": 1607,
+      "status": {
+        "branch_indexed": 2507,
+        "indexed": 1676,
+        "case_indexed": 26
+      },
+      "reasons": {},
+      "machineStatus": {
+        "legacy_text_conditions": 4209
+      },
+      "revisedConditions": 344,
+      "calculationReferenceSources": 0,
+      "revisedEvidence": 337
+    },
+    "bazi": {
+      "count": 5334,
+      "previousCount": 912,
+      "sha256": "74888312141bfcc0c7e8294f340fd045a1aaed54abae59795e64a3cfeea07770",
+      "added": 8142,
+      "removed": 3720,
+      "status": {
+        "branch_indexed": 1633,
+        "indexed": 362,
+        "case_indexed": 20,
+        "unmapped": 3319
+      },
+      "reasons": {
+        "different_calculation_system": 3319
+      },
+      "machineStatus": {
+        "legacy_text_conditions": 1703,
+        "ready": 153,
+        "needs_calculation": 3476,
+        "needs_review": 2
+      },
+      "revisedConditions": 0,
+      "calculationReferenceSources": 0,
+      "revisedEvidence": 0
+    }
+  }
+}

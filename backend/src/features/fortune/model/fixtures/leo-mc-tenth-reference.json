@@ -1,0 +1,15 @@
+{
+  "profile": "leo-mc-tenth-linked-v1",
+  "reviewedOn": "2026-11-19",
+  "source": {
+    "url": "https://www.astro.nu/wp-content/uploads/The-Progressed-Horoscope-Alan-Leo.pdf#page=210",
+    "pdfPageOneBased": 210,
+    "sha256": "1bce70fcdc4fa9aa10c21988cd00554af01261a82ab33e50fc961631e52360a9",
+    "triggerExcerpt": "transiting the M.C. and passing through the Tenth House",
+    "responseExcerpt": "great responsibilities",
+    "reviewSummary": "完整段落同时讨论与上级、信誉有关的压力，以及言行审慎、承担责任的另一回应分支；本实现保留条件性解释，不按盘面判断用户人格。",
+    "note": "原页使用土星符号，本条按土星段核读；原JSON的p.195与短引不改，不声称数字PDF页码等同原归档页码。"
+  },
+  "testChart": { "birthAt": "1990-01-01T04:00:00.000Z", "armc": 0, "latitude": 35 },
+  "realYears": { "entryAndRetrogradeExit": 2025, "reentry": 2026, "backgroundOnly": 2027 }
+}

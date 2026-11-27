@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 final legacyRepositoryRoot = Directory.fromUri(
-  Platform.script.resolve('../../../../../../'),
+  Platform.script.resolve('../../../../../backend/'),
 );
 
 Future<List<Object?>> runLegacyOracle(String program, Object input) async {

@@ -1,0 +1,446 @@
+{
+  "baseline": "twenty-second integration batch",
+  "profile": "ziwei-explicit-natal-year-and-birth-grades-v1",
+  "changes": [
+    {
+      "id": "ziwei-v2-minggong-p142000-004",
+      "method": "ziwei",
+      "previousReason": "unmapped_condition",
+      "status": "branch_indexed",
+      "reason": "unmapped_condition",
+      "inputs": [],
+      "branches": [
+        {
+          "text": "申宫入庙甲庚戊生人贵格",
+          "conditionCompiler": "quanshu-explicit-birth-grades-v1",
+          "inputDigests": [
+            "676a4d218716e2f6b0b67623ad0267eb920dc112a7f9011e3f51766502dbb638",
+            "05606cebdc8f357b4d42ed8bead82f62443449837c146a279fdd17e0109c7fc8",
+            "3df58f5c4f5d28565f34bf74f3d9f23c0bb975b669e8b694aa9b078e4b8fec05"
+          ]
+        },
+        {
+          "text": "丙生人次之",
+          "conditionCompiler": "quanshu-explicit-birth-grades-v1",
+          "inputDigests": [
+            "3cf8a92868b297597dd3014c5489d62a73cf77d7726966888c9b0deb6108a0a4"
+          ]
+        }
+      ],
+      "incompatibleAlternatives": []
+    },
+    {
+      "id": "ziwei-v2-minggong-p253000-001",
+      "method": "ziwei",
+      "previousReason": "unmapped_condition",
+      "status": "indexed",
+      "remainingAlternatives": 8,
+      "inputs": [
+        {
+          "digest": "bb221d77276f059d3a0561facdfe381b6f8b6f138b16a495fda4314c67deebc3"
+        },
+        {
+          "digest": "ccf767bfb1cae2b75ff6bbbb2d7c9b32b50e567ff7925897c08c124c90bce5df"
+        },
+        {
+          "digest": "fdcb03d204b66a0684c3ba87b0363a8707f4948c072bc98e740ceccb8cfcee81"
+        },
+        {
+          "digest": "f3dfb4968fa700c174f3a88d8bc443a25945702c73ff2a6bc68838b23a90e3b4"
+        },
+        {
+          "digest": "d8babe8f5273fda962aa8d4ee24b79f176d65ec890ebee760d392a2ef15ad813"
+        },
+        {
+          "digest": "aa53b3e07c49c197404f778870ab025fdf205ec0cdc55eaac9016f1a24d405f8"
+        },
+        {
+          "digest": "093dec43135d7b8cf1a4e518930a183d1f363955297011ceb1e594b6dd24dc0f"
+        },
+        {
+          "digest": "06509d117b2292ab630512a639fe573e5074799fc71aada6729eedf1bf536ff2"
+        }
+      ],
+      "branches": [],
+      "incompatibleAlternatives": [
+        [
+          {
+            "kind": "palace_star",
+            "palace": "命宫",
+            "star": "擎羊",
+            "scope": "origin"
+          },
+          {
+            "kind": "palace_branch",
+            "palace": "命宫",
+            "branch": "辰"
+          },
+          {
+            "kind": "palace_brightness",
+            "palace": "命宫",
+            "star": "擎羊",
+            "scope": "origin",
+            "brightness": "庙"
+          },
+          {
+            "kind": "natal_year_branch",
+            "branch": "辰"
+          }
+        ],
+        [
+          {
+            "kind": "palace_star",
+            "palace": "命宫",
+            "star": "擎羊",
+            "scope": "origin"
+          },
+          {
+            "kind": "palace_branch",
+            "palace": "命宫",
+            "branch": "辰"
+          },
+          {
+            "kind": "palace_brightness",
+            "palace": "命宫",
+            "star": "擎羊",
+            "scope": "origin",
+            "brightness": "庙"
+          },
+          {
+            "kind": "natal_year_branch",
+            "branch": "戌"
+          }
+        ],
+        [
+          {
+            "kind": "palace_star",
+            "palace": "命宫",
+            "star": "擎羊",
+            "scope": "origin"
+          },
+          {
+            "kind": "palace_branch",
+            "palace": "命宫",
+            "branch": "戌"
+          },
+          {
+            "kind": "palace_brightness",
+            "palace": "命宫",
+            "star": "擎羊",
+            "scope": "origin",
+            "brightness": "庙"
+          },
+          {
+            "kind": "natal_year_branch",
+            "branch": "辰"
+          }
+        ],
+        [
+          {
+            "kind": "palace_star",
+            "palace": "命宫",
+            "star": "擎羊",
+            "scope": "origin"
+          },
+          {
+            "kind": "palace_branch",
+            "palace": "命宫",
+            "branch": "戌"
+          },
+          {
+            "kind": "palace_brightness",
+            "palace": "命宫",
+            "star": "擎羊",
+            "scope": "origin",
+            "brightness": "庙"
+          },
+          {
+            "kind": "natal_year_branch",
+            "branch": "戌"
+          }
+        ],
+        [
+          {
+            "kind": "palace_star",
+            "palace": "命宫",
+            "star": "擎羊",
+            "scope": "origin"
+          },
+          {
+            "kind": "palace_branch",
+            "palace": "命宫",
+            "branch": "丑"
+          },
+          {
+            "kind": "palace_brightness",
+            "palace": "命宫",
+            "star": "擎羊",
+            "scope": "origin",
+            "brightness": "庙"
+          },
+          {
+            "kind": "natal_year_branch",
+            "branch": "辰"
+          }
+        ],
+        [
+          {
+            "kind": "palace_star",
+            "palace": "命宫",
+            "star": "擎羊",
+            "scope": "origin"
+          },
+          {
+            "kind": "palace_branch",
+            "palace": "命宫",
+            "branch": "丑"
+          },
+          {
+            "kind": "palace_brightness",
+            "palace": "命宫",
+            "star": "擎羊",
+            "scope": "origin",
+            "brightness": "庙"
+          },
+          {
+            "kind": "natal_year_branch",
+            "branch": "戌"
+          }
+        ],
+        [
+          {
+            "kind": "palace_star",
+            "palace": "命宫",
+            "star": "擎羊",
+            "scope": "origin"
+          },
+          {
+            "kind": "palace_branch",
+            "palace": "命宫",
+            "branch": "未"
+          },
+          {
+            "kind": "palace_brightness",
+            "palace": "命宫",
+            "star": "擎羊",
+            "scope": "origin",
+            "brightness": "庙"
+          },
+          {
+            "kind": "natal_year_branch",
+            "branch": "辰"
+          }
+        ],
+        [
+          {
+            "kind": "palace_star",
+            "palace": "命宫",
+            "star": "擎羊",
+            "scope": "origin"
+          },
+          {
+            "kind": "palace_branch",
+            "palace": "命宫",
+            "branch": "未"
+          },
+          {
+            "kind": "palace_brightness",
+            "palace": "命宫",
+            "star": "擎羊",
+            "scope": "origin",
+            "brightness": "庙"
+          },
+          {
+            "kind": "natal_year_branch",
+            "branch": "戌"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "ziwei-v2-minggong-p125002-001",
+      "method": "ziwei",
+      "previousReason": "unmapped_condition",
+      "status": "indexed",
+      "inputs": [
+        {
+          "digest": "534b1825ca4a481ac2bfcbfb02bce9c8511ec9851dc84d533c806d72a48f7cf5"
+        },
+        {
+          "digest": "ece43b9d71ac21e2bab2b39270fcd37adfa3270bb6097db79af5b32cc8eaa318"
+        }
+      ],
+      "branches": [],
+      "incompatibleAlternatives": []
+    },
+    {
+      "id": "ziwei-v3-c020-p156002-001",
+      "method": "ziwei",
+      "previousReason": "unmapped_condition",
+      "status": "indexed",
+      "inputs": [
+        {
+          "digest": "814d4e3513928c63fe92395e05ffaa7464e5a55be74c73982da8439f239bc878"
+        },
+        {
+          "digest": "711cc8e84e055d7024e99e87c6ecd677ba194c61e898cd83a5513388b36a395f"
+        },
+        {
+          "digest": "4aa562db283f8ae61e4bd474d542a703ca6226b19ed8976aa5f5171a5e6a7c47"
+        },
+        {
+          "digest": "7715a94a7752a57a0ea9125aa1ca8532018fadd36fc39194d98ff7a1d61efac1"
+        }
+      ],
+      "branches": [],
+      "incompatibleAlternatives": []
+    },
+    {
+      "id": "ziwei-v2-minggong-p173002-003",
+      "method": "ziwei",
+      "previousReason": "unmapped_condition",
+      "status": "indexed",
+      "inputs": [
+        {
+          "digest": "fa92843d5252c32c67b1df6a31f16fbe3657e9803aa581374a851beca73fdfc3"
+        },
+        {
+          "digest": "12f2fdd9bcf65a8c7ee0830e51c3cc33be2cd1cb91f22a24befa4494bbe8a256"
+        },
+        {
+          "digest": "c29bc588b4a990f2157a7c0dff135b90e6454286f30585e23081bbb30a3bda03"
+        },
+        {
+          "digest": "198e8cef97be53b8ddbdc090d0f9850469dc1b2f4087464df24ee6b2e3c5ffe5"
+        }
+      ],
+      "branches": [],
+      "incompatibleAlternatives": []
+    },
+    {
+      "id": "ziwei-v2-minggong-p173002-004",
+      "method": "ziwei",
+      "previousReason": "unmapped_condition",
+      "status": "indexed",
+      "inputs": [
+        {
+          "digest": "f7b39e1c0d9cafec9204c5ac9078896e9ffff3135d69115bbe8945231b5ec01e"
+        },
+        {
+          "digest": "927899b54deab52d373d24d1b6bd9508262985135a98e9949c298cb16898fdd8"
+        },
+        {
+          "digest": "344afe0304107631aa615d0fb55bc7d5260ba692bc4a2e8cc5b29dca79c2af6f"
+        },
+        {
+          "digest": "63638dcb553b16919de10ad289bdb2a9b83ee94ea3c09ceba44ff08a3dc8e636"
+        }
+      ],
+      "branches": [],
+      "incompatibleAlternatives": []
+    }
+  ],
+  "statusOnly": [
+    {
+      "id": "ziwei-v2-minggong-p255000-004",
+      "method": "ziwei",
+      "previousReason": "unmapped_condition",
+      "status": "unmapped",
+      "reason": "unmapped_condition",
+      "inputs": [],
+      "branches": [],
+      "incompatibleAlternatives": []
+    },
+    {
+      "id": "ziwei-v2-minggong-p323001-009",
+      "method": "ziwei",
+      "previousReason": "unmapped_condition",
+      "status": "unmapped",
+      "reason": "unmapped_condition",
+      "inputs": [],
+      "branches": [],
+      "incompatibleAlternatives": []
+    },
+    {
+      "id": "ziwei-v1-xingjue-002-p003-001",
+      "method": "ziwei",
+      "previousReason": "unmapped_condition",
+      "status": "unmapped",
+      "reason": "unmapped_condition",
+      "inputs": [],
+      "branches": [],
+      "incompatibleAlternatives": []
+    },
+    {
+      "id": "ziwei-v1-xingjue-027-p138-001",
+      "method": "ziwei",
+      "previousReason": "unmapped_condition",
+      "status": "unmapped",
+      "reason": "unmapped_condition",
+      "inputs": [],
+      "branches": [],
+      "incompatibleAlternatives": []
+    },
+    {
+      "id": "ziwei-v2-xingjue-008-p852-001",
+      "method": "ziwei",
+      "previousReason": "unmapped_condition",
+      "status": "unmapped",
+      "reason": "unmapped_condition",
+      "inputs": [],
+      "branches": [],
+      "incompatibleAlternatives": []
+    },
+    {
+      "id": "ziwei-v2-xingjue-008-p853-001",
+      "method": "ziwei",
+      "previousReason": "unmapped_condition",
+      "status": "unmapped",
+      "reason": "unmapped_condition",
+      "inputs": [],
+      "branches": [],
+      "incompatibleAlternatives": []
+    },
+    {
+      "id": "ziwei-v3-jielan-123-p001-091",
+      "method": "ziwei",
+      "previousReason": "unmapped_condition",
+      "status": "unmapped",
+      "reason": "unmapped_condition",
+      "inputs": [],
+      "branches": [],
+      "incompatibleAlternatives": []
+    },
+    {
+      "id": "ziwei-v3-jielan-123-p001-108",
+      "method": "ziwei",
+      "previousReason": "unmapped_condition",
+      "status": "unmapped",
+      "reason": "unmapped_condition",
+      "inputs": [],
+      "branches": [],
+      "incompatibleAlternatives": []
+    },
+    {
+      "id": "ziwei-v3-jielan-123-p001-124",
+      "method": "ziwei",
+      "previousReason": "unmapped_condition",
+      "status": "unmapped",
+      "reason": "unmapped_condition",
+      "inputs": [],
+      "branches": [],
+      "incompatibleAlternatives": []
+    }
+  ],
+  "previousQueryableCompiledUnchanged": 2763,
+  "sourceRecords": 18846,
+  "wholeEntries": 5,
+  "branchEntries": 1,
+  "wholeAlternatives": 22,
+  "passageAlternatives": 4,
+  "sourceHashes": {
+    "bazi": "8074930be871d6249c36813d59dae2534ad5f11eeb06c5d2728978b53364e609",
+    "ziwei": "bfe23ad0b26b19992d6f4fe3c2fb1979175513ceaf283bee6ce671d8358698ad",
+    "western": "b92622c3336d4a56af837123b08d438947a5e6751cd272b4be555921a89cb9fc"
+  }
+}

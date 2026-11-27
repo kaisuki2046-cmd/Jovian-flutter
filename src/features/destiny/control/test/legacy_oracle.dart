@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 Future<List<Object?>> runLegacyOracle(String program, Object input) async {
-  final root = Platform.script.resolve('../../../../../../');
+  final root = Platform.script.resolve('../../../../../backend/');
   final process = await Process.start('node', [
     '--input-type=module',
     '--eval',

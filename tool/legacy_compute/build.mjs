@@ -1,15 +1,14 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { frontendRoot, legacyRoot } from './paths.mjs';
 
-const dependencyRoot = resolve(process.env.JOVIAN_LEGACY_NODE_ROOT ?? legacyRoot);
+const dependencyRoot = legacyRoot;
 const modules = join(dependencyRoot, 'node_modules');
 const require = createRequire(join(dependencyRoot, 'package.json'));
 const { runBuild } = require('metro');
 const { getDefaultConfig, mergeConfig } = require('metro-config');
-process.env.JOVIAN_LEGACY_NODE_ROOT = dependencyRoot;
 
 const entry = fileURLToPath(new URL('./worker.ts', import.meta.url));
 const output = join(frontendRoot, 'web', 'legacy-compute.js');

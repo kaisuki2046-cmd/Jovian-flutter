@@ -1,0 +1,125 @@
+{
+  "baseline": "first integration batch",
+  "changes": [
+    {
+      "id": "qtbj-v5-c088-p001-101",
+      "method": "bazi",
+      "conditions": [
+        "亥月辛日，壬与丙同透"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "qtbj-v5-c088-p002-101",
+      "method": "bazi",
+      "conditions": [
+        "亥月辛日，丙藏支、壬透干"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p114000-002",
+      "method": "ziwei",
+      "conditions": [
+        "按原书女命取法，天机与太阴同守命宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p138000-001",
+      "method": "ziwei",
+      "conditions": [
+        "按原书女命取法，本命天同守命"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p138000-003",
+      "method": "ziwei",
+      "conditions": [
+        "按原书女命取法，天同与太阴同守命宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-minggong-p130000-002",
+      "method": "ziwei",
+      "conditions": [
+        "按原书女命取法，本命命宫武曲"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v1-xingjue-020-p964-001",
+      "method": "ziwei",
+      "conditions": [
+        "土局",
+        "天府左辅守身命"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v1-xingjue-020-p965-001",
+      "method": "ziwei",
+      "conditions": [
+        "金局",
+        "武曲七杀同守身命"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v3-xingjue-049-p1340-001",
+      "method": "ziwei",
+      "conditions": [
+        "夫妻宫见天刑、七杀",
+        "土局"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-c007-p101009-003",
+      "method": "ziwei",
+      "conditions": [
+        "按原篇女命取法，本命疾厄宫太阴失陷"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-c012-p101014-006",
+      "method": "ziwei",
+      "conditions": [
+        "按原篇女命取法，本命福德宫七杀独守"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v5-jielan-237-p002-009",
+      "method": "ziwei",
+      "conditions": [
+        "按原篇女命取法，本命福德宫七杀独守"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-144-p002-004",
+      "method": "ziwei",
+      "conditions": [
+        "按原篇女命取法，太阳在本命命宫或身宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    }
+  ]
+}

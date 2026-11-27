@@ -294,7 +294,7 @@ Future<List<FortuneJson>> _node(List<FortuneJson> fixtures) async {
     'node',
     ['--input-type=module', '--eval', _legacy],
     workingDirectory: Platform.script
-        .resolve('../../../../../../../')
+        .resolve('../../../../../../backend/')
         .toFilePath(),
   );
   final output = utf8.decoder.bind(process.stdout).join();
@@ -309,19 +309,7 @@ Future<List<FortuneJson>> _node(List<FortuneJson> fixtures) async {
 
 const _legacy = r'''
 import { readFileSync } from 'node:fs';
-import { registerHooks } from 'node:module';
-import { pathToFileURL } from 'node:url';
-import { join } from 'node:path';
 import { resolve } from './src/features/fortune/server/resolve-fortune.mjs';
-const legacyRoot = process.env.JOVIAN_LEGACY_NODE_ROOT;
-registerHooks({ resolve(specifier, context, next) {
-  try { return resolve(specifier, context, next); }
-  catch (error) {
-    if (!legacyRoot || error.code !== 'ERR_MODULE_NOT_FOUND' ||
-        !/^(lunar-javascript|astronomy-engine|iztro)(?:\/|$)/u.test(specifier)) throw error;
-    return next(specifier, { ...context, parentURL: pathToFileURL(join(legacyRoot, 'package.json')).href });
-  }
-}});
 const { buildFactTimeContext } = await import('./src/features/fortune/control/fact-time-context.ts');
 const { calculateFortuneFacts } = await import('./src/features/fortune/control/fortune-facts.ts');
 const { eligibleFacts, requestForFortuneRun } = await import('./src/features/fortune/control/fortune-interpretation.ts');

@@ -1,0 +1,2015 @@
+{
+  "method": "bazi",
+  "scope": "natal",
+  "calculationVersion": "natal-l1-l2-v2",
+  "pillars": {
+    "year": "癸丑",
+    "month": "壬戌",
+    "day": "壬午",
+    "hour": "壬寅"
+  },
+  "L1": {
+    "status": "evaluated",
+    "pillars": [
+      {
+        "position": "year",
+        "ganZhi": "癸丑",
+        "stem": {
+          "id": "stem:gui",
+          "name": "癸",
+          "element": "水",
+          "polarity": "阴"
+        },
+        "branch": {
+          "id": "branch:chou",
+          "name": "丑",
+          "element": "土",
+          "polarity": "阴"
+        },
+        "tenGod": "劫财",
+        "hiddenStems": [
+          {
+            "id": "stem:ji",
+            "name": "己",
+            "element": "土",
+            "polarity": "阴",
+            "position": "year",
+            "branch": "丑",
+            "tenGod": "正官",
+            "order": 1,
+            "role": "本气"
+          },
+          {
+            "id": "stem:gui",
+            "name": "癸",
+            "element": "水",
+            "polarity": "阴",
+            "position": "year",
+            "branch": "丑",
+            "tenGod": "劫财",
+            "order": 2,
+            "role": "中气"
+          },
+          {
+            "id": "stem:xin",
+            "name": "辛",
+            "element": "金",
+            "polarity": "阴",
+            "position": "year",
+            "branch": "丑",
+            "tenGod": "正印",
+            "order": 3,
+            "role": "余气"
+          }
+        ],
+        "shenSha": []
+      },
+      {
+        "position": "month",
+        "ganZhi": "壬戌",
+        "stem": {
+          "id": "stem:ren",
+          "name": "壬",
+          "element": "水",
+          "polarity": "阳"
+        },
+        "branch": {
+          "id": "branch:xu",
+          "name": "戌",
+          "element": "土",
+          "polarity": "阳"
+        },
+        "tenGod": "比肩",
+        "hiddenStems": [
+          {
+            "id": "stem:wu",
+            "name": "戊",
+            "element": "土",
+            "polarity": "阳",
+            "position": "month",
+            "branch": "戌",
+            "tenGod": "七杀",
+            "order": 1,
+            "role": "本气"
+          },
+          {
+            "id": "stem:xin",
+            "name": "辛",
+            "element": "金",
+            "polarity": "阴",
+            "position": "month",
+            "branch": "戌",
+            "tenGod": "正印",
+            "order": 2,
+            "role": "中气"
+          },
+          {
+            "id": "stem:ding",
+            "name": "丁",
+            "element": "火",
+            "polarity": "阴",
+            "position": "month",
+            "branch": "戌",
+            "tenGod": "正财",
+            "order": 3,
+            "role": "余气"
+          }
+        ],
+        "shenSha": [
+          {
+            "name": "华盖",
+            "sourcePillars": [
+              "day"
+            ]
+          }
+        ]
+      },
+      {
+        "position": "day",
+        "ganZhi": "壬午",
+        "stem": {
+          "id": "stem:ren",
+          "name": "壬",
+          "element": "水",
+          "polarity": "阳"
+        },
+        "branch": {
+          "id": "branch:wu",
+          "name": "午",
+          "element": "火",
+          "polarity": "阳"
+        },
+        "tenGod": "日主",
+        "hiddenStems": [
+          {
+            "id": "stem:ding",
+            "name": "丁",
+            "element": "火",
+            "polarity": "阴",
+            "position": "day",
+            "branch": "午",
+            "tenGod": "正财",
+            "order": 1,
+            "role": "本气"
+          },
+          {
+            "id": "stem:ji",
+            "name": "己",
+            "element": "土",
+            "polarity": "阴",
+            "position": "day",
+            "branch": "午",
+            "tenGod": "正官",
+            "order": 2,
+            "role": "中气"
+          }
+        ],
+        "shenSha": [
+          {
+            "name": "桃花",
+            "sourcePillars": [
+              "year"
+            ]
+          }
+        ]
+      },
+      {
+        "position": "hour",
+        "ganZhi": "壬寅",
+        "stem": {
+          "id": "stem:ren",
+          "name": "壬",
+          "element": "水",
+          "polarity": "阳"
+        },
+        "branch": {
+          "id": "branch:yin",
+          "name": "寅",
+          "element": "木",
+          "polarity": "阳"
+        },
+        "tenGod": "比肩",
+        "hiddenStems": [
+          {
+            "id": "stem:jia",
+            "name": "甲",
+            "element": "木",
+            "polarity": "阳",
+            "position": "hour",
+            "branch": "寅",
+            "tenGod": "食神",
+            "order": 1,
+            "role": "本气"
+          },
+          {
+            "id": "stem:bing",
+            "name": "丙",
+            "element": "火",
+            "polarity": "阳",
+            "position": "hour",
+            "branch": "寅",
+            "tenGod": "偏财",
+            "order": 2,
+            "role": "中气"
+          },
+          {
+            "id": "stem:wu",
+            "name": "戊",
+            "element": "土",
+            "polarity": "阳",
+            "position": "hour",
+            "branch": "寅",
+            "tenGod": "七杀",
+            "order": 3,
+            "role": "余气"
+          }
+        ],
+        "shenSha": [
+          {
+            "name": "空亡",
+            "sourcePillars": [
+              "year"
+            ]
+          },
+          {
+            "name": "文昌贵人",
+            "sourcePillars": [
+              "day"
+            ]
+          }
+        ]
+      }
+    ],
+    "dayMaster": {
+      "position": "day",
+      "stem": {
+        "id": "stem:ren",
+        "name": "壬",
+        "element": "水",
+        "polarity": "阳"
+      },
+      "seat": {
+        "id": "branch:wu",
+        "name": "午",
+        "element": "火",
+        "polarity": "阳"
+      }
+    },
+    "tenGodIndex": [
+      {
+        "name": "比肩",
+        "count": 2,
+        "exposed": [
+          {
+            "position": "month",
+            "ganZhi": "壬戌",
+            "stem": "壬",
+            "element": "水"
+          },
+          {
+            "position": "hour",
+            "ganZhi": "壬寅",
+            "stem": "壬",
+            "element": "水"
+          }
+        ],
+        "hidden": []
+      },
+      {
+        "name": "劫财",
+        "count": 2,
+        "exposed": [
+          {
+            "position": "year",
+            "ganZhi": "癸丑",
+            "stem": "癸",
+            "element": "水"
+          }
+        ],
+        "hidden": [
+          {
+            "position": "year",
+            "ganZhi": "癸丑",
+            "stem": "癸",
+            "element": "水",
+            "branch": "丑",
+            "role": "中气"
+          }
+        ]
+      },
+      {
+        "name": "食神",
+        "count": 1,
+        "exposed": [],
+        "hidden": [
+          {
+            "position": "hour",
+            "ganZhi": "壬寅",
+            "stem": "甲",
+            "element": "木",
+            "branch": "寅",
+            "role": "本气"
+          }
+        ]
+      },
+      {
+        "name": "伤官",
+        "count": 0,
+        "exposed": [],
+        "hidden": []
+      },
+      {
+        "name": "偏财",
+        "count": 1,
+        "exposed": [],
+        "hidden": [
+          {
+            "position": "hour",
+            "ganZhi": "壬寅",
+            "stem": "丙",
+            "element": "火",
+            "branch": "寅",
+            "role": "中气"
+          }
+        ]
+      },
+      {
+        "name": "正财",
+        "count": 2,
+        "exposed": [],
+        "hidden": [
+          {
+            "position": "month",
+            "ganZhi": "壬戌",
+            "stem": "丁",
+            "element": "火",
+            "branch": "戌",
+            "role": "余气"
+          },
+          {
+            "position": "day",
+            "ganZhi": "壬午",
+            "stem": "丁",
+            "element": "火",
+            "branch": "午",
+            "role": "本气"
+          }
+        ]
+      },
+      {
+        "name": "七杀",
+        "count": 2,
+        "exposed": [],
+        "hidden": [
+          {
+            "position": "month",
+            "ganZhi": "壬戌",
+            "stem": "戊",
+            "element": "土",
+            "branch": "戌",
+            "role": "本气"
+          },
+          {
+            "position": "hour",
+            "ganZhi": "壬寅",
+            "stem": "戊",
+            "element": "土",
+            "branch": "寅",
+            "role": "余气"
+          }
+        ]
+      },
+      {
+        "name": "正官",
+        "count": 2,
+        "exposed": [],
+        "hidden": [
+          {
+            "position": "year",
+            "ganZhi": "癸丑",
+            "stem": "己",
+            "element": "土",
+            "branch": "丑",
+            "role": "本气"
+          },
+          {
+            "position": "day",
+            "ganZhi": "壬午",
+            "stem": "己",
+            "element": "土",
+            "branch": "午",
+            "role": "中气"
+          }
+        ]
+      },
+      {
+        "name": "偏印",
+        "count": 0,
+        "exposed": [],
+        "hidden": []
+      },
+      {
+        "name": "正印",
+        "count": 2,
+        "exposed": [],
+        "hidden": [
+          {
+            "position": "year",
+            "ganZhi": "癸丑",
+            "stem": "辛",
+            "element": "金",
+            "branch": "丑",
+            "role": "余气"
+          },
+          {
+            "position": "month",
+            "ganZhi": "壬戌",
+            "stem": "辛",
+            "element": "金",
+            "branch": "戌",
+            "role": "中气"
+          }
+        ]
+      }
+    ],
+    "elements": {
+      "stems": {
+        "木": 0,
+        "火": 0,
+        "土": 0,
+        "金": 0,
+        "水": 4
+      },
+      "branches": {
+        "木": 1,
+        "火": 1,
+        "土": 2,
+        "金": 0,
+        "水": 0
+      },
+      "hiddenStems": {
+        "木": 1,
+        "火": 3,
+        "土": 4,
+        "金": 2,
+        "水": 1
+      },
+      "byPillar": [
+        {
+          "position": "year",
+          "stem": "水",
+          "branch": "土",
+          "hiddenStems": {
+            "木": 0,
+            "火": 0,
+            "土": 1,
+            "金": 1,
+            "水": 1
+          }
+        },
+        {
+          "position": "month",
+          "stem": "水",
+          "branch": "土",
+          "hiddenStems": {
+            "木": 0,
+            "火": 1,
+            "土": 1,
+            "金": 1,
+            "水": 0
+          }
+        },
+        {
+          "position": "day",
+          "stem": "水",
+          "branch": "火",
+          "hiddenStems": {
+            "木": 0,
+            "火": 1,
+            "土": 1,
+            "金": 0,
+            "水": 0
+          }
+        },
+        {
+          "position": "hour",
+          "stem": "水",
+          "branch": "木",
+          "hiddenStems": {
+            "木": 1,
+            "火": 1,
+            "土": 1,
+            "金": 0,
+            "水": 0
+          }
+        }
+      ],
+      "present": [
+        "木",
+        "火",
+        "土",
+        "金",
+        "水"
+      ]
+    },
+    "monthCommand": {
+      "position": "month",
+      "branch": {
+        "id": "branch:xu",
+        "name": "戌",
+        "element": "土",
+        "polarity": "阳"
+      },
+      "hiddenStems": [
+        {
+          "id": "stem:wu",
+          "name": "戊",
+          "element": "土",
+          "polarity": "阳",
+          "position": "month",
+          "branch": "戌",
+          "tenGod": "七杀",
+          "order": 1,
+          "role": "本气"
+        },
+        {
+          "id": "stem:xin",
+          "name": "辛",
+          "element": "金",
+          "polarity": "阴",
+          "position": "month",
+          "branch": "戌",
+          "tenGod": "正印",
+          "order": 2,
+          "role": "中气"
+        },
+        {
+          "id": "stem:ding",
+          "name": "丁",
+          "element": "火",
+          "polarity": "阴",
+          "position": "month",
+          "branch": "戌",
+          "tenGod": "正财",
+          "order": 3,
+          "role": "余气"
+        }
+      ],
+      "season": "秋",
+      "elementRelations": [
+        {
+          "element": "木",
+          "relation": "被克"
+        },
+        {
+          "element": "火",
+          "relation": "被生"
+        },
+        {
+          "element": "土",
+          "relation": "同类"
+        },
+        {
+          "element": "金",
+          "relation": "生"
+        },
+        {
+          "element": "水",
+          "relation": "克"
+        }
+      ]
+    }
+  },
+  "L2": {
+    "localStructures": {
+      "status": "evaluated",
+      "daySeat": {
+        "dayStem": "壬",
+        "dayBranch": "午",
+        "hiddenStems": [
+          {
+            "id": "stem:ding",
+            "name": "丁",
+            "element": "火",
+            "polarity": "阴",
+            "position": "day",
+            "branch": "午",
+            "tenGod": "正财",
+            "order": 1,
+            "role": "本气"
+          },
+          {
+            "id": "stem:ji",
+            "name": "己",
+            "element": "土",
+            "polarity": "阴",
+            "position": "day",
+            "branch": "午",
+            "tenGod": "正官",
+            "order": 2,
+            "role": "中气"
+          }
+        ],
+        "hasWealth": true,
+        "hasSeal": false
+      },
+      "exposed": [
+        {
+          "position": "year",
+          "stem": "癸",
+          "tenGod": "劫财"
+        },
+        {
+          "position": "month",
+          "stem": "壬",
+          "tenGod": "比肩"
+        },
+        {
+          "position": "hour",
+          "stem": "壬",
+          "tenGod": "比肩"
+        }
+      ],
+      "roots": [
+        {
+          "id": "stem:gui",
+          "name": "癸",
+          "element": "水",
+          "polarity": "阴",
+          "position": "year",
+          "branch": "丑",
+          "tenGod": "劫财",
+          "order": 2,
+          "role": "中气",
+          "match": "same_element"
+        }
+      ]
+    },
+    "tenGodStructures": [
+      {
+        "id": "output-generates-wealth",
+        "name": "食伤生财",
+        "status": "evaluated",
+        "candidate": true,
+        "relation": "生",
+        "required": {
+          "from": [
+            "食神",
+            "伤官"
+          ],
+          "to": [
+            "偏财",
+            "正财"
+          ]
+        },
+        "evidence": {
+          "from": [
+            {
+              "position": "hour",
+              "ganZhi": "壬寅",
+              "stem": "甲",
+              "element": "木",
+              "branch": "寅",
+              "role": "本气",
+              "tenGod": "食神",
+              "origin": "hidden_stem"
+            }
+          ],
+          "to": [
+            {
+              "position": "hour",
+              "ganZhi": "壬寅",
+              "stem": "丙",
+              "element": "火",
+              "branch": "寅",
+              "role": "中气",
+              "tenGod": "偏财",
+              "origin": "hidden_stem"
+            },
+            {
+              "position": "month",
+              "ganZhi": "壬戌",
+              "stem": "丁",
+              "element": "火",
+              "branch": "戌",
+              "role": "余气",
+              "tenGod": "正财",
+              "origin": "hidden_stem"
+            },
+            {
+              "position": "day",
+              "ganZhi": "壬午",
+              "stem": "丁",
+              "element": "火",
+              "branch": "午",
+              "role": "本气",
+              "tenGod": "正财",
+              "origin": "hidden_stem"
+            }
+          ]
+        },
+        "formation": {
+          "status": "evaluated",
+          "method": "visible-or-month-main-v1",
+          "supported": false,
+          "result": "仅见组合线索",
+          "pairs": [
+            {
+              "sourceIndex": 0,
+              "targetIndex": 0,
+              "anchored": false
+            },
+            {
+              "sourceIndex": 0,
+              "targetIndex": 1,
+              "anchored": false
+            },
+            {
+              "sourceIndex": 0,
+              "targetIndex": 2,
+              "anchored": false
+            }
+          ]
+        }
+      },
+      {
+        "id": "hurting-officer-generates-wealth",
+        "name": "伤官生财",
+        "status": "evaluated",
+        "candidate": false,
+        "relation": "生",
+        "required": {
+          "from": [
+            "伤官"
+          ],
+          "to": [
+            "偏财",
+            "正财"
+          ]
+        },
+        "evidence": {
+          "from": [],
+          "to": [
+            {
+              "position": "hour",
+              "ganZhi": "壬寅",
+              "stem": "丙",
+              "element": "火",
+              "branch": "寅",
+              "role": "中气",
+              "tenGod": "偏财",
+              "origin": "hidden_stem"
+            },
+            {
+              "position": "month",
+              "ganZhi": "壬戌",
+              "stem": "丁",
+              "element": "火",
+              "branch": "戌",
+              "role": "余气",
+              "tenGod": "正财",
+              "origin": "hidden_stem"
+            },
+            {
+              "position": "day",
+              "ganZhi": "壬午",
+              "stem": "丁",
+              "element": "火",
+              "branch": "午",
+              "role": "本气",
+              "tenGod": "正财",
+              "origin": "hidden_stem"
+            }
+          ]
+        },
+        "formation": {
+          "status": "evaluated",
+          "method": "visible-or-month-main-v1",
+          "supported": false,
+          "result": "缺少组合条件",
+          "pairs": []
+        }
+      },
+      {
+        "id": "officer-generates-seal",
+        "name": "官印相生",
+        "status": "evaluated",
+        "candidate": true,
+        "relation": "生",
+        "required": {
+          "from": [
+            "正官"
+          ],
+          "to": [
+            "偏印",
+            "正印"
+          ]
+        },
+        "evidence": {
+          "from": [
+            {
+              "position": "year",
+              "ganZhi": "癸丑",
+              "stem": "己",
+              "element": "土",
+              "branch": "丑",
+              "role": "本气",
+              "tenGod": "正官",
+              "origin": "hidden_stem"
+            },
+            {
+              "position": "day",
+              "ganZhi": "壬午",
+              "stem": "己",
+              "element": "土",
+              "branch": "午",
+              "role": "中气",
+              "tenGod": "正官",
+              "origin": "hidden_stem"
+            }
+          ],
+          "to": [
+            {
+              "position": "year",
+              "ganZhi": "癸丑",
+              "stem": "辛",
+              "element": "金",
+              "branch": "丑",
+              "role": "余气",
+              "tenGod": "正印",
+              "origin": "hidden_stem"
+            },
+            {
+              "position": "month",
+              "ganZhi": "壬戌",
+              "stem": "辛",
+              "element": "金",
+              "branch": "戌",
+              "role": "中气",
+              "tenGod": "正印",
+              "origin": "hidden_stem"
+            }
+          ]
+        },
+        "formation": {
+          "status": "evaluated",
+          "method": "visible-or-month-main-v1",
+          "supported": false,
+          "result": "仅见组合线索",
+          "pairs": [
+            {
+              "sourceIndex": 0,
+              "targetIndex": 0,
+              "anchored": false
+            },
+            {
+              "sourceIndex": 0,
+              "targetIndex": 1,
+              "anchored": false
+            },
+            {
+              "sourceIndex": 1,
+              "targetIndex": 0,
+              "anchored": false
+            },
+            {
+              "sourceIndex": 1,
+              "targetIndex": 1,
+              "anchored": false
+            }
+          ]
+        }
+      },
+      {
+        "id": "killing-generates-seal",
+        "name": "杀印相生",
+        "status": "evaluated",
+        "candidate": true,
+        "relation": "生",
+        "required": {
+          "from": [
+            "七杀"
+          ],
+          "to": [
+            "偏印",
+            "正印"
+          ]
+        },
+        "evidence": {
+          "from": [
+            {
+              "position": "month",
+              "ganZhi": "壬戌",
+              "stem": "戊",
+              "element": "土",
+              "branch": "戌",
+              "role": "本气",
+              "tenGod": "七杀",
+              "origin": "hidden_stem"
+            },
+            {
+              "position": "hour",
+              "ganZhi": "壬寅",
+              "stem": "戊",
+              "element": "土",
+              "branch": "寅",
+              "role": "余气",
+              "tenGod": "七杀",
+              "origin": "hidden_stem"
+            }
+          ],
+          "to": [
+            {
+              "position": "year",
+              "ganZhi": "癸丑",
+              "stem": "辛",
+              "element": "金",
+              "branch": "丑",
+              "role": "余气",
+              "tenGod": "正印",
+              "origin": "hidden_stem"
+            },
+            {
+              "position": "month",
+              "ganZhi": "壬戌",
+              "stem": "辛",
+              "element": "金",
+              "branch": "戌",
+              "role": "中气",
+              "tenGod": "正印",
+              "origin": "hidden_stem"
+            }
+          ]
+        },
+        "formation": {
+          "status": "evaluated",
+          "method": "visible-or-month-main-v1",
+          "supported": false,
+          "result": "仅见组合线索",
+          "pairs": [
+            {
+              "sourceIndex": 0,
+              "targetIndex": 0,
+              "anchored": false
+            },
+            {
+              "sourceIndex": 0,
+              "targetIndex": 1,
+              "anchored": false
+            },
+            {
+              "sourceIndex": 1,
+              "targetIndex": 0,
+              "anchored": false
+            },
+            {
+              "sourceIndex": 1,
+              "targetIndex": 1,
+              "anchored": false
+            }
+          ]
+        }
+      },
+      {
+        "id": "wealth-generates-officer",
+        "name": "财官相生",
+        "status": "evaluated",
+        "candidate": true,
+        "relation": "生",
+        "required": {
+          "from": [
+            "偏财",
+            "正财"
+          ],
+          "to": [
+            "正官"
+          ]
+        },
+        "evidence": {
+          "from": [
+            {
+              "position": "hour",
+              "ganZhi": "壬寅",
+              "stem": "丙",
+              "element": "火",
+              "branch": "寅",
+              "role": "中气",
+              "tenGod": "偏财",
+              "origin": "hidden_stem"
+            },
+            {
+              "position": "month",
+              "ganZhi": "壬戌",
+              "stem": "丁",
+              "element": "火",
+              "branch": "戌",
+              "role": "余气",
+              "tenGod": "正财",
+              "origin": "hidden_stem"
+            },
+            {
+              "position": "day",
+              "ganZhi": "壬午",
+              "stem": "丁",
+              "element": "火",
+              "branch": "午",
+              "role": "本气",
+              "tenGod": "正财",
+              "origin": "hidden_stem"
+            }
+          ],
+          "to": [
+            {
+              "position": "year",
+              "ganZhi": "癸丑",
+              "stem": "己",
+              "element": "土",
+              "branch": "丑",
+              "role": "本气",
+              "tenGod": "正官",
+              "origin": "hidden_stem"
+            },
+            {
+              "position": "day",
+              "ganZhi": "壬午",
+              "stem": "己",
+              "element": "土",
+              "branch": "午",
+              "role": "中气",
+              "tenGod": "正官",
+              "origin": "hidden_stem"
+            }
+          ]
+        },
+        "formation": {
+          "status": "evaluated",
+          "method": "visible-or-month-main-v1",
+          "supported": false,
+          "result": "仅见组合线索",
+          "pairs": [
+            {
+              "sourceIndex": 0,
+              "targetIndex": 0,
+              "anchored": false
+            },
+            {
+              "sourceIndex": 0,
+              "targetIndex": 1,
+              "anchored": false
+            },
+            {
+              "sourceIndex": 1,
+              "targetIndex": 0,
+              "anchored": false
+            },
+            {
+              "sourceIndex": 1,
+              "targetIndex": 1,
+              "anchored": false
+            },
+            {
+              "sourceIndex": 2,
+              "targetIndex": 0,
+              "anchored": false
+            },
+            {
+              "sourceIndex": 2,
+              "targetIndex": 1,
+              "anchored": false
+            }
+          ]
+        }
+      },
+      {
+        "id": "hurting-officer-controls-officer",
+        "name": "伤官见官",
+        "status": "evaluated",
+        "candidate": false,
+        "relation": "克",
+        "required": {
+          "from": [
+            "伤官"
+          ],
+          "to": [
+            "正官"
+          ]
+        },
+        "evidence": {
+          "from": [],
+          "to": [
+            {
+              "position": "year",
+              "ganZhi": "癸丑",
+              "stem": "己",
+              "element": "土",
+              "branch": "丑",
+              "role": "本气",
+              "tenGod": "正官",
+              "origin": "hidden_stem"
+            },
+            {
+              "position": "day",
+              "ganZhi": "壬午",
+              "stem": "己",
+              "element": "土",
+              "branch": "午",
+              "role": "中气",
+              "tenGod": "正官",
+              "origin": "hidden_stem"
+            }
+          ]
+        },
+        "formation": {
+          "status": "evaluated",
+          "method": "visible-or-month-main-v1",
+          "supported": false,
+          "result": "缺少组合条件",
+          "pairs": []
+        }
+      },
+      {
+        "id": "officer-and-killing",
+        "name": "官杀混杂",
+        "status": "evaluated",
+        "candidate": true,
+        "relation": "同类",
+        "required": {
+          "from": [
+            "正官"
+          ],
+          "to": [
+            "七杀"
+          ]
+        },
+        "evidence": {
+          "from": [
+            {
+              "position": "year",
+              "ganZhi": "癸丑",
+              "stem": "己",
+              "element": "土",
+              "branch": "丑",
+              "role": "本气",
+              "tenGod": "正官",
+              "origin": "hidden_stem"
+            },
+            {
+              "position": "day",
+              "ganZhi": "壬午",
+              "stem": "己",
+              "element": "土",
+              "branch": "午",
+              "role": "中气",
+              "tenGod": "正官",
+              "origin": "hidden_stem"
+            }
+          ],
+          "to": [
+            {
+              "position": "month",
+              "ganZhi": "壬戌",
+              "stem": "戊",
+              "element": "土",
+              "branch": "戌",
+              "role": "本气",
+              "tenGod": "七杀",
+              "origin": "hidden_stem"
+            },
+            {
+              "position": "hour",
+              "ganZhi": "壬寅",
+              "stem": "戊",
+              "element": "土",
+              "branch": "寅",
+              "role": "余气",
+              "tenGod": "七杀",
+              "origin": "hidden_stem"
+            }
+          ]
+        },
+        "formation": {
+          "status": "evaluated",
+          "method": "visible-or-month-main-v1",
+          "supported": false,
+          "result": "仅见组合线索",
+          "pairs": [
+            {
+              "sourceIndex": 0,
+              "targetIndex": 0,
+              "anchored": false
+            },
+            {
+              "sourceIndex": 0,
+              "targetIndex": 1,
+              "anchored": false
+            },
+            {
+              "sourceIndex": 1,
+              "targetIndex": 0,
+              "anchored": false
+            },
+            {
+              "sourceIndex": 1,
+              "targetIndex": 1,
+              "anchored": false
+            }
+          ]
+        }
+      },
+      {
+        "id": "wealth-controls-seal",
+        "name": "财星破印",
+        "status": "evaluated",
+        "candidate": true,
+        "relation": "克",
+        "required": {
+          "from": [
+            "偏财",
+            "正财"
+          ],
+          "to": [
+            "偏印",
+            "正印"
+          ]
+        },
+        "evidence": {
+          "from": [
+            {
+              "position": "hour",
+              "ganZhi": "壬寅",
+              "stem": "丙",
+              "element": "火",
+              "branch": "寅",
+              "role": "中气",
+              "tenGod": "偏财",
+              "origin": "hidden_stem"
+            },
+            {
+              "position": "month",
+              "ganZhi": "壬戌",
+              "stem": "丁",
+              "element": "火",
+              "branch": "戌",
+              "role": "余气",
+              "tenGod": "正财",
+              "origin": "hidden_stem"
+            },
+            {
+              "position": "day",
+              "ganZhi": "壬午",
+              "stem": "丁",
+              "element": "火",
+              "branch": "午",
+              "role": "本气",
+              "tenGod": "正财",
+              "origin": "hidden_stem"
+            }
+          ],
+          "to": [
+            {
+              "position": "year",
+              "ganZhi": "癸丑",
+              "stem": "辛",
+              "element": "金",
+              "branch": "丑",
+              "role": "余气",
+              "tenGod": "正印",
+              "origin": "hidden_stem"
+            },
+            {
+              "position": "month",
+              "ganZhi": "壬戌",
+              "stem": "辛",
+              "element": "金",
+              "branch": "戌",
+              "role": "中气",
+              "tenGod": "正印",
+              "origin": "hidden_stem"
+            }
+          ]
+        },
+        "formation": {
+          "status": "evaluated",
+          "method": "visible-or-month-main-v1",
+          "supported": false,
+          "result": "仅见组合线索",
+          "pairs": [
+            {
+              "sourceIndex": 0,
+              "targetIndex": 0,
+              "anchored": false
+            },
+            {
+              "sourceIndex": 0,
+              "targetIndex": 1,
+              "anchored": false
+            },
+            {
+              "sourceIndex": 1,
+              "targetIndex": 0,
+              "anchored": false
+            },
+            {
+              "sourceIndex": 1,
+              "targetIndex": 1,
+              "anchored": false
+            },
+            {
+              "sourceIndex": 2,
+              "targetIndex": 0,
+              "anchored": false
+            },
+            {
+              "sourceIndex": 2,
+              "targetIndex": 1,
+              "anchored": false
+            }
+          ]
+        }
+      },
+      {
+        "id": "food-controls-killing",
+        "name": "食神制杀",
+        "status": "evaluated",
+        "candidate": true,
+        "relation": "克",
+        "required": {
+          "from": [
+            "食神"
+          ],
+          "to": [
+            "七杀"
+          ]
+        },
+        "evidence": {
+          "from": [
+            {
+              "position": "hour",
+              "ganZhi": "壬寅",
+              "stem": "甲",
+              "element": "木",
+              "branch": "寅",
+              "role": "本气",
+              "tenGod": "食神",
+              "origin": "hidden_stem"
+            }
+          ],
+          "to": [
+            {
+              "position": "month",
+              "ganZhi": "壬戌",
+              "stem": "戊",
+              "element": "土",
+              "branch": "戌",
+              "role": "本气",
+              "tenGod": "七杀",
+              "origin": "hidden_stem"
+            },
+            {
+              "position": "hour",
+              "ganZhi": "壬寅",
+              "stem": "戊",
+              "element": "土",
+              "branch": "寅",
+              "role": "余气",
+              "tenGod": "七杀",
+              "origin": "hidden_stem"
+            }
+          ]
+        },
+        "formation": {
+          "status": "evaluated",
+          "method": "visible-or-month-main-v1",
+          "supported": false,
+          "result": "仅见组合线索",
+          "pairs": [
+            {
+              "sourceIndex": 0,
+              "targetIndex": 0,
+              "anchored": false
+            },
+            {
+              "sourceIndex": 0,
+              "targetIndex": 1,
+              "anchored": false
+            }
+          ]
+        }
+      },
+      {
+        "id": "seal-supports-day-master",
+        "name": "印绶护身",
+        "status": "evaluated",
+        "candidate": true,
+        "relation": "生",
+        "required": {
+          "from": [
+            "偏印",
+            "正印"
+          ],
+          "to": [
+            "日主"
+          ]
+        },
+        "evidence": {
+          "from": [
+            {
+              "position": "year",
+              "ganZhi": "癸丑",
+              "stem": "辛",
+              "element": "金",
+              "branch": "丑",
+              "role": "余气",
+              "tenGod": "正印",
+              "origin": "hidden_stem"
+            },
+            {
+              "position": "month",
+              "ganZhi": "壬戌",
+              "stem": "辛",
+              "element": "金",
+              "branch": "戌",
+              "role": "中气",
+              "tenGod": "正印",
+              "origin": "hidden_stem"
+            }
+          ],
+          "to": [
+            {
+              "position": "day",
+              "ganZhi": "壬午",
+              "stem": "壬",
+              "element": "水",
+              "tenGod": "日主",
+              "origin": "stem"
+            }
+          ]
+        },
+        "formation": {
+          "status": "evaluated",
+          "method": "visible-or-month-main-v1",
+          "supported": false,
+          "result": "仅见组合线索",
+          "pairs": [
+            {
+              "sourceIndex": 0,
+              "targetIndex": 0,
+              "anchored": false
+            },
+            {
+              "sourceIndex": 1,
+              "targetIndex": 0,
+              "anchored": false
+            }
+          ]
+        }
+      }
+    ],
+    "stemBranchRelations": {
+      "status": "evaluated",
+      "stems": [
+        {
+          "positions": [
+            "year",
+            "month"
+          ],
+          "stems": [
+            "癸",
+            "壬"
+          ],
+          "relation": "同类"
+        },
+        {
+          "positions": [
+            "year",
+            "day"
+          ],
+          "stems": [
+            "癸",
+            "壬"
+          ],
+          "relation": "同类"
+        },
+        {
+          "positions": [
+            "year",
+            "hour"
+          ],
+          "stems": [
+            "癸",
+            "壬"
+          ],
+          "relation": "同类"
+        },
+        {
+          "positions": [
+            "month",
+            "day"
+          ],
+          "stems": [
+            "壬",
+            "壬"
+          ],
+          "relation": "同类"
+        },
+        {
+          "positions": [
+            "month",
+            "hour"
+          ],
+          "stems": [
+            "壬",
+            "壬"
+          ],
+          "relation": "同类"
+        },
+        {
+          "positions": [
+            "day",
+            "hour"
+          ],
+          "stems": [
+            "壬",
+            "壬"
+          ],
+          "relation": "同类"
+        }
+      ],
+      "branches": [
+        {
+          "type": "六害",
+          "pattern": "丑午",
+          "state": "complete",
+          "positions": [
+            "year",
+            "day"
+          ],
+          "missing": []
+        },
+        {
+          "type": "三合",
+          "pattern": "寅午戌",
+          "state": "complete",
+          "positions": [
+            "month",
+            "day",
+            "hour"
+          ],
+          "missing": []
+        },
+        {
+          "type": "三刑",
+          "pattern": "丑戌未",
+          "state": "partial",
+          "positions": [
+            "year",
+            "month"
+          ],
+          "missing": [
+            "未"
+          ]
+        }
+      ],
+      "tensions": [
+        {
+          "relations": [
+            1,
+            0
+          ],
+          "sharedPositions": [
+            "day"
+          ],
+          "resolution": {
+            "status": "evaluated",
+            "method": "shared-pillar-v1",
+            "result": "关系并见"
+          }
+        }
+      ]
+    },
+    "assessments": {
+      "dayMasterStrength": {
+        "status": "evaluated",
+        "method": "monthly-weighted-strength-v1",
+        "result": "偏弱",
+        "dayElement": "水",
+        "monthElement": "土",
+        "monthRelation": "被克",
+        "supportScore": 34,
+        "total": 121,
+        "supportPercent": 28.1,
+        "supportElements": [
+          "金",
+          "水"
+        ]
+      },
+      "fiveElementStrength": {
+        "status": "evaluated",
+        "method": "monthly-weighted-strength-v1",
+        "elements": [
+          {
+            "element": "木",
+            "score": 6,
+            "season": "囚"
+          },
+          {
+            "element": "火",
+            "score": 21,
+            "season": "休"
+          },
+          {
+            "element": "土",
+            "score": 60,
+            "season": "旺"
+          },
+          {
+            "element": "金",
+            "score": 20,
+            "season": "相"
+          },
+          {
+            "element": "水",
+            "score": 14,
+            "season": "死"
+          }
+        ],
+        "contributions": [
+          {
+            "position": "year",
+            "stem": "癸",
+            "element": "水",
+            "tenGod": "劫财",
+            "origin": "stem",
+            "weight": 4,
+            "points": 4
+          },
+          {
+            "position": "year",
+            "stem": "己",
+            "element": "土",
+            "tenGod": "正官",
+            "origin": "本气",
+            "weight": 3,
+            "points": 15
+          },
+          {
+            "position": "year",
+            "stem": "癸",
+            "element": "水",
+            "tenGod": "劫财",
+            "origin": "中气",
+            "weight": 2,
+            "points": 2
+          },
+          {
+            "position": "year",
+            "stem": "辛",
+            "element": "金",
+            "tenGod": "正印",
+            "origin": "余气",
+            "weight": 1,
+            "points": 4
+          },
+          {
+            "position": "month",
+            "stem": "壬",
+            "element": "水",
+            "tenGod": "比肩",
+            "origin": "stem",
+            "weight": 4,
+            "points": 4
+          },
+          {
+            "position": "month",
+            "stem": "戊",
+            "element": "土",
+            "tenGod": "七杀",
+            "origin": "本气",
+            "weight": 6,
+            "points": 30
+          },
+          {
+            "position": "month",
+            "stem": "辛",
+            "element": "金",
+            "tenGod": "正印",
+            "origin": "中气",
+            "weight": 4,
+            "points": 16
+          },
+          {
+            "position": "month",
+            "stem": "丁",
+            "element": "火",
+            "tenGod": "正财",
+            "origin": "余气",
+            "weight": 2,
+            "points": 6
+          },
+          {
+            "position": "day",
+            "stem": "丁",
+            "element": "火",
+            "tenGod": "正财",
+            "origin": "本气",
+            "weight": 3,
+            "points": 9
+          },
+          {
+            "position": "day",
+            "stem": "己",
+            "element": "土",
+            "tenGod": "正官",
+            "origin": "中气",
+            "weight": 2,
+            "points": 10
+          },
+          {
+            "position": "hour",
+            "stem": "壬",
+            "element": "水",
+            "tenGod": "比肩",
+            "origin": "stem",
+            "weight": 4,
+            "points": 4
+          },
+          {
+            "position": "hour",
+            "stem": "甲",
+            "element": "木",
+            "tenGod": "食神",
+            "origin": "本气",
+            "weight": 3,
+            "points": 6
+          },
+          {
+            "position": "hour",
+            "stem": "丙",
+            "element": "火",
+            "tenGod": "偏财",
+            "origin": "中气",
+            "weight": 2,
+            "points": 6
+          },
+          {
+            "position": "hour",
+            "stem": "戊",
+            "element": "土",
+            "tenGod": "七杀",
+            "origin": "余气",
+            "weight": 1,
+            "points": 5
+          }
+        ]
+      },
+      "tenGodStrength": {
+        "status": "evaluated",
+        "method": "monthly-weighted-strength-v1",
+        "scores": [
+          {
+            "name": "比肩",
+            "score": 8
+          },
+          {
+            "name": "劫财",
+            "score": 6
+          },
+          {
+            "name": "食神",
+            "score": 6
+          },
+          {
+            "name": "伤官",
+            "score": 0
+          },
+          {
+            "name": "偏财",
+            "score": 6
+          },
+          {
+            "name": "正财",
+            "score": 15
+          },
+          {
+            "name": "七杀",
+            "score": 35
+          },
+          {
+            "name": "正官",
+            "score": 25
+          },
+          {
+            "name": "偏印",
+            "score": 0
+          },
+          {
+            "name": "正印",
+            "score": 20
+          }
+        ]
+      },
+      "patterns": {
+        "status": "evaluated",
+        "method": "month-command-pattern-screen-v1",
+        "candidate": "七杀格",
+        "result": "待配合",
+        "evidence": {
+          "monthBranch": "戌",
+          "selected": {
+            "id": "stem:wu",
+            "name": "戊",
+            "element": "土",
+            "polarity": "阳",
+            "position": "month",
+            "branch": "戌",
+            "tenGod": "七杀",
+            "order": 1,
+            "role": "本气"
+          },
+          "exposed": false,
+          "assistance": [],
+          "interference": []
+        },
+        "specialCandidates": {
+          "专旺": false,
+          "从势": false,
+          "化气": false
+        }
+      },
+      "climate": {
+        "status": "evaluated",
+        "method": "season-fire-water-v1",
+        "temperature": "冷热未触发",
+        "moisture": "偏燥",
+        "evidence": {
+          "season": "秋",
+          "monthBranch": "戌",
+          "fire": 21,
+          "water": 14
+        }
+      },
+      "mediation": {
+        "status": "evaluated",
+        "method": "prominent-control-bridge-v1",
+        "pairs": []
+      },
+      "remedy": {
+        "status": "evaluated",
+        "method": "dominance-control-v1",
+        "dominant": {
+          "element": "土",
+          "score": 60,
+          "season": "旺"
+        },
+        "candidates": [
+          "木"
+        ]
+      },
+      "usefulGod": {
+        "monthPattern": {
+          "status": "evaluated",
+          "method": "month-command-pattern-screen-v1",
+          "candidates": [
+            "土"
+          ]
+        },
+        "balancing": {
+          "status": "evaluated",
+          "method": "monthly-weighted-strength-v1",
+          "candidates": [
+            "金",
+            "水"
+          ]
+        },
+        "climate": {
+          "status": "evaluated",
+          "method": "season-fire-water-v1",
+          "candidates": [
+            "水"
+          ]
+        },
+        "remedy": {
+          "status": "evaluated",
+          "method": "dominance-control-v1",
+          "candidates": [
+            "木"
+          ]
+        },
+        "mediation": {
+          "status": "evaluated",
+          "method": "prominent-control-bridge-v1",
+          "candidates": []
+        }
+      }
+    },
+    "specialStructures": {
+      "shenSha": {
+        "status": "evaluated",
+        "version": "natal-shensha-v1",
+        "byPillar": {
+          "year": [],
+          "month": [
+            {
+              "name": "华盖",
+              "sourcePillars": [
+                "day"
+              ]
+            }
+          ],
+          "day": [
+            {
+              "name": "桃花",
+              "sourcePillars": [
+                "year"
+              ]
+            }
+          ],
+          "hour": [
+            {
+              "name": "空亡",
+              "sourcePillars": [
+                "year"
+              ]
+            },
+            {
+              "name": "文昌贵人",
+              "sourcePillars": [
+                "day"
+              ]
+            }
+          ]
+        }
+      },
+      "shenShaCombinations": {
+        "status": "evaluated",
+        "method": "same-pillar-shensha-v1",
+        "matches": [
+          {
+            "position": "hour",
+            "ganZhi": "壬寅",
+            "shenSha": [
+              {
+                "name": "空亡",
+                "sourcePillars": [
+                  "year"
+                ]
+              },
+              {
+                "name": "文昌贵人",
+                "sourcePillars": [
+                  "day"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "naYin": {
+        "status": "evaluated",
+        "method": "sexagenary-nayin-v1",
+        "byPillar": [
+          {
+            "position": "year",
+            "ganZhi": "癸丑",
+            "name": "桑柘木"
+          },
+          {
+            "position": "month",
+            "ganZhi": "壬戌",
+            "name": "大海水"
+          },
+          {
+            "position": "day",
+            "ganZhi": "壬午",
+            "name": "杨柳木"
+          },
+          {
+            "position": "hour",
+            "ganZhi": "壬寅",
+            "name": "金箔金"
+          }
+        ]
+      },
+      "dayHourCombinations": {
+        "status": "evaluated",
+        "method": "natal-day-hour-pair-v1",
+        "day": "壬午",
+        "hour": "壬寅",
+        "stems": [
+          {
+            "positions": [
+              "day",
+              "hour"
+            ],
+            "stems": [
+              "壬",
+              "壬"
+            ],
+            "relation": "同类"
+          }
+        ],
+        "branches": []
+      }
+    }
+  }
+}

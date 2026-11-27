@@ -1,0 +1,35 @@
+{
+  "baseline": "twelfth integration batch",
+  "profile": "lilly-1659-p104-v1",
+  "calculationReferenceSources": 144,
+  "calculationCells": 160,
+  "changes": [
+    {
+      "id": "astro-lilly-v3-wit-p005-001",
+      "method": "western",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unsupported_calculation_profile",
+      "conditions": [
+        "水星落入莉莉体系中自己的守护星座。"
+      ],
+      "inputs": 1
+    },
+    {
+      "id": "astro-lilly-v3-health-servants-p011-001",
+      "method": "western",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unsupported_calculation_profile",
+      "conditions": [
+        "按莉莉的宫制确认漂泊土星在第六宫，且落风象或火象的指定星座。同时须核实土星漂泊。"
+      ],
+      "inputs": 6
+    }
+  ],
+  "boundaries": [
+    "Source table rows remain scoped computational references, not unconditional personal readings.",
+    "Only classical named planets and explicit dignity predicates; strong and selected significators remain unsupported.",
+    "Peregrine requires all five dignities absent; unknown sect uses day/night consensus."
+  ]
+}

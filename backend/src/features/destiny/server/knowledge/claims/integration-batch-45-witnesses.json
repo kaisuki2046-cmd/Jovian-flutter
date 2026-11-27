@@ -1,0 +1,550 @@
+{
+  "scanned": 47849,
+  "alternatives": 66,
+  "witnesses": [
+    {
+      "date": "1900-01-01T12:00:00.000Z",
+      "latitude": 39.9,
+      "longitude": 116.4,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-preferment-p047-001",
+          "inputDigest": "324292a7f08dc0ef870d1ad60ff185b479fcb5320061ae3ee219be1333d741e7"
+        },
+        {
+          "id": "astro-lilly-v3-preferment-p047-001",
+          "inputDigest": "bcb3cfe47f4ad69840146ee5a76829c5b6bac206c121ced02433c700d03ab682"
+        }
+      ]
+    },
+    {
+      "date": "1900-01-01T16:00:00.000Z",
+      "latitude": 57,
+      "longitude": -3,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-preferment-p046-001",
+          "inputDigest": "a7c7ab34981980cee2f6e78f08652ae6819e5508198e5cb9965fd3903c42f04b"
+        },
+        {
+          "id": "astro-lilly-v3-preferment-p046-001",
+          "inputDigest": "25e8c35aedbc25c2e7d61e7d60cff5d570c3d456fddb2dcce1534b47afc5f320"
+        }
+      ]
+    },
+    {
+      "date": "1900-01-03T20:00:00.000Z",
+      "latitude": -33.9,
+      "longitude": 151.2,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-spouse-count-p012-001",
+          "inputDigest": "8f58b4cdaa4bfba10fc1d0122600edebb1f4176373a1ec44673f23bad58dc10b"
+        },
+        {
+          "id": "astro-lilly-v3-spouse-count-p012-001",
+          "inputDigest": "7005fa873a042a5695bbaa8e18e9380062f6728341bfc25384e455cb74a6ee48"
+        }
+      ]
+    },
+    {
+      "date": "1900-01-05T00:00:00.000Z",
+      "latitude": -51,
+      "longitude": -59,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-spouse-count-p012-001",
+          "inputDigest": "d5b2c57d68304e3e40f847836e21d46595e1485eee42e2937d5a84e0d8a78ae6"
+        },
+        {
+          "id": "astro-lilly-v3-spouse-count-p012-001",
+          "inputDigest": "a10fc7cd628a01a90a634d8acd88423936e505cb040a4cca5e13ff6ac7a6fa5e"
+        },
+        {
+          "id": "astro-lilly-v3-spouse-count-p013-001",
+          "inputDigest": "54ead577adae3d05d16dd4fefc80d1e91e00a1a0b33b1ea6f76d6fd1e484cf90"
+        },
+        {
+          "id": "astro-lilly-v3-spouse-count-p013-001",
+          "inputDigest": "c8f5ea5d2c544c2132aa5c6504b4d8c4673758bbe4aa1d1f75becd8df811604d"
+        }
+      ]
+    },
+    {
+      "date": "1900-01-09T00:00:00.000Z",
+      "latitude": 57,
+      "longitude": -3,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-spouse-count-p012-001",
+          "inputDigest": "995ba233b99766a2edb074b64ff07b5b68cca54674f451adb184e40e2004f912"
+        },
+        {
+          "id": "astro-lilly-v3-spouse-count-p012-001",
+          "inputDigest": "38693a82cdf2979674f7228db2329502c64b8c344eba2707eaf5c86043d4c669"
+        }
+      ]
+    },
+    {
+      "date": "1900-01-15T14:00:00.000Z",
+      "latitude": 39.9,
+      "longitude": 116.4,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-spouse-count-p014-001",
+          "inputDigest": "aa2fde5804656036704be0d6bdab0e18810b63bf714e1b7e82b39ab7ef83863d"
+        }
+      ]
+    },
+    {
+      "date": "1900-01-15T22:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-spouse-count-p014-001",
+          "inputDigest": "b53488cdcca5ad8e247fcd6f258452ca7cd3a0807d4586f9ea6a32b8ed273738"
+        }
+      ]
+    },
+    {
+      "date": "1900-01-23T06:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-spouse-count-p012-001",
+          "inputDigest": "6478e37fc649eb99a01ea07f65e6ecf0ced39fab3f65661eb30cef5d9b95f8da"
+        },
+        {
+          "id": "astro-lilly-v3-spouse-count-p012-001",
+          "inputDigest": "1640758a4edb6064583521dd5ae7a1f9d9cb11749fb0d4a3bf89072cb01e599a"
+        }
+      ]
+    },
+    {
+      "date": "1900-01-23T08:00:00.000Z",
+      "latitude": 39.9,
+      "longitude": 116.4,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-preferment-p046-001",
+          "inputDigest": "d7b968b7492eb31b7a6353edc2c4de7b601094a74d92913c80c64c8fb323db3f"
+        },
+        {
+          "id": "astro-lilly-v3-preferment-p046-001",
+          "inputDigest": "84ca167ad1137aeb119af537182e6dcaa20b0982f3bf01d393e3ebfb39d78ce5"
+        }
+      ]
+    },
+    {
+      "date": "1900-01-23T18:00:00.000Z",
+      "latitude": 39.9,
+      "longitude": 116.4,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-spouse-count-p013-001",
+          "inputDigest": "5eee8877a7b0722fabbbe3e482289923bba460b2abf0324a1996b6c703d63e80"
+        },
+        {
+          "id": "astro-lilly-v3-spouse-count-p013-001",
+          "inputDigest": "6cb823a6614808d7aea266d773dcda1d8952bba343b1f0f3b4f925bc87650698"
+        }
+      ]
+    },
+    {
+      "date": "1900-01-23T22:00:00.000Z",
+      "latitude": 57,
+      "longitude": -3,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-spouse-count-p014-001",
+          "inputDigest": "2f7e62258c21adfd3222ce4528860b5aacf1c6a0b3b6242f684aa9603776d4bf"
+        },
+        {
+          "id": "astro-lilly-v3-spouse-count-p014-001",
+          "inputDigest": "95256061e118c222f95a4c63bed1974877848dc0a1a111aa1fa4a1d5e9e4c822"
+        }
+      ]
+    },
+    {
+      "date": "1900-02-06T14:00:00.000Z",
+      "latitude": 57,
+      "longitude": -3,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-preferment-p047-001",
+          "inputDigest": "ef160afd0c1aeebb57f53106f30d02fb4a3b64b0fbb82c9c55ef2889dc9eb5d0"
+        },
+        {
+          "id": "astro-lilly-v3-preferment-p047-001",
+          "inputDigest": "6904456621a15e5e583cf7c8a6dfc5b13be5508501d20504fbf4b4930f54871d"
+        }
+      ]
+    },
+    {
+      "date": "1900-02-20T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-spouse-count-p012-001",
+          "inputDigest": "36288fd6d2fe6cd3d4d775681ca503bd7813c811d22a1c7a1a0606e804cbcde0"
+        },
+        {
+          "id": "astro-lilly-v3-spouse-count-p012-001",
+          "inputDigest": "577e68b8ea5759db4573b3c63b97492f04ec6343ca6ce61bb72e183017fe648f"
+        },
+        {
+          "id": "astro-lilly-v3-spouse-count-p013-001",
+          "inputDigest": "bec822130e3ee79f4f9caec063a62f38e84d73f242a6a08b78db38161249494a"
+        },
+        {
+          "id": "astro-lilly-v3-spouse-count-p013-001",
+          "inputDigest": "01bd9eb26594b6d12208893a33951fc6535f302b66c816a8ed762f080828779b"
+        },
+        {
+          "id": "astro-lilly-v3-spouse-count-p013-001",
+          "inputDigest": "99e9096b4d9f0c98ca366908d39e39e68affd6f8fea3514c9522522ea851b00a"
+        },
+        {
+          "id": "astro-lilly-v3-spouse-count-p013-001",
+          "inputDigest": "342e5feb16bb79c864d980b238ed9de3718c60332cdd1126789e9f27659c8ec3"
+        }
+      ]
+    },
+    {
+      "date": "1900-02-20T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "女",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-women-marriage-p017-001",
+          "inputDigest": "7cf41ea22370ba0fe9acbeb98c7e47d4c42cfd74cf1d09ddead1a0a524853d46"
+        }
+      ]
+    },
+    {
+      "date": "1900-02-20T06:00:00.000Z",
+      "latitude": 57,
+      "longitude": -3,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-spouse-count-p014-001",
+          "inputDigest": "35b0b67ea2569a4c8e78699db37e1d042f02c2da67200913005f4debe22d5bb3"
+        },
+        {
+          "id": "astro-lilly-v3-spouse-count-p014-001",
+          "inputDigest": "902dc27046df98520bfdf06f695be5a0105af42e1688b33d1365cf03ef299b5c"
+        }
+      ]
+    },
+    {
+      "date": "1900-02-22T04:00:00.000Z",
+      "latitude": -51,
+      "longitude": -59,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-spouse-count-p014-001",
+          "inputDigest": "c62f5e499cba3b6a6a82247d427bdd109fb7761c20880bd72e76cc54d33416ca"
+        },
+        {
+          "id": "astro-lilly-v3-spouse-count-p014-001",
+          "inputDigest": "7445e6c86b65bbb64a809eed4559f1298766a4d826d777bd287e838475ce4b8d"
+        }
+      ]
+    },
+    {
+      "date": "1900-03-02T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "女",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-women-marriage-p017-001",
+          "inputDigest": "689a40078c6a7e2b8eaf7ca687c14168af34c7d59c1382dc65d80e94990afe6a"
+        }
+      ]
+    },
+    {
+      "date": "1900-03-04T08:00:00.000Z",
+      "latitude": 39.9,
+      "longitude": 116.4,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-spouse-count-p012-001",
+          "inputDigest": "160d504016def016cbf076f4b6b0793b7f33492657cb64b463a46e7c9179a5bb"
+        },
+        {
+          "id": "astro-lilly-v3-spouse-count-p012-001",
+          "inputDigest": "d77efe3a24d455e4062891790ddee4535bde57dd4f5a9c42dadf04f0d700ef53"
+        }
+      ]
+    },
+    {
+      "date": "1900-03-20T00:00:00.000Z",
+      "latitude": 57,
+      "longitude": -3,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-spouse-count-p013-001",
+          "inputDigest": "594a74d5fc1e2371a2c99485ffb5e1986475efd5c37821b1d34fd8070bcae9d0"
+        },
+        {
+          "id": "astro-lilly-v3-spouse-count-p013-001",
+          "inputDigest": "750ce6b08dab4ee0db2dc7e09f1eb76435e688cc4eb0fcc3bb91bf31ee33301c"
+        }
+      ]
+    },
+    {
+      "date": "1900-03-20T02:00:00.000Z",
+      "latitude": -51,
+      "longitude": -59,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-spouse-count-p014-001",
+          "inputDigest": "aa42be332298cee492dc46ba9b5798a5fb8c8e7315e44fae9474e0885f4015f4"
+        },
+        {
+          "id": "astro-lilly-v3-spouse-count-p014-001",
+          "inputDigest": "0c868fa200a4112f1a70313d194d8e609d70af2b4d212a6b99bb3d1cf1e840fa"
+        }
+      ]
+    },
+    {
+      "date": "1900-03-22T02:00:00.000Z",
+      "latitude": 39.9,
+      "longitude": 116.4,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-preferment-p047-001",
+          "inputDigest": "458b459d557152a9e6bcda4826582852c701fc3f6e876cc43c2709ebe1346dfc"
+        },
+        {
+          "id": "astro-lilly-v3-preferment-p047-001",
+          "inputDigest": "13633bef29a4f540c75fc1049d798976e5bf7093d08dd33a28a84af31df9472f"
+        }
+      ]
+    },
+    {
+      "date": "1900-03-26T04:00:00.000Z",
+      "latitude": 39.9,
+      "longitude": 116.4,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-preferment-p046-001",
+          "inputDigest": "bbcc6d5bd08c1eca8e9adbae3b5ca639cb711a5b82b95cb75c5ad26723b06f33"
+        },
+        {
+          "id": "astro-lilly-v3-preferment-p046-001",
+          "inputDigest": "8f8f9200ba4e7c1bda3c48bf33779d25f288fae72174849942e3625f4cdb58e7"
+        }
+      ]
+    },
+    {
+      "date": "1900-05-27T18:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-preferment-p046-001",
+          "inputDigest": "d5bd157295ff295b6da2f472071d092235c886340913777ae15641c99b3e811b"
+        }
+      ]
+    },
+    {
+      "date": "1900-06-22T10:00:00.000Z",
+      "latitude": -33.9,
+      "longitude": 151.2,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-preferment-p047-001",
+          "inputDigest": "6923ac4aff11a8a441ba8f5891250f1ea992ab258a0db62a091ef07fa4ca2c88"
+        },
+        {
+          "id": "astro-lilly-v3-preferment-p047-001",
+          "inputDigest": "e99cb0daf13e50426f95a2d24f65a033676eff876a0bffa964c821ca9c1003a5"
+        }
+      ]
+    },
+    {
+      "date": "1900-08-13T00:00:00.000Z",
+      "latitude": -51,
+      "longitude": -59,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-spouse-count-p013-001",
+          "inputDigest": "5493896c56311afd47caaf69b05bc8a4ba3fc051977c24be10e1d68d46d5ea25"
+        },
+        {
+          "id": "astro-lilly-v3-spouse-count-p013-001",
+          "inputDigest": "fad45d73a4a4ec932176717254873e502dbec1ca00bc4519953a599fb1bc3129"
+        }
+      ]
+    },
+    {
+      "date": "1900-08-13T08:00:00.000Z",
+      "latitude": 57,
+      "longitude": -3,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-spouse-count-p014-001",
+          "inputDigest": "d49024c26bae5cb25f6e4213cd53bd67d75703291239d7782c1a2d3751a31178"
+        },
+        {
+          "id": "astro-lilly-v3-spouse-count-p014-001",
+          "inputDigest": "ac75a7e112bcba9f1bc43b0ede7c6a5b1f0568d378c499464f9ba504c79529a7"
+        }
+      ]
+    },
+    {
+      "date": "1900-09-08T08:00:00.000Z",
+      "latitude": -51,
+      "longitude": -59,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-preferment-p047-001",
+          "inputDigest": "52c552ece149a68cb1c5c1ed5dc3d162467ea166ef8f2fb19b4ce172d34431a8"
+        },
+        {
+          "id": "astro-lilly-v3-preferment-p047-001",
+          "inputDigest": "9ea9451ba73ca4088e90be8c5df64b2c7953da904eabb7babf3102516c04dec9"
+        }
+      ]
+    },
+    {
+      "date": "1900-09-18T08:00:00.000Z",
+      "latitude": -51,
+      "longitude": -59,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-preferment-p046-001",
+          "inputDigest": "9881dfe5ba02a3f20bbe8059cd7931245370658ed0b023533876fc60b2d77ab9"
+        },
+        {
+          "id": "astro-lilly-v3-preferment-p046-001",
+          "inputDigest": "6a39d0f8fb32a4ec1d24b498e022845ada3ce6ec126e67f29b87d360954d67bb"
+        }
+      ]
+    },
+    {
+      "date": "1901-03-23T22:00:00.000Z",
+      "latitude": -33.9,
+      "longitude": 151.2,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-preferment-p046-001",
+          "inputDigest": "1053ffdc1206e724f021532300886901d3fb75964b14a2334c4c64117c6bd9ed"
+        }
+      ]
+    },
+    {
+      "date": "1906-08-04T06:00:00.000Z",
+      "latitude": -51,
+      "longitude": -59,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-preferment-p046-001",
+          "inputDigest": "2671241ec923aa2d90c490a31378386211dfd297c156f3d24872346ab29979aa"
+        }
+      ]
+    },
+    {
+      "date": "1906-08-08T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-preferment-p047-001",
+          "inputDigest": "3095d71eba4c87f04b5cb6c9391323c02e7b4f61dcdedc297e964f7624dc9d32"
+        },
+        {
+          "id": "astro-lilly-v3-preferment-p047-001",
+          "inputDigest": "9e82d717a64ba7c41763f28ad6fd5cb39ef572f11c4f82ccf91d366726a10150"
+        }
+      ]
+    },
+    {
+      "date": "1906-08-20T06:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-preferment-p046-001",
+          "inputDigest": "e6bd0d7299a7ce806e8548a2379f32e8cccf31d2fafd0b43a0d301ae4197780e"
+        }
+      ]
+    },
+    {
+      "date": "1921-10-14T06:00:00.000Z",
+      "latitude": -51,
+      "longitude": -59,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-preferment-p047-001",
+          "inputDigest": "fea07aed04b128c220cd72750df7b12f13ee876a7ad34a717de3fda3bfebc368"
+        }
+      ]
+    },
+    {
+      "date": "1921-10-18T20:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-preferment-p047-001",
+          "inputDigest": "08486e1900fd9a2fe8d6d2efa03bad7afb6ae9825836de0570d40689bba46326"
+        }
+      ]
+    },
+    {
+      "date": "1921-11-01T08:00:00.000Z",
+      "latitude": 57,
+      "longitude": -3,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-preferment-p046-001",
+          "inputDigest": "c1b4b397c4a5de9992fbfbeb9f25c9e8b6b2af1afb5304550621f8fb07bb7a08"
+        },
+        {
+          "id": "astro-lilly-v3-preferment-p046-001",
+          "inputDigest": "2a27f4a6cb913b50497215c03664703e27a978622d21f0e15778cc81c688b926"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "source": "https://rosicrucian.com/mos/moseng08.htm",
+  "chapters": ["XXIII", "XXIV", "XXV"],
+  "birthAt": "1884-04-24T20:20:00.000Z",
+  "localBirthDescription": "1884-04-24 14:00 true local time, longitude 95W, latitude 42N",
+  "calculationDates": [
+    { "birthAt": "1884-04-24T20:20:00.000Z", "adjustedDate": "1883-12-19" },
+    { "birthAt": "1884-04-24T22:20:00.000Z", "adjustedDate": "1883-11-19" }
+  ],
+  "annualNoonPairs": [
+    ["1883-12-19", "1884-04-24"],
+    ["1884-12-19", "1884-04-25"],
+    ["1897-12-19", "1884-05-08"],
+    ["1907-12-19", "1884-05-18"],
+    ["1916-12-19", "1884-05-27"],
+    ["1917-12-19", "1884-05-28"],
+    ["1918-12-19", "1884-05-29"]
+  ],
+  "printedPositions": [
+    { "at": "1917-12-19T12:00:00Z", "body": "Moon", "longitude": 117.1833333333 },
+    { "at": "1918-12-19T12:00:00Z", "body": "Moon", "longitude": 131.2333333333 },
+    { "at": "1918-05-19T12:00:00Z", "body": "Moon", "longitude": 123.0166666667 },
+    { "at": "1918-06-01T12:00:00Z", "body": "Moon", "longitude": 123.5 },
+    { "at": "1917-12-19T12:00:00Z", "body": "Sun", "longitude": 67.4833333333 },
+    { "at": "1918-06-01T12:00:00Z", "body": "Sun", "longitude": 67.9333333333 }
+  ],
+  "positionToleranceDegrees": 0.025,
+  "precisionNote": "Printed values include rounded monthly arithmetic; modern apparent ephemerides and the declared UTC-noon anchors are compared within 1.5 arcminutes, not asserted identical to the historical ephemeris."
+}

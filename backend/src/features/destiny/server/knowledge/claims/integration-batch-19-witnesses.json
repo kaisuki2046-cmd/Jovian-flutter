@@ -1,0 +1,2690 @@
+{
+  "scanned": 218,
+  "targetCells": 240,
+  "witnesses": [
+    {
+      "date": "2026-01-01T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p047-001",
+          "system": "egyptian_common",
+          "sign": "capricorn",
+          "sect": "both",
+          "planet": "Sun",
+          "ruler": "Jupiter"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p047-001",
+          "system": "ptolemy_manuscript",
+          "sign": "capricorn",
+          "sect": "both",
+          "planet": "Sun",
+          "ruler": "Mercury"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p087-001",
+          "system": "chaldaean",
+          "sign": "capricorn",
+          "sect": "night",
+          "planet": "Sun",
+          "ruler": "Mercury"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p012-001",
+          "system": "egyptian_common",
+          "sign": "gemini",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p011-001",
+          "system": "ptolemy_manuscript",
+          "sign": "gemini",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p091-001",
+          "system": "chaldaean",
+          "sign": "gemini",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p045-001",
+          "system": "egyptian_common",
+          "sign": "sagittarius",
+          "sect": "both",
+          "planet": "Mercury",
+          "ruler": "Mars"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p045-001",
+          "system": "ptolemy_manuscript",
+          "sign": "sagittarius",
+          "sect": "both",
+          "planet": "Mercury",
+          "ruler": "Mars"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p085-001",
+          "system": "chaldaean",
+          "sign": "sagittarius",
+          "sect": "night",
+          "planet": "Mercury",
+          "ruler": "Mars"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p048-001",
+          "system": "ptolemy_manuscript",
+          "sign": "capricorn",
+          "sect": "both",
+          "planet": "Mars",
+          "ruler": "Jupiter"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p019-001",
+          "system": "egyptian_common",
+          "sign": "cancer",
+          "sect": "both",
+          "planet": "Jupiter",
+          "ruler": "Jupiter"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p019-001",
+          "system": "ptolemy_manuscript",
+          "sign": "cancer",
+          "sect": "both",
+          "planet": "Jupiter",
+          "ruler": "Venus"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p099-001",
+          "system": "chaldaean",
+          "sign": "cancer",
+          "sect": "night",
+          "planet": "Jupiter",
+          "ruler": "Mercury"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p059-001",
+          "system": "egyptian_common",
+          "sign": "pisces",
+          "sect": "both",
+          "planet": "Saturn",
+          "ruler": "Mars"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p060-001",
+          "system": "ptolemy_manuscript",
+          "sign": "pisces",
+          "sect": "both",
+          "planet": "Saturn",
+          "ruler": "Saturn"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p100-001",
+          "system": "chaldaean",
+          "sign": "pisces",
+          "sect": "night",
+          "planet": "Saturn",
+          "ruler": "Saturn"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-01T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p067-001",
+          "system": "chaldaean",
+          "sign": "capricorn",
+          "sect": "day",
+          "planet": "Sun",
+          "ruler": "Saturn"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p013-001",
+          "system": "egyptian_common",
+          "sign": "gemini",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Venus"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p013-001",
+          "system": "ptolemy_manuscript",
+          "sign": "gemini",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Venus"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p072-001",
+          "system": "chaldaean",
+          "sign": "gemini",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p065-001",
+          "system": "chaldaean",
+          "sign": "sagittarius",
+          "sect": "day",
+          "planet": "Mercury",
+          "ruler": "Mars"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p079-001",
+          "system": "chaldaean",
+          "sign": "cancer",
+          "sect": "day",
+          "planet": "Jupiter",
+          "ruler": "Saturn"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p080-001",
+          "system": "chaldaean",
+          "sign": "pisces",
+          "sect": "day",
+          "planet": "Saturn",
+          "ruler": "Mercury"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-02T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p014-001",
+          "system": "egyptian_common",
+          "sign": "gemini",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mars"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p014-001",
+          "system": "ptolemy_manuscript",
+          "sign": "gemini",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mars"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p094-001",
+          "system": "chaldaean",
+          "sign": "gemini",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p046-001",
+          "system": "egyptian_common",
+          "sign": "capricorn",
+          "sect": "both",
+          "planet": "Mercury",
+          "ruler": "Mercury"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p046-001",
+          "system": "ptolemy_manuscript",
+          "sign": "capricorn",
+          "sect": "both",
+          "planet": "Mercury",
+          "ruler": "Venus"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p086-001",
+          "system": "chaldaean",
+          "sign": "capricorn",
+          "sect": "night",
+          "planet": "Mercury",
+          "ruler": "Venus"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-02T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p015-001",
+          "system": "egyptian_common",
+          "sign": "gemini",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p015-001",
+          "system": "ptolemy_manuscript",
+          "sign": "gemini",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p075-001",
+          "system": "chaldaean",
+          "sign": "gemini",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Venus"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p066-001",
+          "system": "chaldaean",
+          "sign": "capricorn",
+          "sect": "day",
+          "planet": "Mercury",
+          "ruler": "Venus"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-03T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p016-001",
+          "system": "egyptian_common",
+          "sign": "cancer",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mars"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p017-001",
+          "system": "ptolemy_manuscript",
+          "sign": "cancer",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p096-001",
+          "system": "chaldaean",
+          "sign": "cancer",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Mars"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p048-001",
+          "system": "egyptian_common",
+          "sign": "capricorn",
+          "sect": "both",
+          "planet": "Mars",
+          "ruler": "Venus"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-03T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p018-001",
+          "system": "egyptian_common",
+          "sign": "cancer",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p018-001",
+          "system": "ptolemy_manuscript",
+          "sign": "cancer",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p077-001",
+          "system": "chaldaean",
+          "sign": "cancer",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-04T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p098-001",
+          "system": "chaldaean",
+          "sign": "cancer",
+          "sect": "night",
+          "planet": "Jupiter",
+          "ruler": "Venus"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-04T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p020-001",
+          "system": "egyptian_common",
+          "sign": "cancer",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p020-001",
+          "system": "ptolemy_manuscript",
+          "sign": "cancer",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p080-001",
+          "system": "chaldaean",
+          "sign": "cancer",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p068-001",
+          "system": "chaldaean",
+          "sign": "capricorn",
+          "sect": "day",
+          "planet": "Mars",
+          "ruler": "Mercury"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p078-001",
+          "system": "chaldaean",
+          "sign": "cancer",
+          "sect": "day",
+          "planet": "Jupiter",
+          "ruler": "Venus"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-05T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p022-001",
+          "system": "egyptian_common",
+          "sign": "leo",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Venus"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p022-001",
+          "system": "ptolemy_manuscript",
+          "sign": "leo",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p081-001",
+          "system": "chaldaean",
+          "sign": "leo",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p088-001",
+          "system": "chaldaean",
+          "sign": "capricorn",
+          "sect": "night",
+          "planet": "Mars",
+          "ruler": "Saturn"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-05T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p023-001",
+          "system": "egyptian_common",
+          "sign": "leo",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p023-001",
+          "system": "ptolemy_manuscript",
+          "sign": "leo",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p062-001",
+          "system": "chaldaean",
+          "sign": "leo",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Venus"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-06T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p024-001",
+          "system": "egyptian_common",
+          "sign": "leo",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p024-001",
+          "system": "ptolemy_manuscript",
+          "sign": "leo",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Venus"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p083-001",
+          "system": "chaldaean",
+          "sign": "leo",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-06T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p025-001",
+          "system": "egyptian_common",
+          "sign": "leo",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mars"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p025-001",
+          "system": "ptolemy_manuscript",
+          "sign": "leo",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mars"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p065-001",
+          "system": "chaldaean",
+          "sign": "leo",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Mars"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-07T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p026-001",
+          "system": "egyptian_common",
+          "sign": "virgo",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p026-001",
+          "system": "ptolemy_manuscript",
+          "sign": "virgo",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p086-001",
+          "system": "chaldaean",
+          "sign": "virgo",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Venus"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-07T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p027-001",
+          "system": "egyptian_common",
+          "sign": "virgo",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Venus"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p027-001",
+          "system": "ptolemy_manuscript",
+          "sign": "virgo",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Venus"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p067-001",
+          "system": "chaldaean",
+          "sign": "virgo",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-08T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p028-001",
+          "system": "egyptian_common",
+          "sign": "virgo",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p028-001",
+          "system": "ptolemy_manuscript",
+          "sign": "virgo",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p088-001",
+          "system": "chaldaean",
+          "sign": "virgo",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-08T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p029-001",
+          "system": "egyptian_common",
+          "sign": "virgo",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mars"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p029-001",
+          "system": "ptolemy_manuscript",
+          "sign": "virgo",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p069-001",
+          "system": "chaldaean",
+          "sign": "virgo",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Mars"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-09T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p030-001",
+          "system": "egyptian_common",
+          "sign": "virgo",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p030-001",
+          "system": "ptolemy_manuscript",
+          "sign": "virgo",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mars"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p090-001",
+          "system": "chaldaean",
+          "sign": "virgo",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p049-001",
+          "system": "ptolemy_manuscript",
+          "sign": "capricorn",
+          "sect": "both",
+          "planet": "Venus",
+          "ruler": "Saturn"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-09T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p032-001",
+          "system": "egyptian_common",
+          "sign": "libra",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p032-001",
+          "system": "ptolemy_manuscript",
+          "sign": "libra",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Venus"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p071-001",
+          "system": "chaldaean",
+          "sign": "libra",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-10T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p033-001",
+          "system": "ptolemy_manuscript",
+          "sign": "libra",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p092-001",
+          "system": "chaldaean",
+          "sign": "libra",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-10T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p033-001",
+          "system": "egyptian_common",
+          "sign": "libra",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p034-001",
+          "system": "ptolemy_manuscript",
+          "sign": "libra",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p073-001",
+          "system": "chaldaean",
+          "sign": "libra",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Mars"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p069-001",
+          "system": "chaldaean",
+          "sign": "capricorn",
+          "sect": "day",
+          "planet": "Venus",
+          "ruler": "Mars"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-11T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p034-001",
+          "system": "egyptian_common",
+          "sign": "libra",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Venus"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p035-001",
+          "system": "ptolemy_manuscript",
+          "sign": "libra",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mars"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p094-001",
+          "system": "chaldaean",
+          "sign": "libra",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p089-001",
+          "system": "chaldaean",
+          "sign": "capricorn",
+          "sect": "night",
+          "planet": "Venus",
+          "ruler": "Mars"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-11T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p036-001",
+          "system": "egyptian_common",
+          "sign": "scorpio",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mars"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p036-001",
+          "system": "ptolemy_manuscript",
+          "sign": "scorpio",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mars"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p076-001",
+          "system": "chaldaean",
+          "sign": "scorpio",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Mars"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p049-001",
+          "system": "egyptian_common",
+          "sign": "capricorn",
+          "sect": "both",
+          "planet": "Venus",
+          "ruler": "Saturn"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-12T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p037-001",
+          "system": "ptolemy_manuscript",
+          "sign": "scorpio",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Venus"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p096-001",
+          "system": "chaldaean",
+          "sign": "scorpio",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Mars"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-12T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p038-001",
+          "system": "egyptian_common",
+          "sign": "scorpio",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p077-001",
+          "system": "chaldaean",
+          "sign": "scorpio",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-13T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p038-001",
+          "system": "ptolemy_manuscript",
+          "sign": "scorpio",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p098-001",
+          "system": "chaldaean",
+          "sign": "scorpio",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Venus"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-13T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p040-001",
+          "system": "egyptian_common",
+          "sign": "scorpio",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p039-001",
+          "system": "ptolemy_manuscript",
+          "sign": "scorpio",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p079-001",
+          "system": "chaldaean",
+          "sign": "scorpio",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-14T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p041-001",
+          "system": "egyptian_common",
+          "sign": "sagittarius",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p041-001",
+          "system": "ptolemy_manuscript",
+          "sign": "sagittarius",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p081-001",
+          "system": "chaldaean",
+          "sign": "sagittarius",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p050-001",
+          "system": "ptolemy_manuscript",
+          "sign": "capricorn",
+          "sect": "both",
+          "planet": "Venus",
+          "ruler": "Mars"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-14T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p061-001",
+          "system": "chaldaean",
+          "sign": "sagittarius",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p050-001",
+          "system": "egyptian_common",
+          "sign": "capricorn",
+          "sect": "both",
+          "planet": "Venus",
+          "ruler": "Mars"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p070-001",
+          "system": "chaldaean",
+          "sign": "capricorn",
+          "sect": "day",
+          "planet": "Venus",
+          "ruler": "Jupiter"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-15T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p042-001",
+          "system": "egyptian_common",
+          "sign": "sagittarius",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Venus"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p042-001",
+          "system": "ptolemy_manuscript",
+          "sign": "sagittarius",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Venus"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p082-001",
+          "system": "chaldaean",
+          "sign": "sagittarius",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Venus"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p090-001",
+          "system": "chaldaean",
+          "sign": "capricorn",
+          "sect": "night",
+          "planet": "Venus",
+          "ruler": "Jupiter"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-15T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p043-001",
+          "system": "egyptian_common",
+          "sign": "sagittarius",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p043-001",
+          "system": "ptolemy_manuscript",
+          "sign": "sagittarius",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p063-001",
+          "system": "chaldaean",
+          "sign": "sagittarius",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-16T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p044-001",
+          "system": "egyptian_common",
+          "sign": "sagittarius",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p044-001",
+          "system": "ptolemy_manuscript",
+          "sign": "sagittarius",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p084-001",
+          "system": "chaldaean",
+          "sign": "sagittarius",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-18T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p051-001",
+          "system": "egyptian_common",
+          "sign": "aquarius",
+          "sect": "both",
+          "planet": "Venus",
+          "ruler": "Mercury"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p051-001",
+          "system": "ptolemy_manuscript",
+          "sign": "aquarius",
+          "sect": "both",
+          "planet": "Venus",
+          "ruler": "Saturn"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p091-001",
+          "system": "chaldaean",
+          "sign": "aquarius",
+          "sect": "night",
+          "planet": "Venus",
+          "ruler": "Mercury"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-18T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p071-001",
+          "system": "chaldaean",
+          "sign": "aquarius",
+          "sect": "day",
+          "planet": "Venus",
+          "ruler": "Saturn"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-19T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p052-001",
+          "system": "egyptian_common",
+          "sign": "aquarius",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Venus"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p052-001",
+          "system": "ptolemy_manuscript",
+          "sign": "aquarius",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-20T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p053-001",
+          "system": "egyptian_common",
+          "sign": "aquarius",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p053-001",
+          "system": "ptolemy_manuscript",
+          "sign": "aquarius",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Venus"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p092-001",
+          "system": "chaldaean",
+          "sign": "aquarius",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-20T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p073-001",
+          "system": "chaldaean",
+          "sign": "aquarius",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Mars"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-21T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p055-001",
+          "system": "egyptian_common",
+          "sign": "aquarius",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p055-001",
+          "system": "ptolemy_manuscript",
+          "sign": "aquarius",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mars"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p095-001",
+          "system": "chaldaean",
+          "sign": "aquarius",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Venus"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-21T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p056-001",
+          "system": "egyptian_common",
+          "sign": "pisces",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Venus"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p056-001",
+          "system": "ptolemy_manuscript",
+          "sign": "pisces",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Venus"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p076-001",
+          "system": "chaldaean",
+          "sign": "pisces",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Mars"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-22T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p057-001",
+          "system": "ptolemy_manuscript",
+          "sign": "pisces",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p097-001",
+          "system": "chaldaean",
+          "sign": "pisces",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-22T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p057-001",
+          "system": "egyptian_common",
+          "sign": "pisces",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p058-001",
+          "system": "ptolemy_manuscript",
+          "sign": "pisces",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p078-001",
+          "system": "chaldaean",
+          "sign": "pisces",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Venus"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-23T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p059-001",
+          "system": "ptolemy_manuscript",
+          "sign": "pisces",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mars"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p099-001",
+          "system": "chaldaean",
+          "sign": "pisces",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-23T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p060-001",
+          "system": "egyptian_common",
+          "sign": "pisces",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-24T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p001-001",
+          "system": "egyptian_common",
+          "sign": "aries",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p001-001",
+          "system": "ptolemy_manuscript",
+          "sign": "aries",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p081-001",
+          "system": "chaldaean",
+          "sign": "aries",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-24T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p003-001",
+          "system": "egyptian_common",
+          "sign": "aries",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p002-001",
+          "system": "ptolemy_manuscript",
+          "sign": "aries",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Venus"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p062-001",
+          "system": "chaldaean",
+          "sign": "aries",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Venus"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p072-001",
+          "system": "chaldaean",
+          "sign": "aquarius",
+          "sect": "day",
+          "planet": "Venus",
+          "ruler": "Mercury"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-25T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p003-001",
+          "system": "ptolemy_manuscript",
+          "sign": "aries",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p083-001",
+          "system": "chaldaean",
+          "sign": "aries",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-25T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p005-001",
+          "system": "egyptian_common",
+          "sign": "aries",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p005-001",
+          "system": "ptolemy_manuscript",
+          "sign": "aries",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p065-001",
+          "system": "chaldaean",
+          "sign": "aries",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Mars"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-26T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p006-001",
+          "system": "egyptian_common",
+          "sign": "taurus",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Venus"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p006-001",
+          "system": "ptolemy_manuscript",
+          "sign": "taurus",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Venus"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p086-001",
+          "system": "chaldaean",
+          "sign": "taurus",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Venus"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-26T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p007-001",
+          "system": "egyptian_common",
+          "sign": "taurus",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p007-001",
+          "system": "ptolemy_manuscript",
+          "sign": "taurus",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p067-001",
+          "system": "chaldaean",
+          "sign": "taurus",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-27T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p008-001",
+          "system": "egyptian_common",
+          "sign": "taurus",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p008-001",
+          "system": "ptolemy_manuscript",
+          "sign": "taurus",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p088-001",
+          "system": "chaldaean",
+          "sign": "taurus",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-27T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p009-001",
+          "system": "egyptian_common",
+          "sign": "taurus",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p010-001",
+          "system": "ptolemy_manuscript",
+          "sign": "taurus",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mars"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p069-001",
+          "system": "chaldaean",
+          "sign": "taurus",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Mars"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-28T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p011-001",
+          "system": "egyptian_common",
+          "sign": "gemini",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-28T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p012-001",
+          "system": "ptolemy_manuscript",
+          "sign": "gemini",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-29T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p093-001",
+          "system": "chaldaean",
+          "sign": "gemini",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Mars"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-29T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p074-001",
+          "system": "chaldaean",
+          "sign": "gemini",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-30T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p016-001",
+          "system": "ptolemy_manuscript",
+          "sign": "cancer",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mars"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p093-001",
+          "system": "chaldaean",
+          "sign": "aquarius",
+          "sect": "night",
+          "planet": "Mercury",
+          "ruler": "Mars"
+        }
+      ]
+    },
+    {
+      "date": "2026-01-30T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p017-001",
+          "system": "egyptian_common",
+          "sign": "cancer",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Venus"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-01T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p100-001",
+          "system": "chaldaean",
+          "sign": "cancer",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-01T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p061-001",
+          "system": "chaldaean",
+          "sign": "leo",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p054-001",
+          "system": "egyptian_common",
+          "sign": "aquarius",
+          "sect": "both",
+          "planet": "Mercury",
+          "ruler": "Mars"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p054-001",
+          "system": "ptolemy_manuscript",
+          "sign": "aquarius",
+          "sect": "both",
+          "planet": "Mercury",
+          "ruler": "Jupiter"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-02T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p082-001",
+          "system": "chaldaean",
+          "sign": "leo",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Venus"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p094-001",
+          "system": "chaldaean",
+          "sign": "aquarius",
+          "sect": "night",
+          "planet": "Mercury",
+          "ruler": "Jupiter"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-02T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p064-001",
+          "system": "chaldaean",
+          "sign": "leo",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p074-001",
+          "system": "chaldaean",
+          "sign": "aquarius",
+          "sect": "day",
+          "planet": "Mercury",
+          "ruler": "Jupiter"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-03T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p085-001",
+          "system": "chaldaean",
+          "sign": "leo",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Mars"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-03T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p066-001",
+          "system": "chaldaean",
+          "sign": "virgo",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Venus"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-04T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p087-001",
+          "system": "chaldaean",
+          "sign": "virgo",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-04T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p068-001",
+          "system": "chaldaean",
+          "sign": "virgo",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-05T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p089-001",
+          "system": "chaldaean",
+          "sign": "virgo",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Mars"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-05T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p031-001",
+          "system": "egyptian_common",
+          "sign": "libra",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p031-001",
+          "system": "ptolemy_manuscript",
+          "sign": "libra",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p075-001",
+          "system": "chaldaean",
+          "sign": "aquarius",
+          "sect": "day",
+          "planet": "Mercury",
+          "ruler": "Venus"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-06T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p091-001",
+          "system": "chaldaean",
+          "sign": "libra",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-06T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p072-001",
+          "system": "chaldaean",
+          "sign": "libra",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-07T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p093-001",
+          "system": "chaldaean",
+          "sign": "libra",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Mars"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p096-001",
+          "system": "chaldaean",
+          "sign": "pisces",
+          "sect": "night",
+          "planet": "Mercury",
+          "ruler": "Mars"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-07T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p075-001",
+          "system": "chaldaean",
+          "sign": "libra",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Venus"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-08T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p037-001",
+          "system": "egyptian_common",
+          "sign": "scorpio",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Venus"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-09T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p097-001",
+          "system": "chaldaean",
+          "sign": "scorpio",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-09T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p039-001",
+          "system": "egyptian_common",
+          "sign": "scorpio",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p078-001",
+          "system": "chaldaean",
+          "sign": "scorpio",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Venus"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-10T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p100-001",
+          "system": "chaldaean",
+          "sign": "scorpio",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-11T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p062-001",
+          "system": "chaldaean",
+          "sign": "sagittarius",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Venus"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-12T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p083-001",
+          "system": "chaldaean",
+          "sign": "sagittarius",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-12T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p077-001",
+          "system": "chaldaean",
+          "sign": "pisces",
+          "sect": "day",
+          "planet": "Mercury",
+          "ruler": "Jupiter"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-14T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p061-001",
+          "system": "chaldaean",
+          "sign": "aries",
+          "sect": "day",
+          "planet": "Saturn",
+          "ruler": "Jupiter"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-17T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p058-001",
+          "system": "egyptian_common",
+          "sign": "pisces",
+          "sect": "both",
+          "planet": "Mercury",
+          "ruler": "Mercury"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p098-001",
+          "system": "chaldaean",
+          "sign": "pisces",
+          "sect": "night",
+          "planet": "Mercury",
+          "ruler": "Venus"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-19T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p079-001",
+          "system": "chaldaean",
+          "sign": "pisces",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-20T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p002-001",
+          "system": "egyptian_common",
+          "sign": "aries",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Venus"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-21T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p004-001",
+          "system": "egyptian_common",
+          "sign": "aries",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mars"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p004-001",
+          "system": "ptolemy_manuscript",
+          "sign": "aries",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mars"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p064-001",
+          "system": "chaldaean",
+          "sign": "aries",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-22T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p066-001",
+          "system": "chaldaean",
+          "sign": "taurus",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Venus"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-23T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p087-001",
+          "system": "chaldaean",
+          "sign": "taurus",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-24T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p010-001",
+          "system": "egyptian_common",
+          "sign": "taurus",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mars"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p090-001",
+          "system": "chaldaean",
+          "sign": "taurus",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-24T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p071-001",
+          "system": "chaldaean",
+          "sign": "gemini",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-25T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p092-001",
+          "system": "chaldaean",
+          "sign": "gemini",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-25T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p073-001",
+          "system": "chaldaean",
+          "sign": "gemini",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Mars"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-26T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p095-001",
+          "system": "chaldaean",
+          "sign": "gemini",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Venus"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-26T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p076-001",
+          "system": "chaldaean",
+          "sign": "cancer",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Mars"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-27T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p097-001",
+          "system": "chaldaean",
+          "sign": "cancer",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-28T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p021-001",
+          "system": "egyptian_common",
+          "sign": "leo",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p021-001",
+          "system": "ptolemy_manuscript",
+          "sign": "leo",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-01T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p063-001",
+          "system": "chaldaean",
+          "sign": "leo",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-02T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p084-001",
+          "system": "chaldaean",
+          "sign": "leo",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-04T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p070-001",
+          "system": "chaldaean",
+          "sign": "virgo",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-06T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p074-001",
+          "system": "chaldaean",
+          "sign": "libra",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-07T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p095-001",
+          "system": "chaldaean",
+          "sign": "libra",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Venus"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-09T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p099-001",
+          "system": "chaldaean",
+          "sign": "scorpio",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-09T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p040-001",
+          "system": "ptolemy_manuscript",
+          "sign": "scorpio",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Saturn"
+        },
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p080-001",
+          "system": "chaldaean",
+          "sign": "scorpio",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-11T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p064-001",
+          "system": "chaldaean",
+          "sign": "sagittarius",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-13T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p082-001",
+          "system": "chaldaean",
+          "sign": "aries",
+          "sect": "night",
+          "planet": "Venus",
+          "ruler": "Venus"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-19T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p063-001",
+          "system": "chaldaean",
+          "sign": "aries",
+          "sect": "day",
+          "planet": "Venus",
+          "ruler": "Saturn"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-21T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p085-001",
+          "system": "chaldaean",
+          "sign": "aries",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Mars"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-22T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p068-001",
+          "system": "chaldaean",
+          "sign": "taurus",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Mercury"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-23T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p089-001",
+          "system": "chaldaean",
+          "sign": "taurus",
+          "sect": "night",
+          "planet": "Moon",
+          "ruler": "Mars"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-24T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p084-001",
+          "system": "chaldaean",
+          "sign": "aries",
+          "sect": "night",
+          "planet": "Venus",
+          "ruler": "Saturn"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-03T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-20-p035-001",
+          "system": "egyptian_common",
+          "sign": "libra",
+          "sect": "both",
+          "planet": "Moon",
+          "ruler": "Mars"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-18T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p009-001",
+          "system": "ptolemy_manuscript",
+          "sign": "taurus",
+          "sect": "both",
+          "planet": "Venus",
+          "ruler": "Saturn"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-19T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "sourceId": "astro-ptolemy-v1-chapter-21-p070-001",
+          "system": "chaldaean",
+          "sign": "taurus",
+          "sect": "day",
+          "planet": "Moon",
+          "ruler": "Jupiter"
+        }
+      ]
+    }
+  ],
+  "missing": []
+}

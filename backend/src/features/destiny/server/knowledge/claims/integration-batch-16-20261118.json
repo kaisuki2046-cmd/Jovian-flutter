@@ -1,0 +1,203 @@
+{
+  "baseline": "fifteenth integration batch",
+  "profile": "ziwei-complete-star-names-explicit-conjunction-v1",
+  "changes": [
+    {
+      "id": "ziwei-v2-fuqigong-p009-001",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "conditions": [
+        "本命夫妻宫太阴入庙，依原句男女命均论"
+      ],
+      "inputs": 1,
+      "inputDigests": [
+        "acb4ad3beccf0e2c62e325f7ec1905019ec03a9d2ca39d2bdf16ffe65d0c1fd7"
+      ]
+    },
+    {
+      "id": "ziwei-v1-zhuxing-wenda-p182000-001",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "conditions": [
+        "天哭天虚临本命父母宫，按本歌核对"
+      ],
+      "inputs": 1,
+      "inputDigests": [
+        "2b7885fb3a2a553ae440970f60ccc317c25178b6077719dcb838b6e4c3e36471"
+      ]
+    },
+    {
+      "id": "ziwei-v2-minggong-p134000-002",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "conditions": [
+        "天同守卯位或酉位命宫",
+        "生年乙、丙或辛"
+      ],
+      "inputs": 6,
+      "inputDigests": [
+        "0367068aa60172f196515a39ed598ac73c1bb4c74aa95509ba5f6b5ecf4e46e3",
+        "d03670166d5ca8ba981bcf4430472c22ec37d995299e1677293c18345a5c80c2",
+        "c3d532b6bef94e5839dce311991981648d06bf304b9a7295e140eb241553eb5c",
+        "1a0ed75ceda0bba3d14e7e12a92e9dfc705ed5c44fa718d628f19688278b4d25",
+        "e9cc2e46ef2b177d6862271a1ed2cda4a1ddd8908d506ebb0eb7c26be9bab5ef",
+        "ebb1b7eecd46eaaed47621bce802d70e8f16e1c8b61b53d2312e6288a0ecdc25"
+      ]
+    },
+    {
+      "id": "ziwei-v2-minggong-p134000-004",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "conditions": [
+        "天同入庙守巳位或亥位命宫",
+        "生年壬、丙或戊"
+      ],
+      "inputs": 6,
+      "inputDigests": [
+        "526ec3ab1b14487ed02d55ce2ca2597a7acb1c7411484c71f030f6d0e62488cd",
+        "3ec648b0c15de0bc3acc06b7e1ec284356f1ea7a458cae3824088bd4e07d6b09",
+        "57ea8b03f62d42911e0a17592ec23bac0ddbb68b097eee53190be9196b67e36b",
+        "8b1eb794d22dbdb1b78872bd1f6a15cddffe0bd32a102304a7707a9dd2df774d",
+        "3d6b47ea7fc6d44f522eee3577a89836a08804b4c54bb8f81673f18ca1edf1c8",
+        "9008a888bf669a424cec20897087a0a7a18766bac5e2bfecdf31b8fab70c5ee5"
+      ]
+    },
+    {
+      "id": "ziwei-v2-minggong-p134000-005",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "conditions": [
+        "天同守辰位或戌位命宫",
+        "生年丙或丁"
+      ],
+      "inputs": 4,
+      "inputDigests": [
+        "67249a63397f4db03e430c9b065f3b1bc27ef654f92f354c1bb60573e7c6a42f",
+        "1a6975361e981e586b29c42203959642eb86ce533f84cc0449b8416c48b50384",
+        "fec11bb333eacd3b09929f70fd2b02518599a248337b7e2c58d8d4fbef584c20",
+        "20f50a9dc4373abcc9d94bc69ba9fbca9f970fdcad2021a680020ce306216823"
+      ]
+    },
+    {
+      "id": "ziwei-v2-minggong-p134000-006",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "conditions": [
+        "天同守辰位或戌位命宫",
+        "生年庚或癸"
+      ],
+      "inputs": 4,
+      "inputDigests": [
+        "df87bc443437f0743aca81c6c992649fe6800ab1e5d7d2e727d85d5b320872a0",
+        "906059e22fd2714bef815cf1545061e72a81175931ebd1d102c5ad7aaae5fdb0",
+        "ae3f58da773d0d252e7478b9f5460ef9d128bda8dbf52ea0deb97813954b5db4",
+        "2a4626fefded018d6aaf49b24a9d77baa881e82979bb5ad6cad127960daf3d54"
+      ]
+    },
+    {
+      "id": "ziwei-v2-minggong-p141002-002",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "conditions": [
+        "本命廉贞守命并与擎羊同宫"
+      ],
+      "inputs": 1,
+      "inputDigests": [
+        "f13c627594b90d04e538021ab42c99aa3bd0833028597efc0180d6c4043f32a6"
+      ]
+    },
+    {
+      "id": "ziwei-v4-jielan-227-p001-001",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "conditions": [
+        "本命父母宫临天哭天虚"
+      ],
+      "inputs": 1,
+      "inputDigests": [
+        "2b7885fb3a2a553ae440970f60ccc317c25178b6077719dcb838b6e4c3e36471"
+      ]
+    },
+    {
+      "id": "ziwei-v1-xingjue-012-p057-001",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "conditions": [
+        "本命破军守命且与火星同宫"
+      ],
+      "inputs": 1,
+      "inputDigests": [
+        "18184e164c65b3165b1b82b675f139b668dbaf0aeb13f735177dea89e59dd74f"
+      ]
+    },
+    {
+      "id": "ziwei-v1-xingjue-025-p135-001",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "conditions": [
+        "本命官禄宫在寅，七杀与文曲同守"
+      ],
+      "inputs": 1,
+      "inputDigests": [
+        "40cfbf646d0f9377b9f38be70c41002bef61698dec66a97bbfb2963d6e8f673b"
+      ]
+    },
+    {
+      "id": "ziwei-v2-caibogong-p101018-004",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "conditions": [
+        "本命财帛宫在巳或亥，破军与武曲同守"
+      ],
+      "inputs": 2,
+      "inputDigests": [
+        "69d898991eff51eb587bb86cffbed9dedeb5687c26ee1554c0d44386d324c953",
+        "e8c3be7c24a89887b0481d4775686656b0eaafd849d14b17583922bac4a3c715"
+      ]
+    },
+    {
+      "id": "ziwei-v4-jielan-189-p001-007",
+      "method": "ziwei",
+      "previousStatus": "unmapped",
+      "status": "indexed",
+      "previousReason": "unmapped_condition",
+      "conditions": [
+        "禄存和帝星紫微守本命官禄宫"
+      ],
+      "inputs": 1,
+      "inputDigests": [
+        "d9112246c8b378688a2183b6f89adc1fbb8472b11ed9737a5ac5a5483fea7bf3"
+      ]
+    }
+  ],
+  "uniqueAlternatives": 29,
+  "previousQueryableEntriesUnchanged": 2715,
+  "sourceHashes": {
+    "bazi": "8074930be871d6249c36813d59dae2534ad5f11eeb06c5d2728978b53364e609",
+    "ziwei": "bfe23ad0b26b19992d6f4fe3c2fb1979175513ceaf283bee6ce671d8358698ad",
+    "western": "b92622c3336d4a56af837123b08d438947a5e6751cd272b4be555921a89cb9fc"
+  },
+  "sourceRecords": 18846
+}

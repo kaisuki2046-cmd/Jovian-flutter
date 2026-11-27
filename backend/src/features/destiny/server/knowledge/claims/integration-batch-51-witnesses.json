@@ -1,0 +1,378 @@
+{
+  "scanned": 7524,
+  "alternatives": 22,
+  "witnesses": [
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 5,
+      "proofs": [
+        {
+          "id": "ziwei-v3-xingjue-050-p644-001",
+          "text": "辰地子宮天同單守者、天同主五子",
+          "inputDigest": "ad3352f3508a9ff751b1d37e4425e48383a1430589095deaa1b166e918861226"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 11,
+      "proofs": [
+        {
+          "id": "ziwei-v2-xingjue-014-p343-001",
+          "inputDigest": "a46af4b4214a2123d769f7885b41328fb330b07acfefea48fd97d04f4e23d3c5"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 22
+        },
+        "gender": "female"
+      },
+      "timeIndex": 7,
+      "proofs": [
+        {
+          "id": "ziwei-v2-jielan-101-p013-027",
+          "inputDigest": "cdf3643672e704bd98d3137ed412168a92393a1017260c21b826a846cd237392"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 29
+        },
+        "gender": "female"
+      },
+      "timeIndex": 3,
+      "proofs": [
+        {
+          "id": "ziwei-v3-xingjue-056-p737-001",
+          "text": "天府單守田宮最吉",
+          "inputDigest": "2ba6ef3d86b8176a1b2a9191d725aef2d6e6f0df2861ccf820a50679cfe317f3"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 29
+        },
+        "gender": "female"
+      },
+      "timeIndex": 11,
+      "proofs": [
+        {
+          "id": "ziwei-v3-xingjue-056-p744-001",
+          "text": "巳田天相單守、與亥地武曲、丑地天府相會合、田宅旺盛",
+          "inputDigest": "28c007b233badd4e6af2914d019697d4b231b4af679dee73e5b91affcf43d419"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 2,
+          "day": 26
+        },
+        "gender": "female"
+      },
+      "timeIndex": 2,
+      "proofs": [
+        {
+          "id": "ziwei-v2-xingjue-016-p362-001",
+          "inputDigest": "8564473451a9156d42fcfbf2d3d869361c219066f18989ba100fc94c6ccd0b14"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 3,
+          "day": 11
+        },
+        "gender": "female"
+      },
+      "timeIndex": 7,
+      "proofs": [
+        {
+          "id": "ziwei-v3-xingjue-049-p616-001",
+          "inputDigest": "38cbe4884f93c289a15927cd2662c4ceaf78f4934092c4b0f50f22761f70ee02"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 3,
+          "day": 25
+        },
+        "gender": "female"
+      },
+      "timeIndex": 3,
+      "proofs": [
+        {
+          "id": "ziwei-v3-xingjue-053-p695-001",
+          "inputDigest": "ffaa651063ce544c5c0ae43574327acdbd1936c0e122b4603a04f913feef3316"
+        },
+        {
+          "id": "ziwei-v2-xingjue-004-p1065-001",
+          "text": "紫微單守不得輔弼者為孤君、平生少助、親戚不和、出無朋友",
+          "inputDigest": "5a8a02c7452b99bbf6d1fa27d79d0091fc7607949eaa609d5c4d341c192a0ffe"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 3,
+          "day": 25
+        },
+        "gender": "female"
+      },
+      "timeIndex": 7,
+      "proofs": [
+        {
+          "id": "ziwei-v2-minggong-p242001-003",
+          "text": "单守命身，看财之奴",
+          "inputDigest": "a1039e249cfb300c33c600449fbe55889265f6b26e03a8f08aaea80e684466df"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 4,
+          "day": 29
+        },
+        "gender": "female"
+      },
+      "timeIndex": 6,
+      "proofs": [
+        {
+          "id": "ziwei-v3-xingjue-051-p657-001",
+          "text": "午地財七殺單守者財富",
+          "inputDigest": "210926a42e61b62cbad58f56886e878b2678eec07b4f9c1276e099d7e90fbe42"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 7,
+          "day": 15
+        },
+        "gender": "female"
+      },
+      "timeIndex": 1,
+      "proofs": [
+        {
+          "id": "ziwei-v2-minggong-p242001-003",
+          "text": "单守命身，看财之奴",
+          "inputDigest": "fef22c114830aa4fae7c383a38738818ae9472999c0404c987c41f49c97cbd62"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 9,
+          "day": 16
+        },
+        "gender": "female"
+      },
+      "timeIndex": 11,
+      "proofs": [
+        {
+          "id": "ziwei-v2-minggong-p242001-003",
+          "text": "单守命身，看财之奴",
+          "inputDigest": "4592512b5b8b239c66d0fe054b26ab5d089a84915a797f297fd0f5ca17bd94a1"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 11,
+          "day": 4
+        },
+        "gender": "female"
+      },
+      "timeIndex": 2,
+      "proofs": [
+        {
+          "id": "ziwei-v2-xingjue-016-p362-001",
+          "inputDigest": "67fa627c9312d9ba79659601fa0140deee860133cccf302bc9a6003a606cab29"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 11,
+          "day": 11
+        },
+        "gender": "female"
+      },
+      "timeIndex": 8,
+      "proofs": [
+        {
+          "id": "ziwei-v3-xingjue-055-p716-001",
+          "inputDigest": "d1ed1d4e6b616d932202eba353d1be066afe5d6ff8c5242bdc441ae3f746cfe4"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 12,
+          "day": 23
+        },
+        "gender": "female"
+      },
+      "timeIndex": 8,
+      "proofs": [
+        {
+          "id": "ziwei-v2-minggong-p242001-003",
+          "text": "单守命身，看财之奴",
+          "inputDigest": "a9aec078262df46b05fd61105085fd439238e042999059bb41e8645de795e9a9"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1981,
+          "month": 6,
+          "day": 2
+        },
+        "gender": "female"
+      },
+      "timeIndex": 3,
+      "proofs": [
+        {
+          "id": "ziwei-v2-minggong-p242001-003",
+          "text": "单守命身，看财之奴",
+          "inputDigest": "e3e818d0ac963a3c05b9d2ae5135201440f19698f845ec1037b322bdf2c77f75"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1982,
+          "month": 2,
+          "day": 23
+        },
+        "gender": "female"
+      },
+      "timeIndex": 5,
+      "proofs": [
+        {
+          "id": "ziwei-v2-xingjue-004-p1063-001",
+          "inputDigest": "a9b59dddd47074baf9dd500299d368aba9bff0d14f70a45c572cbe03e43fc4fe"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1982,
+          "month": 10,
+          "day": 12
+        },
+        "gender": "female"
+      },
+      "timeIndex": 3,
+      "proofs": [
+        {
+          "id": "ziwei-v2-xingjue-016-p362-001",
+          "inputDigest": "48beda8606871284c717847573dfd6acc43d9f116dd865896b2128d79014c457"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1983,
+          "month": 3,
+          "day": 1
+        },
+        "gender": "female"
+      },
+      "timeIndex": 5,
+      "proofs": [
+        {
+          "id": "ziwei-v3-xingjue-056-p816-001",
+          "inputDigest": "302f6efc671e63088ef2f85ab56eaa8f9aa1edc6e16c9ff2ee8bde1277fbc8f0"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1983,
+          "month": 6,
+          "day": 7
+        },
+        "gender": "female"
+      },
+      "timeIndex": 7,
+      "proofs": [
+        {
+          "id": "ziwei-v2-xingjue-016-p362-001",
+          "inputDigest": "06cf1db5143b08469da572c0bea6a868a44adf6ab3c1228b5f3c3650e338ab6e"
+        }
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1985,
+          "month": 6,
+          "day": 4
+        },
+        "gender": "female"
+      },
+      "timeIndex": 10,
+      "proofs": [
+        {
+          "id": "ziwei-v2-minggong-p242001-003",
+          "text": "单守命身，看财之奴",
+          "inputDigest": "7b51484ab1f18da4550682c9a17b81e71081c51804cdee53335c06a0b91cf0d5"
+        }
+      ]
+    }
+  ]
+}

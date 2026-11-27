@@ -1,0 +1,103 @@
+{
+  "baseline": "sixteenth integration batch",
+  "profile": "bazi-explicit-lu-virtues-gods-v1",
+  "changes": [
+    {
+      "id": "yhzp-v1-c351-p010-001",
+      "method": "bazi",
+      "previousStatus": "unmapped",
+      "previousReason": "unmapped_condition",
+      "status": "indexed",
+      "conditions": [
+        "本篇日禄归时且原局无官星"
+      ],
+      "inputs": 1,
+      "inputDigests": [
+        "63594b70b3d22018e8a95dc89a4c60664f61856832435879518b3c805bfc3558"
+      ],
+      "compiler": "bazi-literal-dnf-v1"
+    },
+    {
+      "id": "yhzp-v2-c002-p037-001",
+      "method": "bazi",
+      "previousStatus": "unmapped",
+      "previousReason": "unmapped_condition",
+      "status": "indexed",
+      "conditions": [
+        "日主衰弱而遇鬼杀"
+      ],
+      "inputs": 7,
+      "inputDigests": [
+        "781983d3de6429d4df6e6064f4a6db9e4829eba4d370bec0963ea511ec8557a1",
+        "d33e2ad6fcd96a12bba2169e974b345a95d235d1218ab3e0064efe45630bd9dc",
+        "a595dc017231ad36fecf2935595870ea017f11318f1c122eb9adc143cf3f2c45",
+        "13df0a2ec40c2775a8e12d655ccb7fe160131f150e851cb872ee82ecac20db1a",
+        "4c442f66a60b8c831812f3e52a325803e67cc17ee9fa92dd206d010df763cefd",
+        "a7b44521769f17a058be1777ad05b4bb913cefdb3c782f40055a0a49d4c3c34e",
+        "27ce7bba2177451c3e2e846e2527296e5797af08992d8e2a64f6ef35aaeeeab6"
+      ],
+      "compiler": "established-literal-parser"
+    },
+    {
+      "id": "yhzp-v2-c002-p070-001",
+      "method": "bazi",
+      "previousStatus": "unmapped",
+      "previousReason": "unmapped_condition",
+      "status": "indexed",
+      "conditions": [
+        "日主羸弱而得官星"
+      ],
+      "inputs": 7,
+      "inputDigests": [
+        "fd5b72d0d1897b614e8dad1dd44a10805421013bf276d3775762eadfd4a1c7c3",
+        "f8d09206c9ee94f0a15359a5ad66f7ffbfc1a7f5915309fb430d0ac9709d874f",
+        "2e387fa5f394615c300f22d86d26db1804d2f56dbfa778e0e01474f8da1ecb17",
+        "302f0a9a48b2bf14c6cf3f150aab444f840ccddf2f4ea4df3c8ae12a6873bc23",
+        "4728ba938242c49e9def3502743ceaa85a0c73ddcee43717958fe0368ab9cd1b",
+        "93aa471488ea7a32bf3a0c1407865465d6f9e4d4b8995e06f4e57477e788e8c2",
+        "cc6771f00ff50a7bf4fa1593489b9d9804b2ea335004b8cbd1f40e8604fc9951"
+      ],
+      "compiler": "established-literal-parser"
+    },
+    {
+      "id": "yhzp-v3-c031-p002-101",
+      "method": "bazi",
+      "previousStatus": "unmapped",
+      "previousReason": "uncertain_conditions",
+      "status": "indexed",
+      "conditions": [
+        "本篇女命原局有天月德，又见印绶"
+      ],
+      "inputs": 14,
+      "inputDigests": [
+        "0b8096c1d706ff61c534abb84de95c0807edec20c0e64ca2dd14afe2b207776a",
+        "5d2f652b6757494dbb54ce84c7d8a5efd8ae37edf00d2362196ca4388539e5b1",
+        "7f9549615c18f20ff98a0353e23664f6b1d1140875ac016bbe7a5ccc93df3d85",
+        "c142e5b0dac14b1f677994fa22ade3c8d5e9e5ab04021a4330d30c4e27c33e2f",
+        "69fe3cf7b4149f387ee6f1c933ff14178d9e2bdef63cf1d8fe6cbffd2223d60b",
+        "4b81afeec19ea35b380eaf25845a49d4fcc22ab308166b872f4f7b08e1c784a1",
+        "ba2bcfbd48fd4d2e2c96615e86e7c129a6ad0c685d996c413e222d5f4e7f32e8",
+        "e24efba617432e04fb0f0dd23f19fbf13981ede78098dad78dc0aa1710dbf04b",
+        "dfd61595471e314b5099eff93a3613aa09cf6a34a8f970062071cfb7b7b0dc18",
+        "26409e4951711d4e119c9844fcb5587e75fbb90550d74e5fad93de2f6cb99439",
+        "5502f0b12c3cb3bfd6e751170c3c3fccf828c4cd33034d071335f0af8c945d22",
+        "46ea021fa57c294566f956132008b84ee8f5166f0a2efdc72efeeec04fa96aef",
+        "bb086c4ee60565ed34c8fd974cf29fdb22f121f409f135e808a2298f6ba07150",
+        "b97e1f72318340cb5eab6803e0f4c9c6456e50671a867682cd4cfbf6ff7c9aeb"
+      ],
+      "compiler": "yhzp-v3-one-virtue-v1"
+    }
+  ],
+  "uniqueAlternatives": 29,
+  "previousQueryableEntriesUnchanged": 2727,
+  "sourceHashes": {
+    "bazi": "8074930be871d6249c36813d59dae2534ad5f11eeb06c5d2728978b53364e609",
+    "ziwei": "bfe23ad0b26b19992d6f4fe3c2fb1979175513ceaf283bee6ce671d8358698ad",
+    "western": "b92622c3336d4a56af837123b08d438947a5e6751cd272b4be555921a89cb9fc"
+  },
+  "sourceRecords": 18846,
+  "deferred": [
+    "yhzp-v2-c002-p077-001",
+    "yhzp-v2-c002-p118-101"
+  ]
+}

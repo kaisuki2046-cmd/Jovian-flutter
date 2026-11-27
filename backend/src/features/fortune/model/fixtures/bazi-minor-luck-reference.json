@@ -1,0 +1,38 @@
+{
+  "profile": "smth-minor-luck-alternatives-atomic-v1",
+  "reviewedOn": "2026-11-19",
+  "sources": [
+    "https://zh.wikisource.org/w/index.php?oldid=761691&title=三命通會_(四庫全書本)/卷02",
+    "https://zh.wikisource.org/w/index.php?oldid=657369&title=三命通會_(四庫全書本)/卷03"
+  ],
+  "hourExamples": [
+    { "year": "甲子", "hour": "甲子", "gender": "男", "ordinal": 1, "pillar": "乙丑", "direction": "forward" },
+    { "year": "甲子", "hour": "甲子", "gender": "男", "ordinal": 2, "pillar": "丙寅", "direction": "forward" },
+    { "year": "甲子", "hour": "甲子", "gender": "男", "ordinal": 60, "pillar": "甲子", "direction": "forward" },
+    { "year": "甲子", "hour": "甲子", "gender": "男", "ordinal": 61, "pillar": "乙丑", "direction": "forward" },
+    { "year": "甲子", "hour": "甲子", "gender": "女", "ordinal": 1, "pillar": "癸亥", "direction": "backward" },
+    { "year": "甲子", "hour": "甲子", "gender": "女", "ordinal": 2, "pillar": "壬戌", "direction": "backward" },
+    { "year": "乙丑", "hour": "甲子", "gender": "男", "ordinal": 1, "pillar": "癸亥", "direction": "backward" },
+    { "year": "乙丑", "hour": "甲子", "gender": "女", "ordinal": 1, "pillar": "乙丑", "direction": "forward" }
+  ],
+  "fixedExamples": [
+    { "gender": "男", "ordinal": 1, "pillar": "丙寅" },
+    { "gender": "男", "ordinal": 2, "pillar": "丁卯" },
+    { "gender": "男", "ordinal": 60, "pillar": "乙丑" },
+    { "gender": "男", "ordinal": 61, "pillar": "丙寅" },
+    { "gender": "女", "ordinal": 1, "pillar": "壬申", "opening": "丙申" },
+    { "gender": "女", "ordinal": 2, "pillar": "辛未", "opening": "乙未" },
+    { "gender": "女", "ordinal": 60, "pillar": "癸酉", "opening": "丁酉" },
+    { "gender": "女", "ordinal": 61, "pillar": "壬申", "opening": "丙申" }
+  ],
+  "realExample": {
+    "year": 1990, "month": 9, "day": 29, "hour": 12, "gender": 0,
+    "testYear": 2026, "hourMinorBeforeLiChun": "庚午", "hourMinorAfterLiChun": "己巳",
+    "fixedAfterLiChun": "丙申", "openingAfterLiChun": "庚申"
+  },
+  "transitionExample": {
+    "year": 1990, "month": 9, "day": 26, "hour": 12, "gender": 0,
+    "testYear": 2026, "transition": "2026-10-28T02:00:00.000Z", "minor": "癸巳", "beforeLuck": "壬午", "afterLuck": "辛巳"
+  },
+  "calendarStatus": "出生年一、立春换序仅为明示候选政策，不声称原文计龄边界已核。异文与方法分别保留，不据候选计算断吉凶。"
+}

@@ -1,0 +1,131 @@
+{
+  "witnesses": [
+    {
+      "date": "1911-06-26T11:00:00.000Z",
+      "latitude": -55.67,
+      "longitude": 80.56,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-wealth-duration-p003-001",
+          "inputDigest": "61e30c399788bb4079f50841eb7662943ad5079f64d3344d6956e19f95910070"
+        },
+        {
+          "id": "astro-lilly-v3-wealth-duration-p021-001",
+          "inputDigest": "ad0e40a32d892ddd5efd3ce84f2aa6da7bb8dbaeb4dc8a8cc6791086d9a20157"
+        },
+        {
+          "id": "astro-lilly-v3-wealth-duration-p026-001",
+          "inputDigest": "87d666f5157e4b9927187078b4362d9f77a666e08ed0d8ec1a626e609c1456e0"
+        },
+        {
+          "id": "astro-lilly-v3-wealth-duration-p029-001",
+          "inputDigest": "37e14b187cace4983fd5bcd3d2f796c4ba79fa8960963eb817e3ab776c65c7ec"
+        },
+        {
+          "id": "astro-lilly-v3-wealth-duration-p029-001",
+          "inputDigest": "33f327e3f0a111ab28bc605e404209d739f3c54ef8d654e3fc825f885b55717f"
+        }
+      ]
+    },
+    {
+      "date": "1991-09-17T15:02:00.000Z",
+      "latitude": 20.37,
+      "longitude": -32.51,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-wealth-duration-p027-001",
+          "inputDigest": "d4fed25cc016c77cdfedbfdc9d9bc84f1ed0891bbf292f1d77757a7366c94276"
+        },
+        {
+          "id": "astro-lilly-v3-wealth-duration-p029-001",
+          "inputDigest": "d1f52755e0cc64adce644ca0381554a843a19888b8ae268f85a0ee736bfcb058"
+        },
+        {
+          "id": "astro-lilly-v3-wealth-duration-p029-001",
+          "inputDigest": "4ee25b10e2c8557ca2dd1e3303ccff01aebbce2b2a03df430c2f8cb9b3a8e275"
+        }
+      ]
+    },
+    {
+      "date": "2018-06-10T10:58:00.000Z",
+      "latitude": 0.69,
+      "longitude": 13.55,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-wealth-duration-p024-001",
+          "inputDigest": "f9763b206dd692e624cd50fd8335f85d5ac616b7119a51b886392733b92ff1a6"
+        },
+        {
+          "id": "astro-lilly-v3-wealth-duration-p024-001",
+          "inputDigest": "8522c070258192eccd7d884e9c4b9cae3c9cd20f1291759835708b11b0c27281"
+        }
+      ]
+    },
+    {
+      "date": "1916-07-17T08:07:00.000Z",
+      "latitude": -61.8,
+      "longitude": -24.31,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-wealth-duration-p003-001",
+          "inputDigest": "33122fdac4cb2d1fa72432351a1c741077c2057d684d00fe12392be64fc1f766"
+        },
+        {
+          "id": "astro-lilly-v3-wealth-duration-p027-001",
+          "inputDigest": "b62e602bf658f8c315f95800bd1d3244f051411e711a1863a995fc67ad73eb95"
+        }
+      ]
+    },
+    {
+      "date": "1909-12-26T18:11:00.000Z",
+      "latitude": -37.99,
+      "longitude": 90.28,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-wealth-duration-p025-001",
+          "inputDigest": "02b49058170c870fcc1846eb7269eaa7fc449fd4ed7f4496b2219618f144c209"
+        }
+      ]
+    },
+    {
+      "date": "1950-08-20T19:19:00.000Z",
+      "latitude": 12.2,
+      "longitude": 7.16,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-wealth-duration-p025-001",
+          "inputDigest": "74082d75d5bcc15fcdda4d6da724601d3d244766f016a14be42932726382d140"
+        }
+      ]
+    },
+    {
+      "date": "1952-08-03T00:51:00.000Z",
+      "latitude": -11.77,
+      "longitude": -30.74,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-wealth-duration-p026-001",
+          "inputDigest": "da9689f6b7b3f56017026d5a4d4c2cf6900f8c0cffdd4f114817a5844ae86f24"
+        }
+      ]
+    },
+    {
+      "date": "2019-01-05T21:33:00.000Z",
+      "latitude": 13.1,
+      "longitude": 99.11,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-wealth-duration-p022-001",
+          "inputDigest": "154437850a9cc1bb4f68a5c127462dd3242f4d8971cb24965d27d7732ae98977"
+        }
+      ]
+    }
+  ],
+  "differentQuarters": "1952-08-03T00:51:00.000Z",
+  "singleLuminary": {
+    "date": "1949-01-19T00:15:00.000Z",
+    "latitude": -52.1,
+    "longitude": -99.86
+  },
+  "mixedMotion": "1991-09-17T15:02:00.000Z"
+}

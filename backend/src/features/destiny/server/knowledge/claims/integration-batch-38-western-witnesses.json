@@ -1,0 +1,165 @@
+{
+  "scanned": 11832,
+  "targetAlternatives": 15,
+  "previousQueryable": 2834,
+  "witnesses": [
+    {
+      "date": "1990-01-01T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-preferment-p004-001",
+          "inputDigest": "566a4aa57b110ae3362e25991c1a563f9997b430720dea17bd8c32c91078d138"
+        },
+        {
+          "id": "astro-lilly-v3-wealth-duration-p015-001",
+          "inputDigest": "ff7dbf2df176ab3ce87e9d9e9913cc192e8dc51eddbe5dae6c0884e90362cc11"
+        }
+      ]
+    },
+    {
+      "date": "1990-01-03T06:00:00.000Z",
+      "latitude": 39.9,
+      "longitude": 116.4,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-preferment-p004-001",
+          "inputDigest": "ba9df231bf4c4e104ae5d53c17f3ef55b7aa0e779e80ca129ab0b8c79841519f"
+        }
+      ]
+    },
+    {
+      "date": "1990-01-03T18:00:00.000Z",
+      "latitude": -33.9,
+      "longitude": 151.2,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-preferment-p034-001",
+          "inputDigest": "3c0db8dcfeb39344c919f7923e7b65f36788866af599196bacbd1d3b2e98b439"
+        }
+      ]
+    },
+    {
+      "date": "1990-01-11T09:00:00.000Z",
+      "latitude": 39.9,
+      "longitude": 116.4,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-preferment-p034-001",
+          "inputDigest": "63dc3630386430bfcc61c492b9d1991b2b075c7a0a0c14e9043e2ab3ab974c3b"
+        }
+      ]
+    },
+    {
+      "date": "1990-06-02T03:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-preferment-p034-001",
+          "inputDigest": "aa6c22705a629f2662fabaf92671529bd0e9b04718958a584e10216cac304c99"
+        }
+      ]
+    },
+    {
+      "date": "1990-06-02T18:00:00.000Z",
+      "latitude": -33.9,
+      "longitude": 151.2,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-preferment-p034-001",
+          "inputDigest": "3acde13d23ff943a838489edef967d070403ae4af4fdabd5c25a838fc33b5d3f"
+        }
+      ]
+    },
+    {
+      "date": "1990-06-12T21:00:00.000Z",
+      "latitude": 39.9,
+      "longitude": 116.4,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-preferment-p034-001",
+          "inputDigest": "3536d8285d1630bd33f32a089238f882a0df441d2b40914e7648403683301495"
+        }
+      ]
+    },
+    {
+      "date": "1990-07-28T06:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-preferment-p034-001",
+          "inputDigest": "a7edc0729e0ad1107d1ada16fd826effee0e358865b52e98a12f21f7b6b7e861"
+        }
+      ]
+    },
+    {
+      "date": "1990-07-30T09:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-preferment-p034-001",
+          "inputDigest": "f4db2a0b0ae3f801264311a1e2b72e1c96be52c68f774a9d3359d09bd726715e"
+        }
+      ]
+    },
+    {
+      "date": "1990-10-02T00:00:00.000Z",
+      "latitude": 39.9,
+      "longitude": 116.4,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-preferment-p034-001",
+          "inputDigest": "373a8c6785df0efaf0b348bf77bfecf20f648a466c50feb70559e87e490791da"
+        }
+      ]
+    },
+    {
+      "date": "1991-02-09T18:00:00.000Z",
+      "latitude": -33.9,
+      "longitude": 151.2,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-preferment-p034-001",
+          "inputDigest": "7ee3ce7d723c0afc80e2d324e91650df70d1047492f95ce02cd5cc4d1adf3820"
+        }
+      ]
+    },
+    {
+      "date": "1991-10-21T00:00:00.000Z",
+      "latitude": 39.9,
+      "longitude": 116.4,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-preferment-p034-001",
+          "inputDigest": "e19e9ba421aa2535c7945dc1c46cd5eccad9c51809f5405bede135af42717ade"
+        }
+      ]
+    },
+    {
+      "date": "1994-12-10T00:00:00.000Z",
+      "latitude": 39.9,
+      "longitude": 116.4,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-preferment-p034-001",
+          "inputDigest": "551899ccad86857fe0a8aa142af3d977b5536ac9bbe065bcccb7707c6645f708"
+        }
+      ]
+    },
+    {
+      "date": "1998-02-04T21:00:00.000Z",
+      "latitude": -33.9,
+      "longitude": 151.2,
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-preferment-p034-001",
+          "inputDigest": "75cff8a84258a4402ebe2cfaa7e6fe8b49b5ef92cf750b82170bee22f76ce7e0"
+        }
+      ]
+    }
+  ]
+}

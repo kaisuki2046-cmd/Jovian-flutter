@@ -1,0 +1,114 @@
+{
+  "witnesses": [
+    {
+      "date": "1994-11-19T19:42:00.000Z",
+      "latitude": -23.71,
+      "longitude": 14.69,
+      "proofs": [
+        {
+          "id": "astro-ptolemy-v4-fortune-p012-001",
+          "inputDigest": "705732aeb5a1438e6679cf2c29aed436d545bb4c2e90d93c01ab225793a7978f"
+        }
+      ]
+    },
+    {
+      "date": "1903-11-03T08:40:00.000Z",
+      "latitude": -17.68,
+      "longitude": 157.64,
+      "proofs": [
+        {
+          "id": "astro-ptolemy-v4-fortune-p009-001",
+          "inputDigest": "6c4f32937233dfb5eeecda120a2dcc289c7b4d320ab0c09c1552e1be060648f5"
+        },
+        {
+          "id": "astro-ptolemy-v4-fortune-p015-001",
+          "inputDigest": "6c4f32937233dfb5eeecda120a2dcc289c7b4d320ab0c09c1552e1be060648f5"
+        }
+      ]
+    },
+    {
+      "date": "2016-07-09T12:35:00.000Z",
+      "latitude": -19.39,
+      "longitude": 49.64,
+      "proofs": [
+        {
+          "id": "astro-ptolemy-v4-fortune-p010-001",
+          "inputDigest": "bbb4bc23e4f231f022f1ce76182c7177395f2f4fc1aa993d9c23a6341ee2b4f5"
+        },
+        {
+          "id": "astro-ptolemy-v4-fortune-p013-001",
+          "inputDigest": "bbb4bc23e4f231f022f1ce76182c7177395f2f4fc1aa993d9c23a6341ee2b4f5"
+        }
+      ]
+    },
+    {
+      "date": "1933-12-08T22:52:00.000Z",
+      "latitude": -45.41,
+      "longitude": -115.25,
+      "proofs": [
+        {
+          "id": "astro-ptolemy-v4-fortune-p047-001",
+          "inputDigest": "243a18960072abab8d555f1bb378e50d96405e01f0cc713a38e52ac4b408043f"
+        }
+      ]
+    },
+    {
+      "date": "1956-10-29T15:55:00.000Z",
+      "latitude": 26.72,
+      "longitude": -19.47,
+      "proofs": [
+        {
+          "id": "astro-ptolemy-v4-fortune-p016-001",
+          "inputDigest": "457aae00dd316d7c41655bf7276afe8fb5f7d7b47884e84199b0dfb6b4aecbea"
+        }
+      ]
+    },
+    {
+      "date": "1985-07-19T07:34:00.000Z",
+      "latitude": -12.98,
+      "longitude": 166.62,
+      "proofs": [
+        {
+          "id": "astro-ptolemy-v4-fortune-p010-001",
+          "inputDigest": "0d6a7b80fe2efbdd27dc473b4bf537ee0014ea7428e507e67a0829c7215913e3"
+        },
+        {
+          "id": "astro-ptolemy-v4-fortune-p013-001",
+          "inputDigest": "0d6a7b80fe2efbdd27dc473b4bf537ee0014ea7428e507e67a0829c7215913e3"
+        }
+      ]
+    },
+    {
+      "date": "2014-11-19T16:49:00.000Z",
+      "latitude": -13.45,
+      "longitude": -88.92,
+      "proofs": [
+        {
+          "id": "astro-ptolemy-v4-fortune-p049-001",
+          "inputDigest": "d884b1b71873253f8b073cd785f6422a5cd1f6d64faa73892e89a73236e6227a"
+        }
+      ]
+    },
+    {
+      "date": "1996-08-01T10:54:00.000Z",
+      "latitude": 1.09,
+      "longitude": -111.35,
+      "proofs": [
+        {
+          "id": "astro-ptolemy-v4-fortune-p048-001",
+          "inputDigest": "3ebce9985c520b460b5206e018e995e9f505c39503525c4188245dae3ff0dcf3"
+        }
+      ]
+    }
+  ],
+  "followingOnly": {
+    "date": "1915-10-20T16:43:00.000Z",
+    "latitude": 58.17,
+    "longitude": -17.03
+  },
+  "incompleteUpperPair": {
+    "date": "2005-02-18T17:22:00.000Z",
+    "latitude": -35.94,
+    "longitude": 53.14
+  }
+}

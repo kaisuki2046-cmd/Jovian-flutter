@@ -1,0 +1,19 @@
+{
+  "profile_id": "three-methods-v1",
+  "liuyao": "liuyao-jingfang-najia-v1",
+  "line_order": "bottom_to_top",
+  "coin_face_values": {"text": 2, "back": 3},
+  "calendar_timezone": "Asia/Shanghai",
+  "calendar_day_boundary": "23:00",
+  "calendar_month_boundary": "exact_jie_instant",
+  "relative_reference": "original_hexagram_palace_element",
+  "hidden_spirits": "missing_relations_from_pure_palace_same_line",
+  "tarot_deck": "rws-78-v1",
+  "tarot_spread": "situation-influence-trend-v1",
+  "reversed_probability": "1/2",
+  "meihua": "meihua-click-ms-sum-v1",
+  "meihua_nuclear_policy": "qian_kun_use_changed_once",
+  "question_parser_prompt": "question-parser-v1",
+  "reading_prompt": "concise-reading-v1",
+  "knowledge_version": "local-knowledge-v1"
+}

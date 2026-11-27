@@ -1,0 +1,78 @@
+{
+  "sources": [
+    {
+      "title": "The Progressed Horoscope, Alan Leo, 1906 original facsimile",
+      "url": "https://iapsop.com/ssoc/1906__leo___the_progressed_horoscope.pdf",
+      "pdfSHA256": "653f3af2f914811d19a63482cc69aa0e1952112ab295eeff13b81ff44536425e",
+      "verification": "Original source pages visually checked; source passage IDs are catalog sequence numbers, not printed page numbers."
+    },
+    {
+      "title": "How to Judge a Nativity, Alan Leo, fourth edition 1928, printed pp.26-27; supporting same-author edition",
+      "url": "https://archive.org/download/howtojudgenativi00leoa/howtojudgenativi00leoa.pdf",
+      "pdfPage": 51,
+      "printedPage": 27,
+      "pdfSHA256": "99fe9a864d34b48ae017c13d96791039784830da3f79966f71c7195873752fc6",
+      "verification": "Visually checked sign/ruler glyphs. Aquarius Saturn, Pisces Jupiter, Scorpio Mars. Footnote does not allot sign houses to Uranus or Neptune. Not claimed an identical 1906 edition."
+    }
+  ],
+  "cusps": [
+    95,
+    125,
+    155,
+    185,
+    215,
+    245,
+    275,
+    305,
+    335,
+    5,
+    35,
+    65
+  ],
+  "marsRuledHouses": [
+    5,
+    10
+  ],
+  "saturnRuledHouses": [
+    7,
+    8
+  ],
+  "passages": [
+    {
+      "passage": "leo-1906-interpretation-p048",
+      "pdfPage": 196,
+      "printedPage": 186,
+      "sourceHash": "5840b29009c80f00a3966bb385acd02be5ff4e4e52673776927993958b36a811",
+      "progressedBody": "Mars",
+      "natalTargetId": "Neptune",
+      "aspectType": "semisextile"
+    },
+    {
+      "passage": "leo-1906-interpretation-p066",
+      "pdfPage": 187,
+      "printedPage": 177,
+      "sourceHash": "3e8db14b990a8b92b0699966ee260b2dff6d7800e55019d2b9d91de913bf6790",
+      "progressedBody": "Mars",
+      "natalTargetId": "Saturn",
+      "aspectType": "parallel"
+    },
+    {
+      "passage": "leo-1906-interpretation-p105",
+      "pdfPage": 166,
+      "printedPage": 156,
+      "sourceHash": "e46d10019c952dabbaf482fb741ed049eedbb9013a13c13e38a1db6d7e9d88e6",
+      "progressedBody": "Mercury",
+      "natalTargetId": "Neptune",
+      "aspectType": "opposition"
+    },
+    {
+      "passage": "leo-1906-interpretation-p300",
+      "pdfPage": 173,
+      "printedPage": 163,
+      "sourceHash": "055b8bd2da046265f3a177c8a2cb4f8543b7fe924e1a84dbaf93c85f883542e0",
+      "progressedBody": "Venus",
+      "natalTargetId": "Jupiter",
+      "aspectType": "quincunx"
+    }
+  ]
+}

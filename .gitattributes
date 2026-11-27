@@ -1,1 +1,3 @@
 /tool/patches/divination-tarot-first.patch text eol=lf
+
+/backend/src/** -text

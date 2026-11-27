@@ -1,0 +1,35 @@
+{
+  "attempted": 1962,
+  "sourceRecords": 11,
+  "alternatives": 34,
+  "cazimi": {
+    "date": "2014-04-26T05:00:00.000Z",
+    "latitude": -23,
+    "longitude": -118
+  },
+  "witnesses": [
+    {"date":"1990-01-01T06:00:00.000Z","latitude":0,"longitude":0,"proofs":[{"id":"astro-lilly-v3-profession-method-p014-001","inputDigest":"a01d9d1c64ea224e50dfdbd763635216f2fe5c52cac1c81df83b3aae7f43d317"}]},
+    {"date":"1990-01-23T06:00:00.000Z","latitude":0,"longitude":0,"proofs":[{"id":"astro-lilly-v3-profession-method-p014-001","inputDigest":"5e399ad12db927bb400b218111493a3866576ce4854d670ae78cec28db2c7401"}]},
+    {"date":"1990-02-18T18:00:00.000Z","latitude":0,"longitude":0,"proofs":[{"id":"astro-lilly-v3-profession-method-p014-001","inputDigest":"709b82affc3312f42b09cb30901bad5a5b64c55ac82204217dc7668a60095759"}]},
+    {"date":"1990-04-06T06:00:00.000Z","latitude":0,"longitude":0,"proofs":[{"id":"astro-lilly-v3-profession-method-p013-001","inputDigest":"2364f523fecf3cad028d627cfa7be39e57d414ea7892a81777fa668c03d865d1"}]},
+    {"date":"1991-08-05T12:00:00.000Z","latitude":0,"longitude":0,"proofs":[{"id":"astro-lilly-v3-profession-p050-001","inputDigest":"778bcc9144638ce37ea53ec4f9035b61ff59b56959ed544318bbb0c97f860ef8"},{"id":"astro-lilly-v3-profession-method-p013-001","inputDigest":"2459c9ce5c5cc57e300ab5f0a75c20464f606b384ca6563500046734dd9ee3e6"},{"id":"astro-lilly-v3-profession-method-p013-001","inputDigest":"d7c3695ea413b2e28b3227bdb5ad4f3e838032b655021a87b4cd354d305d2e03"}]},
+    {"date":"1992-08-15T06:00:00.000Z","latitude":0,"longitude":0,"proofs":[{"id":"astro-lilly-v3-profession-method-p013-001","inputDigest":"76766aa234cc283a03013a9888ff78cc3abd7f806e196530806702bbd96485d3"},{"id":"astro-lilly-v3-profession-method-p013-001","inputDigest":"f4edc7c29155871dc0ff7aabb2e11e2c7f6d09a3bd314012dbccb2f1f50d6600"}]},
+    {"date":"1995-05-05T12:00:00.000Z","latitude":0,"longitude":0,"proofs":[{"id":"astro-lilly-v3-profession-method-p013-001","inputDigest":"0fdfca5344e299d19e963f79dde21800a9c9f9553f0662c3021677fc1b83c147"}]},
+    {"date":"2014-03-28T15:00:00.000Z","latitude":-23,"longitude":30,"proofs":[{"id":"astro-lilly-v3-profession-method-p013-001","inputDigest":"b1898a816e74ab5b2a30ef4c78417375001b0663b9f3b8b22fc94f9b5771717f"}]},
+    {"date":"2020-10-22T08:00:00.000Z","latitude":18,"longitude":115,"proofs":[{"id":"astro-lilly-v3-profession-method-p013-001","inputDigest":"2de584c24ed03f906d218b87752633fd7f96ff810f734333d958f2aeeaf22266"}]},
+    {"date":"2015-01-11T20:00:00.000Z","latitude":-35,"longitude":0,"proofs":[{"id":"astro-lilly-v3-profession-method-p013-001","inputDigest":"edab93989a632dbea09e202431254f6b0aabd4b3f7105b90dd6f18d16c8b02ac"}]},
+    {"date":"2003-05-29T15:00:00.000Z","latitude":-35,"longitude":0,"proofs":[{"id":"astro-lilly-v3-profession-p065-001","inputDigest":"af7279a06edd7a82f6194e735d83a6b46e643961c7f266413121692819bcb7e1"},{"id":"astro-lilly-v3-profession-p065-001","inputDigest":"b456e9c5dea977bf3e6dc9d8aec645bc6a303c2caaad3b46aeaaa74b1b38fa40"}]},
+    {"date":"1933-04-23T12:00:00.000Z","latitude":18,"longitude":30,"proofs":[{"id":"astro-lilly-v3-profession-method-p015-001","inputDigest":"ba65b0c75c1705ee3dab7c7f89bf1b8bd1418630b56ee96e63238673739efa4e"}]},
+    {"date":"1941-08-15T14:00:00.000Z","latitude":0,"longitude":30,"proofs":[{"id":"astro-lilly-v3-profession-method-p015-001","inputDigest":"695e73e635c989149b9483d30cd2d0582072be4f1b9f2d4b0a1f8b8962b96e45"}]},
+    {"date":"1911-01-03T09:00:00.000Z","latitude":18,"longitude":0,"proofs":[{"id":"astro-lilly-v3-profession-method-p015-001","inputDigest":"8644759b6da8818f581220191cffecd94c1ecbb79647dcb56cb6a0e723b6b585"}]},
+    {"date":"1977-04-08T18:00:00.000Z","latitude":-35,"longitude":-59,"proofs":[{"id":"astro-lilly-v3-profession-method-p015-001","inputDigest":"c7edf159626de631fe245d610a73aaa44795c1f67290c16ef9f5dc65da90894f"}]},
+    {"date":"1934-07-02T13:00:00.000Z","latitude":-35,"longitude":77,"proofs":[{"id":"astro-lilly-v3-profession-method-p005-001","inputDigest":"d4c3a277cc86cd11b887dd941567b2597a85f6c7fd6ed924747a9cee9f58e0d7"},{"id":"astro-lilly-v3-profession-method-p016-001","inputDigest":"c6875927c17645545d3ba4b11a91a6ed5cd2873d33c87e3f6e7dd09ea1d33560"}]},
+    {"date":"2021-08-28T17:00:00.000Z","latitude":-23,"longitude":0,"proofs":[{"id":"astro-lilly-v3-profession-method-p005-001","inputDigest":"0f1ad89ba00c5c549edc5b8719edee3c79126576561d66cf594597d3c51eb747"},{"id":"astro-lilly-v3-profession-method-p016-001","inputDigest":"ad0c9ab57e82d9baa2f1e2594eb3bb9eff48f6a2548f620db6954f521d0a079d"}]},
+    {"date":"1991-03-13T22:00:00.000Z","latitude":31,"longitude":0,"proofs":[{"id":"astro-lilly-v3-profession-method-p005-001","inputDigest":"634c73e7a5bae16fd1636e03b152334cabb2e41000e3a11679bcf861d4b9af78"},{"id":"astro-lilly-v3-profession-method-p016-001","inputDigest":"e6fa500622bf505d1bf79a07e2b609386ff6de9a177bde3a272e59dc46c0598e"}]},
+    {"date":"1985-11-05T06:00:00.000Z","latitude":0,"longitude":-118,"proofs":[{"id":"astro-lilly-v3-profession-method-p017-001","inputDigest":"c6f87dc474a690987912e15d7f38fe230ee8bfce50c9acc53c418d008e3fb2fa"}]},
+    {"date":"2025-01-11T13:00:00.000Z","latitude":31,"longitude":77,"proofs":[{"id":"astro-lilly-v3-profession-method-p015-001","inputDigest":"451f99363f3781ae4325e5d483b6b86c2c43c30dd66923c7592f79bdf4553127"}]},
+    {"date":"1968-08-16T14:00:00.000Z","latitude":0,"longitude":0,"proofs":[{"id":"astro-lilly-v3-profession-p015-001","inputDigest":"621e52e7d9dfbc5febacc433922f3c39e953dcd268a7ea78ea7d464a9115b125"},{"id":"astro-lilly-v3-profession-p015-001","inputDigest":"cc21f44fd586af6bb85780c616e641ee14df204f43a4c8d1138dbb57c54d66ad"}]},
+    {"date":"2001-03-25T10:00:00.000Z","latitude":-35,"longitude":115,"proofs":[{"id":"astro-lilly-v3-profession-method-p015-001","inputDigest":"ab2acac847caeabaad9802eeff9238066e87790579ea4afb8dbffa8df4c7acdf"}]},
+    {"date":"1983-06-30T23:00:00.000Z","latitude":-35,"longitude":160,"proofs":[{"id":"astro-lilly-v3-profession-p041-001","inputDigest":"07a668394dd425a9f82c83cb35d681098b5b644fec28add76cd41e02d8e1f875"},{"id":"astro-lilly-v3-profession-p041-001","inputDigest":"98a8ae58915dfcb80d4c78ab302d27a15d520982fa29977b904e5a5034a04dd3"},{"id":"astro-lilly-v3-profession-p042-001","inputDigest":"55ba648d478a7c671c87e180aa4c9c1ff86aeceec76a432f919256bece492df5"},{"id":"astro-lilly-v3-profession-p042-001","inputDigest":"77a2801fa33d8b5091cc0add50d21401f337fd8b023aec00513084f14aea39fb"}]}
+  ]
+}

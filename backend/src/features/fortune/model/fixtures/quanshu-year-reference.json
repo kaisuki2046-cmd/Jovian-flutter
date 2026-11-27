@@ -1,0 +1,22 @@
+{
+  "reviewedOn": "2026-11-19",
+  "sourceURL": "https://zh.wikisource.org/w/index.php?oldid=1963110&title=紫微斗數全書/卷二",
+  "sections": ["安天哭天虚星诀 论本生年支", "安斗君诀 即月将星是也", "安天伤天使诀", "安丧门白虎吊客官府四飞星诀"],
+  "note": "固定录文的算法测试资料；并非原刊影印。星位不代替吉众、遇禄、会照与救应。",
+  "cryByBirthYear": ["午", "巳", "辰", "卯", "寅", "丑", "子", "亥", "戌", "酉", "申", "未"],
+  "xuByBirthYear": ["午", "未", "申", "酉", "戌", "亥", "子", "丑", "寅", "卯", "辰", "巳"],
+  "doujunExamples": [
+    { "year": 2026, "month": 4, "hour": "寅", "stop": "卯", "branch": "巳" },
+    { "year": 2025, "month": 1, "hour": "子", "stop": "巳", "branch": "巳" },
+    { "year": 2025, "month": 12, "hour": "亥", "stop": "午", "branch": "巳" },
+    { "year": 2024, "month": 12, "hour": "子", "stop": "巳", "branch": "巳" },
+    { "year": 2027, "month": 1, "hour": "亥", "stop": "未", "branch": "午" }
+  ],
+  "examples": [
+    { "n": 19, "dateStr": "1970-01-05", "timeIndex": 2, "gender": "女" },
+    { "n": 40, "dateStr": "1970-01-05", "timeIndex": 0, "gender": "女" },
+    { "n": 41, "dateStr": "1947-02-05", "timeIndex": 3, "gender": "女" },
+    { "n": 44, "dateStr": "1990-05-05", "timeIndex": 2, "gender": "女" },
+    { "n": 52, "dateStr": "1990-05-05", "timeIndex": 2, "gender": "女" }
+  ]
+}

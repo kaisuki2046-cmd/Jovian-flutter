@@ -1,0 +1,548 @@
+{
+  "baseline": "twenty-seventh integration batch",
+  "profile": "named-natal-mutagen-location-and-source-passages-v1",
+  "changes": [
+    {
+      "id": "ziwei-v2-jielan-072-p002-002",
+      "method": "ziwei",
+      "previousReason": "unmapped_condition",
+      "inputs": [
+        {
+          "digest": "53bfde0f6cf6735704b966f827df85eb47052329af93838ba9d62c435cfe1af2"
+        },
+        {
+          "digest": "39cb61a210d769af7534e54cfc24c20a5249043a7ffbc5f5e23fdb6f85136634"
+        },
+        {
+          "digest": "8c8674a5004992d51a0eff5fd0074fd2f9ed497707da096f219bb1909efacde5"
+        },
+        {
+          "digest": "d768825cb901ab6724f9900a9d45687ca12bd50fdf98fdc40f3ecc2d94066ffe"
+        },
+        {
+          "digest": "b96b29b4e57e68c54baca01ae0e65c14e40958199b50423601978a022cd7d3aa"
+        },
+        {
+          "digest": "108d657091e3541e9d327a8bbc3a62d69e69b994b26bbae3b8daa7d56a917cb4"
+        },
+        {
+          "digest": "cdf405ff9caecb6f7a99e6b1d0f3fa6d61773d7bf772e93c3f2ad5dd448002e2"
+        },
+        {
+          "digest": "64c9e285781e6a350decb57dcb9a394378d7634f1752f81b36e3898d98b6cda9"
+        },
+        {
+          "digest": "c68d3052d38d60e0fab4c93a468c68056e5a2a5518ef153cdf2cb56afbb70195"
+        },
+        {
+          "digest": "c37e9d3cabb1208e3fabfc1da82f5f8410069a41f424ac4e313776b17cf2caa4"
+        },
+        {
+          "digest": "8a740aad3a6f891c6f951497d89dea95caaa6360894368d3c7a6feb6aee93715"
+        },
+        {
+          "digest": "081290c62d530cb814960cb4efb2525f3173b7692d7f430931db566b8f6a870b"
+        },
+        {
+          "digest": "e8d250a2a2dd75df32902d724e5c884d5b0ace9f3dcb368e8a8c9333ae036829"
+        },
+        {
+          "digest": "a239872e632385632082867133560fd43fb1b4980ecb3e0d23e2fd41102805f9"
+        },
+        {
+          "digest": "b89dff57198366ec3fbeb271eba13067c76df1e63a1645443a0555dee41ceaf3"
+        },
+        {
+          "digest": "ea627bcbd6052791f44dcb6e66a15f055d67618c6b099c91d5d337de22e36357"
+        },
+        {
+          "digest": "25e3a16bff4380dcff4e2dfe5cf9bf7fc34ae58e97e6bc946ce7a739dba82d62"
+        },
+        {
+          "digest": "f2c182cace568d757b237f5b58a1c3fb58094347636b5820d8621657e5417906"
+        },
+        {
+          "digest": "76663e50c69f4118658b97de9f2efe95da898443eee22c113da0f5c8cb841ca0"
+        },
+        {
+          "digest": "f57e1fbe1d90e1f86f31f34bab9c758d8de16c64599fea47af483f6f4eb103cc"
+        },
+        {
+          "digest": "9c1eea449b047bae785751b7422328fad519476d31ece65d2e0650b7ea8e7006"
+        },
+        {
+          "digest": "d0301149e5d4e80a8e3c1b30ce6fa070ef7d3724484551dadb9e2c22fa792e41"
+        },
+        {
+          "digest": "dd4190f87a145b3a6cb7faa4d728bb847ba78913921a6396a32b60ee7f9803db"
+        },
+        {
+          "digest": "e0999f315f804ac0254fb65cf46f4a11956d44b444926bc419ae3ca46b48498d"
+        },
+        {
+          "digest": "8dfeb6bc5c4ab7892efe982a0189c98a522a893f9e8de25d3a7a8bd13b7c9543"
+        },
+        {
+          "digest": "c489923a098150b7f2cc36af991968965abdf9197388e0cb8462c07f863ed95b"
+        },
+        {
+          "digest": "c6822d06365ded6230257d0a30c3050859f6375cbc626ca85ff69c481fb42673"
+        },
+        {
+          "digest": "dd324a8c08f714d3c341425684b51e774e572cd2ed64e4122d0fa0a45a7bbb1c"
+        },
+        {
+          "digest": "41f3a9e828a8d27bb6911c0fc158abd9810d6a1ccc40c921de764e8c1071de37"
+        },
+        {
+          "digest": "de2d8b582301745631afdecdd29a8f291ebf9cd5f2a80835a197d2bb7476e94f"
+        },
+        {
+          "digest": "812edf674731d636fe0e9c7c1a4c11b096e7802a089afba6851acd02df3a219a"
+        },
+        {
+          "digest": "eb4e6811d6b50ffaa6ffe8171572c9a231cd811904dab1ece2de368bd1b81b09"
+        },
+        {
+          "digest": "41bbc501f610ff180fda1740141f92a10c0e7b6de827ae34759b43b00deb3926"
+        },
+        {
+          "digest": "dd2edf671015c54a6af071134a2977026e7f27224ea9f32f584d5c907d4ad2e2"
+        },
+        {
+          "digest": "eb04d6d98547c95a85b7f7b0e9cc42d6f1e893f586fce875851561ad8ad7ad69"
+        },
+        {
+          "digest": "afe35b69f3f9e64528561fe7ea3ab7aab020d25239e08479174425482e509028"
+        }
+      ],
+      "branches": []
+    },
+    {
+      "id": "ziwei-v4-jielan-203-p002-001",
+      "method": "ziwei",
+      "previousReason": "unmapped_condition",
+      "inputs": [
+        {
+          "digest": "bf6f0d1fe58daff71d5f7986ba0796e36c4e2a826ab25b658913eb16e08dbff9"
+        },
+        {
+          "digest": "a977ac87960788b50517786dbcf4c7a710151e34b432fc141d1f8ff410d6eff8"
+        },
+        {
+          "digest": "835255ad45dee28855701a963cb49c0cef57c52184ffec941f3756ed0ae232fc"
+        },
+        {
+          "digest": "c0a4bb8b189001b84b716d30cfbdd4cf54eb6fa8928f3368dd6200072904731b"
+        },
+        {
+          "digest": "c38f5711942192a3555bfbeb220a258f6022d5b545fb4ec3cfb1ce48580e3456"
+        },
+        {
+          "digest": "a7211622676990daa1284d1cf140b5bed4bf8e46ac534a99c6da461541a73ef5"
+        },
+        {
+          "digest": "65dd1e6034b0360252943a16f0ffb1f98896dac5e298b2d11b5c523d76f81c29"
+        },
+        {
+          "digest": "202b10d026c000458b37399fdae2ad827b9f46794463882624745ba466fa14a1"
+        },
+        {
+          "digest": "a22e2663ef21b1d095065c8ef7dadab5061efc05135b1c45830b2b8bc8628a3c"
+        },
+        {
+          "digest": "2b43a4d7c9b53c5e32f5ac49dbbd235823629dde78641a20e1bab2346ea82174"
+        },
+        {
+          "digest": "8d92a8d24567bc376989100f9beae68dfc8a6cb9f851134da4e1edcc5998bcc3"
+        },
+        {
+          "digest": "25941e25ccc228d8b5d49650b7e6b689bc442ffed68914a7ab11eff97c75cb1a"
+        },
+        {
+          "digest": "b52b05d29ecf91231249c522134e72c80d97ba604e51cbcb9a431e46283e4d82"
+        },
+        {
+          "digest": "d5cb0c9f102f5ac113a759622aac0be5c7f7e0017a6f91b4ef7162c9fa07119c"
+        },
+        {
+          "digest": "c84876283653888984e92915857e3f8478692556c2e33a02b632151fc6d292e8"
+        },
+        {
+          "digest": "3a3c0c4644b7a78353ea0cf15ad70245eae551c5b41b9cf5a41a80a4bf06f374"
+        },
+        {
+          "digest": "4b4b55ab2b4803a9c60e9bc8737b21877b9d4349e59f2f98567da60f3e00e046"
+        },
+        {
+          "digest": "33fcb599739508a9b73db1730a3fa8eec3662f58e66c410e551889fbfcfe2fab"
+        },
+        {
+          "digest": "16e0181b65063dcb60ad593ec00ab19df110f728eaf20649dff49f83d51772bb"
+        },
+        {
+          "digest": "45fe0205ff76d80db90f3ef09e2bc4b29d37a59ead17eace0dff4c848dbd5790"
+        },
+        {
+          "digest": "fb527ce9c44748f0bbc56b93218f671370adbea77c305ad0f2f074852edd98b6"
+        },
+        {
+          "digest": "64969570929260a8c57acd636dd76c711086209aab384cf91a13c17d13ca80c2"
+        },
+        {
+          "digest": "20a744cdeb1c638624864dbbaaa1030f1fe993c421e76c3c257d769f0d5f10e4"
+        },
+        {
+          "digest": "e005df412e33dd736c363387676aafe3fbc238d85947fe920506afcaea6c7984"
+        },
+        {
+          "digest": "fdaba48fca64deeab0479854a8f5b6e089c987fb806bd2f1f38e8068c6f2a2e9"
+        },
+        {
+          "digest": "04e8df8eb52125cbce6a5791d7d8ef380adb0f4527ee04a98b143000f5766af9"
+        },
+        {
+          "digest": "c3a48922a43549fdbc0bae30bd47af33d4a31c1fea7a86d49691287883d6dda3"
+        },
+        {
+          "digest": "28b839fd20f36729daaa837d2c56051fc2609ed2978636f3efbbb222c021720a"
+        },
+        {
+          "digest": "9a79e690bc930a5d4ec4e991d18cf2afa4b3151cba3e06d81d7e60a3b119f68b"
+        },
+        {
+          "digest": "60493bbcf8a8843a300a194ba804a83cf245417f49955a33178468e43d5168c9"
+        },
+        {
+          "digest": "608eff1c2d7f42d53c682fa350ddfbd6420dbb4f467a83dec2db47f559826d0b"
+        },
+        {
+          "digest": "67d614372e71f3b11218f7eabc2883e7838dc13da65524bffa82623071111dd5"
+        },
+        {
+          "digest": "33075609b09ec8c5cb0a89e272696dedd880953e03c6dd36659ead781e1f29f3"
+        },
+        {
+          "digest": "d9660ee5557f5f3fdc8590c1a7706b75c2af12cd759b2d65b212cb514da97cf1"
+        },
+        {
+          "digest": "b56e4a780b135e5d6bdb1d06383ee377e530d182524a9c4b7aa5e48e4b2369f2"
+        },
+        {
+          "digest": "ad17ef40c9b669a6703f4df139bfb5bb068d9a8f0eef0375780359d766971474"
+        },
+        {
+          "digest": "d4a292579d5a3e84b8c970727e0c8e9e20cc76b02495e851b8b3c64d5ef16fbe"
+        },
+        {
+          "digest": "354a452aede06c87c98113b68c6d93b1bc5d93e1e7868156a017458a6fbada84"
+        },
+        {
+          "digest": "3ea4ce7197439e224a3096c9761ca4a1cba29c133e5655f38ea13f29fdd980bc"
+        },
+        {
+          "digest": "e84ef0140e7f9ed8a1324c767d178bc5e182b6d31cf920e5c65ea61ca8d193ea"
+        },
+        {
+          "digest": "2ecf49e2b6315ef7d1e51d69fb4573703b9668c773e372de3067e0db58fb4662"
+        },
+        {
+          "digest": "8408a0697e57ac74bc64d43e397ef16b0f461a237841b4d768deb0f01ad9f72d"
+        },
+        {
+          "digest": "25a089b2ea3e6efb3f67a45028bceebc83fb900d5fc745f0c13cd253b14451fb"
+        },
+        {
+          "digest": "e8ec917384e927f6294b9892148bfd46a2fc9144a6a4e33b55316d8e57efca47"
+        },
+        {
+          "digest": "8441dcf2a844133d9a8dc807dc5aabb1a52a1d3d73b552bcd6461b38a108f06f"
+        },
+        {
+          "digest": "5862631e8b84c31c4b4234b35a6ab0b8542fe5b40622a178048328e0876a80e5"
+        },
+        {
+          "digest": "6c9622f5488c772ded4bfb7b27ea0430b1d53cd49f9b187a381a8e6807da1375"
+        },
+        {
+          "digest": "87673098664796b6538952174ae2c2fa2c90f9e02bdb5787a7446c4d9be6b96b"
+        },
+        {
+          "digest": "a5238189d80e7855597e2a39bbd0c9e9f012a86167ac4e8c3bfd117ad5a0b27e"
+        },
+        {
+          "digest": "b7c746d0f02cdc71ec312b542365b02b1c7db811e8692970d32d9fe2733a4717"
+        },
+        {
+          "digest": "32c4c67f829428d3ace083de1ad69ab395b78447da5f17a3602d0a725a13cc50"
+        },
+        {
+          "digest": "c1a9cb223f083a023dd926f52fe5c668db8d37c86481b1b20def49e298445112"
+        },
+        {
+          "digest": "035a0feede5052140b076ca74329bd39c550a7fc98c4593d1fd6ca0a8bd2e712"
+        },
+        {
+          "digest": "d5e02a02ff3e423eb98c101925fb52becee2197d9f847b0d216398b003d6aca8"
+        },
+        {
+          "digest": "07362bb2754a7b8b772348aa55018deef6de5b4549b112dbd0c258039fbd1072"
+        },
+        {
+          "digest": "44913152c83392a55cbd3ecf0fe36941fb2f4a919f2b2fc21a2d86076c60db9d"
+        },
+        {
+          "digest": "ca6e02921311ac22278cb8562e00f7fccdd168b2546b0c5b72068d76412587c2"
+        },
+        {
+          "digest": "d46e8d717fb28b093fcfc8de2ddeb0b511eeeaa5cd182d3672878aaa3d77ff72"
+        },
+        {
+          "digest": "21646cc15bc32f0b9a8c418a08121eb94d0c1a0a06a3498fbda3c754b31695d2"
+        },
+        {
+          "digest": "abc6500fc491be7bd2ceed19acd9ec89c2a486ade97dd5bc0bfc3f9d38fe5f5f"
+        },
+        {
+          "digest": "18a0fe353498ed758fa89728623e076c335fc39f70266f7e317ac7926bc7eb9f"
+        },
+        {
+          "digest": "7af0500f1b7b5b01e63467e3bfb0c790cce3fe1c143720f214101e739c080f89"
+        },
+        {
+          "digest": "35720dd9949471efbda5168abac4bb5cd46c00cf88f2c50de66f21703bce0f7c"
+        },
+        {
+          "digest": "77a1664a3bb788721d6e5e985b9a7bf4c4676fe750512d84c82bab481e34786c"
+        },
+        {
+          "digest": "10feb6f4780b9830dd0633a672270636246fd7313537f6be847aef286e076fbd"
+        },
+        {
+          "digest": "38a2726b61a03ecf94249154eebb6d6802773d0858265a0724d92bbd67024efe"
+        },
+        {
+          "digest": "e7275f6fe7cc72d007fb8acfdb43d6355302fdbeabe6a58970391d2fe56993fc"
+        },
+        {
+          "digest": "737d723323a112beada7964fd8292cd784b8ff394f7b7d8628ee0ad86a11997f"
+        },
+        {
+          "digest": "2cb9023bf3eba315779ebf1e135f0a02049ae2e4dc2588918f1089b995e9de6d"
+        },
+        {
+          "digest": "0667ec13d5ff1405f8579253ab12d49f3e2ba788a5ad6819147ff5ae26d1eb7d"
+        },
+        {
+          "digest": "7fe9fa619d8b8961386d5b8ebdc5d25b150f022072059299e571d10c54916e83"
+        },
+        {
+          "digest": "e5b4c3104c8734798c27dd3dea892f79f0d77972d1188f8067b90b183127f50f"
+        },
+        {
+          "digest": "a29be2a24e0a7ad268e0fd5895f6f671a39a67ee471dacd093d58bc1d9acbd85"
+        },
+        {
+          "digest": "bf5f322b881e7054442d2c56d32646a906a281da53669af5431b8bb92a62f57d"
+        },
+        {
+          "digest": "f999a470d67a37acbc3374c19f38679220fdfb317c4ab6451bc35afe9f38a964"
+        },
+        {
+          "digest": "3c2edf08eeb0e11ab3653498221e337c8be3da8f932a62553d01f1c68b9d42d3"
+        },
+        {
+          "digest": "caf54941f62c63e3b156b74b1f2f1d1a67bfe925aa2d06714b1a289c983840b6"
+        },
+        {
+          "digest": "5794d96373a7bc142b3bb32aed6791320c93f52bfd7db2da4a3b0dc417becb64"
+        },
+        {
+          "digest": "c24ad6fa712201030e09c08c8bd308c776ea10847de8188462167791fb22317c"
+        },
+        {
+          "digest": "11e83fa8fa48f0fea180f1ee3cd8592ef8a07e7a7980ba9e16079a498b73e6fb"
+        },
+        {
+          "digest": "6a7f8665d315dcaed13cca0d21d86824791754c230d146c6cb8ddbd9151df3c3"
+        },
+        {
+          "digest": "68a563840bed3e8c9d0fe0af25b047d0feea7caeb984d964d336ac674b06f3f1"
+        },
+        {
+          "digest": "f796446c67a7dc0d4ef0385750cf14f4f440456c06d8dd4d94da95990292e758"
+        },
+        {
+          "digest": "e439d4fa8d72cf6e3b8394c4d016043b905affbe9dc4882f974c982db78c9c55"
+        },
+        {
+          "digest": "5fec40ef25ec59e3a1478a58ffe589f56a56adabc199f6418c047aaf217990ae"
+        },
+        {
+          "digest": "1e56b033147c9297725438d44441cd9d525d071d96b97d86c6fa6ee4456252f5"
+        },
+        {
+          "digest": "463794d9ef080a4ddcdcde5c6aa5a6cd4c3af27cacac8ba1e46f3a214598ea6e"
+        },
+        {
+          "digest": "3c3c401ef3d576c93373b84b078889d8cb49b2cb26a5afe2e5c64213dfab5d9c"
+        },
+        {
+          "digest": "ed72221e6a1b266201b3c95ba4bf3b4f77e2cc1d3d0191c16115119845e72431"
+        },
+        {
+          "digest": "e665684934c9b43adf2b587c3d5163842d2067ffe36c89cebbdb4a1f67d07df0"
+        },
+        {
+          "digest": "98ad87b9cef7354e6d0cc2b5712a4e16d58009632c2349c54d13bdcc72c19c2a"
+        },
+        {
+          "digest": "5581ece0d5a89ac36eddf53267707bf3ac59618c883fc86e353172886d568a17"
+        },
+        {
+          "digest": "63defb51e6d747cf3ae73dc261504e565bdb016ea0c0db104fb1d2cd70ba569e"
+        },
+        {
+          "digest": "23ab2be8c04c2e87c931a48a1586514dbcba636109fca5f4d62ede0e0ef04f57"
+        },
+        {
+          "digest": "6723cb9e12ee1ad777755a7d29016d2af238fd917a9de62bb059bc978d57997c"
+        },
+        {
+          "digest": "9af4670624c22a6ad1859d33131cd8a823a453a04b977076879c379e61620360"
+        }
+      ],
+      "branches": []
+    },
+    {
+      "id": "ziwei-v2-minggong-p323001-033",
+      "method": "ziwei",
+      "previousReason": "unmapped_condition",
+      "reason": "unmapped_condition",
+      "inputs": [],
+      "branches": [
+        {
+          "text": "若太阳在寅卯辰巳午化忌，太阴在酉戌亥子化忌为福论。",
+          "conditionCompiler": "iztro-2.6.5-natal-mutagen-placement-v1",
+          "inputs": [
+            {
+              "digest": "bf6f0d1fe58daff71d5f7986ba0796e36c4e2a826ab25b658913eb16e08dbff9"
+            },
+            {
+              "digest": "b52b05d29ecf91231249c522134e72c80d97ba604e51cbcb9a431e46283e4d82"
+            },
+            {
+              "digest": "fdaba48fca64deeab0479854a8f5b6e089c987fb806bd2f1f38e8068c6f2a2e9"
+            },
+            {
+              "digest": "d4a292579d5a3e84b8c970727e0c8e9e20cc76b02495e851b8b3c64d5ef16fbe"
+            },
+            {
+              "digest": "e221b06af7ecee36d8dc9029c4633933ab091d8e4512c73b202ac5afd05eb01d"
+            },
+            {
+              "digest": "a5238189d80e7855597e2a39bbd0c9e9f012a86167ac4e8c3bfd117ad5a0b27e"
+            },
+            {
+              "digest": "18a0fe353498ed758fa89728623e076c335fc39f70266f7e317ac7926bc7eb9f"
+            },
+            {
+              "digest": "a29be2a24e0a7ad268e0fd5895f6f671a39a67ee471dacd093d58bc1d9acbd85"
+            },
+            {
+              "digest": "5fec40ef25ec59e3a1478a58ffe589f56a56adabc199f6418c047aaf217990ae"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "reviewed": [
+    {
+      "id": "ziwei-v3-c020-p133011-001",
+      "method": "ziwei",
+      "previousReason": "unmapped_condition",
+      "reason": "different_chart_tradition",
+      "inputs": [],
+      "branches": [],
+      "incompatibleAlternatives": 12
+    },
+    {
+      "id": "ziwei-v2-minggong-p319003-002",
+      "method": "ziwei",
+      "previousReason": "unmapped_condition",
+      "reason": "different_chart_tradition",
+      "inputs": [],
+      "branches": [],
+      "incompatibleAlternatives": 1
+    },
+    {
+      "id": "ziwei-v2-minggong-p319003-003",
+      "method": "ziwei",
+      "previousReason": "unmapped_condition",
+      "reason": "different_chart_tradition",
+      "inputs": [],
+      "branches": [],
+      "incompatibleAlternatives": 1
+    }
+  ],
+  "recognizedOnly": [
+    {
+      "id": "ziwei-v2-minggong-p173002-005",
+      "method": "ziwei",
+      "previousReason": "unmapped_condition",
+      "reason": "unmapped_condition",
+      "inputs": [],
+      "branches": []
+    },
+    {
+      "id": "ziwei-v5-jielan-233-p002-012",
+      "method": "ziwei",
+      "previousReason": "unmapped_condition",
+      "reason": "unmapped_condition",
+      "inputs": [],
+      "branches": []
+    }
+  ],
+  "metadataChanged": [
+    {
+      "id": "ziwei-v1-c016-p101004-001",
+      "method": "ziwei",
+      "previousReason": "unmapped_condition",
+      "reason": "unmapped_condition",
+      "inputs": [],
+      "branches": [
+        {
+          "text": "贪狼化禄居四墓，纵然遇吉亦中平",
+          "inputs": [
+            {
+              "digest": "feb76629a51674a382a9463c3b6ff4811a8d9d6e395b8363d559854c7127c4bd"
+            },
+            {
+              "digest": "b33b3602488f1054df4eb30c9e8d45ddeb2d461e422b65c246157ef7832a0634"
+            },
+            {
+              "digest": "52d559dcd3fd4a062f40a44a4147c4699a8a565aa5cd9d3673d70c85a0c943de"
+            },
+            {
+              "digest": "ca9f7224a140f81eb7a90f4a267afe11b3c5a652880b1658a710d61b5d3274d4"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "sourceRecords": 18846,
+  "previousQueryableCompiledUnchanged": 2804,
+  "previousQueryableInputsPreserved": 2805,
+  "wholeEntries": 2,
+  "branchEntries": 1,
+  "wholeAlternatives": 132,
+  "passageAlternatives": 9,
+  "newAlternativeCount": 141,
+  "sourceHashes": {
+    "bazi": "8074930be871d6249c36813d59dae2534ad5f11eeb06c5d2728978b53364e609",
+    "ziwei": "bfe23ad0b26b19992d6f4fe3c2fb1979175513ceaf283bee6ce671d8358698ad",
+    "western": "b92622c3336d4a56af837123b08d438947a5e6751cd272b4be555921a89cb9fc"
+  }
+}

@@ -45,6 +45,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $project = Split-Path -Parent $env:JOVIAN_START_FILE
+$backend = Join-Path $project 'backend'
 $started = @()
 $exitCode = 0
 
@@ -95,8 +96,19 @@ function Get-NodeRuntime {
         throw 'Could not determine the installed Node.js version.'
     }
     $nodeVersion = [version]$Matches[1]
-    if ($nodeVersion -lt [version]'22.13.0') { throw 'Node.js 22.13 or newer is required.' }
-    @{ Path = $node; Version = $nodeVersion }
+    if (($nodeVersion.Major -eq 22 -and $nodeVersion.Minor -ge 13) -or
+        ($nodeVersion.Major -eq 24 -and $nodeVersion.Minor -ge 3) -or $nodeVersion.Major -ge 26) {
+        return @{ Path = $node }
+    }
+    throw 'Install Node.js 22.13+, 24.3+ (within the 24.x series), or 26+ with npm.'
+}
+
+function Initialize-Backend {
+    if (Test-Path -LiteralPath (Join-Path $backend 'node_modules/.package-lock.json') -PathType Leaf) { return }
+    $npm = Get-Command npm.cmd -CommandType Application -ErrorAction Stop | Select-Object -First 1 -ExpandProperty Source
+    Write-Host 'Installing the bundled Node dependencies.'
+    & $npm ci --prefix $backend --no-audit --no-fund
+    if ($LASTEXITCODE -ne 0) { throw 'Could not install backend dependencies.' }
 }
 
 function Initialize-LocalCompute([string]$node) {
@@ -104,9 +116,8 @@ function Initialize-LocalCompute([string]$node) {
         (Test-Path -LiteralPath 'tool/legacy_compute/native_assets/legacy-compute.html' -PathType Leaf)) {
         return
     }
-    if (!$node) { $node = (Get-NodeRuntime).Path }
     & $node 'tool/legacy_compute/build.mjs'
-    if ($LASTEXITCODE -ne 0) { throw 'Could not prepare the original TypeScript chart assets.' }
+    if ($LASTEXITCODE -ne 0) { throw 'Could not prepare the TypeScript chart assets.' }
 }
 
 Push-Location -LiteralPath $project
@@ -125,33 +136,13 @@ try {
     }
     $webOrigin = "http://localhost:$picked"
 
+    $node = (Get-NodeRuntime).Path
+    Initialize-Backend
+    if (!$CheckServices) { Initialize-LocalCompute $node }
+
     if ($ServiceConfig) {
         $config = (Resolve-Path -LiteralPath $ServiceConfig).Path
-        Initialize-LocalCompute
     } else {
-        $legacySource = ([string]$env:JOVIAN_LEGACY_SOURCE_ROOT).Trim()
-        if (!$legacySource) { $legacySource = Join-Path $project '..\app' }
-        if (!(Test-Path -LiteralPath $legacySource -PathType Container)) {
-            throw 'Set JOVIAN_LEGACY_SOURCE_ROOT to a checkout of the original Jovian source.'
-        }
-        $legacy = (Resolve-Path -LiteralPath $legacySource).Path
-        $nodeRuntime = Get-NodeRuntime
-        $node = $nodeRuntime.Path
-
-        $nodeRoot = $env:JOVIAN_LEGACY_NODE_ROOT
-        if (!$nodeRoot) {
-            $nodeRoot = @($legacy, 'E:\app') |
-                Where-Object { Test-Path -LiteralPath (Join-Path $_ 'node_modules') -PathType Container } |
-                Select-Object -First 1
-        }
-        if (!$nodeRoot -or !(Test-Path -LiteralPath (Join-Path $nodeRoot 'node_modules') -PathType Container)) {
-            throw 'Install the original Node dependencies or set JOVIAN_LEGACY_NODE_ROOT to their checkout.'
-        }
-        $nodeRoot = (Resolve-Path -LiteralPath $nodeRoot).Path
-        if ($nodeRoot -ne $legacy -and $nodeRuntime.Version -lt [version]'22.15.0') {
-            throw 'Node.js 22.15 or newer is required to use dependencies from another checkout.'
-        }
-
         $services = @(
             @{ Name='Account'; Key='ACCOUNT_API_URL'; Env='APP_ACCOUNT_PORT'; Ports=@(8787,8801,8803,8805)
                File='src/features/account/server/index.mjs'; Probe='/account/session' },
@@ -171,8 +162,8 @@ try {
         foreach ($service in $services) {
             $service.Port = Find-FreePort $service.Ports $service.Name -Reserved $reserved -AllowEphemeral
             $reserved += $service.Port
-            if (!(Test-Path -LiteralPath (Join-Path $legacy $service.File) -PathType Leaf)) {
-                throw "The original $($service.Name) entry is missing in $legacy."
+            if (!(Test-Path -LiteralPath (Join-Path $backend $service.File) -PathType Leaf)) {
+                throw "The $($service.Name) entry is missing in $backend."
             }
             $service.ErrorLog = Join-Path $runDirectory "$($service.Name).stderr.log"
             [Environment]::SetEnvironmentVariable($service.Env, [string]$service.Port, 'Process')
@@ -189,52 +180,10 @@ try {
         $env:DESTINY_ALLOWED_ORIGINS = $webOrigin
         $env:FORTUNE_ACCOUNT_BASE_URL = "http://127.0.0.1:$env:APP_ACCOUNT_PORT"
         if (!$env:FORTUNE_FACT_DIRECTORY) {
-            $env:FORTUNE_FACT_DIRECTORY = Join-Path $legacy '.local\fortune'
+            $env:FORTUNE_FACT_DIRECTORY = Join-Path $backend '.local\fortune'
         }
 
-        $provider = ([string]$env:APP_LOCAL_AUTH_PROVIDER_PATH).Trim()
-        if (!$provider) {
-            $provider = @((Join-Path $legacy '..\virtual-auth-provider\provider.mjs'), 'E:\virtual-auth-provider\provider.mjs') |
-                Where-Object { Test-Path -LiteralPath $_ -PathType Leaf } | Select-Object -First 1
-        }
-        if ($provider) {
-            $env:APP_LOCAL_AUTH_PROVIDER_PATH = (Resolve-Path -LiteralPath $provider).Path
-            $env:NODE_ENV = 'development'
-            $env:APP_PHONE_CODES = 'local'
-        } else {
-            $env:NODE_ENV = 'production'
-            $env:APP_PHONE_CODES = 'off'
-        }
-        if (!$env:DEEPSEEK_API_KEY -and !$env:DEEPSEEK_API_KEY_FILE -and
-            (Test-Path -LiteralPath 'E:\deepseek\deepseek api.txt' -PathType Leaf)) {
-            $env:DEEPSEEK_API_KEY_FILE = 'E:\deepseek\deepseek api.txt'
-        }
-        if (!$env:DEEPSEEK_API_KEY -and !$env:DEEPSEEK_API_KEY_FILE) {
-            Write-Warning 'DeepSeek is unconfigured. Online reports need an existing key or key file.'
-        }
-
-        $env:JOVIAN_LEGACY_SOURCE_ROOT = $legacy
-        $env:JOVIAN_LEGACY_NODE_ROOT = $nodeRoot
-        if (!$CheckServices) { Initialize-LocalCompute $node }
-        $env:JOVIAN_WEB_NODE_FALLBACK = if ($nodeRoot -ne $legacy) { $nodeRoot } else { $null }
         $watchdog = @'
-import * as nodeModule from 'node:module';
-import { join } from 'node:path';
-import { pathToFileURL } from 'node:url';
-
-const fallback = process.env.JOVIAN_WEB_NODE_FALLBACK;
-if (fallback) {
-    const owner = pathToFileURL(join(fallback, 'package.json')).href;
-    nodeModule.registerHooks({ resolve(specifier, context, next) {
-        try {
-            return next(specifier, context);
-        } catch (error) {
-            if (error.code !== 'ERR_MODULE_NOT_FOUND' || !/^(?:@[^/]+\/)?[a-zA-Z0-9][^:\\]*$/.test(specifier)) throw error;
-            return next(specifier, { ...context, parentURL: owner });
-        }
-    } });
-}
-
 const parent = process.ppid;
 setInterval(() => {
     try {
@@ -248,8 +197,8 @@ setInterval(() => {
         foreach ($service in $services) {
             $processOptions = @{
                 FilePath = $node
-                ArgumentList = @("--import=data:text/javascript;base64,$preload", '--experimental-strip-types', $service.File)
-                WorkingDirectory = $legacy
+                ArgumentList = @("--import=data:text/javascript;base64,$preload", '--env-file-if-exists=.env', '--experimental-strip-types', $service.File)
+                WorkingDirectory = $backend
                 WindowStyle = 'Hidden'
                 RedirectStandardOutput = Join-Path $runDirectory "$($service.Name).stdout.log"
                 RedirectStandardError = $service.ErrorLog
@@ -260,15 +209,6 @@ setInterval(() => {
         for ($index = 0; $index -lt $services.Count; $index++) {
             Wait-JovianService $services[$index] $started[$index]
         }
-        if ($provider) {
-            $capabilities = Invoke-RestMethod -Uri "http://127.0.0.1:$env:APP_ACCOUNT_PORT/account/auth/capabilities" -TimeoutSec 3
-            if ($capabilities.localSocialProviders) {
-                Write-Host 'Virtual authentication provider ready.'
-            } else {
-                Write-Warning 'The account service did not load the virtual authentication provider.'
-            }
-        }
-
         $config = Join-Path $runDirectory 'services.json'
         [IO.File]::WriteAllText($config, ($defines | ConvertTo-Json))
     }

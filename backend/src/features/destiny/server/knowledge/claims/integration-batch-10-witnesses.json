@@ -1,0 +1,552 @@
+{
+  "profile": "ziwei-explicit-branch-alternatives-v1",
+  "scanned": 2602,
+  "witnesses": [
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 2,
+      "ids": [
+        "ziwei-v2-minggong-p166000-006"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 10,
+      "ids": [
+        "ziwei-v2-minggong-p199000-005"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 2,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 5,
+      "ids": [
+        "ziwei-v2-minggong-p207000-008"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 2,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 7,
+      "ids": [
+        "ziwei-v2-minggong-p102000-003"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 3,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 11,
+      "ids": [
+        "ziwei-v2-minggong-p118000-004"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 6,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 4,
+      "ids": [
+        "ziwei-v2-minggong-p166000-004"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 8,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 8,
+      "ids": [
+        "ziwei-v2-minggong-p110000-001"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 10,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 2,
+      "ids": [
+        "ziwei-v2-minggong-p215000-002"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 11,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 7,
+      "ids": [
+        "ziwei-v2-minggong-p179000-002"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 11,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 8,
+      "ids": [
+        "ziwei-v2-minggong-p184000-003"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1981,
+          "month": 4,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 0,
+      "ids": [
+        "ziwei-v2-minggong-p223000-002"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1981,
+          "month": 5,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 2,
+      "ids": [
+        "ziwei-v2-minggong-p184000-002"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1981,
+          "month": 8,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 10,
+      "ids": [
+        "ziwei-v2-minggong-p175000-007"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1981,
+          "month": 9,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 9,
+      "ids": [
+        "ziwei-v2-minggong-p175000-001"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1981,
+          "month": 10,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 1,
+      "ids": [
+        "ziwei-v2-minggong-p215000-003"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1981,
+          "month": 11,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 2,
+      "ids": [
+        "ziwei-v2-minggong-p118000-003"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1982,
+          "month": 7,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 2,
+      "ids": [
+        "ziwei-v2-minggong-p158000-002"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1983,
+          "month": 1,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 8,
+      "ids": [
+        "ziwei-v2-minggong-p110000-004"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1983,
+          "month": 8,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 8,
+      "ids": [
+        "ziwei-v2-minggong-p207000-002",
+        "ziwei-v2-minggong-p206002-003"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1983,
+          "month": 12,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 6,
+      "ids": [
+        "ziwei-v2-minggong-p193000-001"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1984,
+          "month": 3,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 11,
+      "ids": [
+        "ziwei-v2-minggong-p126000-005"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1984,
+          "month": 4,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 10,
+      "ids": [
+        "ziwei-v2-minggong-p199000-001"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1985,
+          "month": 10,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 3,
+      "ids": [
+        "ziwei-v2-minggong-p215000-004"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1985,
+          "month": 11,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 8,
+      "ids": [
+        "ziwei-v2-minggong-p150000-002"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1986,
+          "month": 3,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 3,
+      "ids": [
+        "ziwei-v2-minggong-p175000-002"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1986,
+          "month": 6,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 6,
+      "ids": [
+        "ziwei-v2-minggong-p207000-003"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1986,
+          "month": 8,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 2,
+      "ids": [
+        "ziwei-v2-minggong-p102000-004"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1987,
+          "month": 9,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 2,
+      "ids": [
+        "ziwei-v2-minggong-p166000-001"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1991,
+          "month": 2,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 5,
+      "ids": [
+        "ziwei-v2-minggong-p223000-003"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1998,
+          "month": 1,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 9,
+      "ids": [
+        "ziwei-v2-minggong-p175000-008"
+      ]
+    }
+  ],
+  "missing": [],
+  "deferred": [
+    "ziwei-v2-minggong-p193000-004",
+    "ziwei-v1-guancelu-001-p066-001"
+  ]
+}

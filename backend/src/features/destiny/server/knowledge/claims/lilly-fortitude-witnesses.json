@@ -1,0 +1,42 @@
+{
+  "scanned": 8614,
+  "witnesses": [
+    {"birthTime":"2000-01-01T00:00:00.000Z","place":{"latitude":22.54,"longitude":114.06},"proofs":[{"planet":"Sun","sourceId":"astro-lilly-v1-strength-table-p008-001","points":-5},{"planet":"Sun","sourceId":"astro-lilly-v1-strength-table-p014-001","points":-5},{"planet":"Sun","sourceId":"astro-lilly-v1-strength-table-p018-001","points":2},{"planet":"Moon","sourceId":"astro-lilly-v1-strength-table-p007-001","points":-4},{"planet":"Moon","sourceId":"astro-lilly-v1-strength-table-p009-001","points":5},{"planet":"Moon","sourceId":"astro-lilly-v1-strength-table-p019-001","points":-2},{"planet":"Moon","sourceId":"astro-lilly-v1-strength-table-p025-001","points":-2},{"planet":"Moon","sourceId":"astro-lilly-v1-strength-table-p026-001","points":5},{"planet":"Mercury","sourceId":"astro-lilly-v1-strength-table-p016-001","points":4},{"planet":"Mercury","sourceId":"astro-lilly-v1-strength-table-p023-001","points":-2},{"planet":"Mercury","sourceId":"astro-lilly-v1-strength-table-p029-001","points":-4},{"planet":"Venus","sourceId":"astro-lilly-v1-strength-table-p010-001","points":4},{"planet":"Mars","sourceId":"astro-lilly-v1-strength-table-p004-001","points":2},{"planet":"Mars","sourceId":"astro-lilly-v1-strength-table-p011-001","points":3},{"planet":"Mars","sourceId":"astro-lilly-v1-strength-table-p021-001","points":-2},{"planet":"Jupiter","sourceId":"astro-lilly-v1-strength-table-p013-001","points":1},{"planet":"Saturn","sourceId":"astro-lilly-v1-strength-table-p017-001","points":-5}]},
+    {"birthTime":"2000-01-02T01:00:00.000Z","place":{"latitude":22.54,"longitude":114.06},"proofs":[{"planet":"Mercury","sourceId":"astro-lilly-v1-strength-table-p028-001","points":-5}]},
+    {"birthTime":"2000-01-03T02:00:00.000Z","place":{"latitude":22.54,"longitude":114.06},"proofs":[{"planet":"Moon","sourceId":"astro-lilly-v1-strength-table-p012-001","points":2}]},
+    {"birthTime":"2000-01-04T03:00:00.000Z","place":{"latitude":22.54,"longitude":114.06},"proofs":[{"planet":"Moon","sourceId":"astro-lilly-v1-strength-table-p005-001","points":1},{"planet":"Mars","sourceId":"astro-lilly-v1-strength-table-p001-001","points":5},{"planet":"Mars","sourceId":"astro-lilly-v1-strength-table-p003-001","points":3}]},
+    {"birthTime":"2000-01-05T04:00:00.000Z","place":{"latitude":22.54,"longitude":114.06},"proofs":[{"planet":"Venus","sourceId":"astro-lilly-v1-strength-table-p015-001","points":-2}]},
+    {"birthTime":"2000-01-06T05:00:00.000Z","place":{"latitude":22.54,"longitude":114.06},"proofs":[{"planet":"Moon","sourceId":"astro-lilly-v1-strength-table-p006-001","points":-5}]},
+    {"birthTime":"2000-01-07T06:00:00.000Z","place":{"latitude":22.54,"longitude":114.06},"proofs":[{"planet":"Moon","sourceId":"astro-lilly-v1-strength-table-p024-001","points":2}]},
+    {"birthTime":"2000-01-15T14:00:00.000Z","place":{"latitude":22.54,"longitude":114.06},"proofs":[{"planet":"Moon","sourceId":"astro-lilly-v1-strength-table-p002-001","points":4}]},
+    {"birthTime":"2000-01-16T15:00:00.000Z","place":{"latitude":22.54,"longitude":114.06},"proofs":[{"planet":"Mercury","sourceId":"astro-lilly-v1-strength-table-p022-001","points":2}]},
+    {"birthTime":"2000-03-01T12:00:00.000Z","place":{"latitude":22.54,"longitude":114.06},"proofs":[{"planet":"Mercury","sourceId":"astro-lilly-v1-strength-table-p027-001","points":5}]},
+    {"birthTime":"2000-03-23T10:00:00.000Z","place":{"latitude":22.54,"longitude":114.06},"proofs":[{"planet":"Jupiter","sourceId":"astro-lilly-v1-strength-table-p038-001","points":-5}]},
+    {"birthTime":"2000-05-08T08:00:00.000Z","place":{"latitude":22.54,"longitude":114.06},"proofs":[{"planet":"Jupiter","sourceId":"astro-lilly-v1-strength-table-p020-001","points":2}]},
+    {"birthTime":"2000-11-22T14:00:00.000Z","place":{"latitude":22.54,"longitude":114.06},"proofs":[{"planet":"Venus","sourceId":"astro-lilly-v1-strength-table-p035-001","points":-3}]},
+    {"birthTime":"2001-10-03T17:00:00.000Z","place":{"latitude":22.54,"longitude":114.06},"proofs":[{"planet":"Jupiter","sourceId":"astro-lilly-v1-strength-table-p034-001","points":-4}]},
+    {"birthTime":"2001-10-30T20:00:00.000Z","place":{"latitude":22.54,"longitude":114.06},"proofs":[{"planet":"Mercury","sourceId":"astro-lilly-v1-strength-table-p030-001","points":5}]},
+    {"birthTime":"2002-05-10T20:00:00.000Z","place":{"latitude":22.54,"longitude":114.06},"proofs":[{"planet":"Venus","sourceId":"astro-lilly-v1-strength-table-p033-001","points":-5}]},
+    {"birthTime":"2002-06-29T22:00:00.000Z","place":{"latitude":22.54,"longitude":114.06},"proofs":[{"planet":"Mercury","sourceId":"astro-lilly-v1-strength-table-p032-001","points":3}]},
+    {"birthTime":"2005-07-08T23:00:00.000Z","place":{"latitude":22.54,"longitude":114.06},"proofs":[{"planet":"Mars","sourceId":"astro-lilly-v1-strength-table-p036-001","points":4}]},
+    {"birthTime":"2011-06-28T20:00:00.000Z","place":{"latitude":22.54,"longitude":114.06},"proofs":[{"planet":"Venus","sourceId":"astro-lilly-v1-strength-table-p037-001","points":-4}]},
+    {"birthTime":"2023-08-01T21:00:00.000Z","place":{"latitude":22.54,"longitude":114.06},"proofs":[{"planet":"Mars","sourceId":"astro-lilly-v1-strength-table-p031-001","points":4}]}
+  ],
+  "fixedStarWitnesses": [
+    {"birthTime":"2000-01-23T04:49:00.000Z","place":{"latitude":31.23,"longitude":121.47},"proofs":[{"planet":"Moon","sourceId":"astro-lilly-v1-strength-table-p039-001","points":6}]},
+    {"birthTime":"2025-01-21T04:31:00.000Z","place":{"latitude":31.23,"longitude":121.47},"proofs":[{"planet":"Moon","sourceId":"astro-lilly-v1-strength-table-p040-001","points":5}]},
+    {"birthTime":"1990-01-07T08:00:00.000Z","place":{"latitude":31.23,"longitude":121.47},"proofs":[{"planet":"Moon","sourceId":"astro-lilly-v1-strength-table-p041-001","points":-5}]}
+  ],
+  "fixedStarReference": {
+    "source": "Swiss Ephemeris 2.10.03, swe_fixstar2_ut, SEFLG_SWIEPH",
+    "stars": ["cor_leonis", "spica_virgo", "caput_algol"],
+    "samples": [
+      ["1900-01-01T12:00:00Z", [148.44778745757577,202.44968773580123,54.7827993875896]],
+      ["1990-01-07T08:00:00Z", [149.69784846445785,203.70460733625788,56.03562189930132]],
+      ["2000-01-01T12:00:00Z", [149.82904083405435,203.83614814724376,56.168190128962536]],
+      ["2000-01-23T04:49:00Z", [149.83149938139678,203.83944252576146,56.16735484643925]],
+      ["2025-01-01T12:00:00Z", [150.1806944664938,204.18912506618423,56.52072980369464]],
+      ["2025-01-21T04:31:00Z", [150.18286252057234,204.19203865744586,56.519908708173325]]
+    ]
+  }
+}

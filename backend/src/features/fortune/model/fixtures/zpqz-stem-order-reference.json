@@ -1,0 +1,41 @@
+{
+  "sources": ["https://www.ncc.com.tw/fate/paleo/bg/bg_032.htm", "https://www.ncc.com.tw/fate/paleo/bg/bg_034.htm"],
+  "printedCases": [
+    {"id": "zeng-wealth-seal", "pillars": ["乙未", "甲申", "丙申", "庚寅"]},
+    {"id": "yi-ji-adjacent", "pillars": ["乙未", "己卯", "庚寅", "辛巳"]},
+    {"id": "li-robbery-kill", "pillars": ["庚寅", "乙酉", "甲子", "戊辰"]},
+    {"id": "jia-ji-ding-between", "pillars": ["甲子", "丁卯", "己亥", "戊辰"]},
+    {"id": "wu-gui-yi-between", "pillars": ["癸巳", "壬戌", "乙巳", "戊寅"]}
+  ],
+  "killCombiners": [
+    ["甲", "庚", "乙", "劫财"], ["丙", "壬", "丁", "劫财"], ["戊", "甲", "己", "劫财"], ["庚", "丙", "辛", "劫财"], ["壬", "戊", "癸", "劫财"],
+    ["乙", "辛", "丙", "伤官"], ["丁", "癸", "戊", "伤官"], ["己", "乙", "庚", "伤官"], ["辛", "丁", "壬", "伤官"], ["癸", "己", "甲", "伤官"]
+  ],
+  "wuOfficerExamples": [
+    {"date": [1971, 6, 16], "hour": 14, "gender": 0, "year": 2018, "luck": "己亥", "natal": ["辛亥", "甲午", "壬申", "丁未"], "foodAndWealth": ["month", "hour"]},
+    {"date": [1977, 6, 14], "hour": 8, "gender": 0, "year": 2007, "luck": "己酉", "natal": ["丁巳", "丙午", "壬寅", "甲辰"], "foodAndWealth": ["hour", "year"]},
+    {"date": [1970, 6, 11], "hour": 8, "gender": 0, "year": 1994, "luck": "己卯", "natal": ["庚戌", "壬午", "壬戌", "甲辰"]},
+    {"date": [1970, 6, 11], "hour": 14, "gender": 0, "year": 1994, "luck": "己卯", "natal": ["庚戌", "壬午", "壬戌", "丁未"]},
+    {"date": [1971, 6, 16], "hour": 18, "gender": 0, "year": 2020, "luck": "己亥", "natal": ["辛亥", "甲午", "壬申", "己酉"], "priorJi": "hour"},
+    {"date": [1971, 6, 16], "hour": 14, "gender": 1, "year": 1979, "luck": "癸巳", "natal": ["辛亥", "甲午", "壬申", "丁未"], "annualJiOnly": true}
+  ],
+  "officerKillExamples": {
+    "robberyWithoutMonthOfficer": {"date": [1979, 1, 5], "hour": 6, "gender": 0, "year": 2040, "natal": ["戊午", "甲子", "壬申", "癸卯"], "luck": "戊午"},
+    "hurtingWithoutMonthOfficer": {"date": [1979, 1, 20], "hour": 6, "gender": 0, "year": 1985, "natal": ["戊午", "乙丑", "丁亥", "癸卯"], "luck": "甲子"},
+    "twoRobberyStems": {"date": [1950, 9, 26], "hour": 22, "gender": 0, "year": 1998, "natal": ["庚寅", "乙酉", "甲子", "乙亥"], "luck": "庚辰"},
+    "wealthAgainstSeal": {"date": [1981, 8, 15], "hour": 4, "gender": 0, "year": 2041, "natal": ["辛酉", "丙申", "乙丑", "戊寅"], "luck": "壬寅"}
+  },
+  "calendarExamples": {
+    "56": {"date": [1994, 12, 14], "hour": 14, "gender": 0, "year": 2089, "natal": ["甲戌", "丙子", "甲戌", "辛未"], "luck": "丙寅"},
+    "63": {"date": [1988, 9, 16], "hour": 18, "gender": 0, "year": 2063, "natal": ["戊辰", "辛酉", "甲戌", "癸酉"], "luck": "癸丑"},
+    "71": {"date": [1992, 11, 16], "hour": 18, "gender": 0, "year": 2027, "natal": ["壬申", "辛亥", "丙申", "丁酉"], "luck": "丁未"},
+    "72": {"date": [1992, 11, 7], "hour": 18, "gender": 0, "year": 2024, "natal": ["壬申", "辛亥", "丁亥", "己酉"], "luck": "丁未"},
+    "73": {"date": [1992, 11, 7], "hour": 16, "gender": 0, "year": 2064, "natal": ["壬申", "辛亥", "丁亥", "戊申"], "luck": "癸卯"},
+    "87": {"date": [1984, 6, 7], "hour": 14, "gender": 0, "year": 1987, "natal": ["甲子", "庚午", "壬申", "丁未"], "luck": "己巳"},
+    "105": {"date": [1950, 9, 26], "hour": 8, "gender": 0, "year": 1998, "natal": ["庚寅", "乙酉", "甲子", "戊辰"], "luck": "庚辰"},
+    "106": {"date": [1981, 8, 15], "hour": 18, "gender": 0, "year": 2041, "natal": ["辛酉", "丙申", "乙丑", "乙酉"], "luck": "壬寅"},
+    "112": {"date": [1895, 8, 17], "hour": 4, "gender": 0, "year": 1974, "natal": ["乙未", "甲申", "丙申", "庚寅"], "luck": "壬辰"},
+    "113": {"date": [2015, 3, 15], "hour": 10, "gender": 0, "year": 2034, "natal": ["乙未", "己卯", "庚寅", "辛巳"], "luck": "辛巳"}
+  },
+  "note": "Printed columns were independently transcribed from the source. Calendar cases are computed witnesses of the predicates, not claims about the historical identities or outcomes."
+}

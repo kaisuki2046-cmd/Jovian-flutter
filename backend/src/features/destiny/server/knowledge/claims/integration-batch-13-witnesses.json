@@ -1,0 +1,22 @@
+{
+  "scanned": 823,
+  "witnesses": [
+    {
+      "date": "2026-02-14T14:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "ids": [
+        "astro-lilly-v3-health-servants-p011-001"
+      ]
+    },
+    {
+      "date": "2026-05-17T12:00:00.000Z",
+      "latitude": 39.907,
+      "longitude": 116.397,
+      "ids": [
+        "astro-lilly-v3-wit-p005-001"
+      ]
+    }
+  ],
+  "missing": []
+}

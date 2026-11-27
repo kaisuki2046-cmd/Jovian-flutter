@@ -1,0 +1,102 @@
+[
+  {
+    "date": "1938-11-17T07:58:00.000Z",
+    "latitude": -28.581,
+    "longitude": 129.593,
+    "witnesses": [
+      "luminary_quality",
+      "quality_sun",
+      "quality_moon",
+      "quality_mercury",
+      "quality_venus",
+      "quality_mars",
+      "quality_jupiter",
+      "quality_saturn",
+      "autumn",
+      "solar_half",
+      "winds_west",
+      "rising_even",
+      "winds_south",
+      "opposed_quality",
+      "sign_west_ic",
+      "winds_north",
+      "rising_odd",
+      "sign_mc_west",
+      "winds_east",
+      "akin_quality",
+      "lunar_half",
+      "sign_asc_mc"
+    ],
+    "qualityBranches": [
+      "akin_quality:season",
+      "opposed_quality:season"
+    ]
+  },
+  {
+    "date": "1974-05-02T01:05:00.000Z",
+    "latitude": -53.541,
+    "longitude": -20.254,
+    "witnesses": [
+      "spring",
+      "north",
+      "sign_ic_asc"
+    ],
+    "qualityBranches": []
+  },
+  {
+    "date": "1936-02-24T12:34:00.000Z",
+    "latitude": 41.251,
+    "longitude": 73.382,
+    "witnesses": [
+      "winter"
+    ],
+    "qualityBranches": []
+  },
+  {
+    "date": "1927-08-18T20:30:00.000Z",
+    "latitude": -3.006,
+    "longitude": 92.924,
+    "witnesses": [
+      "summer"
+    ],
+    "qualityBranches": []
+  },
+  {
+    "date": "2021-09-09T16:16:00.000Z",
+    "latitude": 42.252,
+    "longitude": -159.225,
+    "witnesses": [
+      "east"
+    ],
+    "qualityBranches": []
+  },
+  {
+    "date": "1928-05-08T18:30:00.000Z",
+    "latitude": -51.697,
+    "longitude": 3.694,
+    "witnesses": [],
+    "qualityBranches": [
+      "opposed_quality:angle"
+    ]
+  },
+  {
+    "date": "1922-04-12T03:18:00.000Z",
+    "latitude": 20.326,
+    "longitude": 131.117,
+    "witnesses": [
+      "south"
+    ],
+    "qualityBranches": [
+      "akin_quality:angle"
+    ]
+  },
+  {
+    "date": "1929-05-01T07:37:00.000Z",
+    "latitude": -47.12,
+    "longitude": 84.706,
+    "witnesses": [
+      "west"
+    ],
+    "qualityBranches": []
+  }
+]

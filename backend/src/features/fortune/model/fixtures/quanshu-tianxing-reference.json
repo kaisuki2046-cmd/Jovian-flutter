@@ -1,0 +1,25 @@
+{
+  "profile": "quanshu-tianxing-month-four-seats-v1",
+  "reviewedOn": "2026-11-19",
+  "sources": [
+    {
+      "url": "https://zh.wikisource.org/w/index.php?oldid=7913704&title=紫微斗數全書/卷一",
+      "section": "問天刑星所主若何？",
+      "text": "二限逢之主出家，官事牢獄失財，入廟則吉。",
+      "verse": "天刑未必是凶星，入廟名為天喜神，昌曲吉星來湊合，定然獻策到王庭，刑居寅上並酉戌，更臨卯位自光明，必遇文星成大業，掌握邊疆百萬兵。"
+    },
+    {
+      "url": "https://zh.wikisource.org/w/index.php?oldid=1963110&title=紫微斗數全書/卷二",
+      "section": "安天刑天姚星诀",
+      "text": "天刑星从酉上起正月顺至本生月便安之。"
+    }
+  ],
+  "reading": "将同篇歌诀所列寅卯酉戌解释为本条入庙例外的定位；不将未列支位称为落陷，不由此认定昌曲吉曜或文星成就分支。",
+  "birthMonthBranches": ["酉", "戌", "亥", "子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申"],
+  "templeListedBranches": ["寅", "卯", "酉", "戌"],
+  "realExamples": [
+    { "dateStr": "1990-02-01", "timeIndex": 2, "gender": "女", "birthMonth": 1, "tianxingBranch": "酉", "year": 2025, "scope": "decadal", "templeListed": true },
+    { "dateStr": "1990-04-01", "timeIndex": 2, "gender": "女", "birthMonth": 3, "tianxingBranch": "亥", "year": 2024, "scope": "decadal", "templeListed": false },
+    { "dateStr": "1990-02-01", "timeIndex": 2, "gender": "女", "birthMonth": 1, "tianxingBranch": "酉", "year": 2021, "scope": "minor", "templeListed": true }
+  ]
+}

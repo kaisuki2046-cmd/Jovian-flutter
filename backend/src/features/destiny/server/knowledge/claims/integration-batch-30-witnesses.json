@@ -1,0 +1,444 @@
+{
+  "profile": "lilly-source-composites-and-selected-member-sign-v1",
+  "scanned": 8963,
+  "targetAlternatives": 41,
+  "witnesses": [
+    {
+      "date": "1990-01-01T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-friends-p018-001",
+          "inputDigest": "2b695f02ca9ca535f1b594c0b2b7a90ea9aa9860088211554410fa1301dfc1ea"
+        }
+      ]
+    },
+    {
+      "date": "1990-01-01T06:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-spouse-description-p004-001",
+          "inputDigest": "965a767afeac18feabbe38894f1f591888bb71f24e570264272c420b364fd6fd"
+        },
+        {
+          "id": "astro-lilly-v3-friends-p018-001",
+          "inputDigest": "1f28506717aa2e88de4d4f8a708fba47c252b5c2d0852904225fd90bde7de751"
+        },
+        {
+          "id": "astro-lilly-v3-profession-p031-001",
+          "inputDigest": "cea5e37327197d0642211956f6d29904620e644ba0a0b1239444e0e8e793fa4e"
+        }
+      ]
+    },
+    {
+      "date": "1990-01-01T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-friends-p018-001",
+          "inputDigest": "4308adc7ea2d00cd5db989ed3f464f7bfa042c2491f4491887ccf697ce5eeb1f"
+        },
+        {
+          "id": "astro-lilly-v3-religion-dreams-p011-001",
+          "inputDigest": "2079bf21afdabe389eb55710fecec2a5f2e99b87e98bc3124dd4b2719ba4ac8b"
+        }
+      ]
+    },
+    {
+      "date": "1990-01-02T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-friends-p018-001",
+          "inputDigest": "1684ca91ca577393f26c739bff29caa95b40946b9f7db207db3681373685eff0"
+        }
+      ]
+    },
+    {
+      "date": "1990-01-04T06:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-friends-p018-001",
+          "inputDigest": "0c2d1c5edcd8f47d01a6ab6a9822ccbd574001317168a832cd168320211a6318"
+        }
+      ]
+    },
+    {
+      "date": "1990-01-04T18:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-spouse-description-p004-001",
+          "inputDigest": "a162bedfbfbc076d914aebe59d650b42f1dbc08b9f59bd5a072b27a3691291fd"
+        },
+        {
+          "id": "astro-lilly-v3-friends-p018-001",
+          "inputDigest": "bcc4c3083d038c265af2ed2fcb75b9757673228ad65d5dbcab06f35aed5d6449"
+        }
+      ]
+    },
+    {
+      "date": "1990-01-15T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-religion-dreams-p011-001",
+          "inputDigest": "b031ea9e5e788e1e4cb72e51b4509fbef4d1ec0f599c45e49cd7f0ccc67e0d91"
+        }
+      ]
+    },
+    {
+      "date": "1990-01-19T18:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-profession-p032-001",
+          "inputDigest": "b179444b49398c9bbc6e42a68f1fe1c877dd87a59496456d62cecd007ea4ce2d"
+        }
+      ]
+    },
+    {
+      "date": "1990-01-24T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-friends-p018-001",
+          "inputDigest": "9308e4bf626e028b0bfabe40758173a3622416a53761b07de27f5cb3bd44ba78"
+        }
+      ]
+    },
+    {
+      "date": "1990-01-28T18:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-friends-p018-001",
+          "inputDigest": "2a773938c480526f2e593c89dc6f229c4d49df6a1f13b3421fd64b60cf6563f8"
+        }
+      ]
+    },
+    {
+      "date": "1990-01-29T06:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-friends-p018-001",
+          "inputDigest": "798c970d8c04e163325319a8b2f3878a4aeafc0ece0253a057eb335049404086"
+        }
+      ]
+    },
+    {
+      "date": "1990-01-30T06:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-profession-p032-001",
+          "inputDigest": "edc5c0e37ada1a164d8859338d920cc1de4cc0850457775220543d8625da026b"
+        }
+      ]
+    },
+    {
+      "date": "1990-02-18T18:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-profession-p031-001",
+          "inputDigest": "36e9078a1f0451926b5dbd35892a23eb2bdaae3e5e77bcd617d40a4ad6f454fd"
+        }
+      ]
+    },
+    {
+      "date": "1990-02-27T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-friends-p018-001",
+          "inputDigest": "4abc24a7647f3f1da1ab288e7b500de5ddedbaa00c6ba90e897813cf8e9c9803"
+        }
+      ]
+    },
+    {
+      "date": "1990-04-06T06:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-profession-p031-001",
+          "inputDigest": "079a5c478c35d7c46dfdf94c8641c5ca9529273c61f09ea76f74cc8317337737"
+        },
+        {
+          "id": "astro-lilly-v3-profession-p032-001",
+          "inputDigest": "079a5c478c35d7c46dfdf94c8641c5ca9529273c61f09ea76f74cc8317337737"
+        }
+      ]
+    },
+    {
+      "date": "1990-04-07T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-profession-p032-001",
+          "inputDigest": "0a04c55c7056656051bf9f3960a545495f7d79a8f843b560cc45159b31723004"
+        }
+      ]
+    },
+    {
+      "date": "1990-04-16T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-profession-p031-001",
+          "inputDigest": "99b8382d94f8673fa8cbb46013d431ecf4df4f93d681ee8b5ce2cbb4355b5de1"
+        }
+      ]
+    },
+    {
+      "date": "1990-04-21T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-profession-p032-001",
+          "inputDigest": "db9368c9cf3c62a90880607ccb24833115fb148ee453f0f6a72d0d1a9a11c3c3"
+        }
+      ]
+    },
+    {
+      "date": "1990-06-22T18:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-profession-p031-001",
+          "inputDigest": "95cf515fd3a8a700105685cfb03724169c1d86f41ff19a8069bab10cda9c63ce"
+        },
+        {
+          "id": "astro-lilly-v3-profession-p032-001",
+          "inputDigest": "95cf515fd3a8a700105685cfb03724169c1d86f41ff19a8069bab10cda9c63ce"
+        }
+      ]
+    },
+    {
+      "date": "1990-07-21T06:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-profession-p032-001",
+          "inputDigest": "d7f3708462747fe0dccd2b8aee41fe5f0659164c8d0fd9ba36d4829dfad0969e"
+        }
+      ]
+    },
+    {
+      "date": "1990-11-06T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-profession-p032-001",
+          "inputDigest": "5c8cc12f601c69d29baa6b812f10669decd4452ae4358591cf1d08ca70f80e6a"
+        }
+      ]
+    },
+    {
+      "date": "1990-12-07T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-profession-p032-001",
+          "inputDigest": "e8dddb3a2a97b9d145f509d51b34663899b1f6db20d7c2597e0e4504c2a6dbce"
+        }
+      ]
+    },
+    {
+      "date": "1990-12-21T18:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-profession-p031-001",
+          "inputDigest": "6525313ea131536a0a5484ccf0057aa1dcc89fd13504e4ea49859eda0f36c6c2"
+        },
+        {
+          "id": "astro-lilly-v3-profession-p032-001",
+          "inputDigest": "6525313ea131536a0a5484ccf0057aa1dcc89fd13504e4ea49859eda0f36c6c2"
+        }
+      ]
+    },
+    {
+      "date": "1991-01-10T06:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-children-p009-001",
+          "inputDigest": "45ad815fc444de9523174a3a319864a03673aeb0c03f3b9c59344bdf62c62a19"
+        }
+      ]
+    },
+    {
+      "date": "1991-04-20T18:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-spouse-description-p006-001",
+          "inputDigest": "46da93a5f10e3684abe731c23e5080f14b1352ef56b4a4b250013e04aa80d34f"
+        }
+      ]
+    },
+    {
+      "date": "1991-06-22T18:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-profession-p031-001",
+          "inputDigest": "3bafe95b0679850c414a99cf0350afdf7a6660af0ad68e073400e59b1385f3ef"
+        }
+      ]
+    },
+    {
+      "date": "1991-06-29T06:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-profession-p031-001",
+          "inputDigest": "77bb8107df07bb95c0225267e64c994b0a9f63688a0b8ff1058cf273a112fd1d"
+        }
+      ]
+    },
+    {
+      "date": "1991-07-08T06:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-profession-p031-001",
+          "inputDigest": "de13561be6d7818349ce5801977d8734e36f99d076d8e476c59ed04e31851d44"
+        }
+      ]
+    },
+    {
+      "date": "1991-10-17T00:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-profession-p032-001",
+          "inputDigest": "11971e294046a57ab10ebd8912d5d3599bb8c7f4e101621eb9c46dd6d6b07808"
+        }
+      ]
+    },
+    {
+      "date": "1991-11-01T06:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-profession-p032-001",
+          "inputDigest": "084e30c48524e8b4208813cf9fb341b5ac01658cef06d7172a9ccf63c8900106"
+        }
+      ]
+    },
+    {
+      "date": "1992-06-15T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-profession-p032-001",
+          "inputDigest": "4a3d794c94cc938f54ed95b16eec41ec388f4aaf46c618e39440ebc0ad758442"
+        }
+      ]
+    },
+    {
+      "date": "1992-09-12T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-profession-p032-001",
+          "inputDigest": "8e7c05331d4690929fb6e20c0804e8e7001dcabaaa8841e54eaab97cc47b33da"
+        }
+      ]
+    },
+    {
+      "date": "1993-02-16T18:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-profession-p032-001",
+          "inputDigest": "627a284ca35317640b2e5cafd9b8a28b7eeabd543ad3b0540da50b46b56a7388"
+        }
+      ]
+    },
+    {
+      "date": "1996-02-19T12:00:00.000Z",
+      "latitude": 0,
+      "longitude": 0,
+      "gender": "男",
+      "proofs": [
+        {
+          "id": "astro-lilly-v3-spouse-description-p006-001",
+          "inputDigest": "4c694bb42f70cf042465ca3157c3701bc867f256defdbe5e195b84a01d060a6a"
+        }
+      ]
+    }
+  ],
+  "missing": []
+}

@@ -1,0 +1,31 @@
+{
+  "ids": ["010-027","010-028","010-038","010-042","011-001","011-006","011-013","011-016","011-032","012-012","012-014","012-018","012-030","012-031","012-033","013-006","013-014","013-015","014-007","014-020","014-022","019-005","019-024","021-027"],
+  "conditionGroups": 26,
+  "wholeRecords": 1,
+  "witnesses": [
+    {"profile":{"date":{"year":1924,"month":1,"day":1},"gender":"male"},"timeIndex":0,"proofs":[{"id":"ziwei-v2-jielan-101-p010-028","text":"主为人重厚","inputDigest":"f5f4bd716352cfe1a7dc0a0df5bde48050bc27b417b178cf3a79f431937f038e"}]},
+    {"profile":{"date":{"year":1924,"month":1,"day":27},"gender":"male"},"timeIndex":10,"proofs":[{"id":"ziwei-v2-jielan-101-p010-027","text":null,"inputDigest":"b2bb6475c87bcb8c2b4548591556adc35087e568fc17cdaf87ce88290603b881"}]},
+    {"profile":{"date":{"year":1924,"month":2,"day":9},"gender":"female"},"timeIndex":3,"proofs":[{"id":"ziwei-v2-jielan-101-p012-018","text":"欠和","inputDigest":"57a4522bce8557075f60eb189766da7919608d37dd8d7029907bd7fdb8bb0efb"}]},
+    {"profile":{"date":{"year":1924,"month":4,"day":14},"gender":"male"},"timeIndex":4,"proofs":[{"id":"ziwei-v2-jielan-101-p014-007","text":"如加吉，一发如雷","inputDigest":"7957f51465901737c46e83ccd9ffd5e8d6752f7a1243669b70a899308fe5c203"}]},
+    {"profile":{"date":{"year":1924,"month":4,"day":27},"gender":"female"},"timeIndex":9,"proofs":[{"id":"ziwei-v2-jielan-101-p010-027","text":null,"inputDigest":"4a31c5bada9992e8a5b5ec7448c95a22d0f6ea211adc83d89500d6548d5a4c45"}]},
+    {"profile":{"date":{"year":1924,"month":5,"day":23},"gender":"female"},"timeIndex":7,"proofs":[{"id":"ziwei-v2-jielan-101-p019-024","text":"逢凶，破耗","inputDigest":"28760fe666660fcd9c19447390fb9432f1f9e1c21fe1a4570edd276872bb677d"},{"id":"ziwei-v2-jielan-101-p019-005","text":"逢吉，大发","inputDigest":"dccf2ff139bcc9b5dc0afb0541a61dd3ac9658ea83bf43580dc072626ccf89e7"}]},
+    {"profile":{"date":{"year":1924,"month":7,"day":1},"gender":"male"},"timeIndex":10,"proofs":[{"id":"ziwei-v2-jielan-101-p012-033","text":"见昌曲，美貌","inputDigest":"b48dce2a5383a613e88d896bca3bac43c593b379a57ef5a117704a85685e8350"},{"id":"ziwei-v2-jielan-101-p010-042","text":"陷地，贫贱","inputDigest":"70b8668d8a46ffb6539a448dca21387d5f849d07cc070269965c98150eadddb8"}]},
+    {"profile":{"date":{"year":1925,"month":2,"day":7},"gender":"female"},"timeIndex":0,"proofs":[{"id":"ziwei-v2-jielan-101-p021-027","text":"加凶，生离克害","inputDigest":"dac5bdd00224769e9807deb85cc8f2316ebd23a753e494bc1444d1d2614abd33"}]},
+    {"profile":{"date":{"year":1925,"month":12,"day":3},"gender":"male"},"timeIndex":7,"proofs":[{"id":"ziwei-v2-jielan-101-p010-038","text":"加杀，僧道风流","inputDigest":"ea533c31d6c101846a9f6ad16d57989137d18c59af0d888f2a184ceaaed8f1ee"}]},
+    {"profile":{"date":{"year":1926,"month":5,"day":8},"gender":"male"},"timeIndex":8,"proofs":[{"id":"ziwei-v2-jielan-101-p014-020","text":"先难后易，加羊陀，亦然","inputDigest":"6c1edee65fab4a288c87889ea6a6873cd6265c607e77fe355ced2842ea2b52c2"}]},
+    {"profile":{"date":{"year":1926,"month":9,"day":2},"gender":"female"},"timeIndex":5,"proofs":[{"id":"ziwei-v2-jielan-101-p013-014","text":"加四杀，有亦不得力","inputDigest":"c00000c50eeb2218976af888f00efbd916a8fe906bbe87a921a1a749d1fef8ee"}]},
+    {"profile":{"date":{"year":1926,"month":11,"day":19},"gender":"female"},"timeIndex":11,"proofs":[{"id":"ziwei-v2-jielan-101-p010-042","text":"陷地，贫贱","inputDigest":"853b8f7aadcee57626433f19c3776f9b9b081fa3cd0b464ef62b8bcb3217f4e4"}]},
+    {"profile":{"date":{"year":1929,"month":7,"day":21},"gender":"male"},"timeIndex":5,"proofs":[{"id":"ziwei-v2-jielan-101-p011-006","text":"会昌曲，五七人","inputDigest":"601a92840e6583e3b14227841983b449e3895738f4ce2423a5481edc047730ce"}]},
+    {"profile":{"date":{"year":1930,"month":9,"day":10},"gender":"male"},"timeIndex":10,"proofs":[{"id":"ziwei-v2-jielan-101-p011-032","text":"旺加杀，亦克","inputDigest":"129d5c9052922d75e9740de3eddf8ede6c9b253aaf38c1fddf1f0e5decd483b1"}]},
+    {"profile":{"date":{"year":1931,"month":7,"day":6},"gender":"female"},"timeIndex":6,"proofs":[{"id":"ziwei-v2-jielan-101-p012-031","text":"加羊陀，克","inputDigest":"224dbed6f20f802547d0a72ae85f2db98bf25829c04315f2742ae03c5797364b"}]},
+    {"profile":{"date":{"year":1934,"month":8,"day":10},"gender":"male"},"timeIndex":0,"proofs":[{"id":"ziwei-v2-jielan-101-p011-001","text":"加四杀，克","inputDigest":"554eeca8f77d570149e4306e9dc1ccbe745076f7c5706cc4cd3180b5fadebd92"}]},
+    {"profile":{"date":{"year":1935,"month":1,"day":13},"gender":"male"},"timeIndex":0,"proofs":[{"id":"ziwei-v2-jielan-101-p014-022","text":"加四杀，辛苦得财，横成横破","inputDigest":"8e715ebffe1bf8b953feb8a2b52cce84604f2339ce3daf0b0dfa9bc3a4975c67"}]},
+    {"profile":{"date":{"year":1946,"month":6,"day":4},"gender":"male"},"timeIndex":3,"proofs":[{"id":"ziwei-v2-jielan-101-p013-015","text":"加四杀孤，有亦不得力","inputDigest":"a95855b5960ce2dc86d01adf67a2a1f5b6b221a96c46fdb1d2fae13bc57a5648"}]},
+    {"profile":{"date":{"year":1952,"month":3,"day":23},"gender":"female"},"timeIndex":8,"proofs":[{"id":"ziwei-v2-jielan-101-p011-013","text":"加羊陀火铃，主克","inputDigest":"d138c042dc44677e44a8ef4f21acfbe47832e3b01827298eaf68e4ada0f8aa20"}]},
+    {"profile":{"date":{"year":1952,"month":12,"day":21},"gender":"male"},"timeIndex":6,"proofs":[{"id":"ziwei-v2-jielan-101-p012-030","text":"加四杀遇昌，主离","inputDigest":"d67cfffb40d6282895d452937b7a5320b9256edbc3acd14cb71ee3a2537edab1"}]},
+    {"profile":{"date":{"year":1956,"month":5,"day":9},"gender":"female"},"timeIndex":4,"proofs":[{"id":"ziwei-v2-jielan-101-p012-014","text":"加四杀不一，生离","inputDigest":"ecdab7c6a67a0a1bf363e74586754e34f3a35505a6773cb30c2980179f5136fc"}]},
+    {"profile":{"date":{"year":1960,"month":11,"day":15},"gender":"male"},"timeIndex":7,"proofs":[{"id":"ziwei-v2-jielan-101-p012-012","text":"加四杀，男女皆克","inputDigest":"9ddd1d754030b2ca77f5492563e3f7542fd924ac82a091ab0b00b8db42f9d0f7"}]},
+    {"profile":{"date":{"year":1964,"month":5,"day":12},"gender":"male"},"timeIndex":9,"proofs":[{"id":"ziwei-v2-jielan-101-p011-016","text":"加四杀，二人","inputDigest":"4e8ea639a7508dcd36a403bbff7a65ddcdeba17d19ef2e940bc1d784569562c8"}]},
+    {"profile":{"date":{"year":1928,"month":10,"day":11},"gender":"male"},"timeIndex":6,"proofs":[{"id":"ziwei-v2-jielan-101-p013-006","text":"陷地加四杀，克","inputDigest":"bb78a920d3f38d4d2e2ec710bdf16be40eb7e183546ecf9acb953ddec85658c3"}]}
+  ]
+}

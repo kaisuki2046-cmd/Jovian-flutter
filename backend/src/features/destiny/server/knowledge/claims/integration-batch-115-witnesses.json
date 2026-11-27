@@ -1,0 +1,24 @@
+{
+  "sourceRecords": 16,
+  "alternatives": 22,
+  "wholeRecords": 6,
+  "witnesses": [
+    {"profile":{"date":{"year":1924,"month":2,"day":27},"gender":"female"},"timeIndex":0,"proofs":[{"id":"ziwei-v1-zhuxing-wenda-p122000-017","text":"遇耗因以虛花","inputDigest":"3ee78d17e215aab76004145b47b975e71213833ea4672d547746849379d850b9"},{"id":"ziwei-v1-zhuxing-wenda-p122000-017","text":"見七殺或配以遭刑。","inputDigest":"c1e89e2df16c1795cc2bfee87f6a94385e18c0c49d695ffe4dfed11d9d697642"},{"id":"ziwei-v1-zhuxing-wenda-p122000-019","text":"惟會火鈴能富貴","inputDigest":"8614421b10a05d647bab4f6798dabfd82982001f5357f28c681dfb1c84f7fe91"}]},
+    {"profile":{"date":{"year":1924,"month":8,"day":6},"gender":"female"},"timeIndex":2,"proofs":[{"id":"ziwei-v1-zhuxing-wenda-p182002-008","text":"會吉主享福","inputDigest":"e7e3f3e42c405c4312669a72c1d6cb2ec2b07e96c9bbf400adf179f82c558659"}]},
+    {"profile":{"date":{"year":1927,"month":4,"day":22},"gender":"female"},"timeIndex":1,"proofs":[{"id":"ziwei-v1-zhuxing-wenda-p123000-011","inputDigest":"206748bb2625c67b45f69873ae6db57636f3a1ce7f381ab6b6bf1bbafb68d816"},{"id":"ziwei-v1-zhuxing-wenda-p179000-006","text":"加刑刃","inputDigest":"a5c3d536f75aea218038f9d3dc82ee052ac6096c674c3e9fc7858ef423edb17f"}]},
+    {"profile":{"date":{"year":1927,"month":4,"day":22},"gender":"female"},"timeIndex":9,"proofs":[{"id":"ziwei-v1-zhuxing-wenda-p160000-004","text":"刑并桃花则风流惹祸","inputDigest":"6fe9df84e265a7ca4bb46f174c2ed63d7b7aa15e918411fc5c45924b215c4528"}]},
+    {"profile":{"date":{"year":1928,"month":7,"day":2},"gender":"female"},"timeIndex":8,"proofs":[{"id":"ziwei-v1-zhuxing-wenda-p122000-014","inputDigest":"5cbe85be35ebfd752e69b7d190128abfde9404177b15f5069767700e5643ca12"}]},
+    {"profile":{"date":{"year":1932,"month":7,"day":13},"gender":"female"},"timeIndex":7,"proofs":[{"id":"ziwei-v1-zhuxing-wenda-p160000-003","text":"刑与暗同行招暗疾而坏目","inputDigest":"9e30ee2e3af65ad8d222b053be0f547e0b7a0a59f122745abd90f073f6e018de"}]},
+    {"profile":{"date":{"year":1924,"month":3,"day":21},"gender":"female"},"timeIndex":2,"proofs":[{"id":"ziwei-v1-zhuxing-wenda-p121000-007","text":"遇火鈴為災","inputDigest":"bc00ab83706937c5212111ddcbd96825800a0528b1783f7d4133fc18a4f9c096"}]},
+    {"profile":{"date":{"year":1925,"month":10,"day":17},"gender":"male"},"timeIndex":10,"proofs":[{"id":"ziwei-v1-zhuxing-wenda-p122000-017","text":"遇廉貞也不潔","inputDigest":"69cb0a2ad3e6083a92f771b8fcd9bc352ed6d9b4cf66c68508b33c830f872d69"}]},
+    {"profile":{"date":{"year":1924,"month":8,"day":6},"gender":"female"},"timeIndex":7,"proofs":[{"id":"ziwei-v1-zhuxing-wenda-p160000-003","text":"忌同日月则伤亲损目","inputDigest":"dd9569d00874869962010dcc948a05670feb7a5ce0ad7d5d3f84772884481e7d"}]},
+    {"profile":{"date":{"year":1925,"month":7,"day":17},"gender":"male"},"timeIndex":4,"proofs":[{"id":"ziwei-v1-zhuxing-wenda-p160000-004","text":"忌贪狼合因花酒以忘身","inputDigest":"e7d8090b96c22440eead73fe9ccc53d03a32097401e3bd92236c06241c088e35"}]},
+    {"profile":{"date":{"year":1927,"month":6,"day":30},"gender":"female"},"timeIndex":2,"proofs":[{"id":"ziwei-v1-zhuxing-wenda-p159000-005","text":"若陷地加杀刑克招凶","inputDigest":"1aaad204644f0945551772007987043ae02be4ffaa3ec1d184a7d2377a88db6a"}]},
+    {"profile":{"date":{"year":1932,"month":8,"day":2},"gender":"female"},"timeIndex":2,"proofs":[{"id":"ziwei-v1-zhuxing-wenda-p037-007","text":"午戌之地，巨门羊陀冲破","inputDigest":"8ef71f09cf03f30a259d8843677b4690a05a7c639997f3bbdd4f645ea246b597"},{"id":"ziwei-v1-zhuxing-wenda-p037-009","text":"若陷地冲破淫而且贱。","inputDigest":"803f7982e8c95f34e1d48b1e17ba1b1928012b56783dae2fd0ee90afd470e4a6"}]},
+    {"profile":{"date":{"year":2020,"month":6,"day":26},"gender":"male"},"timeIndex":2,"proofs":[{"id":"ziwei-v1-zhuxing-wenda-p127000-013","inputDigest":"1b314e26e75436656751df6ab72e03bc73bde69e8f8794e33cf656a62577c9d2"}]},
+    {"profile":{"date":{"year":2020,"month":6,"day":21},"gender":"female"},"timeIndex":9,"proofs":[{"id":"ziwei-v1-zhuxing-wenda-p160000-007","inputDigest":"47cea98463216ffbdd4af3fcad4d707b01a79ba7b1495d6d4541e748a6354dc3"}]},
+    {"profile":{"date":{"year":1926,"month":3,"day":24},"gender":"male"},"timeIndex":3,"proofs":[{"id":"ziwei-v1-zhuxing-wenda-p024-004","inputDigest":"1d53aa66c1e17a973c448004f1e29ee4522500fef0969007d9728e72d5d53c20"}]},
+    {"profile":{"date":{"year":1924,"month":10,"day":22},"gender":"female"},"timeIndex":9,"proofs":[{"id":"ziwei-v1-zhuxing-wenda-p133000-009","inputDigest":"4a57c9926e12f38f5d646a4e3f044a4f344f7d9d05e9575d34f6a69cb0e389fb"}]},
+    {"profile":{"date":{"year":1925,"month":4,"day":8},"gender":"female"},"timeIndex":6,"proofs":[{"id":"ziwei-v1-zhuxing-wenda-p037-007","text":"午戌之地，巨门羊陀冲破","inputDigest":"b0a149d205cce510f78da2c6c591c9d9c22c49d8448046a3c1a25731fdf6d3a9"},{"id":"ziwei-v1-zhuxing-wenda-p037-009","text":"若陷地冲破淫而且贱。","inputDigest":"cea03ddf68a9226f659dce7bb675c70f94cb5222e63d26beec1733b009318646"}]}
+  ]
+}

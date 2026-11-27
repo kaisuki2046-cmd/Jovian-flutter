@@ -1,0 +1,448 @@
+{
+  "profile": "muxuan-decadal-base-v1",
+  "libraryEdition": "muxuan-json",
+  "chartCombinations": 172800,
+  "potentialNumbers": 432,
+  "reached": 176,
+  "priorReach": 143,
+  "additionalReach": 169,
+  "nativeRuns": 107,
+  "printed": {
+    "pillars": [
+      "庚寅",
+      "甲申",
+      "丙午",
+      "甲午"
+    ],
+    "results": [
+      {
+        "birthTime": "1950-09-08T04:00:00.000Z",
+        "gender": "男",
+        "clauseId": 8648,
+        "decadalPeriod": {
+          "ganZhi": "乙酉",
+          "startAge": 1,
+          "endAge": 10,
+          "ageBasis": "虚岁"
+        },
+        "claimId": "tbss-v8-clauses-p08648-001"
+      },
+      {
+        "birthTime": "1950-09-08T04:00:00.000Z",
+        "gender": "男",
+        "clauseId": 10649,
+        "decadalPeriod": {
+          "ganZhi": "丙戌",
+          "startAge": 11,
+          "endAge": 20,
+          "ageBasis": "虚岁"
+        },
+        "reason": "scope_mismatch"
+      },
+      {
+        "birthTime": "1950-09-08T04:00:00.000Z",
+        "gender": "男",
+        "clauseId": 7645,
+        "decadalPeriod": {
+          "ganZhi": "丁亥",
+          "startAge": 21,
+          "endAge": 30,
+          "ageBasis": "虚岁"
+        },
+        "reason": "not_in_catalog"
+      },
+      {
+        "birthTime": "1950-09-08T04:00:00.000Z",
+        "gender": "男",
+        "clauseId": 7645,
+        "decadalPeriod": {
+          "ganZhi": "戊子",
+          "startAge": 31,
+          "endAge": 40,
+          "ageBasis": "虚岁"
+        },
+        "reason": "not_in_catalog"
+      },
+      {
+        "birthTime": "1950-09-08T04:00:00.000Z",
+        "gender": "男",
+        "clauseId": 8649,
+        "decadalPeriod": {
+          "ganZhi": "己丑",
+          "startAge": 41,
+          "endAge": 50,
+          "ageBasis": "虚岁"
+        },
+        "reason": "not_in_catalog"
+      },
+      {
+        "birthTime": "1950-09-08T04:00:00.000Z",
+        "gender": "男",
+        "clauseId": 8647,
+        "decadalPeriod": {
+          "ganZhi": "庚寅",
+          "startAge": 51,
+          "endAge": 60,
+          "ageBasis": "虚岁"
+        },
+        "reason": "scope_mismatch"
+      },
+      {
+        "birthTime": "1950-09-08T04:00:00.000Z",
+        "gender": "男",
+        "clauseId": 10647,
+        "decadalPeriod": {
+          "ganZhi": "辛卯",
+          "startAge": 61,
+          "endAge": 70,
+          "ageBasis": "虚岁"
+        },
+        "claimId": "tbss-v10-clauses-p10647-001"
+      },
+      {
+        "birthTime": "1950-09-08T04:00:00.000Z",
+        "gender": "男",
+        "clauseId": 7649,
+        "decadalPeriod": {
+          "ganZhi": "壬辰",
+          "startAge": 71,
+          "endAge": 80,
+          "ageBasis": "虚岁"
+        },
+        "reason": "not_in_catalog"
+      },
+      {
+        "birthTime": "1950-09-08T04:00:00.000Z",
+        "gender": "男",
+        "clauseId": 7646,
+        "decadalPeriod": {
+          "ganZhi": "癸巳",
+          "startAge": 81,
+          "endAge": 90,
+          "ageBasis": "虚岁"
+        },
+        "reason": "not_in_catalog"
+      },
+      {
+        "birthTime": "1950-09-08T04:00:00.000Z",
+        "gender": "男",
+        "clauseId": 8646,
+        "decadalPeriod": {
+          "ganZhi": "甲午",
+          "startAge": 91,
+          "endAge": 100,
+          "ageBasis": "虚岁"
+        },
+        "reason": "not_in_catalog"
+      }
+    ]
+  },
+  "reverse": {
+    "pillars": [
+      "庚寅",
+      "甲申",
+      "丙午",
+      "甲午"
+    ],
+    "results": [
+      {
+        "birthTime": "1950-09-08T04:00:00.000Z",
+        "gender": "女",
+        "clauseId": 7649,
+        "decadalPeriod": {
+          "ganZhi": "癸未",
+          "startAge": 12,
+          "endAge": 21,
+          "ageBasis": "虚岁"
+        },
+        "reason": "not_in_catalog"
+      },
+      {
+        "birthTime": "1950-09-08T04:00:00.000Z",
+        "gender": "女",
+        "clauseId": 7646,
+        "decadalPeriod": {
+          "ganZhi": "壬午",
+          "startAge": 22,
+          "endAge": 31,
+          "ageBasis": "虚岁"
+        },
+        "reason": "not_in_catalog"
+      },
+      {
+        "birthTime": "1950-09-08T04:00:00.000Z",
+        "gender": "女",
+        "clauseId": 10646,
+        "decadalPeriod": {
+          "ganZhi": "辛巳",
+          "startAge": 32,
+          "endAge": 41,
+          "ageBasis": "虚岁"
+        },
+        "reason": "not_in_catalog"
+      },
+      {
+        "birthTime": "1950-09-08T04:00:00.000Z",
+        "gender": "女",
+        "clauseId": 8649,
+        "decadalPeriod": {
+          "ganZhi": "庚辰",
+          "startAge": 42,
+          "endAge": 51,
+          "ageBasis": "虚岁"
+        },
+        "reason": "not_in_catalog"
+      },
+      {
+        "birthTime": "1950-09-08T04:00:00.000Z",
+        "gender": "女",
+        "clauseId": 8647,
+        "decadalPeriod": {
+          "ganZhi": "己卯",
+          "startAge": 52,
+          "endAge": 61,
+          "ageBasis": "虚岁"
+        },
+        "reason": "scope_mismatch"
+      },
+      {
+        "birthTime": "1950-09-08T04:00:00.000Z",
+        "gender": "女",
+        "clauseId": 7647,
+        "decadalPeriod": {
+          "ganZhi": "戊寅",
+          "startAge": 62,
+          "endAge": 71,
+          "ageBasis": "虚岁"
+        },
+        "reason": "not_in_catalog"
+      },
+      {
+        "birthTime": "1950-09-08T04:00:00.000Z",
+        "gender": "女",
+        "clauseId": 7649,
+        "decadalPeriod": {
+          "ganZhi": "丁丑",
+          "startAge": 72,
+          "endAge": 81,
+          "ageBasis": "虚岁"
+        },
+        "reason": "not_in_catalog"
+      },
+      {
+        "birthTime": "1950-09-08T04:00:00.000Z",
+        "gender": "女",
+        "clauseId": 10645,
+        "decadalPeriod": {
+          "ganZhi": "丙子",
+          "startAge": 82,
+          "endAge": 91,
+          "ageBasis": "虚岁"
+        },
+        "claimId": "tbss-v10-clauses-p10645-001"
+      },
+      {
+        "birthTime": "1950-09-08T04:00:00.000Z",
+        "gender": "女",
+        "clauseId": 8645,
+        "decadalPeriod": {
+          "ganZhi": "乙亥",
+          "startAge": 92,
+          "endAge": 101,
+          "ageBasis": "虚岁"
+        },
+        "claimId": "tbss-v8-clauses-p08436-001"
+      },
+      {
+        "birthTime": "1950-09-08T04:00:00.000Z",
+        "gender": "女",
+        "clauseId": 8649,
+        "decadalPeriod": {
+          "ganZhi": "甲戌",
+          "startAge": 102,
+          "endAge": 111,
+          "ageBasis": "虚岁"
+        },
+        "reason": "not_in_catalog"
+      }
+    ]
+  },
+  "witnesses": [
+    {"birthTime":"1967-02-11T20:00:00.000Z","gender":"女","clauseId":6334,"decadalPeriod":{"ganZhi":"壬子","startAge":98,"endAge":107,"ageBasis":"虚岁"},"claimId":"tbss-v6-clauses-p06334-001","previouslyReachable":false},
+    {"birthTime":"1967-02-11T16:00:00.000Z","gender":"女","clauseId":6344,"decadalPeriod":{"ganZhi":"壬子","startAge":98,"endAge":107,"ageBasis":"虚岁"},"claimId":"tbss-v6-clauses-p06344-001","previouslyReachable":false},
+    {"birthTime":"1964-03-13T16:00:00.000Z","gender":"男","clauseId":6348,"decadalPeriod":{"ganZhi":"壬申","startAge":48,"endAge":57,"ageBasis":"虚岁"},"claimId":"tbss-v6-clauses-p06348-001","previouslyReachable":false},
+    {"birthTime":"1967-02-11T18:00:00.000Z","gender":"女","clauseId":6364,"decadalPeriod":{"ganZhi":"壬子","startAge":98,"endAge":107,"ageBasis":"虚岁"},"claimId":"tbss-v6-clauses-p06364-001","previouslyReachable":false},
+    {"birthTime":"1966-04-12T18:00:00.000Z","gender":"男","clauseId":6370,"decadalPeriod":{"ganZhi":"丁酉","startAge":49,"endAge":58,"ageBasis":"虚岁"},"claimId":"tbss-v6-clauses-p06370-001","previouslyReachable":false},
+    {"birthTime":"1964-03-11T18:00:00.000Z","gender":"女","clauseId":6436,"decadalPeriod":{"ganZhi":"戊午","startAge":83,"endAge":92,"ageBasis":"虚岁"},"claimId":"tbss-v6-clauses-p06436-001","previouslyReachable":false},
+    {"birthTime":"1964-04-14T22:00:00.000Z","gender":"男","clauseId":6437,"decadalPeriod":{"ganZhi":"戊寅","startAge":98,"endAge":107,"ageBasis":"虚岁"},"claimId":"tbss-v6-clauses-p06437-001","previouslyReachable":false},
+    {"birthTime":"1964-03-11T18:00:00.000Z","gender":"男","clauseId":6438,"decadalPeriod":{"ganZhi":"壬申","startAge":49,"endAge":58,"ageBasis":"虚岁"},"claimId":"tbss-v6-clauses-p06438-001","previouslyReachable":false},
+    {"birthTime":"1967-02-13T16:00:00.000Z","gender":"女","clauseId":6444,"decadalPeriod":{"ganZhi":"壬子","startAge":97,"endAge":106,"ageBasis":"虚岁"},"claimId":"tbss-v6-clauses-p06444-001","previouslyReachable":false},
+    {"birthTime":"1966-04-14T16:00:00.000Z","gender":"男","clauseId":6450,"decadalPeriod":{"ganZhi":"丁酉","startAge":48,"endAge":57,"ageBasis":"虚岁"},"claimId":"tbss-v6-clauses-p06450-001","previouslyReachable":false},
+    {"birthTime":"1967-02-13T20:00:00.000Z","gender":"女","clauseId":6464,"decadalPeriod":{"ganZhi":"壬子","startAge":97,"endAge":106,"ageBasis":"虚岁"},"claimId":"tbss-v6-clauses-p06464-001","previouslyReachable":false},
+    {"birthTime":"1964-03-11T16:00:00.000Z","gender":"女","clauseId":6465,"decadalPeriod":{"ganZhi":"癸亥","startAge":33,"endAge":42,"ageBasis":"虚岁"},"claimId":"tbss-v6-clauses-p06465-001","previouslyReachable":false},
+    {"birthTime":"1964-03-11T16:00:00.000Z","gender":"男","clauseId":6468,"decadalPeriod":{"ganZhi":"壬申","startAge":49,"endAge":58,"ageBasis":"虚岁"},"claimId":"tbss-v2-clauses-p02174-001","previouslyReachable":false},
+    {"birthTime":"1967-02-15T16:00:00.000Z","gender":"女","clauseId":6634,"decadalPeriod":{"ganZhi":"壬子","startAge":97,"endAge":106,"ageBasis":"虚岁"},"claimId":"tbss-v2-clauses-p02645-001","previouslyReachable":true},
+    {"birthTime":"1964-03-12T16:00:00.000Z","gender":"男","clauseId":6638,"decadalPeriod":{"ganZhi":"壬申","startAge":48,"endAge":57,"ageBasis":"虚岁"},"claimId":"tbss-v5-clauses-p05598-001","previouslyReachable":false},
+    {"birthTime":"1964-03-12T18:00:00.000Z","gender":"女","clauseId":6645,"decadalPeriod":{"ganZhi":"癸亥","startAge":33,"endAge":42,"ageBasis":"虚岁"},"claimId":"tbss-v6-clauses-p06645-001","previouslyReachable":false},
+    {"birthTime":"1964-04-11T18:00:00.000Z","gender":"男","clauseId":6647,"decadalPeriod":{"ganZhi":"戊寅","startAge":99,"endAge":108,"ageBasis":"虚岁"},"claimId":"tbss-v6-clauses-p06647-001","previouslyReachable":false},
+    {"birthTime":"1964-03-12T18:00:00.000Z","gender":"男","clauseId":6649,"decadalPeriod":{"ganZhi":"戊辰","startAge":8,"endAge":17,"ageBasis":"虚岁"},"claimId":"tbss-v6-clauses-p06649-001","previouslyReachable":false},
+    {"birthTime":"1966-04-11T18:00:00.000Z","gender":"男","clauseId":6650,"decadalPeriod":{"ganZhi":"丁酉","startAge":49,"endAge":58,"ageBasis":"虚岁"},"claimId":"tbss-v6-clauses-p06650-001","previouslyReachable":false},
+    {"birthTime":"1966-04-11T18:00:00.000Z","gender":"男","clauseId":6651,"decadalPeriod":{"ganZhi":"戊戌","startAge":59,"endAge":68,"ageBasis":"虚岁"},"claimId":"tbss-v6-clauses-p06651-001","previouslyReachable":false},
+    {"birthTime":"1966-10-13T22:00:00.000Z","gender":"女","clauseId":6670,"decadalPeriod":{"ganZhi":"丁酉","startAge":3,"endAge":12,"ageBasis":"虚岁"},"claimId":"tbss-v6-clauses-p06670-001","previouslyReachable":false},
+    {"birthTime":"1964-01-13T20:00:00.000Z","gender":"男","clauseId":7338,"decadalPeriod":{"ganZhi":"壬戌","startAge":23,"endAge":32,"ageBasis":"虚岁"},"claimId":"tbss-v7-clauses-p07338-001","previouslyReachable":false},
+    {"birthTime":"1966-02-11T20:00:00.000Z","gender":"男","clauseId":7341,"decadalPeriod":{"ganZhi":"壬辰","startAge":18,"endAge":27,"ageBasis":"虚岁"},"claimId":"tbss-v7-clauses-p07341-001","previouslyReachable":false},
+    {"birthTime":"1964-03-13T16:00:00.000Z","gender":"男","clauseId":7349,"decadalPeriod":{"ganZhi":"甲戌","startAge":68,"endAge":77,"ageBasis":"虚岁"},"claimId":"tbss-v7-clauses-p07349-001","previouslyReachable":false},
+    {"birthTime":"1966-02-11T16:00:00.000Z","gender":"男","clauseId":7350,"decadalPeriod":{"ganZhi":"丁酉","startAge":68,"endAge":77,"ageBasis":"虚岁"},"claimId":"tbss-v7-clauses-p07350-001","previouslyReachable":false},
+    {"birthTime":"1964-01-13T18:00:00.000Z","gender":"男","clauseId":7368,"decadalPeriod":{"ganZhi":"壬戌","startAge":23,"endAge":32,"ageBasis":"虚岁"},"claimId":"tbss-v7-clauses-p07368-001","previouslyReachable":false},
+    {"birthTime":"1964-01-11T18:00:00.000Z","gender":"女","clauseId":7436,"decadalPeriod":{"ganZhi":"丁卯","startAge":19,"endAge":28,"ageBasis":"虚岁"},"claimId":"tbss-v7-clauses-p07436-001","previouslyReachable":false},
+    {"birthTime":"1964-01-11T18:00:00.000Z","gender":"女","clauseId":7437,"decadalPeriod":{"ganZhi":"壬申","startAge":69,"endAge":78,"ageBasis":"虚岁"},"claimId":"tbss-v7-clauses-p07437-001","previouslyReachable":false},
+    {"birthTime":"1964-03-11T16:00:00.000Z","gender":"女","clauseId":7465,"decadalPeriod":{"ganZhi":"甲子","startAge":23,"endAge":32,"ageBasis":"虚岁"},"claimId":"tbss-v7-clauses-p07465-001","previouslyReachable":false},
+    {"birthTime":"1967-04-11T16:00:00.000Z","gender":"女","clauseId":7634,"decadalPeriod":{"ganZhi":"壬子","startAge":79,"endAge":88,"ageBasis":"虚岁"},"claimId":"tbss-v7-clauses-p07634-001","previouslyReachable":false},
+    {"birthTime":"1964-01-12T16:00:00.000Z","gender":"男","clauseId":7635,"decadalPeriod":{"ganZhi":"戊午","startAge":63,"endAge":72,"ageBasis":"虚岁"},"claimId":"tbss-v7-clauses-p07635-001","previouslyReachable":false},
+    {"birthTime":"1964-01-12T16:00:00.000Z","gender":"女","clauseId":7636,"decadalPeriod":{"ganZhi":"丁卯","startAge":18,"endAge":27,"ageBasis":"虚岁"},"claimId":"tbss-v7-clauses-p07636-001","previouslyReachable":false},
+    {"birthTime":"1964-01-12T16:00:00.000Z","gender":"女","clauseId":7637,"decadalPeriod":{"ganZhi":"壬申","startAge":68,"endAge":77,"ageBasis":"虚岁"},"claimId":"tbss-v7-clauses-p07637-001","previouslyReachable":false},
+    {"birthTime":"1964-01-12T16:00:00.000Z","gender":"男","clauseId":7638,"decadalPeriod":{"ganZhi":"壬戌","startAge":23,"endAge":32,"ageBasis":"虚岁"},"claimId":"tbss-v6-clauses-p06581-001","previouslyReachable":false},
+    {"birthTime":"1966-02-15T16:00:00.000Z","gender":"男","clauseId":7641,"decadalPeriod":{"ganZhi":"壬辰","startAge":17,"endAge":26,"ageBasis":"虚岁"},"claimId":"tbss-v7-clauses-p07641-001","previouslyReachable":false},
+    {"birthTime":"1966-02-15T18:00:00.000Z","gender":"男","clauseId":7651,"decadalPeriod":{"ganZhi":"壬辰","startAge":17,"endAge":26,"ageBasis":"虚岁"},"claimId":"tbss-v7-clauses-p07651-001","previouslyReachable":false},
+    {"birthTime":"1964-01-12T22:00:00.000Z","gender":"男","clauseId":7665,"decadalPeriod":{"ganZhi":"戊午","startAge":63,"endAge":72,"ageBasis":"虚岁"},"claimId":"tbss-v7-clauses-p07665-001","previouslyReachable":false},
+    {"birthTime":"1966-02-15T22:00:00.000Z","gender":"男","clauseId":7671,"decadalPeriod":{"ganZhi":"壬辰","startAge":17,"endAge":26,"ageBasis":"虚岁"},"claimId":"tbss-v7-clauses-p07671-001","previouslyReachable":false},
+    {"birthTime":"1964-01-13T20:00:00.000Z","gender":"男","clauseId":8334,"decadalPeriod":{"ganZhi":"甲子","startAge":3,"endAge":12,"ageBasis":"虚岁"},"claimId":"tbss-v8-clauses-p08334-001","previouslyReachable":false},
+    {"birthTime":"1964-01-13T20:00:00.000Z","gender":"男","clauseId":8336,"decadalPeriod":{"ganZhi":"乙卯","startAge":93,"endAge":102,"ageBasis":"虚岁"},"claimId":"tbss-v8-clauses-p08336-001","previouslyReachable":false},
+    {"birthTime":"1964-01-13T20:00:00.000Z","gender":"男","clauseId":8337,"decadalPeriod":{"ganZhi":"庚申","startAge":43,"endAge":52,"ageBasis":"虚岁"},"claimId":"tbss-v8-clauses-p08337-001","previouslyReachable":false},
+    {"birthTime":"1964-01-13T20:00:00.000Z","gender":"男","clauseId":8338,"decadalPeriod":{"ganZhi":"己未","startAge":53,"endAge":62,"ageBasis":"虚岁"},"claimId":"tbss-v8-clauses-p08338-001","previouslyReachable":false},
+    {"birthTime":"1966-02-11T20:00:00.000Z","gender":"男","clauseId":8341,"decadalPeriod":{"ganZhi":"乙未","startAge":48,"endAge":57,"ageBasis":"虚岁"},"claimId":"tbss-v8-clauses-p08341-001","previouslyReachable":false},
+    {"birthTime":"1964-01-13T16:00:00.000Z","gender":"男","clauseId":8344,"decadalPeriod":{"ganZhi":"甲子","startAge":3,"endAge":12,"ageBasis":"虚岁"},"claimId":"tbss-v8-clauses-p08344-001","previouslyReachable":false},
+    {"birthTime":"1964-01-13T16:00:00.000Z","gender":"男","clauseId":8347,"decadalPeriod":{"ganZhi":"庚申","startAge":43,"endAge":52,"ageBasis":"虚岁"},"claimId":"tbss-v8-clauses-p08347-001","previouslyReachable":false},
+    {"birthTime":"1964-01-13T16:00:00.000Z","gender":"男","clauseId":8348,"decadalPeriod":{"ganZhi":"己未","startAge":53,"endAge":62,"ageBasis":"虚岁"},"claimId":"tbss-v8-clauses-p08348-001","previouslyReachable":false},
+    {"birthTime":"1964-05-12T16:00:00.000Z","gender":"男","clauseId":8349,"decadalPeriod":{"ganZhi":"甲戌","startAge":49,"endAge":58,"ageBasis":"虚岁"},"claimId":"tbss-v8-clauses-p08349-001","previouslyReachable":false},
+    {"birthTime":"1966-02-11T16:00:00.000Z","gender":"男","clauseId":8351,"decadalPeriod":{"ganZhi":"乙未","startAge":48,"endAge":57,"ageBasis":"虚岁"},"claimId":"tbss-v8-clauses-p08351-001","previouslyReachable":false},
+    {"birthTime":"1964-01-13T18:00:00.000Z","gender":"男","clauseId":8367,"decadalPeriod":{"ganZhi":"庚申","startAge":43,"endAge":52,"ageBasis":"虚岁"},"claimId":"tbss-v8-clauses-p08367-001","previouslyReachable":false},
+    {"birthTime":"1964-05-12T18:00:00.000Z","gender":"女","clauseId":8369,"decadalPeriod":{"ganZhi":"乙丑","startAge":33,"endAge":42,"ageBasis":"虚岁"},"claimId":"tbss-v8-clauses-p08369-001","previouslyReachable":false},
+    {"birthTime":"1964-01-11T18:00:00.000Z","gender":"女","clauseId":8435,"decadalPeriod":{"ganZhi":"己巳","startAge":39,"endAge":48,"ageBasis":"虚岁"},"claimId":"tbss-v8-clauses-p08435-001","previouslyReachable":false},
+    {"birthTime":"1964-01-11T22:00:00.000Z","gender":"男","clauseId":8448,"decadalPeriod":{"ganZhi":"己未","startAge":52,"endAge":61,"ageBasis":"虚岁"},"claimId":"tbss-v8-clauses-p08448-001","previouslyReachable":false},
+    {"birthTime":"1964-05-14T16:00:00.000Z","gender":"男","clauseId":8449,"decadalPeriod":{"ganZhi":"甲戌","startAge":48,"endAge":57,"ageBasis":"虚岁"},"claimId":"tbss-v2-clauses-p02754-001","previouslyReachable":false},
+    {"birthTime":"1964-05-11T16:00:00.000Z","gender":"男","clauseId":8639,"decadalPeriod":{"ganZhi":"甲戌","startAge":49,"endAge":58,"ageBasis":"虚岁"},"claimId":"tbss-v8-clauses-p08639-001","previouslyReachable":false},
+    {"birthTime":"1964-01-12T18:00:00.000Z","gender":"男","clauseId":8644,"decadalPeriod":{"ganZhi":"甲子","startAge":3,"endAge":12,"ageBasis":"虚岁"},"claimId":"tbss-v5-clauses-p05922-001","previouslyReachable":false},
+    {"birthTime":"1950-09-08T04:00:00.000Z","gender":"女","clauseId":8645,"decadalPeriod":{"ganZhi":"乙亥","startAge":92,"endAge":101,"ageBasis":"虚岁"},"claimId":"tbss-v8-clauses-p08436-001","previouslyReachable":false},
+    {"birthTime":"1950-09-08T04:00:00.000Z","gender":"男","clauseId":8648,"decadalPeriod":{"ganZhi":"乙酉","startAge":1,"endAge":10,"ageBasis":"虚岁"},"claimId":"tbss-v8-clauses-p08648-001","previouslyReachable":false},
+    {"birthTime":"1964-01-12T22:00:00.000Z","gender":"男","clauseId":8668,"decadalPeriod":{"ganZhi":"己未","startAge":53,"endAge":62,"ageBasis":"虚岁"},"claimId":"tbss-v8-clauses-p08668-001","previouslyReachable":false},
+    {"birthTime":"1964-05-11T22:00:00.000Z","gender":"男","clauseId":8669,"decadalPeriod":{"ganZhi":"甲戌","startAge":49,"endAge":58,"ageBasis":"虚岁"},"claimId":"tbss-v8-clauses-p08669-001","previouslyReachable":false},
+    {"birthTime":"1967-02-11T20:00:00.000Z","gender":"女","clauseId":9334,"decadalPeriod":{"ganZhi":"辛亥","startAge":88,"endAge":97,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09334-001","previouslyReachable":true},
+    {"birthTime":"1964-02-12T20:00:00.000Z","gender":"女","clauseId":9335,"decadalPeriod":{"ganZhi":"癸亥","startAge":23,"endAge":32,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09335-001","previouslyReachable":true},
+    {"birthTime":"1964-02-12T20:00:00.000Z","gender":"男","clauseId":9337,"decadalPeriod":{"ganZhi":"丁卯","startAge":8,"endAge":17,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09337-001","previouslyReachable":true},
+    {"birthTime":"1964-02-12T20:00:00.000Z","gender":"男","clauseId":9339,"decadalPeriod":{"ganZhi":"戊辰","startAge":18,"endAge":27,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09339-001","previouslyReachable":true},
+    {"birthTime":"1966-03-13T20:00:00.000Z","gender":"男","clauseId":9341,"decadalPeriod":{"ganZhi":"壬辰","startAge":8,"endAge":17,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09341-001","previouslyReachable":false},
+    {"birthTime":"1967-02-11T16:00:00.000Z","gender":"女","clauseId":9344,"decadalPeriod":{"ganZhi":"辛亥","startAge":88,"endAge":97,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09344-001","previouslyReachable":false},
+    {"birthTime":"1964-02-12T16:00:00.000Z","gender":"女","clauseId":9345,"decadalPeriod":{"ganZhi":"癸亥","startAge":23,"endAge":32,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09345-001","previouslyReachable":true},
+    {"birthTime":"1964-02-12T16:00:00.000Z","gender":"女","clauseId":9346,"decadalPeriod":{"ganZhi":"戊午","startAge":73,"endAge":82,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09346-001","previouslyReachable":true},
+    {"birthTime":"1964-02-12T16:00:00.000Z","gender":"男","clauseId":9349,"decadalPeriod":{"ganZhi":"戊辰","startAge":18,"endAge":27,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09349-001","previouslyReachable":false},
+    {"birthTime":"1967-02-11T18:00:00.000Z","gender":"女","clauseId":9364,"decadalPeriod":{"ganZhi":"辛亥","startAge":88,"endAge":97,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09364-001","previouslyReachable":false},
+    {"birthTime":"1964-02-12T18:00:00.000Z","gender":"女","clauseId":9365,"decadalPeriod":{"ganZhi":"癸亥","startAge":23,"endAge":32,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09365-001","previouslyReachable":false},
+    {"birthTime":"1964-02-12T18:00:00.000Z","gender":"女","clauseId":9366,"decadalPeriod":{"ganZhi":"戊午","startAge":73,"endAge":82,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09366-001","previouslyReachable":false},
+    {"birthTime":"1964-02-12T18:00:00.000Z","gender":"男","clauseId":9369,"decadalPeriod":{"ganZhi":"戊辰","startAge":18,"endAge":27,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09369-001","previouslyReachable":false},
+    {"birthTime":"1967-02-13T22:00:00.000Z","gender":"女","clauseId":9434,"decadalPeriod":{"ganZhi":"辛亥","startAge":87,"endAge":96,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09434-001","previouslyReachable":false},
+    {"birthTime":"1964-02-14T22:00:00.000Z","gender":"女","clauseId":9435,"decadalPeriod":{"ganZhi":"癸亥","startAge":24,"endAge":33,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09435-001","previouslyReachable":false},
+    {"birthTime":"1964-02-14T22:00:00.000Z","gender":"女","clauseId":9436,"decadalPeriod":{"ganZhi":"戊午","startAge":74,"endAge":83,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09436-001","previouslyReachable":false},
+    {"birthTime":"1964-02-14T22:00:00.000Z","gender":"男","clauseId":9437,"decadalPeriod":{"ganZhi":"丁卯","startAge":7,"endAge":16,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09437-001","previouslyReachable":false},
+    {"birthTime":"1964-02-14T22:00:00.000Z","gender":"男","clauseId":9439,"decadalPeriod":{"ganZhi":"戊辰","startAge":17,"endAge":26,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09439-001","previouslyReachable":false},
+    {"birthTime":"1966-03-11T18:00:00.000Z","gender":"男","clauseId":9440,"decadalPeriod":{"ganZhi":"丁酉","startAge":59,"endAge":68,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09440-001","previouslyReachable":false},
+    {"birthTime":"1967-02-13T16:00:00.000Z","gender":"女","clauseId":9444,"decadalPeriod":{"ganZhi":"辛亥","startAge":87,"endAge":96,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09444-001","previouslyReachable":false},
+    {"birthTime":"1964-02-14T16:00:00.000Z","gender":"女","clauseId":9445,"decadalPeriod":{"ganZhi":"癸亥","startAge":24,"endAge":33,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09445-001","previouslyReachable":false},
+    {"birthTime":"1964-02-14T16:00:00.000Z","gender":"女","clauseId":9446,"decadalPeriod":{"ganZhi":"戊午","startAge":74,"endAge":83,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09446-001","previouslyReachable":false},
+    {"birthTime":"1964-02-14T16:00:00.000Z","gender":"男","clauseId":9447,"decadalPeriod":{"ganZhi":"丁卯","startAge":7,"endAge":16,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09447-001","previouslyReachable":false},
+    {"birthTime":"1967-02-13T20:00:00.000Z","gender":"女","clauseId":9464,"decadalPeriod":{"ganZhi":"辛亥","startAge":87,"endAge":96,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09464-001","previouslyReachable":false},
+    {"birthTime":"1964-02-14T20:00:00.000Z","gender":"女","clauseId":9465,"decadalPeriod":{"ganZhi":"癸亥","startAge":24,"endAge":33,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09465-001","previouslyReachable":false},
+    {"birthTime":"1964-02-14T20:00:00.000Z","gender":"女","clauseId":9466,"decadalPeriod":{"ganZhi":"戊午","startAge":74,"endAge":83,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09466-001","previouslyReachable":false},
+    {"birthTime":"1964-02-14T20:00:00.000Z","gender":"男","clauseId":9467,"decadalPeriod":{"ganZhi":"丁卯","startAge":7,"endAge":16,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09467-001","previouslyReachable":false},
+    {"birthTime":"1967-02-15T16:00:00.000Z","gender":"女","clauseId":9634,"decadalPeriod":{"ganZhi":"辛亥","startAge":87,"endAge":96,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09634-001","previouslyReachable":false},
+    {"birthTime":"1964-02-11T16:00:00.000Z","gender":"女","clauseId":9635,"decadalPeriod":{"ganZhi":"癸亥","startAge":23,"endAge":32,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09635-001","previouslyReachable":false},
+    {"birthTime":"1964-02-11T16:00:00.000Z","gender":"男","clauseId":9638,"decadalPeriod":{"ganZhi":"壬申","startAge":58,"endAge":67,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09638-001","previouslyReachable":false},
+    {"birthTime":"1967-02-15T18:00:00.000Z","gender":"女","clauseId":9644,"decadalPeriod":{"ganZhi":"辛亥","startAge":87,"endAge":96,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09644-001","previouslyReachable":false},
+    {"birthTime":"1964-02-11T18:00:00.000Z","gender":"女","clauseId":9646,"decadalPeriod":{"ganZhi":"戊午","startAge":73,"endAge":82,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09646-001","previouslyReachable":false},
+    {"birthTime":"1964-02-11T18:00:00.000Z","gender":"男","clauseId":9647,"decadalPeriod":{"ganZhi":"丁卯","startAge":8,"endAge":17,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09647-001","previouslyReachable":false},
+    {"birthTime":"1967-02-15T22:00:00.000Z","gender":"女","clauseId":9664,"decadalPeriod":{"ganZhi":"辛亥","startAge":87,"endAge":96,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09664-001","previouslyReachable":false},
+    {"birthTime":"1964-02-11T22:00:00.000Z","gender":"女","clauseId":9665,"decadalPeriod":{"ganZhi":"癸亥","startAge":23,"endAge":32,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09665-001","previouslyReachable":false},
+    {"birthTime":"1964-08-14T22:00:00.000Z","gender":"男","clauseId":9666,"decadalPeriod":{"ganZhi":"辛巳","startAge":89,"endAge":98,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09666-001","previouslyReachable":false},
+    {"birthTime":"1964-02-11T22:00:00.000Z","gender":"男","clauseId":9667,"decadalPeriod":{"ganZhi":"丁卯","startAge":8,"endAge":17,"ageBasis":"虚岁"},"claimId":"tbss-v9-clauses-p09667-001","previouslyReachable":false},
+    {"birthTime":"1967-04-12T20:00:00.000Z","gender":"女","clauseId":10334,"decadalPeriod":{"ganZhi":"辛亥","startAge":69,"endAge":78,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10334-001","previouslyReachable":false},
+    {"birthTime":"1964-02-12T20:00:00.000Z","gender":"男","clauseId":10336,"decadalPeriod":{"ganZhi":"己巳","startAge":28,"endAge":37,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10336-001","previouslyReachable":false},
+    {"birthTime":"1964-01-13T20:00:00.000Z","gender":"男","clauseId":10337,"decadalPeriod":{"ganZhi":"辛酉","startAge":33,"endAge":42,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10337-001","previouslyReachable":false},
+    {"birthTime":"1964-01-13T20:00:00.000Z","gender":"男","clauseId":10338,"decadalPeriod":{"ganZhi":"丙辰","startAge":83,"endAge":92,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10338-001","previouslyReachable":false},
+    {"birthTime":"1966-02-11T20:00:00.000Z","gender":"男","clauseId":10340,"decadalPeriod":{"ganZhi":"丙申","startAge":58,"endAge":67,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10340-001","previouslyReachable":false},
+    {"birthTime":"1966-02-11T20:00:00.000Z","gender":"女","clauseId":10341,"decadalPeriod":{"ganZhi":"丙戌","startAge":33,"endAge":42,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10341-001","previouslyReachable":false},
+    {"birthTime":"1967-04-12T16:00:00.000Z","gender":"女","clauseId":10344,"decadalPeriod":{"ganZhi":"辛亥","startAge":69,"endAge":78,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10344-001","previouslyReachable":false},
+    {"birthTime":"1964-01-13T16:00:00.000Z","gender":"女","clauseId":10346,"decadalPeriod":{"ganZhi":"丙寅","startAge":8,"endAge":17,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10346-001","previouslyReachable":false},
+    {"birthTime":"1964-01-13T16:00:00.000Z","gender":"男","clauseId":10347,"decadalPeriod":{"ganZhi":"辛酉","startAge":33,"endAge":42,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10347-001","previouslyReachable":false},
+    {"birthTime":"1964-01-13T16:00:00.000Z","gender":"男","clauseId":10348,"decadalPeriod":{"ganZhi":"丙辰","startAge":83,"endAge":92,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10348-001","previouslyReachable":false},
+    {"birthTime":"1964-02-12T16:00:00.000Z","gender":"男","clauseId":10349,"decadalPeriod":{"ganZhi":"甲戌","startAge":78,"endAge":87,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10349-001","previouslyReachable":false},
+    {"birthTime":"1966-02-11T16:00:00.000Z","gender":"男","clauseId":10350,"decadalPeriod":{"ganZhi":"丙申","startAge":58,"endAge":67,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10350-001","previouslyReachable":false},
+    {"birthTime":"1966-02-11T16:00:00.000Z","gender":"女","clauseId":10351,"decadalPeriod":{"ganZhi":"丙戌","startAge":33,"endAge":42,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10351-001","previouslyReachable":false},
+    {"birthTime":"1967-04-12T18:00:00.000Z","gender":"女","clauseId":10364,"decadalPeriod":{"ganZhi":"辛亥","startAge":69,"endAge":78,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10364-001","previouslyReachable":false},
+    {"birthTime":"1964-02-12T18:00:00.000Z","gender":"男","clauseId":10365,"decadalPeriod":{"ganZhi":"乙亥","startAge":88,"endAge":97,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10365-001","previouslyReachable":false},
+    {"birthTime":"1964-01-13T18:00:00.000Z","gender":"女","clauseId":10366,"decadalPeriod":{"ganZhi":"丙寅","startAge":8,"endAge":17,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10366-001","previouslyReachable":false},
+    {"birthTime":"1964-01-13T18:00:00.000Z","gender":"男","clauseId":10367,"decadalPeriod":{"ganZhi":"辛酉","startAge":33,"endAge":42,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10367-001","previouslyReachable":false},
+    {"birthTime":"1964-01-13T18:00:00.000Z","gender":"男","clauseId":10368,"decadalPeriod":{"ganZhi":"丙辰","startAge":83,"endAge":92,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10368-001","previouslyReachable":false},
+    {"birthTime":"1966-02-11T18:00:00.000Z","gender":"男","clauseId":10370,"decadalPeriod":{"ganZhi":"丙申","startAge":58,"endAge":67,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10370-001","previouslyReachable":false},
+    {"birthTime":"1967-04-14T22:00:00.000Z","gender":"女","clauseId":10434,"decadalPeriod":{"ganZhi":"辛亥","startAge":68,"endAge":77,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10434-001","previouslyReachable":false},
+    {"birthTime":"1964-01-11T18:00:00.000Z","gender":"女","clauseId":10436,"decadalPeriod":{"ganZhi":"丙寅","startAge":9,"endAge":18,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10436-001","previouslyReachable":false},
+    {"birthTime":"1966-02-13T22:00:00.000Z","gender":"男","clauseId":10440,"decadalPeriod":{"ganZhi":"丙申","startAge":57,"endAge":66,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10440-001","previouslyReachable":false},
+    {"birthTime":"1967-04-14T16:00:00.000Z","gender":"女","clauseId":10444,"decadalPeriod":{"ganZhi":"辛亥","startAge":68,"endAge":77,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10444-001","previouslyReachable":false},
+    {"birthTime":"1964-02-14T16:00:00.000Z","gender":"女","clauseId":10445,"decadalPeriod":{"ganZhi":"甲子","startAge":14,"endAge":23,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10445-001","previouslyReachable":false},
+    {"birthTime":"1964-01-11T22:00:00.000Z","gender":"女","clauseId":10446,"decadalPeriod":{"ganZhi":"丙寅","startAge":8,"endAge":17,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10446-001","previouslyReachable":false},
+    {"birthTime":"1964-01-11T22:00:00.000Z","gender":"男","clauseId":10447,"decadalPeriod":{"ganZhi":"辛酉","startAge":32,"endAge":41,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10447-001","previouslyReachable":false},
+    {"birthTime":"1964-01-11T22:00:00.000Z","gender":"男","clauseId":10448,"decadalPeriod":{"ganZhi":"丙辰","startAge":82,"endAge":91,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10448-001","previouslyReachable":false},
+    {"birthTime":"1966-02-13T16:00:00.000Z","gender":"男","clauseId":10450,"decadalPeriod":{"ganZhi":"丙申","startAge":57,"endAge":66,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10450-001","previouslyReachable":false},
+    {"birthTime":"1967-04-14T20:00:00.000Z","gender":"女","clauseId":10464,"decadalPeriod":{"ganZhi":"辛亥","startAge":68,"endAge":77,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10464-001","previouslyReachable":false},
+    {"birthTime":"1964-02-14T20:00:00.000Z","gender":"男","clauseId":10465,"decadalPeriod":{"ganZhi":"乙亥","startAge":87,"endAge":96,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10465-001","previouslyReachable":false},
+    {"birthTime":"1964-01-11T16:00:00.000Z","gender":"女","clauseId":10466,"decadalPeriod":{"ganZhi":"丙寅","startAge":9,"endAge":18,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10466-001","previouslyReachable":false},
+    {"birthTime":"1964-01-11T16:00:00.000Z","gender":"男","clauseId":10467,"decadalPeriod":{"ganZhi":"辛酉","startAge":32,"endAge":41,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10467-001","previouslyReachable":false},
+    {"birthTime":"1964-01-11T16:00:00.000Z","gender":"男","clauseId":10468,"decadalPeriod":{"ganZhi":"丙辰","startAge":82,"endAge":91,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10468-001","previouslyReachable":false},
+    {"birthTime":"1966-02-13T20:00:00.000Z","gender":"男","clauseId":10470,"decadalPeriod":{"ganZhi":"丙申","startAge":57,"endAge":66,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10470-001","previouslyReachable":false},
+    {"birthTime":"1966-02-13T20:00:00.000Z","gender":"女","clauseId":10471,"decadalPeriod":{"ganZhi":"丙戌","startAge":34,"endAge":43,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10471-001","previouslyReachable":false},
+    {"birthTime":"1967-04-11T16:00:00.000Z","gender":"女","clauseId":10634,"decadalPeriod":{"ganZhi":"辛亥","startAge":69,"endAge":78,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10634-001","previouslyReachable":false},
+    {"birthTime":"1964-01-12T16:00:00.000Z","gender":"男","clauseId":10637,"decadalPeriod":{"ganZhi":"辛酉","startAge":33,"endAge":42,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10637-001","previouslyReachable":false},
+    {"birthTime":"1966-02-15T16:00:00.000Z","gender":"男","clauseId":10640,"decadalPeriod":{"ganZhi":"丙申","startAge":57,"endAge":66,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10640-001","previouslyReachable":false},
+    {"birthTime":"1967-04-11T18:00:00.000Z","gender":"女","clauseId":10644,"decadalPeriod":{"ganZhi":"辛亥","startAge":69,"endAge":78,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10644-001","previouslyReachable":false},
+    {"birthTime":"1950-09-08T04:00:00.000Z","gender":"女","clauseId":10645,"decadalPeriod":{"ganZhi":"丙子","startAge":82,"endAge":91,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10645-001","previouslyReachable":false},
+    {"birthTime":"1950-09-08T04:00:00.000Z","gender":"男","clauseId":10647,"decadalPeriod":{"ganZhi":"辛卯","startAge":61,"endAge":70,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10647-001","previouslyReachable":false},
+    {"birthTime":"1966-02-15T18:00:00.000Z","gender":"男","clauseId":10650,"decadalPeriod":{"ganZhi":"丙申","startAge":57,"endAge":66,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10650-001","previouslyReachable":false},
+    {"birthTime":"1967-04-11T22:00:00.000Z","gender":"女","clauseId":10664,"decadalPeriod":{"ganZhi":"辛亥","startAge":69,"endAge":78,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10664-001","previouslyReachable":false},
+    {"birthTime":"1964-02-11T22:00:00.000Z","gender":"女","clauseId":10665,"decadalPeriod":{"ganZhi":"甲子","startAge":13,"endAge":22,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10665-001","previouslyReachable":false},
+    {"birthTime":"1964-02-11T22:00:00.000Z","gender":"男","clauseId":10666,"decadalPeriod":{"ganZhi":"己巳","startAge":28,"endAge":37,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10666-001","previouslyReachable":false},
+    {"birthTime":"1964-01-12T22:00:00.000Z","gender":"男","clauseId":10667,"decadalPeriod":{"ganZhi":"辛酉","startAge":33,"endAge":42,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10667-001","previouslyReachable":false},
+    {"birthTime":"1964-02-11T22:00:00.000Z","gender":"男","clauseId":10669,"decadalPeriod":{"ganZhi":"甲戌","startAge":78,"endAge":87,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10669-001","previouslyReachable":false},
+    {"birthTime":"1966-02-15T22:00:00.000Z","gender":"男","clauseId":10670,"decadalPeriod":{"ganZhi":"丙申","startAge":57,"endAge":66,"ageBasis":"虚岁"},"claimId":"tbss-v10-clauses-p10670-001","previouslyReachable":false},
+    {"birthTime":"1964-07-11T20:00:00.000Z","gender":"男","clauseId":12336,"decadalPeriod":{"ganZhi":"辛巳","startAge":100,"endAge":109,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12336-001","previouslyReachable":false},
+    {"birthTime":"1964-02-12T20:00:00.000Z","gender":"女","clauseId":12338,"decadalPeriod":{"ganZhi":"辛酉","startAge":43,"endAge":52,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12338-001","previouslyReachable":false},
+    {"birthTime":"1964-02-12T20:00:00.000Z","gender":"男","clauseId":12339,"decadalPeriod":{"ganZhi":"辛未","startAge":48,"endAge":57,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12339-001","previouslyReachable":false},
+    {"birthTime":"1967-06-11T16:00:00.000Z","gender":"女","clauseId":12344,"decadalPeriod":{"ganZhi":"辛亥","startAge":50,"endAge":59,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12344-001","previouslyReachable":false},
+    {"birthTime":"1964-02-12T16:00:00.000Z","gender":"男","clauseId":12345,"decadalPeriod":{"ganZhi":"丙子","startAge":98,"endAge":107,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12345-001","previouslyReachable":false},
+    {"birthTime":"1964-07-11T16:00:00.000Z","gender":"男","clauseId":12346,"decadalPeriod":{"ganZhi":"辛巳","startAge":100,"endAge":109,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12346-001","previouslyReachable":false},
+    {"birthTime":"1964-02-12T16:00:00.000Z","gender":"男","clauseId":12349,"decadalPeriod":{"ganZhi":"辛未","startAge":48,"endAge":57,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12349-001","previouslyReachable":false},
+    {"birthTime":"1964-02-12T18:00:00.000Z","gender":"男","clauseId":12365,"decadalPeriod":{"ganZhi":"丙子","startAge":98,"endAge":107,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12365-001","previouslyReachable":false},
+    {"birthTime":"1964-07-11T18:00:00.000Z","gender":"男","clauseId":12366,"decadalPeriod":{"ganZhi":"辛巳","startAge":100,"endAge":109,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12366-001","previouslyReachable":false},
+    {"birthTime":"1964-07-11T18:00:00.000Z","gender":"女","clauseId":12367,"decadalPeriod":{"ganZhi":"丙寅","startAge":43,"endAge":52,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12367-001","previouslyReachable":false},
+    {"birthTime":"1964-02-12T18:00:00.000Z","gender":"男","clauseId":12369,"decadalPeriod":{"ganZhi":"辛未","startAge":48,"endAge":57,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12369-001","previouslyReachable":false},
+    {"birthTime":"1967-06-13T22:00:00.000Z","gender":"女","clauseId":12434,"decadalPeriod":{"ganZhi":"辛亥","startAge":49,"endAge":58,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12434-001","previouslyReachable":false},
+    {"birthTime":"1964-02-14T22:00:00.000Z","gender":"男","clauseId":12435,"decadalPeriod":{"ganZhi":"丙子","startAge":97,"endAge":106,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12435-001","previouslyReachable":false},
+    {"birthTime":"1969-07-12T22:00:00.000Z","gender":"女","clauseId":12436,"decadalPeriod":{"ganZhi":"辛巳","startAge":100,"endAge":109,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12436-001","previouslyReachable":false},
+    {"birthTime":"1964-07-13T22:00:00.000Z","gender":"女","clauseId":12437,"decadalPeriod":{"ganZhi":"丙寅","startAge":43,"endAge":52,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12437-001","previouslyReachable":false},
+    {"birthTime":"1964-02-14T22:00:00.000Z","gender":"男","clauseId":12439,"decadalPeriod":{"ganZhi":"辛未","startAge":47,"endAge":56,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12439-001","previouslyReachable":false},
+    {"birthTime":"1967-06-13T16:00:00.000Z","gender":"女","clauseId":12444,"decadalPeriod":{"ganZhi":"辛亥","startAge":49,"endAge":58,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12444-001","previouslyReachable":false},
+    {"birthTime":"1964-02-14T16:00:00.000Z","gender":"男","clauseId":12445,"decadalPeriod":{"ganZhi":"丙子","startAge":97,"endAge":106,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12445-001","previouslyReachable":false},
+    {"birthTime":"1969-07-12T16:00:00.000Z","gender":"女","clauseId":12446,"decadalPeriod":{"ganZhi":"辛巳","startAge":100,"endAge":109,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12446-001","previouslyReachable":false},
+    {"birthTime":"1964-07-13T16:00:00.000Z","gender":"女","clauseId":12447,"decadalPeriod":{"ganZhi":"丙寅","startAge":43,"endAge":52,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12447-001","previouslyReachable":false},
+    {"birthTime":"1964-02-14T16:00:00.000Z","gender":"男","clauseId":12449,"decadalPeriod":{"ganZhi":"辛未","startAge":47,"endAge":56,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12449-001","previouslyReachable":false},
+    {"birthTime":"1964-07-13T20:00:00.000Z","gender":"女","clauseId":12467,"decadalPeriod":{"ganZhi":"丙寅","startAge":43,"endAge":52,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12467-001","previouslyReachable":false},
+    {"birthTime":"1964-02-14T20:00:00.000Z","gender":"男","clauseId":12469,"decadalPeriod":{"ganZhi":"辛未","startAge":47,"endAge":56,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12469-001","previouslyReachable":false},
+    {"birthTime":"1967-06-15T16:00:00.000Z","gender":"女","clauseId":12634,"decadalPeriod":{"ganZhi":"辛亥","startAge":48,"endAge":57,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12634-001","previouslyReachable":false},
+    {"birthTime":"1969-07-14T16:00:00.000Z","gender":"女","clauseId":12636,"decadalPeriod":{"ganZhi":"辛巳","startAge":99,"endAge":108,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12636-001","previouslyReachable":false},
+    {"birthTime":"1967-01-11T16:00:00.000Z","gender":"男","clauseId":12637,"decadalPeriod":{"ganZhi":"辛亥","startAge":98,"endAge":107,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12637-001","previouslyReachable":false},
+    {"birthTime":"1967-06-15T18:00:00.000Z","gender":"女","clauseId":12644,"decadalPeriod":{"ganZhi":"辛亥","startAge":48,"endAge":57,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12644-001","previouslyReachable":false},
+    {"birthTime":"1969-07-14T18:00:00.000Z","gender":"女","clauseId":12646,"decadalPeriod":{"ganZhi":"辛巳","startAge":99,"endAge":108,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12646-001","previouslyReachable":false},
+    {"birthTime":"1967-01-11T18:00:00.000Z","gender":"男","clauseId":12647,"decadalPeriod":{"ganZhi":"辛亥","startAge":98,"endAge":107,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12647-001","previouslyReachable":false},
+    {"birthTime":"1967-06-15T22:00:00.000Z","gender":"女","clauseId":12664,"decadalPeriod":{"ganZhi":"辛亥","startAge":48,"endAge":57,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12664-001","previouslyReachable":false},
+    {"birthTime":"1969-07-14T22:00:00.000Z","gender":"女","clauseId":12666,"decadalPeriod":{"ganZhi":"辛巳","startAge":99,"endAge":108,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12666-001","previouslyReachable":false},
+    {"birthTime":"1967-01-11T22:00:00.000Z","gender":"男","clauseId":12667,"decadalPeriod":{"ganZhi":"辛亥","startAge":98,"endAge":107,"ageBasis":"虚岁"},"claimId":"tbss-v12-clauses-p12667-001","previouslyReachable":false}
+  ]
+}

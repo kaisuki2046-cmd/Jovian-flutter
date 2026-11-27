@@ -1,0 +1,120 @@
+{
+  "baseline": "eighth integration batch",
+  "profile": "ziwei-explicit-conjunction-placement-brightness-v1",
+  "changes": [
+    {
+      "id": "ziwei-v1-zhuxing-wenda-p122000-007",
+      "method": "ziwei",
+      "conditions": [
+        "贪狼与武曲同度"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v1-zhuxing-wenda-p127000-010",
+      "method": "ziwei",
+      "conditions": [
+        "天梁在命宫或对宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v1-zhuxing-wenda-p037-005",
+      "method": "ziwei",
+      "conditions": [
+        "文曲与巨门同度"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v4-jielan-157-p001-001",
+      "method": "ziwei",
+      "conditions": [
+        "太阴入庙且化权"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v1-xingjue-044-p196-001",
+      "method": "ziwei",
+      "conditions": [
+        "贪狼与廉贞同度"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-xingjue-007-p279-001",
+      "method": "ziwei",
+      "conditions": [
+        "太阳在午位守命"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v2-xingjue-008-p296-001",
+      "method": "ziwei",
+      "conditions": [
+        "本命武曲入庙且化禄"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v3-xingjue-051-p662-001",
+      "method": "ziwei",
+      "conditions": [
+        "财帛宫天机单守"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v3-xingjue-052-p675-001",
+      "method": "ziwei",
+      "conditions": [
+        "疾厄宫在卯",
+        "天同与天刑、铃星同居"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v3-xingjue-055-p708-001",
+      "method": "ziwei",
+      "conditions": [
+        "水局",
+        "官禄宫在辰",
+        "巨门和天刑同居"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "ziwei-v3-xingjue-056-p1582-001",
+      "method": "ziwei",
+      "conditions": [
+        "田宅宫天机落陷"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    }
+  ],
+  "mappingNotes": {
+    "samePalace": "同度、同居仅接明确星名的同一宫位关系，不推断会照。",
+    "context": "先列疾厄宫或官禄宫地支时，后列同居星绑定该宫；入命章节的入庙化权绑定命宫。",
+    "brightness": "落陷对应现有陷；入庙与化权、化禄保留同一星、同一宫。",
+    "solitude": "财帛宫天机单守保留主星数量为一，不因识别同义词去掉独守。"
+  },
+  "deferred": [
+    "ziwei-v3-c020-p129017-001",
+    "ziwei-v2-minggong-p206002-002",
+    "ziwei-v1-zhuxing-wenda-p127000-007",
+    "ziwei-v2-xingjue-006-p270-001"
+  ]
+}

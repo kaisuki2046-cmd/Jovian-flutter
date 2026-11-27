@@ -1,0 +1,176 @@
+{
+  "profile": "ziwei-explicit-conjunction-placement-brightness-v1",
+  "scanned": 8784,
+  "witnesses": [
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 0,
+      "ids": [
+        "ziwei-v1-zhuxing-wenda-p127000-010",
+        "ziwei-v1-zhuxing-wenda-p037-005"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 1,
+      "ids": [
+        "ziwei-v2-xingjue-008-p296-001",
+        "ziwei-v3-xingjue-051-p662-001"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 6,
+      "ids": [
+        "ziwei-v2-xingjue-007-p279-001"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 1,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 7,
+      "ids": [
+        "ziwei-v1-xingjue-044-p196-001"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 2,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 2,
+      "ids": [
+        "ziwei-v1-zhuxing-wenda-p122000-007"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1980,
+          "month": 8,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 10,
+      "ids": [
+        "ziwei-v3-xingjue-056-p1582-001"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1988,
+          "month": 6,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 5,
+      "ids": [
+        "ziwei-v4-jielan-157-p001-001"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 2039,
+          "month": 10,
+          "day": 15
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 9,
+      "ids": [
+        "ziwei-v3-xingjue-055-p708-001"
+      ]
+    },
+    {
+      "profile": {
+        "date": {
+          "year": 1982,
+          "month": 8,
+          "day": 29
+        },
+        "place": {
+          "latitude": 39.907,
+          "longitude": 116.397
+        },
+        "gender": "female"
+      },
+      "timeIndex": 0,
+      "ids": [
+        "ziwei-v3-xingjue-052-p675-001"
+      ]
+    }
+  ],
+  "missing": [],
+  "targetedScan": {
+    "lunarMonth": 7,
+    "timeIndex": 0,
+    "scanned": 69
+  }
+}

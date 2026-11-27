@@ -1,0 +1,320 @@
+{
+  "baseline": "third integration batch",
+  "changes": [
+    {
+      "id": "astro-lilly-v3-wealth-level-p002-001",
+      "method": "western",
+      "conditions": [
+        "Regiomontanus 本命盘中木星第二宫且月亮第一宫"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-friends-p008-001",
+      "method": "western",
+      "conditions": [
+        "太阳落第十一宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-friends-p009-001",
+      "method": "western",
+      "conditions": [
+        "月亮落第十一宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-friends-p010-001",
+      "method": "western",
+      "conditions": [
+        "水星落第十一宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-preferment-p032-001",
+      "method": "western",
+      "conditions": [
+        "昼盘，木星在第十宫；土星或火星刑冲时，原文另对长期地位作修正。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-preferment-p033-001",
+      "method": "western",
+      "conditions": [
+        "土星落第十宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-family-p010-001",
+      "method": "western",
+      "conditions": [
+        "太阳或木星居第四宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-mines-p003-001",
+      "method": "western",
+      "conditions": [
+        "木星在天秤座第四宫。土星居宝瓶四宫、木星天秤时原文更看重土星。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-mines-p004-001",
+      "method": "western",
+      "conditions": [
+        "火星在狮子座第四宫，太阳在白羊。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-friends-p021-001",
+      "method": "western",
+      "conditions": [
+        "金星落第十一宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-friends-p022-001",
+      "method": "western",
+      "conditions": [
+        "土星在第十一宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-friends-p023-001",
+      "method": "western",
+      "conditions": [
+        "火星在第十一宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-religion-dreams-p004-001",
+      "method": "western",
+      "conditions": [
+        "逐条检查木星、金星或北交是否在第九宫或第三宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-religion-dreams-p008-001",
+      "method": "western",
+      "conditions": [
+        "水星处第九宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-honour-p027-001",
+      "method": "western",
+      "conditions": [
+        "月亮落天蝎且火星在金牛。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-preferment-p066-001",
+      "method": "western",
+      "conditions": [
+        "太阳在十宫，且处于自身擢升或木星传统庙位。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-preferment-p068-001",
+      "method": "western",
+      "conditions": [
+        "夜盘火星居十宫，须为阳性星座，且属火星自庙或木星庙；按原书相交为白羊或射手。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-friends-p042-001",
+      "method": "western",
+      "conditions": [
+        "月亮落宝瓶或双鱼。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-enemies-p021-001",
+      "method": "western",
+      "conditions": [
+        "上升星座为双子。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-enemies-p022-001",
+      "method": "western",
+      "conditions": [
+        "上升星座为射手。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-enemies-p023-001",
+      "method": "western",
+      "conditions": [
+        "上升星座为宝瓶。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-relatives-p007-001",
+      "method": "western",
+      "conditions": [
+        "火星依莉莉第三宫取星口径位于第三宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-relatives-p015-001",
+      "method": "western",
+      "conditions": [
+        "本命上升星座为白羊或天秤。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-relatives-p016-001",
+      "method": "western",
+      "conditions": [
+        "本命上升星座为巨蟹或摩羯。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-relatives-p017-001",
+      "method": "western",
+      "conditions": [
+        "本命上升星座为狮子或水瓶。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-siblings-p035-001",
+      "method": "western",
+      "conditions": [
+        "土星位于第一宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-siblings-p036-001",
+      "method": "western",
+      "conditions": [
+        "木星位于第一宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-family-p028-001",
+      "method": "western",
+      "conditions": [
+        "月亮和金星分别位于第六宫与第十二宫，两颗星的具体分配可互换。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-mines-p006-001",
+      "method": "western",
+      "conditions": [
+        "土星在第四宫水瓶座，木星同时在天秤座。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-children-p022-001",
+      "method": "western",
+      "conditions": [
+        "月亮位于第五宫，按这段作为单项子女见证。另核同段给出的五宫土星。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-children-p023-001",
+      "method": "western",
+      "conditions": [
+        "先有月亮居第五宫，同宫还有土星。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-children-p026-001",
+      "method": "western",
+      "conditions": [
+        "月亮与金星同在第五宫。原书把多产星座补作有利分量的加强条件。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-religion-dreams-p026-001",
+      "method": "western",
+      "conditions": [
+        "太阳处第九宫。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-health-servants-p013-001",
+      "method": "western",
+      "conditions": [
+        "按莉莉的宫制确认火星在第六宫，且落风象或火象的指定星座。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    },
+    {
+      "id": "astro-lilly-v3-wit-p042-001",
+      "method": "western",
+      "conditions": [
+        "水星在上升宫且入庙；这是角宫入庙总则中的强调子集。"
+      ],
+      "previousStatus": "unmapped",
+      "status": "indexed"
+    }
+  ]
+}

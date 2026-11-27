@@ -179,16 +179,32 @@ typedef _GuideHistoryRow = ({
 });
 
 class _GuideConversationHistoryState extends State<GuideConversationHistory> {
+  final _search = TextEditingController();
+  final _searchFocus = FocusNode();
   String _query = '';
+
+  void _filter(String query) =>
+      setState(() => _query = query.trim().toLowerCase());
+
+  void _clearSearch() {
+    _search.clear();
+    _filter('');
+    _searchFocus.requestFocus();
+  }
+
+  @override
+  void dispose() {
+    _search.dispose();
+    _searchFocus.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final width = (MediaQuery.sizeOf(context).width * .84).clamp(0.0, 320.0);
-    final now = DateTime.now();
+    final today = _calendarDay(DateTime.now());
     final theme = Theme.of(context);
-    final readings = {
-      for (final entry in widget.entries) entry.id: entry.reading,
-    };
+    final readings = {for (final entry in widget.entries) entry.id: entry};
     final linkedIds = {
       for (final transcript in widget.transcripts)
         for (final turn in transcript.turns)
@@ -200,7 +216,7 @@ class _GuideConversationHistoryState extends State<GuideConversationHistory> {
           (
             id: transcript.id,
             question: transcript.turns.first.question,
-            updatedAt: transcript.turns.last.sentAt,
+            updatedAt: _latestActivity(transcript, readings),
             open: widget.openConversation == null
                 ? null
                 : () => widget.openConversation!(transcript.id),
@@ -234,15 +250,20 @@ class _GuideConversationHistoryState extends State<GuideConversationHistory> {
     final groups = <String, List<_GuideHistoryRow>>{};
     for (final entry in entries) {
       final date = entry.updatedAt.toLocal();
-      final label = DateUtils.isSameDay(date, now)
-          ? '今天'
-          : '${date.year}年${date.month}月';
+      final age = today.difference(_calendarDay(date)).inDays;
+      final label = switch (age) {
+        <= 0 => context.uiLabel('今天'),
+        1 => context.uiLabel('昨天'),
+        < 7 => context.uiLabel('7 天内'),
+        < 30 => context.uiLabel('30 天内'),
+        _ => MaterialLocalizations.of(context).formatMonthYear(date),
+      };
       groups.putIfAbsent(label, () => []).add(entry);
     }
     return Drawer(
       width: width,
       shape: const RoundedRectangleBorder(),
-      semanticLabel: '会话历史',
+      semanticLabel: context.uiLabel('会话历史'),
       backgroundColor: theme.scaffoldBackgroundColor,
       child: SafeArea(
         child: Padding(
@@ -259,39 +280,55 @@ class _GuideConversationHistoryState extends State<GuideConversationHistory> {
                     ),
                   ),
                   IconButton(
-                    tooltip: '关闭会话历史',
+                    tooltip: context.uiLabel('关闭会话历史'),
                     onPressed: widget.back,
                     icon: const Icon(Icons.close),
                   ),
                 ],
               ),
-              Semantics(
-                label: '搜索对话',
-                child: TextField(
-                  onChanged: (query) =>
-                      setState(() => _query = query.trim().toLowerCase()),
-                  decoration: const InputDecoration(
-                    hintText: '搜索对话',
-                    prefixIcon: Icon(Icons.search),
-                    isDense: true,
-                  ),
+              TextField(
+                controller: _search,
+                focusNode: _searchFocus,
+                autocorrect: false,
+                textInputAction: TextInputAction.search,
+                onChanged: _filter,
+                decoration: InputDecoration(
+                  labelText: context.uiLabel('搜索对话'),
+                  hintText: context.uiLabel('搜索对话内容…'),
+                  prefixIcon: const Icon(Icons.search),
+                  isDense: true,
+                  suffixIcon: _search.text.isEmpty
+                      ? null
+                      : IconButton(
+                          tooltip: context.uiLabel('清空搜索'),
+                          icon: const Icon(Icons.close),
+                          onPressed: _clearSearch,
+                        ),
                 ),
               ),
               if (groups.isEmpty)
                 Padding(
                   padding: const EdgeInsets.all(12),
-                  child: Text(_query.isEmpty ? '暂无历史对话' : '没有找到匹配的对话'),
+                  child: Semantics(
+                    liveRegion: true,
+                    child: UiText(_query.isEmpty ? '暂无历史对话' : '没有找到匹配的对话'),
+                  ),
                 )
               else
                 Expanded(
                   child: ListView(
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
                     children: [
                       for (final group in groups.entries) ...[
                         Padding(
                           padding: const EdgeInsets.fromLTRB(8, 14, 8, 4),
-                          child: Text(
-                            group.key,
-                            style: theme.textTheme.labelMedium,
+                          child: Semantics(
+                            header: true,
+                            child: Text(
+                              group.key,
+                              style: theme.textTheme.labelMedium,
+                            ),
                           ),
                         ),
                         for (final entry in group.value)
@@ -343,15 +380,19 @@ class _GuideConversationHistoryState extends State<GuideConversationHistory> {
 
   bool _matchesTranscript(
     GuideTranscript transcript,
-    Map<String, OnlineReading> readings,
+    Map<String, GuideHistoryEntry> readings,
   ) => transcript.turns.any((turn) {
-    final reading = readings[turn.readingId];
-    return _matches(
-      turn.question,
-      turn.reply ?? reading?.snapshot.focus ?? '',
-      reading?.followUps ?? const [],
-    );
+    final reading = readings[turn.readingId]?.reading;
+    return _contains(turn.reply) ||
+        _contains(turn.clarificationQuestion) ||
+        _matches(
+          turn.question,
+          reading?.snapshot.focus ?? '',
+          reading?.followUps ?? const [],
+        );
   });
+
+  bool _contains(String? text) => text?.toLowerCase().contains(_query) ?? false;
 
   bool _matches(
     String question,
@@ -359,11 +400,26 @@ class _GuideConversationHistoryState extends State<GuideConversationHistory> {
     List<ReadingFollowUp> followUps,
   ) =>
       _query.isEmpty ||
-      question.toLowerCase().contains(_query) ||
-      focus.toLowerCase().contains(_query) ||
+      _contains(question) ||
+      _contains(focus) ||
       followUps.any(
-        (turn) =>
-            turn.question.toLowerCase().contains(_query) ||
-            turn.answer.toLowerCase().contains(_query),
+        (turn) => _contains(turn.question) || _contains(turn.answer),
       );
 }
+
+DateTime _latestActivity(
+  GuideTranscript transcript,
+  Map<String, GuideHistoryEntry> readings,
+) {
+  var latest = transcript.turns.last.sentAt;
+  for (final turn in transcript.turns) {
+    final saved = readings[turn.readingId];
+    if (saved != null && saved.updatedAt.isAfter(latest))
+      latest = saved.updatedAt;
+  }
+  return latest;
+}
+
+// Compare calendar days without the varying length of a local DST day.
+DateTime _calendarDay(DateTime local) =>
+    DateTime.utc(local.year, local.month, local.day);

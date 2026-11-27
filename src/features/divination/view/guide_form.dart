@@ -468,7 +468,7 @@ class _GuideFormState extends State<GuideForm>
         titleTextStyle: Theme.of(context).textTheme.titleMedium,
         title: const UiText('对话'),
         leading: IconButton(
-          tooltip: '会话历史',
+          tooltip: context.uiLabel('会话历史'),
           icon: const Icon(Icons.menu_rounded),
           onPressed: () {
             FocusScope.of(context).unfocus();
@@ -477,7 +477,7 @@ class _GuideFormState extends State<GuideForm>
         ),
         actions: [
           IconButton(
-            tooltip: '新对话',
+            tooltip: context.uiLabel('新对话'),
             icon: const Icon(Icons.add_comment_outlined),
             onPressed: online?.busy == true
                 ? null

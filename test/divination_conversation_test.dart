@@ -22,6 +22,7 @@ import '../src/features/divination/view/guide_conversation.dart';
 import '../src/features/divination/view/guide_form.dart';
 import '../src/features/divination/view/reading_report.dart';
 import '../src/ui/chat_time_label.dart';
+import '../src/ui/interface_language.dart';
 
 import 'support/divination_service_fixture.dart';
 
@@ -794,6 +795,133 @@ void main() {
 
       expect(service.calls, isEmpty);
       expect(await recovery.readTranscriptPosition(), isNull);
+    },
+  );
+
+  testWidgets(
+    'history places a continued reading under Today and searches each turn field',
+    (tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(360, 760);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final now = DateTime.now();
+      DateTime daysAgo(int days) =>
+          DateTime(now.year, now.month, now.day - days, 12);
+      final setup = (DivinationServiceFixture()..failReport = false).connect(
+        DivinationRecoveryFixture(),
+      );
+      addTearDown(setup.dispose);
+      await setup.start(divinationFixtureDetails, automatic: true);
+      final original = setup.reading!;
+      final recovery = DivinationRecoveryFixture();
+      await recovery.writeHistory(
+        GuideHistoryEntry(
+          id: 'old-reading',
+          updatedAt: daysAgo(0),
+          reading: OnlineReading(
+            original.snapshot,
+            report: original.report,
+            followUps: [
+              (
+                question: '刚补问的内容',
+                answer: '新的追问答复',
+                explanation: null,
+                nextSteps: [],
+                evidenceIds: [],
+              ),
+            ],
+          ),
+        ),
+      );
+      for (final (id, question, age) in const [
+        ('active-chat', '最早的会话原文', 65),
+        ('yesterday', '昨天的提问原文', 1),
+        ('last-week', '六天前的提问原文', 6),
+        ('last-month', '七天前的提问原文', 7),
+        ('older', '更早的提问原文', 33),
+      ]) {
+        await recovery.writeTranscriptTurn((
+          id: '$id-turn',
+          conversationId: id,
+          sentAt: daysAgo(age),
+          question: question,
+          reply: id == 'active-chat' ? '前面的助手回复' : null,
+          clarificationQuestion: id == 'active-chat' ? '请补充具体事件' : null,
+          previousQuestion: null,
+          readingId: null,
+        ));
+      }
+
+      await recovery.writeTranscriptTurn((
+        id: 'active-chat-reading',
+        conversationId: 'active-chat',
+        sentAt: daysAgo(64),
+        question: '随后确认的问题',
+        reply: null,
+        clarificationQuestion: null,
+        previousQuestion: null,
+        readingId: 'old-reading',
+      ));
+
+      final service = DivinationServiceFixture();
+      final online = service.connect(recovery);
+      addTearDown(online.dispose);
+      await tester.pumpWidget(
+        MaterialApp(
+          locale: const Locale('en'),
+          localizationsDelegates: const [interfaceStringsDelegate],
+          home: DivinationPage(onlineGuide: online),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Chat history'));
+      await tester.pumpAndSettle();
+      expect(find.byTooltip('Close chat history'), findsOneWidget);
+      expect(find.text('Today'), findsOneWidget);
+      expect(find.text('Yesterday'), findsOneWidget);
+      expect(find.text('Last 7 days'), findsOneWidget);
+      expect(find.text('Last 30 days'), findsOneWidget);
+      final root = tester.element(find.byType(Drawer));
+      expect(
+        find.text(MaterialLocalizations.of(root).formatMonthYear(daysAgo(33))),
+        findsOneWidget,
+      );
+      final rows = find.descendant(
+        of: find.byType(Drawer),
+        matching: find.byType(ListTile),
+      );
+      expect(
+        tester
+            .widgetList<ListTile>(rows)
+            .map((row) => (row.title! as Text).data),
+        ['最早的会话原文', '昨天的提问原文', '六天前的提问原文', '七天前的提问原文', '更早的提问原文'],
+      );
+
+      final search = find.descendant(
+        of: find.byType(Drawer),
+        matching: find.byType(TextField),
+      );
+      for (final query in ['具体事件', original.snapshot.focus, '追问答复']) {
+        await tester.enterText(search, query);
+        await tester.pumpAndSettle();
+        expect(rows, findsOneWidget);
+        expect(find.widgetWithText(ListTile, '最早的会话原文'), findsOneWidget);
+      }
+      await tester.enterText(search, '找不到的字');
+      await tester.pumpAndSettle();
+      expect(find.text('No matching chats'), findsOneWidget);
+      await tester.tap(find.byTooltip('Clear search'));
+      await tester.pumpAndSettle();
+      expect(rows, findsNWidgets(5));
+
+      await tester.tap(find.widgetWithText(ListTile, '最早的会话原文'));
+      await tester.pumpAndSettle();
+      expect(find.byTooltip('Close chat history'), findsNothing);
+      expect(online.activeConversationId, 'active-chat');
+      expect(service.calls, isEmpty);
+      expect(tester.takeException(), isNull);
     },
   );
 

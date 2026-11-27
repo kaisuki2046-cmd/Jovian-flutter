@@ -114,5 +114,22 @@ BirthPlace? _findPlace(String value, List<BirthPlace> places) {
       })
       .take(2)
       .toList();
-  return matches.length == 1 ? matches.first : null;
+  if (matches.isNotEmpty) return matches.length == 1 ? matches.first : null;
+
+  // Older account profiles accept unqualified names such as 上海. Resolve a
+  // city only when the catalog has a single city-level result for that input.
+  final cities = places
+      .where((place) {
+        if (place.district != null) return false;
+        final city = place.city;
+        final names = {city, '${place.country}$city'};
+        if (place.countryCode == 'CN' && city.endsWith('市')) {
+          final short = city.substring(0, city.length - 1);
+          names.addAll([short, '${place.country}$short']);
+        }
+        return names.any((name) => compact(name) == input);
+      })
+      .take(2)
+      .toList();
+  return cities.length == 1 ? cities.first : null;
 }

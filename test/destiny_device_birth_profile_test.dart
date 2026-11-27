@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -50,6 +51,52 @@ Map<String, Object?> _birthFields([String? date = '1998-08-09']) => {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  test(
+    'prefills a unique legacy city but keeps district and ambiguous names distinct',
+    () {
+      final entries =
+          (jsonDecode(
+                    File(
+                      'src/features/destiny/assets/birth_places.json',
+                    ).readAsStringSync(),
+                  )
+                  as List)
+              .cast<Map<String, Object?>>();
+      final shanghai = entries
+          .where((entry) => entry['region'] == '上海市')
+          .map(BirthPlace.fromJson)
+          .toList();
+      final springfield = [
+        for (final region in ['Illinois', 'Missouri'])
+          BirthPlace(
+            id: region,
+            name: 'US · $region · Springfield',
+            countryCode: 'US',
+            country: 'US',
+            region: region,
+            city: 'Springfield',
+            latitude: 37,
+            longitude: -93,
+            timeZone: 'America/Chicago',
+          ),
+      ];
+      BirthPlace? resolve(String value) => BirthProfileDraft.fromAccount(
+        AccountBirthFields(
+          birthDate: '',
+          birthTime: '',
+          birthPlace: value,
+          gender: '',
+        ),
+        [...shanghai, ...springfield],
+      ).place;
+
+      expect(resolve('上海')?.name, '中国 · 上海市');
+      expect(resolve('中国 上海')?.name, '中国 · 上海市');
+      expect(resolve('上海市 · 黄浦区')?.district, '黄浦区');
+      expect(resolve('Springfield'), isNull);
+    },
+  );
 
   test(
     'serializes a write and deletion, keeping each member profile separate',

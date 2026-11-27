@@ -58,6 +58,8 @@ class TarotBackArt extends StatelessWidget {
   );
 }
 
+typedef TarotCardOrigin = ({Rect frame, double angle, double opacity});
+
 class TarotRitualFan extends StatefulWidget {
   const TarotRitualFan({
     super.key,
@@ -72,7 +74,7 @@ class TarotRitualFan extends StatefulWidget {
   final Set<int> selectedSlots;
   final bool busy;
   final bool reducedMotion;
-  final void Function(int slot, Rect origin) choose;
+  final void Function(int slot, TarotCardOrigin origin) choose;
 
   @override
   State<TarotRitualFan> createState() => _TarotRitualFanState();
@@ -206,13 +208,17 @@ class _TarotRitualFanState extends State<TarotRitualFan> {
                                           final box =
                                               cardContext.findRenderObject()!
                                                   as RenderBox;
-                                          widget.choose(
-                                            slot,
-                                            MatrixUtils.transformRect(
-                                              box.getTransformTo(null),
-                                              Offset.zero & box.size,
+                                          widget.choose(slot, (
+                                            frame: Rect.fromCenter(
+                                              center: box.localToGlobal(
+                                                box.size.center(Offset.zero),
+                                              ),
+                                              width: box.size.width,
+                                              height: box.size.height,
                                             ),
-                                          );
+                                            angle: pose.angle,
+                                            opacity: pose.opacity,
+                                          ));
                                         }
 
                                         return Semantics(

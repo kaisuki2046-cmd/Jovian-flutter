@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:math' as math;
+import 'dart:ui' show lerpDouble;
 
 import 'package:jovian_divination/jovian_divination.dart';
 import 'package:material_ui/material_ui.dart';
@@ -20,6 +22,7 @@ class TarotRitualPanel extends StatefulWidget {
     required this.active,
     required this.reducedMotion,
     required this.choose,
+    required this.onFlightChanged,
     required this.reveal,
     required this.finish,
   });
@@ -33,6 +36,7 @@ class TarotRitualPanel extends StatefulWidget {
   final bool active;
   final bool reducedMotion;
   final ValueChanged<int> choose;
+  final ValueChanged<bool> onFlightChanged;
   final ValueChanged<int?> reveal;
   final VoidCallback finish;
 
@@ -40,51 +44,116 @@ class TarotRitualPanel extends StatefulWidget {
   State<TarotRitualPanel> createState() => _TarotRitualPanelState();
 }
 
-class _TarotRitualPanelState extends State<TarotRitualPanel> {
+class _TarotRitualPanelState extends State<TarotRitualPanel>
+    with SingleTickerProviderStateMixin {
+  static const _flightCurve = Cubic(.28, .28, .22, 1);
+
   final _area = GlobalKey();
   final _targets = List.generate(_positions.length, (_) => GlobalKey());
-  ({int slot, int index, Rect from, Rect to})? _flight;
-  bool _arrived = false;
+  late final _motion = AnimationController(vsync: this)
+    ..addStatusListener(_motionChanged);
+  _CardFlight? _flight;
+  Timer? _finalHold;
+  bool _returning = false;
+  bool _landed = false;
 
   @override
   void didUpdateWidget(TarotRitualPanel oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!widget.active ||
-        widget.reducedMotion ||
-        (_arrived && _canFinishFlight)) {
-      _flight = null;
+    if (_flight == null) return;
+    if (!widget.active || widget.reducedMotion) {
+      _finishFlight();
+    } else {
+      _syncFlight();
     }
   }
 
-  bool get _canFinishFlight {
-    final flight = _flight;
-    return flight != null &&
-        (!widget.busy || widget.selectedSlots.length > flight.index);
+  @override
+  void dispose() {
+    _finalHold?.cancel();
+    _motion.dispose();
+    super.dispose();
   }
 
-  void _choose(int slot, Rect origin) {
+  void _motionChanged(AnimationStatus status) {
+    if (status == AnimationStatus.completed) _syncFlight();
+    if (status == AnimationStatus.dismissed && _returning) _finishFlight();
+  }
+
+  void _syncFlight() {
+    final flight = _flight;
+    if (flight == null || _returning || _landed) return;
+    final accepted =
+        widget.selectedSlots.elementAtOrNull(flight.index) == flight.slot;
+    if (!accepted && !widget.busy) {
+      _returning = true;
+      _motion.animateBack(
+        0,
+        duration: const Duration(milliseconds: 230),
+        curve: _flightCurve,
+      );
+    } else if (accepted && _motion.isCompleted) {
+      if (flight.index < _positions.length - 1) {
+        _finishFlight();
+      } else {
+        setState(() => _landed = true);
+        _finalHold = Timer(const Duration(milliseconds: 140), _finishFlight);
+      }
+    }
+  }
+
+  void _finishFlight() {
+    _finalHold?.cancel();
+    _finalHold = null;
+    _motion.stop();
+    setState(() {
+      _flight = null;
+      _returning = false;
+      _landed = false;
+    });
+    // The controller can finish a transfer while this dialog is rebuilding.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _flight == null) widget.onFlightChanged(false);
+    });
+  }
+
+  void _choose(int slot, TarotCardOrigin origin) {
     final index = widget.selectedSlots.length;
     if (widget.busy ||
         widget.selectionBlocked ||
         _flight != null ||
         !widget.active ||
-        index >= _positions.length)
+        index >= _positions.length) {
       return;
+    }
     final targetContext = _targets[index].currentContext;
     final root = _area.currentContext?.findRenderObject();
     final target = targetContext?.findRenderObject();
     if (!widget.reducedMotion && root is RenderBox && target is RenderBox) {
-      final from = root.globalToLocal(origin.topLeft) & origin.size;
+      final from = origin.frame.shift(-root.localToGlobal(Offset.zero));
       final to =
           root.globalToLocal(target.localToGlobal(Offset.zero)) & target.size;
       Scrollable.ensureVisible(
         targetContext!,
         alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart,
       );
+      _motion.value = 0;
       setState(() {
-        _flight = (slot: slot, index: index, from: from, to: to);
-        _arrived = false;
+        _flight = _CardFlight(
+          slot: slot,
+          index: index,
+          from: from,
+          to: to,
+          angle: origin.angle,
+          opacity: origin.opacity,
+        );
       });
+      widget.onFlightChanged(true);
+      _motion.animateTo(
+        1,
+        duration: const Duration(milliseconds: 460),
+        curve: _flightCurve,
+      );
     }
     widget.choose(slot);
   }
@@ -93,12 +162,16 @@ class _TarotRitualPanelState extends State<TarotRitualPanel> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final flight = _flight;
-    final draw = flight == null ? widget.draw : null;
+    final draw = widget.draw;
     final revealed =
         draw?.cards.every((card) => widget.revealed.contains(card.slot)) ??
         false;
     final held = widget.selectedSlots
-        .take(flight?.index ?? widget.selectedSlots.length)
+        .take(
+          flight == null || _landed
+              ? widget.selectedSlots.length
+              : flight.index,
+        )
         .toList(growable: false);
     return Stack(
       key: _area,
@@ -177,30 +250,73 @@ class _TarotRitualPanelState extends State<TarotRitualPanel> {
             ],
           ],
         ),
-        if (flight != null)
+        if (flight != null && !_landed)
           Positioned.fill(
             child: IgnorePointer(
               child: ExcludeSemantics(
-                child: TweenAnimationBuilder<Rect?>(
-                  key: ValueKey(flight.slot),
-                  tween: RectTween(begin: flight.from, end: flight.to),
-                  duration: const Duration(milliseconds: 420),
-                  curve: Curves.easeInOutCubic,
-                  onEnd: () => setState(() {
-                    _arrived = true;
-                    if (_canFinishFlight) _flight = null;
-                  }),
-                  builder: (context, frame, child) => Stack(
-                    children: [
-                      Positioned.fromRect(rect: frame!, child: child!),
-                    ],
-                  ),
-                  child: const TarotBackArt(),
+                child: AnimatedBuilder(
+                  animation: _motion,
+                  child: const RepaintBoundary(child: TarotBackArt()),
+                  builder: (context, child) {
+                    final progress = _motion.value;
+                    return Stack(
+                      children: [
+                        Positioned.fromRect(
+                          key: const ValueKey('tarot-card-flight'),
+                          rect: flight.frameAt(progress),
+                          child: Transform.rotate(
+                            angle: flight.angle * (1 - progress),
+                            child: Opacity(
+                              opacity: lerpDouble(
+                                flight.opacity,
+                                1,
+                                math.min(1, progress / .24),
+                              )!,
+                              child: child,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ),
             ),
           ),
       ],
+    );
+  }
+}
+
+class _CardFlight {
+  const _CardFlight({
+    required this.slot,
+    required this.index,
+    required this.from,
+    required this.to,
+    required this.angle,
+    required this.opacity,
+  });
+
+  final int slot;
+  final int index;
+  final Rect from;
+  final Rect to;
+  final double angle;
+  final double opacity;
+
+  Rect frameAt(double progress) {
+    final bend = progress * (1 - progress);
+    final delta = to.center - from.center;
+    return Rect.fromCenter(
+      center:
+          from.center +
+          Offset(
+            delta.dx * (progress - .66 * bend),
+            delta.dy * (progress + .44 * bend),
+          ),
+      width: lerpDouble(from.width, to.width, progress)!,
+      height: lerpDouble(from.height, to.height, progress)!,
     );
   }
 }

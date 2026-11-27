@@ -74,6 +74,8 @@ class DivinationServiceFixture {
   bool longReport = false;
   Future<void>? understanding;
   Future<void>? followUpReply;
+  Future<void>? pickReply;
+  bool failNextPick = false;
   final understood = <String>[];
   final calls = <String>[];
   final startFailures = <({int status, String code})>[];
@@ -149,6 +151,11 @@ class DivinationServiceFixture {
         );
         return _json(_state());
       case 'POST /reading/pick':
+        await pickReply;
+        if (failNextPick) {
+          failNextPick = false;
+          return _json({'error': 'timeout'}, status: 504);
+        }
         _ritual!.pick(
           GuideCardEvent(
             actionId: body['actionId'] as String,

@@ -51,6 +51,7 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
     with WidgetsBindingObserver {
   late int _settled;
   bool _active = true;
+  bool _cardInFlight = false;
 
   @override
   void initState() {
@@ -100,7 +101,8 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
         snapshot?.stage == GuideStage.draw &&
         snapshot!.selectedSlots.isEmpty &&
         presentation.preparation < 1;
-    final flipping = !casting && snapshot?.stage == GuideStage.reading;
+    final flipping =
+        !casting && !_cardInFlight && snapshot?.stage == GuideStage.reading;
     final title = casting
         ? '投三枚铜钱'
         : flipping
@@ -170,7 +172,7 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  if (error != null && !flipping)
+                  if (error != null && !flipping && !_cardInFlight)
                     Semantics(
                       liveRegion: true,
                       child: UiText(
@@ -178,12 +180,15 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
                         style: TextStyle(color: theme.colorScheme.error),
                       ),
                     ),
-                  if (!busy && permission != null && !flipping)
+                  if (!busy &&
+                      permission != null &&
+                      !flipping &&
+                      !_cardInFlight)
                     OutlinedButton(
                       onPressed: permission,
                       child: const UiText('前往 AI 授权'),
                     ),
-                  if (!busy && retry != null && !flipping)
+                  if (!busy && retry != null && !flipping && !_cardInFlight)
                     TextButton(onPressed: retry, child: const UiText('重试仪式同步')),
                   if (snapshot == null)
                     const UiText('这次算事的进度暂时无法读取。')
@@ -242,13 +247,18 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
                             : TarotRitualPanel(
                                 slotCount: snapshot.slotCount,
                                 selectedSlots: snapshot.selectedSlots,
-                                draw: snapshot.chart?.tarot,
+                                draw: flipping ? snapshot.chart?.tarot : null,
                                 revealed: presentation.revealed,
                                 busy: busy,
                                 selectionBlocked: retry != null && !flipping,
                                 active: _active,
                                 reducedMotion: motionOff,
                                 choose: widget.choose,
+                                onFlightChanged: (moving) {
+                                  if (_cardInFlight != moving) {
+                                    setState(() => _cardInFlight = moving);
+                                  }
+                                },
                                 reveal: (slot) {
                                   setState(() {
                                     if (slot == null) {

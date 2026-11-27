@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../src/features/divination/view/guide_form.dart';
+import '../src/features/divination/view/ritual/guide_ritual_dialog.dart';
 import '../src/features/divination/view/ritual/tarot_deck.dart';
 import '../src/features/divination/view/ritual/tarot_preparation.dart';
 import '../src/ui/interface_language.dart';
@@ -100,6 +103,123 @@ void main() {
       expect(progress, 1);
     },
   );
+
+  for (final reject in [false, true]) {
+    testWidgets(
+      reject
+          ? 'the third card returns before a retry is shown'
+          : 'keeps the third card in the selected position before opening the reveal',
+      (tester) async {
+        tester.view.devicePixelRatio = 1;
+        tester.view.physicalSize = const Size(320, 660);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        addTearDown(tester.view.resetPhysicalSize);
+        final service = DivinationServiceFixture()..failReport = false;
+        final online = service.connect(DivinationRecoveryFixture());
+        addTearDown(online.dispose);
+        await online.start(divinationFixtureDetails, automatic: false);
+        for (var toss = 0; toss < 6; toss++) {
+          await online.toss();
+        }
+        await online.pick(37);
+        await online.pick(38);
+
+        final reply = Completer<void>();
+        if (reject) {
+          service.pickReply = reply.future;
+          service.failNextPick = true;
+        }
+        final changes = ValueNotifier(0);
+        final subscription = online.changes.listen((_) => changes.value++);
+        addTearDown(() async {
+          await subscription.cancel();
+          changes.dispose();
+        });
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: Center(
+                child: GuideRitualDialog(
+                  presentation: GuideRitualPresentation()..preparation = 1,
+                  changes: changes,
+                  snapshot: () => online.reading?.snapshot,
+                  busy: () => online.busy,
+                  error: () => online.message,
+                  retry: () => online.canRetry ? online.retry : null,
+                  toss: () {},
+                  choose: (slot) => unawaited(online.pick(slot)),
+                  pause: () {},
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final card = find.bySemanticsLabel('选取第 41 张牌');
+        final flight = find.byKey(const ValueKey('tarot-card-flight'));
+        final fanTitle = find.text('选择三张塔罗牌');
+        final revealTitle = find.text('翻开三张塔罗牌');
+        final retry = find.text('重试仪式同步');
+        double flightY() => tester.widget<Positioned>(flight).top!;
+
+        tester.widget<Semantics>(card).properties.onTap!();
+        await tester.pump();
+        final origin = flightY();
+        expect(fanTitle, findsOneWidget);
+        expect(revealTitle, findsNothing);
+        expect(card, findsNothing);
+        await tester.pump(const Duration(milliseconds: 160));
+        expect(flightY(), lessThan(origin - 20));
+        expect(revealTitle, findsNothing);
+        expect(find.text('已选 2 / 3 张'), findsOneWidget);
+
+        await tester.pump(const Duration(milliseconds: 305));
+        if (reject) {
+          // A slow response must keep the card at its destination.
+          final landed = flightY();
+          await tester.pump(const Duration(milliseconds: 150));
+          expect(flightY(), landed);
+          expect(retry, findsNothing);
+          reply.complete();
+          await tester.pump();
+          await tester.pump();
+          await tester.pump(const Duration(milliseconds: 80));
+          expect(flightY(), greaterThan(landed));
+          expect(retry, findsNothing);
+          await tester.pump(const Duration(milliseconds: 180));
+          await tester.pumpAndSettle();
+          expect(flight, findsNothing);
+          expect(card, findsOneWidget);
+          expect(find.text('已选 2 / 3 张'), findsOneWidget);
+          expect(retry, findsOneWidget);
+          expect(fanTitle, findsOneWidget);
+          expect(revealTitle, findsNothing);
+
+          await tester.ensureVisible(retry);
+          await tester.tap(retry);
+          await tester.pumpAndSettle();
+          final picks = [
+            for (final (index, call) in service.calls.indexed)
+              if (call == 'POST /reading/pick') service.transmitted[index],
+          ];
+          expect(picks, hasLength(4));
+          expect(picks[2]['actionId'], picks[3]['actionId']);
+          expect(picks[3]['slot'], 40);
+        } else {
+          expect(flight, findsNothing);
+          expect(fanTitle, findsOneWidget);
+          expect(find.text('已选 3 / 3 张'), findsOneWidget);
+          expect(revealTitle, findsNothing);
+          await tester.pump(const Duration(milliseconds: 150));
+          await tester.pumpAndSettle();
+        }
+        expect(revealTitle, findsOneWidget);
+        expect(find.bySemanticsLabel('翻开趋势牌'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
 
   testWidgets(
     'manual ritual can pause, reveal, and continue to chart at 360dp',

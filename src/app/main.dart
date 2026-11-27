@@ -351,6 +351,7 @@ class _AppHome extends StatefulWidget {
 class _AppHomeState extends State<_AppHome> {
   String? _scope;
   OnlineGuideController? _guide;
+  final _socialReads = ValueNotifier(0);
 
   @override
   void initState() {
@@ -394,6 +395,7 @@ class _AppHomeState extends State<_AppHome> {
   void dispose() {
     widget.account?.removeListener(_updateGuideOwner);
     _guide?.dispose();
+    _socialReads.dispose();
     super.dispose();
   }
 
@@ -444,6 +446,7 @@ class _AppHomeState extends State<_AppHome> {
           account: widget.account,
           active: active,
           openAccount: widget.openWelcome,
+          followerAlertReads: _socialReads,
         ),
       ),
       JovianTab.account => switch (widget.account) {
@@ -482,6 +485,9 @@ class _AppHomeState extends State<_AppHome> {
       themeMode: widget.themeMode,
       onThemeModeChanged: widget.onThemeModeChanged,
       openAccount: widget.openWelcome,
+      onFollowerAlertRead: () {
+        if (mounted) _socialReads.value++;
+      },
     ),
     onSectionPopped: (section) =>
         Router.neglect(context, () => widget.onSectionPopped(tab, section)),

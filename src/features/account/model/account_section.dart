@@ -20,6 +20,7 @@ enum AccountSection {
   profilePreview('profile-preview'),
   socialPrivacy('social-privacy'),
   findUser('find-user'),
+  newFollowers('new-followers'),
   socialReports('social-reports'),
   socialModeration('social-moderation'),
   socialProfile('social-profile');

@@ -57,7 +57,6 @@ const _tabAliases = {
   '/modules/divination': JovianTab.divination,
   '/modules/social': JovianTab.messages,
   '/modules/account': JovianTab.account,
-  '/account/new-followers': JovianTab.account,
 };
 final _archiveId = RegExp(r'^[a-f0-9]{64}$');
 final _profileId = RegExp(r'^[A-Za-z0-9_-]{1,128}$');
@@ -91,6 +90,7 @@ AccountSection? _accountSection(String path) => path.startsWith('/account/')
 
 JovianTab _sectionTab(AccountSection section) => switch (section) {
   AccountSection.findUser ||
+  AccountSection.newFollowers ||
   AccountSection.socialReports ||
   AccountSection.socialModeration => JovianTab.messages,
   _ => JovianTab.account,
@@ -184,6 +184,7 @@ class JovianRouteParser extends RouteInformationParser<JovianLocation> {
       final from = switch (_sections[query['from']]) {
         AccountSection.followers => AccountSection.followers,
         AccountSection.following => AccountSection.following,
+        AccountSection.newFollowers => AccountSection.newFollowers,
         _ => AccountSection.findUser,
       };
       final id = query['id'];

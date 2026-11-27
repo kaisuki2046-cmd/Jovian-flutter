@@ -8,6 +8,7 @@ import 'package:http/testing.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../src/app/app_shell.dart';
+import '../src/app/main.dart' show JovianApp;
 import '../src/features/account/account.dart';
 import '../src/features/account/auth/model/session.dart';
 import '../src/features/account/settings/model/agreements.dart';
@@ -497,6 +498,76 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
     account.dispose();
   });
+
+  testWidgets(
+    'the routed follower inbox survives direct links and late reads',
+    (tester) async {
+      final read = Completer<http.Response>();
+      var unread = 1;
+      var markRequests = 0;
+      var profileRequests = 0;
+      final account = _account(_Storage(), (request) async {
+        switch (request.url.path) {
+          case '/social/notifications/summary':
+            return _json({'unread': unread, 'canModerate': false});
+          case '/social/notifications':
+            return _json({
+              'unread': unread,
+              'items': [
+                {
+                  'id': _alertId,
+                  'actor': _profile,
+                  'createdAt': 1700000000000,
+                  'readAt': unread == 0 ? 1700000000001 : null,
+                },
+              ],
+            });
+          case '/social/notifications/read':
+            expect(jsonDecode(request.body), {'id': _alertId});
+            markRequests++;
+            return read.future;
+          case '/social/profiles/$_actorId':
+            profileRequests++;
+            return _json(_profile);
+          default:
+            fail('Unexpected social route ' + request.url.path);
+        }
+      });
+      final platform = tester.binding.platformDispatcher;
+      platform.defaultRouteNameTestValue = '/account/new-followers';
+      addTearDown(platform.clearDefaultRouteNameTestValue);
+      await tester.pumpWidget(JovianApp(account: account));
+      await tester.pumpAndSettle();
+      expect(find.text('明月关注了你'), findsOneWidget);
+      await tester.tap(find.text('查看主页'));
+      await tester.pump();
+      expect(markRequests, 1);
+
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(find.text('1 条未读'), findsOneWidget);
+      unread = 0;
+      read.complete(_json({'unread': unread}));
+      await tester.pumpAndSettle();
+      expect(profileRequests, 0);
+      expect(find.text('1 条未读'), findsNothing);
+
+      await tester.tap(find.text('新增粉丝'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining(' · 已读'), findsOneWidget);
+      await tester.tap(find.text('查看主页'));
+      await tester.pumpAndSettle();
+      expect(find.text('UID 12345678'), findsOneWidget);
+      expect(markRequests, 1);
+      expect(profileRequests, 1);
+
+      await tester.binding.handlePushRoute('/account/new-followers');
+      await tester.pumpAndSettle();
+      expect(find.text('明月关注了你'), findsOneWidget);
+      expect(find.textContaining(' · 已读'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets(
     'opens logged-in search through the narrow message actions menu',

@@ -13,11 +13,13 @@ class SocialPage extends StatelessWidget {
     this.account,
     this.openAccount,
     this.active = true,
+    this.followerAlertReads,
   });
 
   final AccountController? account;
   final VoidCallback? openAccount;
   final bool active;
+  final Listenable? followerAlertReads;
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +39,7 @@ class SocialPage extends StatelessWidget {
               key: ValueKey(memberId),
               page: _MessagesHome(
                 controller: SocialController.forMember(current, memberId),
+                followerAlertReads: followerAlertReads,
               ),
               active: active,
             ),
@@ -74,10 +77,10 @@ class SocialPage extends StatelessWidget {
             () => signInPage('找用户', '登录后可按 UID 或昵称找用户。'),
           ),
           shortcuts: _MessageShortcuts(
-            openFollowers: () => Navigator.of(context).push<void>(
-              MaterialPageRoute(
-                builder: (_) => signInPage('新增粉丝', memberMessages),
-              ),
+            openFollowers: () => AccountSectionLinks.openPage(
+              context,
+              AccountSection.newFollowers,
+              () => signInPage('新增粉丝', memberMessages),
             ),
             openReports: () => AccountSectionLinks.openPage(
               context,
@@ -241,9 +244,13 @@ class _MemberNavigatorState extends State<_MemberNavigator> {
 }
 
 class _MessagesHome extends StatefulWidget {
-  const _MessagesHome({required this.controller});
+  const _MessagesHome({
+    required this.controller,
+    required this.followerAlertReads,
+  });
 
   final SocialController controller;
+  final Listenable? followerAlertReads;
 
   @override
   State<_MessagesHome> createState() => _MessagesHomeState();
@@ -252,6 +259,27 @@ class _MessagesHome extends StatefulWidget {
 class _MessagesHomeState extends State<_MessagesHome> {
   Future<SocialInboxSummary>? _summary;
   bool _visible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.followerAlertReads?.addListener(_refreshAfterRead);
+  }
+
+  @override
+  void didUpdateWidget(covariant _MessagesHome oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.followerAlertReads != widget.followerAlertReads) {
+      oldWidget.followerAlertReads?.removeListener(_refreshAfterRead);
+      widget.followerAlertReads?.addListener(_refreshAfterRead);
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.followerAlertReads?.removeListener(_refreshAfterRead);
+    super.dispose();
+  }
 
   @override
   void didChangeDependencies() {
@@ -274,15 +302,12 @@ class _MessagesHomeState extends State<_MessagesHome> {
     if (mounted && _visible && widget.controller.isCurrentMember) _refresh();
   }
 
-  Future<void> _open(Widget Function() page, {AccountSection? section}) async {
+  Future<void> _open(
+    Widget Function() page, {
+    required AccountSection section,
+  }) async {
     final before = _summary;
-    if (section == null) {
-      await Navigator.of(
-        context,
-      ).push<void>(MaterialPageRoute(builder: (_) => page()));
-    } else {
-      await AccountSectionLinks.openPage(context, section, page);
-    }
+    await AccountSectionLinks.openPage(context, section, page);
     // A quick return can finish before the covering route pauses this page.
     if (mounted && _visible && identical(_summary, before)) _refresh();
   }
@@ -316,6 +341,7 @@ class _MessagesHomeState extends State<_MessagesHome> {
                   controller: widget.controller,
                   onRead: _refreshAfterRead,
                 ),
+                section: AccountSection.newFollowers,
               ),
               openReports: () => _open(
                 () => SocialReportsPage(controller: widget.controller),

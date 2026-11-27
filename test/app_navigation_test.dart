@@ -189,6 +189,23 @@ void main() {
         'id': 'public-123',
         'from': 'followers',
       });
+      final alerts = await parse('/account/new-followers');
+      expect(alerts.tab, JovianTab.messages);
+      expect(alerts.sections.single.section, AccountSection.newFollowers);
+      final fromAlert = await parse(
+        '/account/social-profile?id=public-123&from=new-followers',
+      );
+      expect(fromAlert.tab, JovianTab.messages);
+      expect(fromAlert.sections.map((item) => item.section), [
+        AccountSection.newFollowers,
+        AccountSection.socialProfile,
+      ]);
+      expect(
+        await parser.parseRouteInformation(
+          parser.restoreRouteInformation(fromAlert),
+        ),
+        fromAlert,
+      );
       final invalid = await parse(
         '/account/social-profile?id=user%40example.test',
       );

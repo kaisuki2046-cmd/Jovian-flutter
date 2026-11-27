@@ -28,6 +28,7 @@ class AccountSectionPage extends StatelessWidget {
     required this.themeMode,
     required this.onThemeModeChanged,
     required this.openAccount,
+    this.onFollowerAlertRead,
   });
 
   final AccountController? account;
@@ -35,11 +36,17 @@ class AccountSectionPage extends StatelessWidget {
   final ThemeMode themeMode;
   final ValueChanged<ThemeMode> onThemeModeChanged;
   final VoidCallback openAccount;
+  final VoidCallback? onFollowerAlertRead;
 
   @override
   Widget build(BuildContext context) {
     final current = account;
-    if (current == null) return _unavailable('账号服务暂不可用。');
+    if (current == null) {
+      return _unavailable(
+        '账号服务暂不可用。',
+        title: target.section == AccountSection.newFollowers ? '新增粉丝' : '个人中心',
+      );
+    }
     return ListenableBuilder(
       listenable: current,
       builder: (context, _) => KeyedSubtree(
@@ -85,6 +92,7 @@ class AccountSectionPage extends StatelessWidget {
         if (owner == null) {
           final (title, message) = switch (target.section) {
             AccountSection.findUser => ('找用户', '登录后可按 UID 或昵称找用户。'),
+            AccountSection.newFollowers => ('新增粉丝', '登录后查看当前账户的消息'),
             AccountSection.socialReports => ('我的举报', '登录后查看当前账户的消息'),
             AccountSection.socialModeration => ('举报处理', '登录后查看当前账户的消息'),
             _ => ('个人中心', '登录后可查看此页面。'),
@@ -137,6 +145,10 @@ class AccountSectionPage extends StatelessWidget {
         ),
         AccountSection.findUser => SocialSearchPage(
           controller: SocialController.forMember(account, owner),
+        ),
+        AccountSection.newFollowers => FollowerAlertsPage(
+          controller: SocialController.forMember(account, owner),
+          onRead: onFollowerAlertRead,
         ),
         AccountSection.socialReports ||
         AccountSection.socialModeration => SocialReportsPage(

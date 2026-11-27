@@ -8,14 +8,10 @@ import '../model/social.dart';
 import 'social_profile.dart';
 
 class FollowerAlertsPage extends StatefulWidget {
-  const FollowerAlertsPage({
-    super.key,
-    required this.controller,
-    required this.onRead,
-  });
+  const FollowerAlertsPage({super.key, required this.controller, this.onRead});
 
   final SocialController controller;
-  final VoidCallback onRead;
+  final VoidCallback? onRead;
 
   @override
   State<FollowerAlertsPage> createState() => _FollowerAlertsPageState();
@@ -44,24 +40,25 @@ class _FollowerAlertsPageState extends State<FollowerAlertsPage> {
       _busy = true;
       _error = null;
     });
+    final controller = widget.controller;
     final onRead = widget.onRead;
     try {
       if (alert == null || alert.readAt == null) {
-        await widget.controller.markRead(_alerts, alert?.id);
-        onRead();
+        await controller.markRead(_alerts, alert?.id);
+        if (controller.isCurrentMember) onRead?.call();
       }
       final actor = alert?.actor;
       if (openProfile &&
           actor != null &&
           mounted &&
-          widget.controller.isCurrentMember &&
+          controller.isCurrentMember &&
           ModalRoute.of(context)?.isCurrent == true &&
           TickerMode.getValuesNotifier(context).value.enabled) {
-        await Navigator.of(context).push<void>(
-          MaterialPageRoute(
-            builder: (_) =>
-                SocialProfilePage(controller: widget.controller, id: actor.id),
-          ),
+        await AccountSectionLinks.openPage(
+          context,
+          AccountSection.socialProfile,
+          () => SocialProfilePage(controller: controller, id: actor.id),
+          profileId: actor.id,
         );
         if (mounted) await _alerts.load();
       }

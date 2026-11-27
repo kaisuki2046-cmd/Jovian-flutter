@@ -1,6 +1,7 @@
 import AVFoundation
 import Flutter
 import QuickLook
+import Security
 import UIKit
 
 @main
@@ -18,6 +19,7 @@ import UIKit
       AttachmentPreview.register(with: registrar)
     }
     let messenger = engineBridge.applicationRegistrar.messenger()
+    LegacyReading.register(with: messenger)
     let reference = FlutterMethodChannel(name: "jovian/reading_reference", binaryMessenger: messenger)
     reference.setMethodCallHandler { call, result in
       guard call.method == "open" else {
@@ -52,6 +54,85 @@ import UIKit
       }
       result(nil)
     }
+  }
+}
+
+private enum LegacyReading {
+  private struct KeychainFailure: Error {}
+
+  static func register(with messenger: FlutterBinaryMessenger) {
+    let channel = FlutterMethodChannel(name: "jovian/legacy_reading", binaryMessenger: messenger)
+    channel.setMethodCallHandler { call, result in
+      guard let arguments = call.arguments as? [String: String],
+        let owner = arguments["owner"], let chat = arguments["chatId"],
+        owner.range(
+          of: #"\A(?:member|guest)\.[0-9a-f]{1,6}(?:_[0-9a-f]{1,6}){0,127}\z"#,
+          options: .regularExpression) != nil,
+        chat.range(of: #"\A[a-z0-9-]{1,100}\z"#, options: .regularExpression) != nil else {
+        result(FlutterError(code: "invalid_legacy_reading_scope", message: nil, details: nil))
+        return
+      }
+      let recovery = "jovian.divination.recovery.v2.\(owner).\(chat)"
+      let pending = "jovian.divination.pending-ritual.v2.\(owner).\(chat)"
+      switch call.method {
+      case "read":
+        do {
+          var fields = [String: String]()
+          fields["recovery"] = try read(recovery)
+          fields["pending"] = try read(pending)
+          result(fields)
+        } catch {
+          result(FlutterError(code: "legacy_reading_unavailable", message: nil, details: nil))
+        }
+      case "clear":
+        guard owner.hasPrefix("member."), clear([recovery, pending]) else {
+          result(FlutterError(code: "legacy_reading_cleanup_failed", message: nil, details: nil))
+          return
+        }
+        result(nil)
+      default:
+        result(FlutterMethodNotImplemented)
+      }
+    }
+  }
+
+  // Expo's unauthenticated default and its earlier unsuffixed keychain service.
+  private static let services = ["app:no-auth", "app"]
+
+  private static func query(_ key: String, service: String) -> [String: Any] {
+    let encoded = Data(key.utf8)
+    return [
+      kSecClass as String: kSecClassGenericPassword,
+      kSecAttrService as String: service,
+      kSecAttrGeneric as String: encoded,
+      kSecAttrAccount as String: encoded,
+    ]
+  }
+
+  private static func read(_ key: String) throws -> String? {
+    for service in services {
+      var request = query(key, service: service)
+      request[kSecMatchLimit as String] = kSecMatchLimitOne
+      request[kSecReturnData as String] = true
+      request[kSecUseAuthenticationUI as String] = kSecUseAuthenticationUIFail
+      var item: CFTypeRef?
+      let status = SecItemCopyMatching(request as CFDictionary, &item)
+      if status == errSecItemNotFound { continue }
+      guard status == errSecSuccess else { throw KeychainFailure() }
+      return (item as? Data).flatMap { String(data: $0, encoding: .utf8) }
+    }
+    return nil
+  }
+
+  private static func clear(_ keys: [String]) -> Bool {
+    var success = true
+    for key in keys {
+      for service in services {
+        let status = SecItemDelete(query(key, service: service) as CFDictionary)
+        if status != errSecSuccess && status != errSecItemNotFound { success = false }
+      }
+    }
+    return success
   }
 }
 

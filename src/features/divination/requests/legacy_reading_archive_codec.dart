@@ -16,15 +16,40 @@ String? legacyGuideOwner(String? scope) {
   return '$kind.${id.runes.map((rune) => rune.toRadixString(16)).join('_')}';
 }
 
+Iterable<String> decodeLegacyGuideChatIds(String? saved) sync* {
+  if (_read(() => jsonDecode(saved ?? 'null')) case {
+    'activeId': final String activeId,
+    'threads': final List threads,
+  }) {
+    if (isGuideThreadId(activeId)) yield activeId;
+    for (final thread in threads) {
+      if (thread case {'id': final String id} when isGuideThreadId(id)) {
+        yield id;
+      }
+    }
+  }
+}
+
+Map? _legacyTokens(String? recovery) =>
+    switch (_read(() => jsonDecode(recovery ?? 'null'))) {
+      {'tokens': final Map tokens} => tokens,
+      _ => null,
+    };
+
+final _legacyTokenPattern = RegExp(r'^[A-Za-z0-9_-]{43}$');
+
+Iterable<String> decodeLegacyGuideTokens(String? recovery) =>
+    (_legacyTokens(recovery)?.values ?? const []).whereType<String>().where(
+      _legacyTokenPattern.hasMatch,
+    );
+
 GuideRecovery? decodeLegacyGuideRecovery(
   String? recovery,
   String? pending,
   int messageId,
 ) {
-  final saved = _read(() => jsonDecode(recovery ?? 'null'));
-  if (saved is! Map || saved['tokens'] is! Map) return null;
-  final token = (saved['tokens'] as Map)['$messageId'];
-  if (token is! String || !RegExp(r'^[A-Za-z0-9_-]{43}$').hasMatch(token)) {
+  final token = _legacyTokens(recovery)?['$messageId'];
+  if (token is! String || !_legacyTokenPattern.hasMatch(token)) {
     return null;
   }
   final event = _read(() => jsonDecode(pending ?? 'null'));
@@ -32,32 +57,46 @@ GuideRecovery? decodeLegacyGuideRecovery(
     return GuideRecovery(token);
   }
   final action = event['action'] as Map;
-  final body = action.length == 1 ? action.values.single : null;
-  final replay = switch ((action.keys.firstOrNull, body)) {
-    ('toss', {'actionId': final String id, 'step': final int step})
-        when isGuideThreadId(id) && step >= 0 && step < 6 =>
-      PendingGuideAction(GuideAction.toss, body as Map<String, Object?>),
-    (
-      'pick',
-      {
-        'actionId': final String id,
-        'step': final int step,
-        'slot': final int slot,
-        'epochMs': String _,
-        'monotonicMs': num _,
-        'clockSessionId': final String clock,
-      },
-    )
-        when isGuideThreadId(id) &&
-            isGuideThreadId(clock) &&
-            step >= 0 &&
-            step < 3 &&
-            slot >= 0 &&
-            slot < 78 =>
-      PendingGuideAction(GuideAction.pick, body as Map<String, Object?>),
-    _ => null,
-  };
-  return GuideRecovery(token, replay);
+  try {
+    if (action.length == 1) {
+      switch (action) {
+        case {'toss': {'actionId': final String id, 'step': final int step}}:
+          final toss = GuideCoinEvent(actionId: id, step: step);
+          toss.validate();
+          return GuideRecovery(
+            token,
+            PendingGuideAction(GuideAction.toss, toss.toJson()),
+          );
+        case {
+              'pick': {
+                'actionId': final String id,
+                'step': final int step,
+                'slot': final int slot,
+                'epochMs': final String time,
+                'monotonicMs': final num elapsed,
+                'clockSessionId': final String clock,
+              },
+            }
+            when slot >= 0 && slot < 78:
+          final pick = GuideCardEvent(
+            actionId: id,
+            step: step,
+            slot: slot,
+            epochMs: time,
+            monotonicMs: elapsed,
+            clockSessionId: clock,
+          );
+          pick.validate();
+          return GuideRecovery(
+            token,
+            PendingGuideAction(GuideAction.pick, pick.toJson()),
+          );
+      }
+    }
+  } on GuideRitualError {
+    // The task can still be reopened without replaying a corrupt event.
+  }
+  return GuideRecovery(token);
 }
 
 const _legacyMethods = {

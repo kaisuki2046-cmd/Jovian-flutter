@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:jovian_divination/jovian_divination.dart';
 import 'package:path_provider/path_provider.dart';
@@ -12,6 +13,7 @@ import 'reading_transcript_codec.dart';
 
 const _historyPrefix = 'jovian.divination.flutter.v1.';
 const _storage = FlutterSecureStorage();
+const _legacyReading = MethodChannel('jovian/legacy_reading');
 Future<void>? _storageWork;
 
 Future<T> _withStorage<T>(Future<T> Function() action) async {
@@ -27,20 +29,33 @@ Future<T> _withStorage<T>(Future<T> Function() action) async {
   }
 }
 
-Future<List<String>> memberReadingTokens(String owner) =>
-    _withStorage(() async {
-      final items = await _storage.readAll();
-      final tokens = <String>{};
-      for (final entry in items.entries) {
-        final suffix = memberReadingKeySuffix(entry.key, _historyPrefix, owner);
-        if (suffix == 'active' || _isReadingKey(suffix, 'session.')) {
-          if (decodeGuideRecovery(entry.value) case final recovery?) {
-            tokens.add(recovery.token);
-          }
-        }
+Future<List<String>> memberReadingTokens(
+  String owner, {
+  Future<Directory?> Function() legacyDirectory = _nativeLegacyDirectory,
+}) => _withStorage(() async {
+  final items = await _storage.readAll();
+  final tokens = <String>{};
+  for (final entry in items.entries) {
+    final suffix = memberReadingKeySuffix(entry.key, _historyPrefix, owner);
+    if (suffix == 'active' || _isReadingKey(suffix, 'session.')) {
+      if (decodeGuideRecovery(entry.value) case final recovery?) {
+        tokens.add(recovery.token);
       }
-      return tokens.toList();
-    });
+    }
+  }
+  final legacyOwner = legacyGuideOwner('member:$owner');
+  if (legacyOwner != null) {
+    final directory = await legacyDirectory();
+    if (directory != null) {
+      final files = _legacyFiles(directory, legacyOwner);
+      for (final chat in await _legacyChatIds(files)) {
+        final fields = await _legacyReadingCall('read', legacyOwner, chat);
+        tokens.addAll(decodeLegacyGuideTokens(fields?['recovery']));
+      }
+    }
+  }
+  return tokens.toList();
+});
 
 Future<void> clearMemberReadingData(
   String owner, {
@@ -74,12 +89,48 @@ Future<void> _clearLegacyMemberData(
   if (legacyOwner == null) return;
   final directory = await legacyDirectory();
   if (directory == null) return;
-  for (final extension in ['json', 'tmp']) {
+  final files = _legacyFiles(directory, legacyOwner);
+  // Keep the chat index until every credential has been cleared so a retry
+  // after a storage error still has all the original chat IDs.
+  for (final chat in await _legacyChatIds(files)) {
+    await _legacyReadingCall('clear', legacyOwner, chat);
+  }
+  for (final file in files) {
     try {
-      await _legacyFile(directory, legacyOwner, extension).delete();
+      await file.delete();
     } on PathNotFoundException {
       // Already deleted, or this device never ran the React Native app.
     }
+  }
+}
+
+Future<Set<String>> _legacyChatIds(List<File> files) async {
+  // RN can write recovery for the default chat before saving a transcript.
+  final chats = {'original'};
+  for (final file in files) {
+    try {
+      final raw = utf8.decode(await file.readAsBytes(), allowMalformed: true);
+      chats.addAll(decodeLegacyGuideChatIds(raw));
+    } on PathNotFoundException {
+      // This account may only have one of the two history files.
+    }
+  }
+  return chats;
+}
+
+Future<Map<String, String>?> _legacyReadingCall(
+  String method,
+  String owner,
+  String chatId,
+) async {
+  try {
+    return await _legacyReading.invokeMapMethod<String, String>(method, {
+      'owner': owner,
+      'chatId': chatId,
+    });
+  } on MissingPluginException {
+    // Only Android and iOS have the original app's native SecureStore.
+    return null;
   }
 }
 
@@ -93,6 +144,11 @@ Future<Directory?> _nativeLegacyDirectory() async {
 File _legacyFile(Directory directory, String owner, String extension) => File(
   '${directory.path}${Platform.pathSeparator}$legacyGuideHistoryPrefix$owner.$extension',
 );
+
+List<File> _legacyFiles(Directory directory, String owner) => [
+  _legacyFile(directory, owner, 'json'),
+  _legacyFile(directory, owner, 'tmp'),
+];
 
 bool _isReadingKey(String? suffix, String kind) =>
     suffix != null &&
@@ -125,6 +181,7 @@ class _NativeReadingHistory
     implements
         GuideHistoryStore,
         LegacyGuideArchiveStore,
+        LegacyGuideRecoveryStore,
         GuideTranscriptStore {
   _NativeReadingHistory(
     String namespace,
@@ -208,6 +265,23 @@ class _NativeReadingHistory
         () async =>
             decodeLegacyGuideConversations(await _readLegacyHistory()).toList(),
       );
+
+  @override
+  Future<GuideRecovery?> readLegacyRecovery(String chatId, int messageId) =>
+      _withStorage(() async {
+        final owner = _legacyOwner;
+        if (owner == null || !isGuideThreadId(chatId)) return null;
+        try {
+          final fields = await _legacyReadingCall('read', owner, chatId);
+          return decodeLegacyGuideRecovery(
+            fields?['recovery'],
+            fields?['pending'],
+            messageId,
+          );
+        } on PlatformException {
+          return null;
+        }
+      });
 
   @override
   Future<void> writeHistory(GuideHistoryEntry entry) => _write(

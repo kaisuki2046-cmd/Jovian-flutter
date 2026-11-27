@@ -19,6 +19,7 @@ public final class MainActivity extends FlutterActivity {
     private MethodChannel readingReferenceChannel;
     private MethodChannel attachmentPreviewChannel;
     private MethodChannel legacyPreferencesChannel;
+    private MethodChannel legacyReadingChannel;
 
     @Override
     public void configureFlutterEngine(FlutterEngine flutterEngine) {
@@ -72,6 +73,30 @@ public final class MainActivity extends FlutterActivity {
                     result.notImplemented();
             }
         });
+        legacyReadingChannel = new MethodChannel(messenger, "jovian/legacy_reading",
+            StandardMethodCodec.INSTANCE, messenger.makeBackgroundTaskQueue());
+        legacyReadingChannel.setMethodCallHandler((call, result) -> {
+            if (!(call.arguments instanceof Map<?, ?> arguments)
+                    || !(arguments.get("owner") instanceof String owner)
+                    || !(arguments.get("chatId") instanceof String chatId)) {
+                result.error("invalid_legacy_reading_scope", null, null);
+                return;
+            }
+            switch (call.method) {
+                case "read":
+                    result.success(LegacyPreferences.readReading(this, owner, chatId));
+                    break;
+                case "clear":
+                    if (LegacyPreferences.clearMemberReading(this, owner, chatId)) {
+                        result.success(null);
+                    } else {
+                        result.error("legacy_reading_cleanup_failed", null, null);
+                    }
+                    break;
+                default:
+                    result.notImplemented();
+            }
+        });
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), "jovian/app_updates")
             .setMethodCallHandler((call, result) -> {
                 switch (call.method) {
@@ -110,6 +135,7 @@ public final class MainActivity extends FlutterActivity {
         if (readingReferenceChannel != null) readingReferenceChannel.setMethodCallHandler(null);
         if (attachmentPreviewChannel != null) attachmentPreviewChannel.setMethodCallHandler(null);
         if (legacyPreferencesChannel != null) legacyPreferencesChannel.setMethodCallHandler(null);
+        if (legacyReadingChannel != null) legacyReadingChannel.setMethodCallHandler(null);
         if (coinAudio != null) coinAudio.release();
         super.cleanUpFlutterEngine(flutterEngine);
     }

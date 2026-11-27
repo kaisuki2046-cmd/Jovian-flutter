@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jovian_divination/jovian_divination.dart';
@@ -246,6 +247,154 @@ void main() {
       expect(await history.readHistory(), isEmpty);
       expect(await archives.readLegacyConversations(), isEmpty);
       expect((await other.readLegacyConversations()).single.title, '其他会员的旧记录');
+    },
+  );
+
+  test(
+    'native upgrade resumes the selected ritual and clears its owner',
+    () async {
+      final directory = await Directory.systemTemp.createTemp(
+        'jovian-rn-ritual-',
+      );
+      addTearDown(() => directory.delete(recursive: true));
+      Future<Directory> legacyDirectory() async => directory;
+
+      const owner = 'owner';
+      const member = 'member.6f_77_6e_65_72';
+      const other = 'member.6f_74_68_65_72';
+      const guest = 'guest.6f_77_6e_65_72';
+      const chat = 'before-upgrade';
+      final service = DivinationServiceFixture();
+      final originalStore = DivinationRecoveryFixture();
+      final original = service.connect(originalStore);
+      await original.start(divinationFixtureDetails, automatic: false);
+      await original.toss();
+      final firstToss = original.reading!.toJson();
+      final token = originalStore.state!.token;
+      original.dispose();
+      final originalToken = 'b' * 43;
+      final savedNextToken = 'c' * 43;
+      String recovery(String value) => jsonEncode({
+        'latest': 2,
+        'tokens': {'2': value},
+      });
+      final records = {
+        (member, chat): {
+          'recovery': recovery(token),
+          'pending': jsonEncode({
+            'token': token,
+            'action': {
+              'toss': {
+                'actionId': 'af63f9bf-0e9c-4b08-a525-01b5677b4e32',
+                'step': 1,
+              },
+            },
+          }),
+        },
+        (member, 'original'): {'recovery': recovery(originalToken)},
+        (member, 'pending-file'): {'recovery': recovery(savedNextToken)},
+        (other, chat): {'recovery': recovery('d' * 43)},
+        (guest, chat): {'recovery': recovery('e' * 43)},
+      };
+      const channel = MethodChannel('jovian/legacy_reading');
+      final messenger =
+          TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+      final calls = <(String, String, String)>[];
+      var failClear = true;
+      messenger.setMockMethodCallHandler(channel, (call) async {
+        final owner = call.arguments['owner'] as String;
+        final chat = call.arguments['chatId'] as String;
+        calls.add((call.method, owner, chat));
+        if (call.method == 'read')
+          return records[(owner, chat)] ?? <String, String>{};
+        expect(call.method, 'clear');
+        if (chat == 'pending-file' && failClear) {
+          throw PlatformException(code: 'legacy_reading_cleanup_failed');
+        }
+        records.remove((owner, chat));
+        return null;
+      });
+      addTearDown(() => messenger.setMockMethodCallHandler(channel, null));
+
+      final history = File.fromUri(
+        directory.uri.resolve('jovian.divination.history.v2.$member.json'),
+      );
+      final pending = File.fromUri(
+        directory.uri.resolve('jovian.divination.history.v2.$member.tmp'),
+      );
+      await history.writeAsString(
+        jsonEncode({
+          'activeId': chat,
+          'threads': [
+            {
+              'id': chat,
+              'updatedAt': 1700000000000,
+              'messages': [
+                {'id': 2, 'kind': 'readingSession', 'snapshot': firstToss},
+              ],
+            },
+          ],
+        }),
+      );
+      // An interrupted RN file move can leave a different active chat in .tmp.
+      await pending.writeAsString(
+        jsonEncode({
+          'activeId': 'pending-file',
+          'threads': [
+            {'id': '../outside-owner'},
+          ],
+        }),
+      );
+
+      final store = createReadingRecovery(
+        _base,
+        ownerScope: 'member:$owner',
+        legacyDirectory: legacyDirectory,
+      );
+      final guide = service.connect(store);
+      addTearDown(guide.dispose);
+      await guide.restore();
+      final conversation = guide.legacyConversations.single;
+      service.calls.clear();
+      expect(
+        await guide.resumeLegacyReading(
+          conversation,
+          conversation.messages.single,
+        ),
+        isNull,
+      );
+      expect(calls, [('read', member, chat)]);
+      expect(guide.reading!.snapshot.tosses.length, 2);
+      expect(service.calls, [
+        'GET /reading',
+        'POST /reading/toss',
+        'GET /reading',
+      ]);
+      expect((await store.read())!.threadId, 'import-rn-$chat-2');
+
+      calls.clear();
+      expect(
+        await memberReadingTokens(owner, legacyDirectory: legacyDirectory),
+        unorderedEquals([token, originalToken, savedNextToken]),
+      );
+      expect(calls, [
+        ('read', member, 'original'),
+        ('read', member, chat),
+        ('read', member, 'pending-file'),
+      ]);
+
+      await expectLater(
+        clearMemberReadingData(owner, legacyDirectory: legacyDirectory),
+        throwsA(isA<PlatformException>()),
+      );
+      expect(await history.exists(), isTrue);
+      expect(await pending.exists(), isTrue);
+      failClear = false;
+      await clearMemberReadingData(owner, legacyDirectory: legacyDirectory);
+      expect(await history.exists(), isFalse);
+      expect(await pending.exists(), isFalse);
+      expect(await store.read(), isNull);
+      expect(records.keys, unorderedEquals([(other, chat), (guest, chat)]));
     },
   );
 

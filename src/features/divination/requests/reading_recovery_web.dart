@@ -33,15 +33,7 @@ Future<List<String>> memberReadingTokens(String owner) async {
       }
     } else if (legacyOwner != null &&
         key.startsWith('$_legacyRecoveryPrefix$legacyOwner.')) {
-      try {
-        if (jsonDecode(recoveries.getItem(key) ?? 'null') case {
-          'tokens': final Map tokens,
-        }) {
-          result.addAll(tokens.values.whereType<String>());
-        }
-      } on FormatException {
-        // The deletion still removes an unreadable recovery entry.
-      }
+      result.addAll(decodeLegacyGuideTokens(recoveries.getItem(key)));
     }
   }
   return result.toList();

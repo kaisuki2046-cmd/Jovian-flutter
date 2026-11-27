@@ -199,7 +199,7 @@ void main() {
         'tokens': {'2': ownerToken, '9': otherToken},
       });
       final action = {
-        'toss': {'actionId': 'original-action', 'step': 1},
+        'toss': {'actionId': '23f81428-b0e8-491b-a02d-b55269c1ce81', 'step': 1},
       };
       expect(decodeLegacyGuideRecovery(saved, null, 3), isNull);
       expect(
@@ -218,6 +218,19 @@ void main() {
       expect(matched?.token, ownerToken);
       expect(matched?.pending?.action, GuideAction.toss);
       expect(matched?.pending?.body, action['toss']);
+      expect(
+        decodeLegacyGuideRecovery(
+          saved,
+          jsonEncode({
+            'token': ownerToken,
+            'action': {
+              'toss': {'actionId': 'corrupt', 'step': 1},
+            },
+          }),
+          2,
+        )?.pending,
+        isNull,
+      );
     },
   );
 

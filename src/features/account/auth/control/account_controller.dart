@@ -28,7 +28,9 @@ class AccountController extends ChangeNotifier {
     this._account,
     this._agreements, {
     AccountDeletionDevice? deletionDevice,
-  }) : deletion = deletionDevice == null
+    DateTime Function() now = DateTime.now,
+  }) : _now = now,
+       deletion = deletionDevice == null
            ? null
            : AccountDeletionService(
                AccountDeletionApi(_account),
@@ -37,12 +39,14 @@ class AccountController extends ChangeNotifier {
 
   final AccountApi _account;
   final AgreementsApi _agreements;
+  final DateTime Function() _now;
   final AccountDeletionService? deletion;
   late final reports = ReportHistoryApi(_account);
   late final _birth = AccountBirthApi(_account);
   late final _profilePreview = ProfilePreviewApi(_account);
 
   AccountSession? _session;
+  Timer? _guestExpiry;
   AgreementCatalog? _catalog;
   AgreementState? _agreementState;
   AuthCapabilities? _capabilities;
@@ -52,12 +56,17 @@ class AccountController extends ChangeNotifier {
   bool _closed = false;
   String? _notice;
 
-  AccountSession? get session => _session;
+  AccountSession? get session {
+    final current = _session;
+    final expires = current?.guestExpiresAt;
+    return expires != null && !expires.isAfter(_now()) ? null : current;
+  }
+
   AccountSession? get nicknameSetupMember =>
       _session?.nicknameRequired == true ? _session : null;
   AccountSession? get authorizedSession =>
       _agreementState?.requiredAccepted == true && nicknameSetupMember == null
-      ? _session
+      ? session
       : null;
   AgreementCatalog? get catalog => _catalog;
   AgreementState? get agreementState => _agreementState;
@@ -108,7 +117,7 @@ class AccountController extends ChangeNotifier {
         proof,
         () => !_closed && _session?.scope == 'member:$owner',
       );
-      _session = null;
+      _setSession(null);
       _agreementState = null;
       try {
         await _account.clearNativeSession();
@@ -303,15 +312,47 @@ class AccountController extends ChangeNotifier {
 
   Future<void> _restore() async {
     final previousScope = _session?.scope;
-    _session = await _account.restore();
+    _setSession(await _account.restore());
     _restored = true;
-    if (previousScope != _session?.scope) _agreementState = null;
+    final restoredScope = session?.scope;
+    if (previousScope != restoredScope) _agreementState = null;
     await Future.wait([
       _account.capabilities().then((value) => _capabilities = value),
       _agreements.catalog().then((value) => _catalog = value),
-      if (_session != null)
-        _agreements.state().then((value) => _agreementState = value),
+      if (restoredScope != null) _refreshAgreementState(restoredScope),
     ]);
+  }
+
+  Future<void> _refreshAgreementState(String scope) async {
+    final state = await _agreements.state();
+    if (!_closed && session?.scope == scope) _agreementState = state;
+  }
+
+  void _setSession(AccountSession? next) {
+    _session = next;
+    checkGuestExpiry();
+  }
+
+  void checkGuestExpiry() {
+    if (_closed) return;
+    _guestExpiry?.cancel();
+    _guestExpiry = null;
+    final expires = _session?.guestExpiresAt;
+    if (expires == null) return;
+    final remaining = expires.difference(_now());
+    if (remaining <= Duration.zero) {
+      _session = null;
+      _agreementState = null;
+      _notice = '游客会话已到期，请重新进入游客体验或登录。';
+      notifyListeners();
+      return;
+    }
+    // Keep the delay within browser timer bounds when the device clock differs.
+    const maxDelay = Duration(days: 20);
+    _guestExpiry = Timer(
+      remaining < maxDelay ? remaining : maxDelay,
+      checkGuestExpiry,
+    );
   }
 
   Future<SignInCodeChallenge?> sendCode(AccountIdentifier identifier) async {
@@ -339,8 +380,9 @@ class AccountController extends ChangeNotifier {
           await _reloadUpdatedAgreements();
           return;
         }
-        _session = session;
         _agreementState = null;
+        _setSession(session);
+        if (_session == null) return;
         signedIn = true;
         if (grantAi) {
           await _updateAiPermissions(
@@ -348,18 +390,20 @@ class AccountController extends ChangeNotifier {
             all: true,
           );
         } else {
-          _agreementState = await _agreements.state();
+          await _refreshAgreementState(session.scope);
         }
       },
       failure: '登录或注册失败，请重试。',
       changesSession: true,
     );
-    return signedIn;
+    return signedIn && session != null;
   }
 
   Future<void> acceptRequired(AgreementCatalog accepted) => _run(() async {
+    final scope = session?.scope;
     try {
-      _agreementState = await _agreements.acceptRequired(accepted);
+      final state = await _agreements.acceptRequired(accepted);
+      if (session?.scope == scope) _agreementState = state;
     } on JsonRequestError catch (error) {
       if (error.status != 409) rethrow;
       await _reloadUpdatedAgreements();
@@ -378,7 +422,7 @@ class AccountController extends ChangeNotifier {
     Future<void>? cancel,
   }) => _agreements.readVersion(
     confirmation,
-    isCurrent: () => !_closed && !_sessionChanging && _session?.scope == scope,
+    isCurrent: () => !_closed && !_sessionChanging && session?.scope == scope,
     cancel: cancel,
   );
 
@@ -405,13 +449,16 @@ class AccountController extends ChangeNotifier {
     Future<AgreementState> Function() update, {
     bool all = false,
   }) async {
+    final scope = session?.scope;
     try {
       final state = await update();
+      if (session?.scope != scope) return;
       _agreementState = state;
       if (all && !state.allAiGranted) {
         _notice = '部分 AI 授权未保存，可在隐私设置中查看或重试。';
       }
     } on JsonRequestError catch (error) {
+      if (session?.scope != scope) return;
       if (error.status != 409 && error.status != 403) rethrow;
       // Refresh the current proof and state. A new version requires a new choice.
       _catalog = null;
@@ -421,15 +468,17 @@ class AccountController extends ChangeNotifier {
         _agreements.state(),
       ).wait;
       _catalog = catalog;
-      _agreementState = state;
-      _notice = _updatedAgreementNotice;
+      if (session?.scope == scope) {
+        _agreementState = state;
+        _notice = _updatedAgreementNotice;
+      }
     }
   }
 
   Future<void> signOut() => _run(
     () async {
       await _account.signOut();
-      _session = null;
+      _setSession(null);
       _agreementState = null;
     },
     failure: '退出登录失败，请重试。',
@@ -470,6 +519,7 @@ class AccountController extends ChangeNotifier {
   @override
   void dispose() {
     _closed = true;
+    _guestExpiry?.cancel();
     _account.close();
     super.dispose();
   }

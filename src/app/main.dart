@@ -62,7 +62,7 @@ class JovianApp extends StatefulWidget {
   State<JovianApp> createState() => _JovianAppState();
 }
 
-class _JovianAppState extends State<JovianApp> {
+class _JovianAppState extends State<JovianApp> with WidgetsBindingObserver {
   static const _appearanceKey = 'jovian.ui.theme.v1';
   static const _languageKey = 'jovian.ui.language.v1';
   static const _appearance = FlutterSecureStorage();
@@ -92,6 +92,7 @@ class _JovianAppState extends State<JovianApp> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     if (widget.persistTheme) {
       unawaited(_readAppearance());
       unawaited(_readLanguage());
@@ -119,7 +120,13 @@ class _JovianAppState extends State<JovianApp> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) widget.account?.checkGuestExpiry();
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _routeInformation.dispose();
     _navigation.dispose();
     widget.account?.dispose();

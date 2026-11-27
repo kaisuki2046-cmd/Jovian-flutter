@@ -125,7 +125,9 @@ void main() {
           'GET /account/agreements/catalog' => _json(_catalog),
           'POST /account/auth/guest' => _json({
             'id': 'guest-fixture',
-            'expiresAt': 1795719000000,
+            'expiresAt': DateTime.now()
+                .add(const Duration(days: 7))
+                .millisecondsSinceEpoch,
           }, 201),
           'GET /account/agreements' => _agreementState(true),
           _ => _json({}, 404),
@@ -151,6 +153,141 @@ void main() {
       expect(find.byType(NavigationBar), findsOneWidget);
       expect(find.text('在这里，慢慢认识自己'), findsNothing);
       expect(tester.takeException(), isNull);
+    },
+  );
+
+  for (final resume in [false, true]) {
+    testWidgets(
+      resume
+          ? 'guest archives close at expiry when the app resumes'
+          : 'guest archives close at expiry while browsing',
+      (tester) async {
+        var now = DateTime.utc(2026, 11, 27);
+        final expires = now.add(const Duration(minutes: 2));
+        final archive = 'a' * 64;
+        final record = {
+          'id': archive,
+          'title': '原游客的报告',
+          'calculatedAt': '2026-11-25T12:00:00.000Z',
+          'savedAt': now.millisecondsSinceEpoch,
+        };
+        var entries = 0;
+        var signIns = 0;
+        final account = _account((request) async {
+          final owner = request.url.queryParameters['expectedOwnerId'];
+          switch (request.method + ' ' + request.url.path) {
+            case 'GET /account/session':
+              return _json({}, 401);
+            case 'GET /account/auth/guest':
+              return _json({
+                'id': 'original-guest',
+                'expiresAt': expires.millisecondsSinceEpoch,
+              });
+            case 'GET /account/auth/capabilities':
+              return _json({});
+            case 'GET /account/agreements/catalog':
+              return _json(_catalog);
+            case 'GET /account/agreements':
+              return _agreementState(true);
+            case 'GET /account/destiny-history':
+              return _json({
+                'entries': owner == 'original-guest' ? [record] : [],
+              });
+            case final route
+                when route == 'GET /account/destiny-history/$archive':
+              entries++;
+              expect(owner, 'original-guest');
+              return _json({
+                ...record,
+                'report': {'version': 1, 'overview': '旧游客专属的解读。'},
+              });
+            case 'POST /account/auth/guest':
+              signIns++;
+              return _json({
+                'id': 'next-guest',
+                'expiresAt': now
+                    .add(const Duration(days: 7))
+                    .millisecondsSinceEpoch,
+              }, 201);
+            default:
+              fail('Unexpected request ' + request.url.path);
+          }
+        }, now: () => now);
+        final platform = tester.binding.platformDispatcher;
+        platform.defaultRouteNameTestValue = '/account/reports';
+        addTearDown(platform.clearDefaultRouteNameTestValue);
+        await tester.pumpWidget(JovianApp(account: account));
+        await tester.pumpAndSettle();
+        await _press(tester, '原游客的报告');
+        expect(find.text('旧游客专属的解读。'), findsOneWidget);
+
+        if (resume) {
+          tester.binding.handleAppLifecycleStateChanged(
+            AppLifecycleState.paused,
+          );
+        }
+        now = expires;
+        if (resume) {
+          tester.binding.handleAppLifecycleStateChanged(
+            AppLifecycleState.resumed,
+          );
+        }
+        await tester.pump(resume ? Duration.zero : const Duration(minutes: 2));
+        await tester.pumpAndSettle();
+        expect(account.session, isNull);
+        expect(account.agreementState, isNull);
+        expect(find.text('旧游客专属的解读。'), findsNothing);
+        expect(find.text('游客会话已到期，请重新进入游客体验或登录。'), findsOneWidget);
+
+        await _press(tester, '游客体验');
+        await _press(tester, '同意并继续');
+        expect(account.authorizedSession?.scope, 'guest:next-guest');
+        expect(find.text('旧游客专属的解读。'), findsNothing);
+        expect(entries, 1);
+        expect(signIns, 1);
+      },
+    );
+  }
+
+  testWidgets(
+    'a late guest agreement response leaves the expired session closed',
+    (tester) async {
+      var now = DateTime.utc(2026, 11, 27);
+      final expires = now.add(const Duration(seconds: 2));
+      final pending = Completer<http.Response>();
+      var agreementReads = 0;
+      final account = _account((request) async {
+        switch (request.url.path) {
+          case '/account/session':
+            return _json({}, 401);
+          case '/account/auth/guest':
+            return _json({
+              'id': 'short-guest',
+              'expiresAt': expires.millisecondsSinceEpoch,
+            });
+          case '/account/auth/capabilities':
+            return _json({});
+          case '/account/agreements/catalog':
+            return _json(_catalog);
+          case '/account/agreements':
+            agreementReads++;
+            return pending.future;
+          default:
+            fail('Unexpected request ' + request.url.path);
+        }
+      }, now: () => now);
+      await tester.pumpWidget(JovianApp(account: account));
+      await tester.pump();
+      expect(agreementReads, 1);
+      expect(account.session?.scope, 'guest:short-guest');
+      now = expires;
+      await tester.pump(const Duration(seconds: 2));
+      pending.complete(_agreementState(true));
+      await tester.pumpAndSettle();
+      expect(account.session, isNull);
+      expect(account.agreementState, isNull);
+      expect(account.authorizedSession, isNull);
+      expect(find.byType(NavigationBar), findsNothing);
     },
   );
 
@@ -307,15 +444,16 @@ void main() {
 }
 
 AccountController _account(
-  Future<http.Response> Function(http.Request) respond,
-) {
+  Future<http.Response> Function(http.Request) respond, {
+  DateTime Function() now = DateTime.now,
+}) {
   final api = AccountApi(
     JsonHttpClient(
       base: Uri.https('account.example.test'),
       client: MockClient(respond),
     ),
   );
-  return AccountController(api, AgreementsApi(api));
+  return AccountController(api, AgreementsApi(api), now: now);
 }
 
 http.Response _json(Object body, [int status = 200]) =>

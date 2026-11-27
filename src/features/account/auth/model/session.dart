@@ -12,10 +12,12 @@ class AccountSession {
     this.hasPassword = false,
     this.nicknameRequired = false,
     this.socialProvider,
-  }) : kind = AccountKind.member;
+  }) : kind = AccountKind.member,
+       guestExpiresAt = null;
 
-  const AccountSession.guest(this.id)
-    : kind = AccountKind.guest,
+  const AccountSession.guest(this.id, {required DateTime guestExpiresAt})
+    : guestExpiresAt = guestExpiresAt,
+      kind = AccountKind.guest,
       displayName = '游客',
       uid = null,
       email = null,
@@ -27,6 +29,7 @@ class AccountSession {
       socialProvider = null;
 
   final AccountKind kind;
+  final DateTime? guestExpiresAt;
   final String id;
   final String displayName;
   final String? uid;
@@ -72,9 +75,17 @@ class AccountSession {
   }
 
   factory AccountSession.fromGuest(Map<String, Object?> response) {
-    final id = response['id'];
-    if (id is String && id.isNotEmpty && response['expiresAt'] is num) {
-      return AccountSession.guest(id);
+    if (response case {
+      'id': final String id,
+      'expiresAt': final int expiresAt,
+    } when id.isNotEmpty && expiresAt > 0 && expiresAt <= 8640000000000000) {
+      return AccountSession.guest(
+        id,
+        guestExpiresAt: DateTime.fromMillisecondsSinceEpoch(
+          expiresAt,
+          isUtc: true,
+        ),
+      );
     }
     throw const FormatException('Invalid guest session.');
   }

@@ -135,7 +135,12 @@ void main() {
               : _member(nicknameRequired: mode == 'nickname');
         }
         if (path == '/account/auth/guest') {
-          return _json({'id': 'guest-owner', 'expiresAt': 1795564800000});
+          return _json({
+            'id': 'guest-owner',
+            'expiresAt': DateTime.now()
+                .add(const Duration(days: 7))
+                .millisecondsSinceEpoch,
+          });
         }
         final owner = request.url.queryParameters['expectedOwnerId'];
         final before = request.url.queryParameters['before'];

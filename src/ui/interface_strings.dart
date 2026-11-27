@@ -99,6 +99,8 @@ const englishInterfaceStrings = <String, String>{
   "标签仅保存在当前设备。": "Your tags are stored on this device.",
   "登录或恢复游客会话后，可以查看报告。": "Sign in or resume your guest session to view reports.",
   "会话已变化，请返回后重新读取。": "Your session has changed. Go back and reload the report.",
+  "游客会话已到期，请重新进入游客体验或登录。":
+      "Your guest session has expired. Continue as a guest again or sign in.",
   "添加附件或快捷提问": "Add attachments or a quick question",
   "添加文件": "Add files",
   "待发送附件": "Pending attachments",

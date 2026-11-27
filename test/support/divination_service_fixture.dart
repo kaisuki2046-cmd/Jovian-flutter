@@ -72,6 +72,7 @@ class DivinationServiceFixture {
   bool expired = false;
   bool extendedFollowUp = false;
   bool longReport = false;
+  int? losePickResponseAtStep;
   Future<void>? understanding;
   Future<void>? followUpReply;
   final understood = <String>[];
@@ -159,6 +160,10 @@ class DivinationServiceFixture {
             clockSessionId: body['clockSessionId'] as String,
           ),
         );
+        if (losePickResponseAtStep == body['step']) {
+          losePickResponseAtStep = null;
+          return _json({'error': 'report_model_unavailable'}, status: 503);
+        }
         return _json(_state());
       case 'GET /reading':
         if (expired) return _json({'error': 'not_found'}, status: 404);

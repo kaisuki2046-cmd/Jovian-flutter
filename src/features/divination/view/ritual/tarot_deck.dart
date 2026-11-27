@@ -6,6 +6,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../ui/interface_language.dart';
 
 const tarotAspectRatio = 0.58;
+const tarotDeckControlHeight = 48.0;
 const tarotBack = 'src/features/divination/assets/tarot/back.jpg';
 
 class TarotFanLayout {
@@ -127,32 +128,35 @@ class _TarotRitualFanState extends State<TarotRitualFan> {
     final layout = widget.layout;
     return Column(
       children: [
-        AnimatedBuilder(
-          animation: _scroll,
-          builder: (context, _) {
-            final offset = _scroll.hasClients
-                ? _scroll.offset
-                : layout.maxScroll / 2;
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                  tooltip: context.uiLabel('向左浏览牌阵'),
-                  onPressed: widget.busy || offset <= 0
-                      ? null
-                      : () => _shift(-1),
-                  icon: const Icon(Icons.chevron_left),
-                ),
-                IconButton(
-                  tooltip: context.uiLabel('向右浏览牌阵'),
-                  onPressed: widget.busy || offset >= layout.maxScroll
-                      ? null
-                      : () => _shift(1),
-                  icon: const Icon(Icons.chevron_right),
-                ),
-              ],
-            );
-          },
+        SizedBox(
+          height: tarotDeckControlHeight,
+          child: AnimatedBuilder(
+            animation: _scroll,
+            builder: (context, _) {
+              final offset = _scroll.hasClients
+                  ? _scroll.offset
+                  : layout.maxScroll / 2;
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    tooltip: context.uiLabel('向左浏览牌阵'),
+                    onPressed: widget.busy || offset <= 0
+                        ? null
+                        : () => _shift(-1),
+                    icon: const Icon(Icons.chevron_left),
+                  ),
+                  IconButton(
+                    tooltip: context.uiLabel('向右浏览牌阵'),
+                    onPressed: widget.busy || offset >= layout.maxScroll
+                        ? null
+                        : () => _shift(1),
+                    icon: const Icon(Icons.chevron_right),
+                  ),
+                ],
+              );
+            },
+          ),
         ),
         Semantics(
           container: true,

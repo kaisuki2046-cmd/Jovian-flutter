@@ -158,6 +158,7 @@ class _GuideFormState extends State<GuideForm>
     await online.start(
       question,
       automatic: false,
+      tarotFirst: true,
       attachmentNames: _attachmentNames(_pendingQuestion!.attachments),
     );
     _finishQuestion(online);
@@ -301,6 +302,7 @@ class _GuideFormState extends State<GuideForm>
         presentation: presentation,
         changes: _ritualChanges,
         snapshot: () => mounted ? _snapshot : null,
+        preparedTarot: () => mounted ? online.preparedTarotSlots : null,
         busy: () => mounted && (widget.online?.busy ?? false),
         error: () => mounted ? widget.online?.message : null,
         openAiPermissions: () {

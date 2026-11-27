@@ -7,7 +7,6 @@ import 'package:web/web.dart' as web;
 
 import 'coin_sound_timeline.dart';
 
-typedef _Clip = ({web.AudioBuffer buffer, double offset});
 typedef _Sound = ({web.AudioBufferSourceNode source, web.GainNode gain});
 
 class CoinFeedback {
@@ -19,8 +18,8 @@ class CoinFeedback {
     if (web.document.hidden) stop();
   }).toJS;
   web.AudioContext? _context;
-  web.BiquadFilterNode? _filter;
-  Future<List<_Clip>>? _clips;
+  late web.GainNode _master;
+  Future<List<web.AudioBuffer>>? _clips;
   final _sounds = <_Sound>{};
   int _generation = 0;
   bool _disposed = false;
@@ -52,39 +51,26 @@ class CoinFeedback {
 
   web.AudioContext _createContext() {
     final context = web.AudioContext();
-    final master = context.createGain()..gain.value = coinSoundMasterVolume;
-    master.connect(context.destination);
-    _filter = context.createBiquadFilter()
-      ..type = 'highpass'
-      ..frequency.value = 520
-      ..Q.value = 0.65;
-    _filter!.connect(master);
+    _master = context.createGain()..gain.value = coinSoundMasterVolume;
+    _master.connect(context.destination);
     return context;
   }
 
-  Future<List<_Clip>> _loadClips(web.AudioContext context) => Future.wait(
-    coinCollisionAssets.map((path) async {
-      final bytes = await rootBundle.load(path);
-      final copy = Uint8List.fromList(
-        bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes),
+  Future<List<web.AudioBuffer>> _loadClips(web.AudioContext context) =>
+      Future.wait(
+        coinCollisionAssets.map((path) async {
+          final bytes = await rootBundle.load(path);
+          final copy = Uint8List.fromList(
+            bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes),
+          );
+          return context.decodeAudioData(copy.buffer.toJS).toDart;
+        }),
       );
-      final buffer = await context.decodeAudioData(copy.buffer.toJS).toDart;
-      final samples = buffer.getChannelData(0).toDart;
-      var peak = 0;
-      for (var index = 1; index < samples.length; index++) {
-        if (samples[index].abs() > samples[peak].abs()) peak = index;
-      }
-      return (
-        buffer: buffer,
-        offset: math.max(0.0, peak / buffer.sampleRate - 0.004),
-      );
-    }),
-  );
 
   void play({required bool reducedMotion}) => unawaited(_play(reducedMotion));
 
   Future<void> _play(bool reducedMotion) async {
-    stop();
+    _stopAudio();
     final generation = _generation;
     final context = await _prepare();
     if (context == null || generation != _generation) return;
@@ -100,23 +86,15 @@ class CoinFeedback {
         if (planned + 0.09 < now) continue;
         final source = context.createBufferSource();
         final gain = context.createGain();
-        final clip = clips[event.variant];
         final at = math.max(planned, now);
-        source
-          ..buffer = clip.buffer
-          ..playbackRate.value = coinSoundRate;
-        gain.gain
-          ..setValueAtTime(0, at)
-          ..linearRampToValueAtTime(event.volume, at + 0.003)
-          ..exponentialRampToValueAtTime(event.volume * 0.22, at + 0.025)
-          ..exponentialRampToValueAtTime(0.0001, at + 0.085);
+        source.buffer = clips[event.variant];
+        gain.gain.value = event.volume;
         source.connect(gain);
-        gain.connect(_filter!);
+        gain.connect(_master);
         final sound = (source: source, gain: gain);
         _sounds.add(sound);
         source.onended = ((web.Event _) => _disconnect(sound)).toJS;
-        source.start(at, clip.offset);
-        source.stop(at + 0.09);
+        source.start(at);
       }
     } catch (_) {
       _clips = null;
@@ -124,10 +102,14 @@ class CoinFeedback {
     }
   }
 
-  void pulse() {
+  void pulse() => _vibrate(12);
+
+  void land({required bool first}) => _vibrate(first ? 26 : 13);
+
+  void _vibrate(int milliseconds) {
     if (web.document.hidden || _disposed) return;
     try {
-      web.window.navigator.vibrate(6.toJS);
+      web.window.navigator.vibrate(milliseconds.toJS);
     } catch (_) {
       // Some browsers do not expose the Vibration API.
     }
@@ -141,6 +123,11 @@ class CoinFeedback {
   }
 
   void stop() {
+    _stopAudio();
+    _vibrate(0);
+  }
+
+  void _stopAudio() {
     _generation++;
     for (final sound in _sounds.toList()) {
       try {
@@ -153,8 +140,8 @@ class CoinFeedback {
   }
 
   void dispose() {
-    _disposed = true;
     stop();
+    _disposed = true;
     web.document.removeEventListener('visibilitychange', _visibility);
     final context = _context;
     if (context != null) unawaited(_close(context));

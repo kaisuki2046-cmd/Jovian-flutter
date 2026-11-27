@@ -45,6 +45,12 @@ void main() {
       await tester.tap(send);
       await tester.pumpAndSettle();
 
+      expect(find.text('第 1 步 · 塔罗选牌'), findsOneWidget);
+      for (final position in [40, 38, 39]) {
+        final card = find.bySemanticsLabel('选取第 $position 张牌');
+        tester.widget<Semantics>(card).properties.onTap!();
+        await tester.pumpAndSettle();
+      }
       final toss = find.byKey(const ValueKey('coin-ritual-toss-button'));
       await tester.ensureVisible(toss);
       await tester.tap(toss);

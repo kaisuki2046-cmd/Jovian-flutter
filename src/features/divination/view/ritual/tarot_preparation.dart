@@ -90,8 +90,12 @@ class _TarotDeckPreparationState extends State<TarotDeckPreparation>
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
       final layout = TarotFanLayout(constraints.maxWidth, widget.slotCount);
-      final height = math.max(layout.height + 28, layout.cardHeight * 1.8);
-      final scene = _createScene(layout, height, widget.cutIndex, widget.seed);
+      final height = layout.height;
+      final (scene, spreadOrder) = _createScene(
+        layout,
+        widget.cutIndex,
+        widget.seed,
+      );
       final theme = Theme.of(context);
       return AnimatedBuilder(
         animation: _animation,
@@ -104,38 +108,47 @@ class _TarotDeckPreparationState extends State<TarotDeckPreparation>
             >= 1800 => '正在整理牌堆…',
             _ => '正在洗牌…',
           };
+          final cards = time >= 4730 ? spreadOrder : scene;
           return Column(
             children: [
-              Semantics(
-                liveRegion: true,
-                child: Text(
-                  context.uiLabel(status),
-                  key: const ValueKey('tarot-preparation-status'),
-                  style: theme.textTheme.titleMedium,
+              SizedBox(
+                height: tarotDeckControlHeight,
+                child: Center(
+                  child: Semantics(
+                    liveRegion: true,
+                    child: Text(
+                      context.uiLabel(status),
+                      key: const ValueKey('tarot-preparation-status'),
+                      style: theme.textTheme.titleMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
                 ),
               ),
-              const SizedBox(height: 8),
               ExcludeSemantics(
                 child: SizedBox(
+                  key: const ValueKey('tarot-preparation-stage'),
                   width: layout.width,
                   height: height,
-                  child: Stack(
-                    children: [
-                      for (final card in scene)
-                        if (card.slot != widget.cutIndex ||
-                            time < 3270 ||
-                            time >= 3840)
-                          _motionCard(layout, height, card.at(time)),
-                      if (time >= 3270 && time < 3840)
-                        for (final card in scene)
-                          if (card.slot == widget.cutIndex)
-                            _motionCard(
-                              layout,
-                              height,
-                              card.at(time),
-                              marker: theme.colorScheme.primary,
-                            ),
-                    ],
+                  child: ClipRect(
+                    child: Stack(
+                      children: [
+                        for (final card in cards)
+                          if (card.slot != widget.cutIndex ||
+                              time < 3270 ||
+                              time >= 3840)
+                            _motionCard(layout, height, card.at(time)),
+                        if (time >= 3270 && time < 3840)
+                          for (final card in cards)
+                            if (card.slot == widget.cutIndex)
+                              _motionCard(
+                                layout,
+                                height,
+                                card.at(time),
+                                marker: theme.colorScheme.primary,
+                              ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -161,44 +174,42 @@ Widget _motionCard(
     angle: pose.angle,
     child: Transform.scale(
       scale: pose.scale,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
+      child: Opacity(
+        opacity: pose.opacity,
+        child: Material(
+          elevation: 3,
           borderRadius: BorderRadius.circular(6),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x3313191f),
-              blurRadius: 6,
-              offset: Offset(0, 3),
-            ),
-          ],
-        ),
-        position: marker == null
-            ? DecorationPosition.background
-            : DecorationPosition.foreground,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            const TarotBackArt(),
-            if (marker != null)
-              DecoratedBox(
-                key: const ValueKey('tarot-cut-marker'),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: marker, width: 2),
+          clipBehavior: Clip.antiAlias,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              const TarotBackArt(),
+              if (marker != null)
+                DecoratedBox(
+                  key: const ValueKey('tarot-cut-marker'),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(color: marker, width: 2),
+                  ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     ),
   ),
 );
 
-typedef _Pose = ({Offset offset, double angle, double scale});
+typedef _Pose = ({Offset offset, double angle, double scale, double opacity});
 typedef _Frame = ({double time, _Pose pose});
 
-_Pose _pose(double x, double y, double angle, [double scale = 1]) =>
-    (offset: Offset(x, y), angle: angle, scale: scale);
+_Pose _pose(
+  double x,
+  double y,
+  double angle, [
+  double scale = 1,
+  double opacity = 1,
+]) => (offset: Offset(x, y), angle: angle, scale: scale, opacity: opacity);
 
 class _DeckMotion {
   const _DeckMotion(this.slot, this.frames);
@@ -218,18 +229,21 @@ class _DeckMotion {
             former.pose.angle + (next.pose.angle - former.pose.angle) * eased,
         scale:
             former.pose.scale + (next.pose.scale - former.pose.scale) * eased,
+        opacity:
+            former.pose.opacity +
+            (next.pose.opacity - former.pose.opacity) * eased,
       );
     }
     return frames.last.pose;
   }
 }
 
-List<_DeckMotion> _createScene(
+(List<_DeckMotion>, List<_DeckMotion>) _createScene(
   TarotFanLayout layout,
-  double height,
   int? cut,
   int seed,
 ) {
+  final height = layout.height;
   final scroll = layout.maxScroll / 2;
   final spread = <({int slot, _Pose pose})>[
     for (var slot = 0; slot < layout.slotCount; slot++)
@@ -240,19 +254,22 @@ List<_DeckMotion> _createScene(
             layout.center(slot) - scroll - layout.width / 2,
             10 + layout.cardHeight / 2 - height / 2 + arc.depth,
             arc.angle,
+            1,
+            arc.opacity,
           ),
         ),
   ];
-  if (spread.isEmpty) return [];
+  if (spread.isEmpty) return (const [], const []);
   final split = cut == null
       ? 0
       : (cut - spread.first.slot)
             .clamp(1, math.max(1, spread.length - 1))
             .toInt();
-  return [
+  final scene = [
     for (var index = 0; index < spread.length; index++)
       _makeCardMotion(layout, height, spread, index, cut, split, seed),
   ];
+  return (scene, [...scene.skip(split), ...scene.take(split)]);
 }
 
 _DeckMotion _makeCardMotion(

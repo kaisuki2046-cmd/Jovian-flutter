@@ -22,6 +22,8 @@ class TarotRitualPanel extends StatefulWidget {
     required this.choose,
     required this.reveal,
     required this.finish,
+    this.preparation,
+    this.cardFlight,
   });
 
   final int slotCount;
@@ -35,6 +37,8 @@ class TarotRitualPanel extends StatefulWidget {
   final ValueChanged<int> choose;
   final ValueChanged<int?> reveal;
   final VoidCallback finish;
+  final Widget? preparation;
+  final ValueChanged<bool>? cardFlight;
 
   @override
   State<TarotRitualPanel> createState() => _TarotRitualPanelState();
@@ -52,8 +56,16 @@ class _TarotRitualPanelState extends State<TarotRitualPanel> {
     if (!widget.active ||
         widget.reducedMotion ||
         (_arrived && _canFinishFlight)) {
-      _flight = null;
+      _clearFlight();
     }
+  }
+
+  void _clearFlight() {
+    if (_flight == null) return;
+    _flight = null;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _flight == null) widget.cardFlight?.call(false);
+    });
   }
 
   bool get _canFinishFlight {
@@ -85,6 +97,7 @@ class _TarotRitualPanelState extends State<TarotRitualPanel> {
         _flight = (slot: slot, index: index, from: from, to: to);
         _arrived = false;
       });
+      widget.cardFlight?.call(true);
     }
     widget.choose(slot);
   }
@@ -158,22 +171,23 @@ class _TarotRitualPanelState extends State<TarotRitualPanel> {
                 style: theme.textTheme.titleMedium,
                 textAlign: TextAlign.center,
               ),
-              LayoutBuilder(
-                builder: (context, size) => TarotRitualFan(
-                  layout: TarotFanLayout(size.maxWidth, widget.slotCount),
-                  selectedSlots: {
-                    ...widget.selectedSlots,
-                    if (flight != null) flight.slot,
-                  },
-                  busy:
-                      widget.busy ||
-                      widget.selectionBlocked ||
-                      !widget.active ||
-                      flight != null,
-                  reducedMotion: widget.reducedMotion,
-                  choose: _choose,
-                ),
-              ),
+              widget.preparation ??
+                  LayoutBuilder(
+                    builder: (context, size) => TarotRitualFan(
+                      layout: TarotFanLayout(size.maxWidth, widget.slotCount),
+                      selectedSlots: {
+                        ...widget.selectedSlots,
+                        if (flight != null) flight.slot,
+                      },
+                      busy:
+                          widget.busy ||
+                          widget.selectionBlocked ||
+                          !widget.active ||
+                          flight != null,
+                      reducedMotion: widget.reducedMotion,
+                      choose: _choose,
+                    ),
+                  ),
             ],
           ],
         ),
@@ -188,7 +202,7 @@ class _TarotRitualPanelState extends State<TarotRitualPanel> {
                   curve: Curves.easeInOutCubic,
                   onEnd: () => setState(() {
                     _arrived = true;
-                    if (_canFinishFlight) _flight = null;
+                    if (_canFinishFlight) _clearFlight();
                   }),
                   builder: (context, frame, child) => Stack(
                     children: [

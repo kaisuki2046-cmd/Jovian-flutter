@@ -32,7 +32,7 @@ class CoinFeedback {
         _invoke('strike', {
           'variant': cue.variant,
           'volume': cue.volume * coinSoundMasterVolume,
-          'rate': coinSoundRate,
+          'rate': 1.0,
         }),
       );
 
@@ -72,5 +72,13 @@ class CoinFeedback {
     if (_supported) {
       unawaited(HapticFeedback.selectionClick().catchError((Object _) {}));
     }
+  }
+
+  void land({required bool first}) {
+    if (!_supported) return;
+    final impact = first
+        ? HapticFeedback.mediumImpact()
+        : HapticFeedback.lightImpact();
+    unawaited(impact.catchError((Object _) {}));
   }
 }

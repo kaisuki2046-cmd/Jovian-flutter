@@ -528,15 +528,15 @@ void main() {
       );
       await _send(tester);
       expect(service.automatic, [false]);
+      for (final position in [40, 38, 39]) {
+        final card = find.bySemanticsLabel('选取第 $position 张牌');
+        tester.widget<Semantics>(card).properties.onTap!();
+        await tester.pumpAndSettle();
+      }
       final toss = find.byKey(const ValueKey('coin-ritual-toss-button'));
       for (var index = 0; index < 6; index++) {
         await tester.ensureVisible(toss);
         await tester.tap(toss);
-        await tester.pumpAndSettle();
-      }
-      for (final position in [40, 38, 39]) {
-        final card = find.bySemanticsLabel('选取第 $position 张牌');
-        tester.widget<Semantics>(card).properties.onTap!();
         await tester.pumpAndSettle();
       }
       await _tap(tester, '一键翻牌');
@@ -668,7 +668,7 @@ void main() {
     expect(online.activeTranscript, hasLength(2));
     expect(online.activeTranscript.last.question, divinationFixtureDetails);
     expect(
-      find.byKey(const ValueKey('coin-ritual-toss-button')),
+      find.text('第 1 步 · 塔罗选牌'),
       findsOneWidget,
     );
   });
@@ -760,7 +760,7 @@ void main() {
     ]);
     expect(online.activeTranscript, hasLength(1));
     expect(
-      find.byKey(const ValueKey('coin-ritual-toss-button')),
+      find.text('第 1 步 · 塔罗选牌'),
       findsOneWidget,
     );
   });
@@ -1459,12 +1459,12 @@ void main() {
 
       understanding.complete();
       await tester.pumpAndSettle();
-      final coin = find.byKey(const ValueKey('coin-ritual-toss-button'));
-      expect(coin, findsNothing);
+      final tarot = find.text('第 1 步 · 塔罗选牌');
+      expect(tarot, findsNothing);
       await tester.tap(find.byKey(const ValueKey(JovianTab.divination)));
       await tester.pumpAndSettle();
       await _tap(tester, '继续本次仪式');
-      expect(coin, findsOneWidget);
+      expect(tarot, findsOneWidget);
       await tester.tap(find.byTooltip('暂停仪式'));
       await tester.pumpAndSettle();
     },

@@ -260,6 +260,15 @@ void main() {
     tester,
   ) async {
     final audio = _recordAudio(tester);
+    final haptics = <Object?>[];
+    final messenger = tester.binding.defaultBinaryMessenger;
+    messenger.setMockMethodCallHandler(SystemChannels.platform, (call) async {
+      if (call.method == 'HapticFeedback.vibrate') haptics.add(call.arguments);
+      return null;
+    });
+    addTearDown(
+      () => messenger.setMockMethodCallHandler(SystemChannels.platform, null),
+    );
     final result = [
       [2, 3, 2],
     ];
@@ -268,17 +277,23 @@ void main() {
     await tester.pumpWidget(page([]));
     expect(audio.single.method, 'prepare');
     expect(audio.single.arguments, hasLength(3));
+    await tester.tap(find.byKey(_tossButton));
+    await tester.pump();
+    expect(haptics, ['HapticFeedbackType.selectionClick']);
     await tester.pumpWidget(page(result));
     expect(_variants(audio), [0]);
     await tester.pump(const Duration(milliseconds: 400));
-    expect(_variants(audio), [0, 1, 2]);
+    expect(_variants(audio), [0, 1, 0]);
     await tester.pump(const Duration(milliseconds: 1570));
-    expect(_variants(audio), [0, 1, 2, 0]);
+    expect(_variants(audio), [0, 1, 0, 2]);
+    expect(haptics.last, 'HapticFeedbackType.mediumImpact');
+    await tester.pump(const Duration(milliseconds: 140));
+    expect(haptics.last, 'HapticFeedbackType.lightImpact');
     await tester.pumpWidget(page(result, active: false));
     expect(audio.last.method, 'stop');
     await tester.pump(coinTossDuration);
     await tester.pump(coinTossDuration);
-    expect(_variants(audio), [0, 1, 2, 0]);
+    expect(_variants(audio), [0, 1, 0, 2]);
   });
 
   testWidgets('reduced motion plays one sound and never replays saved tosses', (

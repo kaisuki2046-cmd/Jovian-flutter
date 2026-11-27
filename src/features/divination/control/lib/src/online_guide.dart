@@ -198,7 +198,12 @@ class PendingGuideAction {
 }
 
 class GuideRecovery {
-  const GuideRecovery(this.token, [this.pending, this.threadId]);
+  const GuideRecovery(
+    this.token, [
+    this.pending,
+    this.threadId,
+    this.tarotPicks,
+  ]);
 
   factory GuideRecovery.fromJson(Map<String, Object?> value) {
     final token = value['token'];
@@ -207,8 +212,13 @@ class GuideRecovery {
     }
     final id = value['threadId'];
     final threadId = id is String && isGuideThreadId(id) ? id : null;
+    final picks = switch (value['tarotPicks']) {
+      null => null,
+      final List cards => _recoverTarotPicks(cards),
+      _ => throw const FormatException('Invalid saved Tarot picks.'),
+    };
     final pending = value['pending'];
-    if (pending == null) return GuideRecovery(token, null, threadId);
+    if (pending == null) return GuideRecovery(token, null, threadId, picks);
     if (pending is! Map || pending['body'] is! Map)
       throw const FormatException('Invalid pending reading action.');
     final action = switch (pending['action']) {
@@ -220,19 +230,57 @@ class GuideRecovery {
       token,
       PendingGuideAction(action, (pending['body'] as Map).cast()),
       threadId,
+      picks,
     );
   }
 
   final String token;
   final PendingGuideAction? pending;
   final String? threadId;
+  final List<GuideCardEvent>? tarotPicks;
 
   Map<String, Object?> toJson() => {
     'token': token,
     if (threadId != null) 'threadId': threadId,
     if (pending case final pending?)
       'pending': {'action': pending.action.name, 'body': pending.body},
+    if (tarotPicks case final cards?)
+      'tarotPicks': cards.map((card) => card.toJson()).toList(),
   };
+
+  static List<GuideCardEvent> _recoverTarotPicks(List cards) {
+    if (cards.length > TarotPosition.values.length) {
+      throw const FormatException('Too many saved Tarot picks.');
+    }
+    final slots = <int>{};
+    return List.unmodifiable([
+      for (final (index, item) in cards.indexed)
+        _recoverTarotPick(item as Map, index, slots),
+    ]);
+  }
+
+  static GuideCardEvent _recoverTarotPick(Map item, int index, Set<int> slots) {
+    final card = GuideCardEvent(
+      actionId: item['actionId'] as String,
+      step: item['step'] as int,
+      slot: item['slot'] as int,
+      epochMs: item['epochMs'] as String,
+      monotonicMs: item['monotonicMs'] as num,
+      clockSessionId: item['clockSessionId'] as String,
+    );
+    try {
+      card.validate();
+    } on GuideRitualError {
+      throw const FormatException('Invalid saved Tarot pick.');
+    }
+    if (card.step != index ||
+        card.slot < 0 ||
+        card.slot >= tarotDeck.length ||
+        !slots.add(card.slot)) {
+      throw const FormatException('Invalid saved Tarot position.');
+    }
+    return card;
+  }
 }
 
 abstract interface class GuideRecoveryStore {
@@ -307,6 +355,7 @@ class OnlineGuideController {
   String? _token;
   String? _threadId;
   PendingGuideAction? _pending;
+  List<GuideCardEvent>? _tarotPicks;
   String? _clarificationQuestion;
   String? _previousQuestion;
   Completer<void>? _understanding;
@@ -339,6 +388,8 @@ class OnlineGuideController {
   GuideHistoryEntry? get activeHistoryEntry => _history[_threadId];
   GuideHistoryEntry? archivedHistoryEntry(String id) => _history[id];
   bool get canContinue => _token != null;
+  List<int>? get preparedTarotSlots =>
+      _tarotPicks?.map((card) => card.slot).toList(growable: false);
   Set<int>? get revealedTarotSlots => _revealsFor(_reading?.snapshot);
 
   bool get needsTarotReveal {
@@ -461,6 +512,7 @@ class OnlineGuideController {
     _threadId = null;
     _token = null;
     _pending = null;
+    _tarotPicks = null;
     _reading = null;
     _clarificationQuestion = last.clarificationQuestion;
     _previousQuestion = last.previousQuestion;
@@ -480,6 +532,7 @@ class OnlineGuideController {
     _reading = _history[id]!.reading;
     _token = null;
     _pending = null;
+    _tarotPicks = null;
     _previousQuestion = null;
     _clarificationQuestion = null;
     _emit();
@@ -503,11 +556,17 @@ class OnlineGuideController {
   Future<void> _resume(GuideRecovery recovered) async {
     _token = recovered.token;
     _pending = recovered.pending;
+    _tarotPicks = recovered.tarotPicks;
     if (_pending != null) {
+      _retry = () => _sendPending(refresh: true);
       await _sendPending(refresh: true);
     } else {
       final previous = _reading?.snapshot.stage;
       _reading = await _gateway.get(recovered.token);
+      if (_tarotPicks != null && _reading?.snapshot.stage == GuideStage.draw) {
+        await _finishRitual(revisiting: true);
+        return;
+      }
       if (previous != null && previous != GuideStage.reading) {
         await _beginManualReveal(revisiting: true);
       }
@@ -518,6 +577,7 @@ class OnlineGuideController {
   Future<void> start(
     String text, {
     required bool automatic,
+    bool tarotFirst = false,
     List<String> attachmentNames = const [],
   }) {
     final combined = _clarificationQuestion == null
@@ -574,6 +634,12 @@ class OnlineGuideController {
         _threadId = guideEventId();
         _pending = null;
         _reading = started.reading;
+        _tarotPicks =
+            tarotFirst &&
+                !automatic &&
+                _reading?.snapshot.stage == GuideStage.cast
+            ? const []
+            : null;
         _clarificationQuestion = null;
         _previousQuestion = null;
         await _beginManualReveal();
@@ -632,8 +698,13 @@ class OnlineGuideController {
 
   Future<void> toss() {
     final state = _reading?.snapshot;
-    if (_busy || _token == null || state?.stage != GuideStage.cast)
+    final cards = _tarotPicks;
+    if (_busy ||
+        _token == null ||
+        state?.stage != GuideStage.cast ||
+        (cards != null && cards.length != TarotPosition.values.length)) {
       return Future.value();
+    }
     return _act(
       PendingGuideAction(
         GuideAction.toss,
@@ -647,25 +718,36 @@ class OnlineGuideController {
 
   Future<void> pick(int slot) {
     final state = _reading?.snapshot;
-    if (_busy ||
-        _token == null ||
-        state?.stage != GuideStage.draw ||
-        state!.selectedSlots.contains(slot)) {
+    if (_busy || _token == null || state == null) return Future.value();
+    final prepared = _tarotPicks;
+    final selectingEarly = prepared != null && state.stage == GuideStage.cast;
+    if (!selectingEarly &&
+        (prepared != null || state.stage != GuideStage.draw)) {
       return Future.value();
     }
-    return _act(
-      PendingGuideAction(
-        GuideAction.pick,
-        GuideCardEvent(
-          actionId: guideEventId(),
-          step: state.selectedSlots.length,
-          slot: slot,
-          epochMs: DateTime.now().millisecondsSinceEpoch.toString(),
-          monotonicMs: _clock.elapsedMicroseconds / 1000,
-          clockSessionId: _clockSession,
-        ).toJson(),
-      ),
+    final selected = selectingEarly ? preparedTarotSlots! : state.selectedSlots;
+    final slotCount = selectingEarly ? tarotDeck.length : state.slotCount;
+    if (selected.contains(slot) ||
+        selected.length >= TarotPosition.values.length ||
+        slot < 0 ||
+        slot >= slotCount) {
+      return Future.value();
+    }
+    final card = GuideCardEvent(
+      actionId: guideEventId(),
+      step: selected.length,
+      slot: slot,
+      epochMs: DateTime.now().millisecondsSinceEpoch.toString(),
+      monotonicMs: _clock.elapsedMicroseconds / 1000,
+      clockSessionId: _clockSession,
     );
+    if (selectingEarly) {
+      return _run(() async {
+        _tarotPicks = List.unmodifiable([...prepared, card]);
+        await _save();
+      });
+    }
+    return _act(PendingGuideAction(GuideAction.pick, card.toJson()));
   }
 
   Future<void> requestReport() => _run(_reportIfReady);
@@ -738,6 +820,7 @@ class OnlineGuideController {
     _token = null;
     _threadId = null;
     _pending = null;
+    _tarotPicks = null;
     _reading = null;
     _clarificationQuestion = null;
     await _save();
@@ -838,11 +921,14 @@ class OnlineGuideController {
   }
 
   Future<void> _sendPending({required bool refresh}) async {
+    final wasDrawing = _reading?.snapshot.stage != GuideStage.reading;
+    await _performPending(refresh: refresh);
+    await _finishRitual(revisiting: refresh, beginReveal: wasDrawing);
+  }
+
+  Future<void> _performPending({required bool refresh}) async {
     final token = _token!;
     final event = _pending!;
-    final wasDrawing =
-        event.action == GuideAction.pick &&
-        _reading?.snapshot.stage != GuideStage.reading;
     await _save();
     try {
       final next = await _gateway.perform(token, event);
@@ -852,7 +938,44 @@ class OnlineGuideController {
       _reading = await _gateway.get(token);
     }
     _pending = null;
-    if (wasDrawing) await _beginManualReveal(revisiting: refresh);
+  }
+
+  Future<void> _finishRitual({
+    required bool revisiting,
+    bool beginReveal = true,
+  }) async {
+    final cards = _tarotPicks;
+    if (cards != null && _reading?.snapshot.stage == GuideStage.draw) {
+      _emit();
+      // The server accepts picks after the cast. Replay the original click
+      // events so their timestamps still drive the Mei Hua calculation.
+      while (_reading?.snapshot.stage == GuideStage.draw &&
+          !_changes.isClosed) {
+        _retry = () => _finishRitual(revisiting: true);
+        final selected = _reading!.snapshot.selectedSlots;
+        final next = selected.length;
+        if (next >= cards.length ||
+            selected.indexed.any((item) => cards[item.$1].slot != item.$2)) {
+          throw const ReadingConnectionError(
+            'tarot_selection_conflict',
+            status: 409,
+          );
+        }
+        _pending = PendingGuideAction(GuideAction.pick, cards[next].toJson());
+        _retry = () => _sendPending(refresh: true);
+        await _performPending(refresh: false);
+        final accepted = _reading!.snapshot.selectedSlots;
+        if (accepted.length <= next || accepted[next] != cards[next].slot) {
+          _retry = () => _finishRitual(revisiting: true);
+          throw const ReadingConnectionError(
+            'tarot_selection_conflict',
+            status: 409,
+          );
+        }
+      }
+    }
+    if (_changes.isClosed) return;
+    if (beginReveal) await _beginManualReveal(revisiting: revisiting);
     await _save();
     _emit();
     await _reportIfReady();
@@ -879,7 +1002,9 @@ class OnlineGuideController {
   Future<void> _save() async {
     if (_changes.isClosed) return;
     final id = _threadId;
-    final record = _token == null ? null : GuideRecovery(_token!, _pending, id);
+    final record = _token == null
+        ? null
+        : GuideRecovery(_token!, _pending, id, _tarotPicks);
     await _recovery.write(record);
     if (id == null || _changes.isClosed) return;
     if (_historyStore case final store?) {
@@ -946,6 +1071,7 @@ class OnlineGuideController {
       if (error.status == 404 && _token != null) {
         _token = null;
         _pending = null;
+        _tarotPicks = null;
         _retry = null;
         await _save();
       }
@@ -983,6 +1109,7 @@ String _errorMessage(ReadingConnectionError error) => switch (error.status) {
   400 when error.code == 'question_needs_model_confirmation' =>
     '问题确认已过期，请重试确认。',
   400 => '服务器未接受这次输入，请核对后重试。',
+  409 when error.code == 'tarot_selection_conflict' => '选牌记录与服务器进度不一致，请重试同步。',
   401 => '当前账号会话无法验证，请重新登录后重试。',
   404 => '这次算事已过期，可以发起新问题。',
   428 => '请在隐私设置中开启 AI 数据共享授权后重试。',

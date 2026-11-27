@@ -1,7 +1,9 @@
+import 'package:jovian_divination/jovian_divination.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../src/features/divination/view/guide_form.dart';
+import '../src/features/divination/view/ritual/guide_ritual_dialog.dart';
 import '../src/features/divination/view/ritual/tarot_deck.dart';
 import '../src/features/divination/view/ritual/tarot_preparation.dart';
 import '../src/ui/interface_language.dart';
@@ -102,7 +104,7 @@ void main() {
   );
 
   testWidgets(
-    'manual ritual can pause, reveal, and continue to chart at 360dp',
+    'manual ritual picks Tarot before casting and can pause at 360dp',
     (tester) async {
       tester.view.devicePixelRatio = 1;
       tester.view.physicalSize = const Size(360, 640);
@@ -126,12 +128,8 @@ void main() {
       await tester.tap(find.byTooltip('发送消息'));
       await tester.pumpAndSettle();
       final toss = find.byKey(const ValueKey('coin-ritual-toss-button'));
-      for (var index = 0; index < 6; index++) {
-        await tester.ensureVisible(toss);
-        await tester.tap(toss);
-        await tester.pumpAndSettle();
-      }
-
+      expect(toss, findsNothing);
+      expect(find.text('第 1 步 · 塔罗选牌'), findsOneWidget);
       expect(find.byType(TarotDeckPreparation), findsNothing);
       expect(find.bySemanticsLabel('78 张塔罗牌阵'), findsOneWidget);
       final scroll = find.byKey(const ValueKey('tarot-fan-scroll'));
@@ -159,6 +157,13 @@ void main() {
       for (final position in [38, 39]) {
         final card = find.bySemanticsLabel('选取第 $position 张牌');
         tester.widget<Semantics>(card).properties.onTap!();
+        await tester.pumpAndSettle();
+      }
+      expect(find.text('第 2 步 · 六爻起卦'), findsOneWidget);
+      expect(service.calls, isNot(contains('POST /reading/pick')));
+      for (var index = 0; index < 6; index++) {
+        await tester.ensureVisible(toss);
+        await tester.tap(toss);
         await tester.pumpAndSettle();
       }
       final present = find.bySemanticsLabel('翻开现状牌');
@@ -200,4 +205,60 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+
+  testWidgets('cut and selection share the same deck bounds at 320dp', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(320, 600);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final changes = ValueNotifier(0);
+    addTearDown(changes.dispose);
+    final ritual = GuideRitual(
+      question: divinationFixtureDetails,
+      focus: divinationFixtureFocus,
+      automatic: false,
+    );
+    final presentation = GuideRitualPresentation()..preparation = 0.96;
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('en'),
+        localizationsDelegates: const [interfaceStringsDelegate],
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: const TextScaler.linear(1.4)),
+          child: child!,
+        ),
+        home: Scaffold(
+          body: GuideRitualDialog(
+            presentation: presentation,
+            changes: changes,
+            snapshot: () => ritual.snapshot,
+            preparedTarot: () => const [],
+            busy: () => false,
+            error: () => null,
+            retry: () => null,
+            toss: () {},
+            choose: (_) {},
+            pause: () {},
+          ),
+        ),
+      ),
+    );
+    final deckBefore = tester.getRect(
+      find.byKey(const ValueKey('tarot-preparation-stage')),
+    );
+    final footerBefore = tester.getRect(find.text('Pause'));
+    await tester.pumpAndSettle(const Duration(milliseconds: 240));
+    expect(find.byType(TarotDeckPreparation), findsNothing);
+    expect(
+      tester.getRect(find.byKey(const ValueKey('tarot-fan-scroll'))),
+      deckBefore,
+    );
+    expect(tester.getRect(find.text('Pause')), footerBefore);
+    expect(find.byTooltip('Browse right'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 }

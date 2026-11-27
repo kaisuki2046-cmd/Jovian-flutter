@@ -1,4 +1,5 @@
 /.dart_tool/
+/.local/
 /build/
 /.flutter-plugins-dependencies
 /web/legacy-compute.js

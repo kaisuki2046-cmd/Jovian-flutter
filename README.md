@@ -6,7 +6,7 @@ Flutter 版沿用项目的[目录分工](../app/FRAMEWORK.md)、[协作协议](.
 
 将 Flutter 客户端与原项目检出为同级目录。`app-flutter/` 是 Flutter 客户端的 Git 工作树和项目根目录，`app/` 提供原 RN 应用、TypeScript 计算和 Node 服务。Flutter 编辑、Git 提交、测试和构建均在 `app-flutter/` 下进行。本文指向原项目的链接使用该同级布局。
 
-在 Flutter 项目根目录运行 `node tool/legacy_compute/build.mjs`，由原 TypeScript 生成 Web 和原生端共用的计算资源。原项目的 Node 依赖位于另一工作树时，按[本机计算说明](tool/legacy_compute/README.md)设置 `JOVIAN_LEGACY_NODE_ROOT`。然后运行以下命令，将服务地址和 Web 来源设为已有服务允许的值。若使用 `app/.local` 下的 SDK，在 PowerShell 中把 `flutter` 换成 `& '..\app\.local\flutter-toolchain\flutter\bin\flutter.bat'`。
+在 Flutter 项目根目录运行 `node tool/legacy_compute/build.mjs`，由原 TypeScript 生成 Web 和原生端共用的计算资源。原项目的 Node 依赖位于另一工作树时，按[本机计算说明](tool/legacy_compute/README.md)设置 `JOVIAN_LEGACY_NODE_ROOT`。然后运行以下命令，将服务地址和 Web 来源设为已有服务允许的值。若使用 Flutter 项目 `.local` 下的本地 SDK，在 PowerShell 中把 `flutter` 换成 `& '.\.local\flutter-toolchain\flutter\bin\flutter.bat'`。
 
 ```sh
 flutter pub get

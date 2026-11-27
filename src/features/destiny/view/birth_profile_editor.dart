@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../ui/interface_language.dart';
 import '../model/birth_profile_draft.dart';
+import 'birth_display_labels.dart';
 import 'birth_place_picker.dart';
 import 'birth_time_date_picker.dart';
 
@@ -64,7 +65,9 @@ class _BirthProfileEditorState extends State<BirthProfileEditor> {
                   '出生时间',
                   _choice(
                     action: '选择出生时间',
-                    value: _time == null ? null : _timeLabel(context, _time!),
+                    value: _time == null
+                        ? null
+                        : birthTimeLabel(context, _time!),
                     hint: '选择出生时间',
                     pick: _pickTime,
                   ),
@@ -173,18 +176,6 @@ class _BirthProfileEditorState extends State<BirthProfileEditor> {
       context.uiLanguage == InterfaceLanguage.chinese
       ? '${date.year} 年 ${date.month} 月 ${date.day} 日'
       : birthDateText(date);
-
-  String _timeLabel(BuildContext context, BirthTime time) => switch ((
-    time.hour,
-    time.minute,
-  )) {
-    (null, null) => context.uiLabel('时间未知'),
-    (null, final minute?) =>
-      '${context.uiLabel('小时未知 · ')}$minute${context.uiLabel(' 分')}',
-    (final hour?, null) => '$hour${context.uiLabel(' 时 · 分钟未知')}',
-    (final hour?, final minute?) =>
-      '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}',
-  };
 
   void _update(VoidCallback apply) => setState(() {
     apply();

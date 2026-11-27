@@ -11,6 +11,7 @@ import '../frontend/control/destiny_birth_controller.dart';
 import '../frontend/control/destiny_page_controller.dart';
 import '../model/birth_profile_draft.dart';
 import '../model/destiny_reading.dart';
+import 'birth_display_labels.dart';
 import 'birth_profile_confirmation.dart';
 import 'birth_profile_editor.dart';
 import 'destiny_chart_dialog.dart';
@@ -140,7 +141,7 @@ class _DestinyPageState extends State<DestinyPage> {
             if (_controller.archiveError)
               TextButton(
                 onPressed: _controller.restoreReport,
-                child: const Text('已存报告读取失败，点此重试'),
+                child: const UiText('已存报告读取失败，点此重试'),
               ),
             if (_controller.stage case final stage? when !_controller.saving)
               _progress(context, stage)
@@ -177,7 +178,7 @@ class _DestinyPageState extends State<DestinyPage> {
               _status(context, error),
               TextButton(
                 onPressed: _birth.refresh,
-                child: const Text('重试读取账户出生资料'),
+                child: const UiText('重试读取账户出生资料'),
               ),
             ],
             if (_controller.calculationError case final error?)
@@ -195,10 +196,10 @@ class _DestinyPageState extends State<DestinyPage> {
             if (_controller.needsSave)
               TextButton(
                 onPressed: _controller.saving ? null : _controller.saveReport,
-                child: Text(_controller.saving ? '正在存档…' : '重试存档'),
+                child: UiText(_controller.saving ? '正在存档…' : '重试存档'),
               ),
             if (_birth.localNotice case final notice?)
-              Semantics(liveRegion: true, child: Text(notice)),
+              Semantics(liveRegion: true, child: UiText(notice)),
           ],
         ),
       ),
@@ -256,7 +257,7 @@ class _DestinyPageState extends State<DestinyPage> {
         const SizedBox(height: 16),
         FilledButton(
           onPressed: _canEdit ? _openEditor : null,
-          child: Text(
+          child: UiText(
             _birth.current?.fields.hasData == true ||
                     _birth.localProfile != null
                 ? '核对资料'
@@ -282,7 +283,12 @@ class _DestinyPageState extends State<DestinyPage> {
       ),
       if (_baseline case final fields?
           when fields.birthPlace.isNotEmpty && _prefill.place == null)
-        _status(context, '账户出生地点「${fields.birthPlace}」无法唯一匹配，请重新选择。'),
+        _status(
+          context,
+          context
+              .uiLabel('账户出生地点「{place}」无法唯一匹配，请重新选择。')
+              .replaceFirst('{place}', fields.birthPlace),
+        ),
       TextButton(
         onPressed: () => setState(() => _editing = false),
         child: const UiText('返回入口'),
@@ -313,12 +319,8 @@ class _DestinyPageState extends State<DestinyPage> {
 
   Widget _localProfileSummary(BuildContext context, BirthProfile profile) {
     final fields = accountFieldsFor(profile);
-    final time = fields.birthTime.isEmpty ? '出生时间未知' : fields.birthTime;
-    final gender = switch (profile.gender) {
-      BirthGender.female => '女',
-      BirthGender.male => '男',
-      BirthGender.other => '其他',
-    };
+    final time = birthTimeLabel(context, profile.time);
+    final gender = birthGenderLabel(context, fields.gender);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -352,8 +354,8 @@ class _DestinyPageState extends State<DestinyPage> {
     final accepted = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('删除本机出生资料？'),
-        content: const Text('这里只删除此设备上的副本。账户出生资料和已归档报告仍可使用。'),
+        title: const UiText('删除本机出生资料？'),
+        content: const UiText('这里只删除此设备上的副本。账户出生资料和已归档报告仍可使用。'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -361,7 +363,7 @@ class _DestinyPageState extends State<DestinyPage> {
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('删除'),
+            child: const UiText('删除'),
           ),
         ],
       ),
@@ -543,7 +545,7 @@ class _DestinyPageState extends State<DestinyPage> {
             onPressed: _canEdit
                 ? () => _openEditor(useCurrentDraft: _draft != null)
                 : null,
-            child: Text(_draft == null ? '重新测算' : '编辑出生资料'),
+            child: UiText(_draft == null ? '重新测算' : '编辑出生资料'),
           ),
           if (fresh)
             TextButton(
@@ -559,7 +561,7 @@ class _DestinyPageState extends State<DestinyPage> {
           onPressed: _birth.localReading || _birth.localWriting
               ? null
               : () => _birth.storeLocal(_draft),
-          child: Text(_birth.localWriting ? '正在保存出生资料…' : '保存出生资料到本机'),
+          child: UiText(_birth.localWriting ? '正在保存出生资料…' : '保存出生资料到本机'),
         ),
     ];
   }
@@ -586,7 +588,7 @@ class _DestinyPageState extends State<DestinyPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          UiText(
             fresh ? '人生解读' : '上次解读',
             style: Theme.of(context).textTheme.titleMedium,
           ),

@@ -108,7 +108,7 @@ class _ChartDialogState extends State<_ChartDialog> {
                     ),
                   ),
                   IconButton(
-                    tooltip: '关闭命盘',
+                    tooltip: context.uiLabel('关闭命盘'),
                     onPressed: () => Navigator.pop(context),
                     icon: const Icon(Icons.close),
                   ),
@@ -117,32 +117,40 @@ class _ChartDialogState extends State<_ChartDialog> {
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
-              child: Row(
-                children: [
-                  for (final method in DestinyChartMethod.values)
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 2),
-                        child: ChoiceChip(
-                          label: Center(child: Text(method.label)),
-                          selected: method == _active,
-                          showCheckmark: false,
-                          onSelected: (_) => setState(() => _active = method),
+              child: Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: Wrap(
+                  spacing: 6,
+                  runSpacing: 2,
+                  children: [
+                    for (final method in DestinyChartMethod.values)
+                      ChoiceChip(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        labelPadding: const EdgeInsets.symmetric(horizontal: 2),
+                        label: UiText(
+                          method.label,
+                          textAlign: TextAlign.center,
                         ),
+                        selected: method == _active,
+                        showCheckmark: false,
+                        onSelected: (_) => setState(() => _active = method),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
             const Divider(height: 1),
             if (restored.connectionState == ConnectionState.waiting)
-              const LinearProgressIndicator(semanticsLabel: '正在读取盘面…'),
+              LinearProgressIndicator(
+                semanticsLabel: context.uiLabel('正在读取盘面…'),
+              ),
             Expanded(
               child: ListView(
                 key: ValueKey(_active),
                 padding: const EdgeInsets.all(12),
                 children: [
-                  if (preview?.note case final note?) _Note(note),
+                  if (preview?.note case final note?)
+                    _Note(note, localize: false),
                   ...switch (_active) {
                     DestinyChartMethod.bazi
                         when preview?.rows.isNotEmpty == true ||
@@ -196,18 +204,22 @@ class _Title extends StatelessWidget {
     padding: const EdgeInsets.only(bottom: 6),
     child: Semantics(
       header: true,
-      child: Text(text, style: Theme.of(context).textTheme.titleMedium),
+      child: UiText(text, style: Theme.of(context).textTheme.titleMedium),
     ),
   );
 }
 
 class _Note extends StatelessWidget {
-  const _Note(this.text);
+  const _Note(this.text, {this.localize = true});
   final String text;
+  final bool localize;
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 6),
-    child: Text(text, style: Theme.of(context).textTheme.bodySmall),
+    child: Text(
+      localize ? context.uiLabel(text) : text,
+      style: Theme.of(context).textTheme.bodySmall,
+    ),
   );
 }
 
@@ -234,7 +246,7 @@ class _Fact extends StatelessWidget {
                       fontFamilyFallback: _chartSymbolFallback,
                     ),
                   ),
-                TextSpan(text: row.label),
+                TextSpan(text: context.uiLabel(row.label)),
               ],
             ),
             style: Theme.of(context).textTheme.labelLarge,
@@ -315,7 +327,7 @@ class _Pillars extends StatelessWidget {
                         ),
                         child: Column(
                           children: [
-                            Text(
+                            UiText(
                               row.label,
                               textAlign: TextAlign.center,
                               style: theme.textTheme.labelMedium,
@@ -355,7 +367,10 @@ class _Pillars extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Flexible(
-                      child: Text(row.label, style: theme.textTheme.labelLarge),
+                      child: UiText(
+                        row.label,
+                        style: theme.textTheme.labelLarge,
+                      ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -431,7 +446,10 @@ class _ZiweiPanelState extends State<_ZiweiPanel> {
     final palaces = chart['palaces'];
     final calendar = '${chart['className']} · ${chart['lunarDate']}';
     if (palaces is! List || palaces.isEmpty) {
-      return _Note('$calendar\n出生时刻未完全确定，保留 ${chart['scenarioCount']} 种时辰情景。');
+      final scenarios = context
+          .uiLabel('出生时刻未完全确定，保留 {count} 种时辰情景。')
+          .replaceFirst('{count}', '${chart['scenarioCount']}');
+      return _Note('$calendar\n$scenarios', localize: false);
     }
     final byBranch = {
       for (final Map palace in palaces) palace['branch']: palace,
@@ -490,19 +508,32 @@ class _ZiweiPanelState extends State<_ZiweiPanel> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text(
-                                                palace['name'] as String,
-                                                style:
-                                                    theme.textTheme.labelMedium,
-                                              ),
-                                              Text(
-                                                palace['body'] == true
-                                                    ? '$branch · 身宫'
-                                                    : branch,
-                                                style:
-                                                    theme.textTheme.bodySmall,
+                                              Flexible(
+                                                flex: 2,
+                                                child: UiText(
+                                                  palace['name'] as String,
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: theme
+                                                      .textTheme
+                                                      .labelMedium,
+                                                ),
                                               ),
                                               Flexible(
+                                                child: Text(
+                                                  palace['body'] == true
+                                                      ? '$branch${context.uiLabel(' · 身宫')}'
+                                                      : branch,
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style:
+                                                      theme.textTheme.bodySmall,
+                                                ),
+                                              ),
+                                              Flexible(
+                                                flex: 2,
                                                 child: Text(
                                                   palace['major'] as String,
                                                   maxLines: 2,
@@ -530,15 +561,19 @@ class _ZiweiPanelState extends State<_ZiweiPanel> {
             ),
           ),
         ),
-        _FactsBox('${detail['name']} · ${detail['stem']}${detail['branch']}', [
-          for (final (key, label) in const [
-            ('major', '主星'),
-            ('minor', '辅星'),
-            ('others', '杂曜'),
-          ])
-            if (detail[key] case final String value when value.isNotEmpty)
-              (label: label, value: value),
-        ], key: _detail),
+        _FactsBox(
+          '${context.uiLabel(detail['name'] as String)} · ${detail['stem']}${detail['branch']}',
+          [
+            for (final (key, label) in const [
+              ('major', '主星'),
+              ('minor', '辅星'),
+              ('others', '杂曜'),
+            ])
+              if (detail[key] case final String value when value.isNotEmpty)
+                (label: label, value: value),
+          ],
+          key: _detail,
+        ),
         const _Note('点按宫位切换详情。'),
       ],
     );
@@ -603,7 +638,9 @@ class _WesternPanel extends StatelessWidget {
             children: [
               for (final (index, house) in (wheel['houses'] as List).indexed)
                 Chip(
-                  label: Text('第${index + 1}宫 · ${(house as Map)['label']}'),
+                  label: Text(
+                    '${context.uiLabel('第{number}宫').replaceFirst('{number}', '${index + 1}')} · ${(house as Map)['label']}',
+                  ),
                 ),
             ],
           ),

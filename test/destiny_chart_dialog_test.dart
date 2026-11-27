@@ -8,6 +8,7 @@ import '../src/features/destiny/frontend/control/destiny_chart_presentation.dart
 import '../src/features/destiny/model/destiny_reading.dart';
 import '../src/features/destiny/view/birth_profile_confirmation.dart';
 import '../src/features/destiny/view/destiny_chart_dialog.dart';
+import '../src/ui/interface_language.dart';
 
 void main() {
   testWidgets(
@@ -158,6 +159,93 @@ void main() {
     },
   );
 
+  testWidgets('English chart controls preserve the original chart data', (
+    tester,
+  ) async {
+    _narrow(tester);
+    await _showCharts(
+      tester,
+      DestinyCharts.fromArchive(_archive(timeKnown: true), presentation: _live),
+      textScale: 1.6,
+      english: true,
+    );
+    expect(find.text('Chart results'), findsOneWidget);
+    expect(find.text('Current chart'), findsOneWidget);
+    expect(find.text('Year pillar'), findsWidgets);
+    expect(find.text('藏干十神 原样保存的条目'), findsOneWidget);
+    await tester.tap(find.text('Zi Wei Dou Shu'));
+    await tester.pumpAndSettle();
+    expect(find.text('Zi Wei · Twelve palaces'), findsOneWidget);
+    final scrollable = find.descendant(
+      of: find.byType(Dialog),
+      matching: find.byType(Scrollable),
+    );
+    final palace = find.text('Parents');
+    await tester.scrollUntilVisible(palace, 180, scrollable: scrollable);
+    await tester.pumpAndSettle();
+    await tester.tap(palace);
+    await tester.pumpAndSettle();
+    expect(find.text('Parents · 乙丑'), findsOneWidget);
+    expect(find.text('文曲化科'), findsOneWidget);
+    await tester.tap(find.text('Western chart'));
+    await tester.pumpAndSettle();
+    expect(find.text('Natal chart'), findsOneWidget);
+    final positions = find.text('Planetary placements');
+    await tester.scrollUntilVisible(positions, 150, scrollable: scrollable);
+    expect(find.text('金牛座 1.0°'), findsOneWidget);
+    expect(positions, findsOneWidget);
+    await tester.tap(find.byTooltip('Close chart'));
+    await tester.pumpAndSettle();
+    expect(find.text('Chart results'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('English confirmation translates the conflict and partial time', (
+    tester,
+  ) async {
+    var confirmed = false;
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('en'),
+        localizationsDelegates: const [interfaceStringsDelegate],
+        home: Scaffold(
+          body: BirthProfileConfirmation(
+            entered: const AccountBirthFields(
+              birthDate: '1990-06-12',
+              birthTime: '08:??',
+              birthPlace: '杭州市 西湖区',
+              gender: 'female',
+            ),
+            latest: const AccountBirthFields(
+              birthDate: '1990-06-13',
+              birthTime: '??:25',
+              birthPlace: '',
+              gender: '',
+            ),
+            member: true,
+            saving: false,
+            message: '暂时无法同步出生资料，请重试。',
+            confirm: () => confirmed = true,
+          ),
+        ),
+      ),
+    );
+    expect(find.text('Account birth details have changed'), findsOneWidget);
+    expect(find.text('Date of birth · 1990-06-12'), findsOneWidget);
+    expect(find.text('Time of birth · 8 h · Minute unknown'), findsOneWidget);
+    expect(find.text('Time of birth · Hour unknown · 25 min'), findsOneWidget);
+    expect(find.text('Birth location · 杭州市 西湖区'), findsOneWidget);
+    expect(find.text('Birth location · Not set'), findsOneWidget);
+    expect(find.text('Gender · Female'), findsOneWidget);
+    expect(
+      find.text('Could not sync birth details. Try again.'),
+      findsOneWidget,
+    );
+    await tester.tap(find.text('Sync these details and calculate'));
+    expect(confirmed, isTrue);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets(
     'confirmation names fields and distinguishes partial birth time',
     (tester) async {
@@ -208,11 +296,14 @@ Future<void> _showCharts(
   WidgetTester tester,
   DestinyCharts charts, {
   required double textScale,
+  bool english = false,
   RestoreDestinyPresentation restore = restoreDestinyPresentation,
   ({Listenable listenable, bool Function() isCurrent})? access,
 }) async {
   await tester.pumpWidget(
     MaterialApp(
+      locale: english ? const Locale('en') : null,
+      localizationsDelegates: english ? const [interfaceStringsDelegate] : null,
       builder: (context, child) => MediaQuery(
         data: MediaQuery.of(context).copyWith(
           textScaler: TextScaler.linear(textScale),

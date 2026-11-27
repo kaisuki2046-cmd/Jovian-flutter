@@ -74,13 +74,24 @@ class _FollowerAlertsPageState extends State<FollowerAlertsPage> {
     }
   }
 
+  Future<void> _reload() {
+    if (_error != null) setState(() => _error = null);
+    return _alerts.load();
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const UiText('新增粉丝')),
+    appBar: AppBar(
+      title: const UiText('新增粉丝'),
+      actions: [
+        _RefreshListAction(paginator: _alerts, busy: _busy, onRefresh: _reload),
+      ],
+    ),
     body: _PagedList(
       paginator: _alerts,
       empty: '暂无新增粉丝提醒。',
       busy: _busy,
+      onRefresh: _reload,
       before: () => [
         if (_error != null) _LiveStatus(_error!),
         TextButton(
@@ -157,7 +168,7 @@ class SocialReportsPage extends StatefulWidget {
 class _SocialReportsPageState extends State<SocialReportsPage> {
   late final SocialPaginator<SocialReport> _reports;
   bool _busy = false;
-  String? _error;
+  String? _notice;
 
   @override
   void initState() {
@@ -172,43 +183,50 @@ class _SocialReportsPageState extends State<SocialReportsPage> {
   }
 
   Future<void> _review(SocialReport item) async {
-    final decision =
-        await showDialog<({SocialReportStatus status, String conclusion})>(
-          context: context,
-          useRootNavigator: false,
-          builder: (_) => const _ReviewDialog(),
-        );
-    if (!mounted || decision == null || _busy) return;
+    if (_busy || _reports.loading) return;
     setState(() {
       _busy = true;
-      _error = null;
+      _notice = null;
     });
-    try {
-      await widget.controller.review(
-        _reports,
-        item.id,
-        decision.status,
-        decision.conclusion,
-      );
-    } catch (failure) {
-      if (mounted) {
-        setState(
-          () => _error = describeSocialError(failure, '处理结果未保存，请刷新后重试。'),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _busy = false);
-    }
+    final saved = await showDialog<bool>(
+      context: context,
+      useRootNavigator: false,
+      barrierDismissible: false,
+      builder: (_) => _ReviewDialog(
+        submit: (status, conclusion) =>
+            widget.controller.review(_reports, item.id, status, conclusion),
+      ),
+    );
+    if (!mounted) return;
+    setState(() {
+      _busy = false;
+      _notice = saved == false ? '该举报已结案。' : null;
+    });
+  }
+
+  Future<void> _reload() {
+    if (_notice != null) setState(() => _notice = null);
+    return _reports.load();
   }
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: UiText(widget.moderation ? '举报处理' : '我的举报')),
+    appBar: AppBar(
+      title: UiText(widget.moderation ? '举报处理' : '我的举报'),
+      actions: [
+        _RefreshListAction(
+          paginator: _reports,
+          busy: _busy,
+          onRefresh: _reload,
+        ),
+      ],
+    ),
     body: _PagedList(
       paginator: _reports,
       empty: widget.moderation ? '暂无待处理举报。' : '暂无举报记录。',
       busy: _busy,
-      before: () => [if (_error != null) _LiveStatus(_error!)],
+      onRefresh: _reload,
+      before: () => [if (_notice case final notice?) _LiveStatus(notice)],
       itemBuilder: (context, item) => Card(
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -235,6 +253,8 @@ class _SocialReportsPageState extends State<SocialReportsPage> {
                       .replaceFirst('{date}', _timestamp(context, date)),
                 ),
               if (item.conclusion?.isNotEmpty == true) Text(item.conclusion!),
+              if (widget.moderation)
+                Text(context.uiLabel('案件 {id}').replaceFirst('{id}', item.id)),
               if (item.targetId case final id?)
                 Text('${context.uiLabel('被举报账户')} $id'),
               if (item.detail?.isNotEmpty == true) Text(item.detail!),
@@ -254,7 +274,9 @@ class _SocialReportsPageState extends State<SocialReportsPage> {
 }
 
 class _ReviewDialog extends StatefulWidget {
-  const _ReviewDialog();
+  const _ReviewDialog({required this.submit});
+
+  final Future<bool> Function(SocialReportStatus, String) submit;
 
   @override
   State<_ReviewDialog> createState() => _ReviewDialogState();
@@ -262,35 +284,69 @@ class _ReviewDialog extends StatefulWidget {
 
 class _ReviewDialogState extends State<_ReviewDialog> {
   String _conclusion = '';
+  bool _saving = false;
+  String? _error;
+
+  Future<void> _submit(SocialReportStatus status) async {
+    if (_saving || _conclusion.isEmpty) return;
+    setState(() {
+      _saving = true;
+      _error = null;
+    });
+    try {
+      final saved = await widget.submit(status, _conclusion);
+      if (mounted) Navigator.pop(context, saved);
+    } catch (failure) {
+      if (mounted) {
+        setState(() {
+          _saving = false;
+          _error = describeSocialError(failure, '处理结果保存失败，请重试。');
+        });
+      }
+    }
+  }
 
   @override
-  Widget build(BuildContext context) => AlertDialog(
-    title: const UiText('处理举报'),
-    content: TextField(
-      decoration: InputDecoration(labelText: context.uiLabel('处理结论（举报者可见）')),
-      maxLength: 400,
-      maxLines: 4,
-      onChanged: (value) => setState(() => _conclusion = value.trim()),
-    ),
-    actions: [
-      TextButton(
-        onPressed: () => Navigator.pop(context),
-        child: const UiText('取消'),
+  Widget build(BuildContext context) => PopScope(
+    canPop: !_saving,
+    child: AlertDialog(
+      scrollable: true,
+      title: const UiText('处理举报'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            decoration: InputDecoration(
+              labelText: context.uiLabel('处理结论（举报者可见）'),
+            ),
+            maxLength: 400,
+            maxLines: 4,
+            readOnly: _saving,
+            onChanged: (value) => setState(() => _conclusion = value.trim()),
+          ),
+          if (_saving) const LinearProgressIndicator(),
+          if (_error case final error?) _LiveStatus(error),
+        ],
       ),
-      for (final status in [
-        SocialReportStatus.dismissed,
-        SocialReportStatus.resolved,
-      ])
-        FilledButton.tonal(
-          onPressed: _conclusion.isEmpty
-              ? null
-              : () => Navigator.pop(context, (
-                  status: status,
-                  conclusion: _conclusion,
-                )),
-          child: UiText(status.label),
+      actions: [
+        TextButton(
+          onPressed: _saving ? null : () => Navigator.pop(context),
+          child: const UiText('取消'),
         ),
-    ],
+        FilledButton.tonal(
+          onPressed: _saving || _conclusion.isEmpty
+              ? null
+              : () => _submit(SocialReportStatus.dismissed),
+          child: const UiText('未发现违规'),
+        ),
+        FilledButton(
+          onPressed: _saving || _conclusion.isEmpty
+              ? null
+              : () => _submit(SocialReportStatus.resolved),
+          child: const UiText('标为已处理'),
+        ),
+      ],
+    ),
   );
 }
 
@@ -393,13 +449,10 @@ class _SocialConnectionsPanelState extends State<SocialConnectionsPanel> {
             ? null
             : BackButton(onPressed: widget.onBack),
         actions: [
-          ListenableBuilder(
-            listenable: _people,
-            builder: (context, _) => IconButton(
-              tooltip: context.uiLabel('刷新'),
-              onPressed: _busy ? null : _reload,
-              icon: const Icon(Icons.refresh),
-            ),
+          _RefreshListAction(
+            paginator: _people,
+            busy: _updatingFollow || _openingProfile,
+            onRefresh: _reload,
           ),
         ],
       ),
@@ -420,6 +473,28 @@ class _SocialConnectionsPanelState extends State<SocialConnectionsPanel> {
       ),
     );
   }
+}
+
+class _RefreshListAction<T> extends StatelessWidget {
+  const _RefreshListAction({
+    required this.paginator,
+    required this.busy,
+    required this.onRefresh,
+  });
+
+  final SocialPaginator<T> paginator;
+  final bool busy;
+  final VoidCallback onRefresh;
+
+  @override
+  Widget build(BuildContext context) => ListenableBuilder(
+    listenable: paginator,
+    builder: (context, _) => IconButton(
+      tooltip: context.uiLabel('刷新'),
+      onPressed: busy || paginator.loading ? null : onRefresh,
+      icon: const Icon(Icons.refresh),
+    ),
+  );
 }
 
 class _PagedList<T> extends StatelessWidget {
@@ -457,7 +532,11 @@ class _PagedList<T> extends StatelessWidget {
             if (paginator.error case final error?) ...[
               _LiveStatus(describeSocialError(error, '加载失败，请重试。')),
               TextButton(
-                onPressed: disabled ? null : (onRefresh ?? paginator.load),
+                onPressed: disabled
+                    ? null
+                    : paginator.retryMore
+                    ? () => paginator.load(more: true)
+                    : (onRefresh ?? paginator.load),
                 child: const UiText('重试'),
               ),
             ],
@@ -467,7 +546,7 @@ class _PagedList<T> extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 8),
                 child: itemBuilder(context, item),
               ),
-            if (page?.next != null)
+            if (page?.next != null && !paginator.retryMore)
               OutlinedButton(
                 onPressed: disabled ? null : () => paginator.load(more: true),
                 child: const UiText('加载更多'),

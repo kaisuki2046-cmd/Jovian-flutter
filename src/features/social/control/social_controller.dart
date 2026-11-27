@@ -108,7 +108,8 @@ class SocialController {
     return _api.report(id, reason, description);
   }
 
-  Future<void> review(
+  /// Returns false if another moderator already closed this report.
+  Future<bool> review(
     SocialPaginator<SocialReport> reports,
     String id,
     SocialReportStatus status,
@@ -118,10 +119,17 @@ class SocialController {
     if (contents.isEmpty || contents.runes.length > 400) {
       throw const SocialInputError('请输入 1 至 400 个字符的结论。');
     }
-    await _api.review(id, status, contents);
+    var saved = true;
+    try {
+      await _api.review(id, status, contents);
+    } on JsonRequestError catch (error) {
+      if (error.status != 409) rethrow;
+      saved = false;
+    }
     reports.updateItems(
       (items) => items.where((item) => item.id != id).toList(),
     );
+    return saved;
   }
 }
 
@@ -150,12 +158,16 @@ class SocialPaginator<T> extends ChangeNotifier {
   Object? error;
   bool loading = false;
   bool _disposed = false;
+  bool _failedLoadingMore = false;
+
+  bool get retryMore => _failedLoadingMore && page?.next != null;
 
   Future<void> load({bool more = false}) async {
     final before = more ? page?.next : null;
     if (_disposed || loading || (more && before == null)) return;
     loading = true;
     error = null;
+    _failedLoadingMore = false;
     notifyListeners();
     try {
       final result = await _read(before);
@@ -176,6 +188,7 @@ class SocialPaginator<T> extends ChangeNotifier {
         page = null;
       }
       error = failure;
+      _failedLoadingMore = more;
     } finally {
       if (!_disposed) {
         loading = false;

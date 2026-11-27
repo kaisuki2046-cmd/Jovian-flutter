@@ -119,6 +119,124 @@ AccountController _account(
 }
 
 void main() {
+  testWidgets('inbox pagination retries the same cursor and can refresh', (
+    tester,
+  ) async {
+    final cursors = <String?>[];
+    var pageFailed = false;
+    final account = _account(_Storage(), (request) async {
+      if (request.url.path == '/social/notifications/summary') {
+        return _json({'unread': 2, 'canModerate': false});
+      }
+      expect(request.url.path, '/social/notifications');
+      final cursor = request.url.queryParameters['before'];
+      cursors.add(cursor);
+      if (cursor != null && !pageFailed) {
+        pageFailed = true;
+        return _json({'error': 'temporary'}, 503);
+      }
+      return _json({
+        'unread': 2,
+        if (cursor == null) 'next': 'older-cursor',
+        'items': [
+          {
+            'id': cursor == null ? _alertId : _actorId,
+            if (cursor == null) 'actor': _profile,
+            'createdAt': 1700000000000,
+            'readAt': 1700000000001,
+          },
+        ],
+      });
+    });
+    addTearDown(account.dispose);
+    await account.initialize();
+    await tester.pumpWidget(MaterialApp(home: SocialPage(account: account)));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('新增粉丝'));
+    await tester.pumpAndSettle();
+    expect(find.text('明月关注了你'), findsOneWidget);
+    await tester.tap(find.text('加载更多'));
+    await tester.pumpAndSettle();
+    expect(find.text('明月关注了你'), findsOneWidget);
+    await tester.tap(find.text('重试'));
+    await tester.pumpAndSettle();
+    expect(cursors, [null, 'older-cursor', 'older-cursor']);
+    expect(find.text('明月关注了你'), findsOneWidget);
+    expect(find.text('一位木星环用户关注了你'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('刷新'));
+    await tester.pumpAndSettle();
+    expect(cursors.last, isNull);
+    expect(find.text('一位木星环用户关注了你'), findsNothing);
+  });
+
+  testWidgets('moderation keeps the conclusion and handles a closed case', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(320, 700);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPhysicalSize);
+    final pending = <String, Object?>{
+      'id': _alertId,
+      'targetId': _actorId,
+      'reporterId': '00000000-0000-0000-0000-000000000004',
+      'reason': 'harassment',
+      'status': 'pending',
+      'createdAt': 1700000000000,
+      'detail': '举报原文',
+    };
+    final bodies = <Object?>[];
+    var reads = 0;
+    final account = _account(_Storage(), (request) async {
+      if (request.url.path == '/social/notifications/summary') {
+        return _json({'unread': 0, 'canModerate': true});
+      }
+      expect(request.url.path, '/social/moderation/reports');
+      if (request.method == 'GET') {
+        reads++;
+        return _json({
+          'items': [if (bodies.length < 2) pending],
+        });
+      }
+      bodies.add(jsonDecode(request.body));
+      return _json({
+        'error': bodies.length == 1 ? 'temporary' : 'conflict',
+      }, bodies.length == 1 ? 503 : 409);
+    });
+    addTearDown(account.dispose);
+    await account.initialize();
+    await tester.pumpWidget(MaterialApp(home: SocialPage(account: account)));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('举报处理'));
+    await tester.pumpAndSettle();
+    expect(find.text('案件 $_alertId'), findsOneWidget);
+    await tester.tap(find.text('处理举报'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), '待提交的结论');
+    await tester.pump();
+    await tester.tap(find.text('标为已处理'));
+    await tester.pumpAndSettle();
+    expect(find.text('处理结果保存失败，请重试。'), findsOneWidget);
+    expect(find.text('待提交的结论'), findsOneWidget);
+
+    await tester.tap(find.text('标为已处理'));
+    await tester.pumpAndSettle();
+    expect(bodies, [
+      for (var attempt = 0; attempt < 2; attempt++)
+        {'id': _alertId, 'status': 'resolved', 'conclusion': '待提交的结论'},
+    ]);
+    expect(find.text('该举报已结案。'), findsOneWidget);
+    expect(find.text('举报原文'), findsNothing);
+    expect(find.byType(AlertDialog), findsNothing);
+    await tester.tap(find.byTooltip('刷新'));
+    await tester.pumpAndSettle();
+    expect(reads, 2);
+    expect(find.text('暂无待处理举报。'), findsOneWidget);
+  });
+
   testWidgets('returning to Messages refreshes unread and moderation access', (
     tester,
   ) async {

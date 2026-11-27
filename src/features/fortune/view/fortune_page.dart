@@ -205,6 +205,8 @@ class _FortuneSessionState extends State<_FortuneSession> {
                     fortune: _fortune,
                     openAiPermissions: () => _openAiPermissions(context),
                   ),
+                if (_fortune.savedReport case final saved?)
+                  _savedArchive(context, saved),
                 if (_fortune.online != null &&
                     _fortune.hasChart &&
                     _fortune.displayedPeriod == FortunePeriod.day)
@@ -328,26 +330,34 @@ class _FortuneSessionState extends State<_FortuneSession> {
               ),
             ],
           ),
-        if (_fortune.savedReport case final saved?)
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(14),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    saved.entry.title,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const UiText('已存档'),
-                  ReportBody(saved.body),
-                ],
-              ),
-            ),
-          ),
       ],
     );
   }
+
+  Widget _savedArchive(BuildContext context, ArchivedReport saved) => Card(
+    child: Padding(
+      padding: const EdgeInsets.all(14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Semantics(
+            header: true,
+            child: Text(
+              saved.entry.title,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+          ),
+          FortuneArchiveDates(
+            key: ValueKey(saved.entry.id),
+            report: saved,
+            fortune: _fortune,
+          ),
+          const UiText('已存档'),
+          ReportBody(saved.body),
+        ],
+      ),
+    ),
+  );
 }
 
 class _PreviewCard extends StatelessWidget {

@@ -14,11 +14,141 @@ import '../src/features/fortune/control/fortune_online.dart';
 import '../src/features/fortune/control/fortune_page_controller.dart';
 import '../src/features/fortune/model/online_fortune.dart';
 import '../src/features/fortune/requests/fortune_report_api.dart';
+import '../src/features/fortune/view/fortune_page.dart';
 import '../src/features/fortune/view/fortune_report_history.dart';
 import '../src/shared/http/json_client.dart';
 import 'support/fortune_local_fixture.dart';
 
 void main() {
+  testWidgets('shows the saved window if fortune verification is unavailable', (
+    tester,
+  ) async {
+    const owner = 'fortune-archive-fallback-owner';
+    final archiveReads = <String?>[];
+    final verification = <String?>[];
+    var forecastAvailable = false;
+    final accounts = AccountApi(
+      JsonHttpClient(
+        base: Uri.https('account.example.test'),
+        client: MockClient((request) async {
+          expect(request.method, 'GET');
+          switch (request.url.path) {
+            case '/account/session':
+              return _response({
+                'user': {'id': owner, 'displayName': '验收会员'},
+              });
+            case '/account/auth/capabilities':
+              return _response({});
+            case '/account/agreements/catalog':
+              return _response({
+                'documents': [
+                  for (final id in ['terms', 'privacy', 'ai'])
+                    {
+                      'id': id,
+                      'title': id,
+                      'version': 'v1',
+                      'hash': id,
+                      'state': 'published',
+                      'sections': [],
+                    },
+                ],
+              });
+            case '/account/agreements':
+              return _response({
+                'requiredAccepted': true,
+                'permissions': {
+                  for (final purpose in aiPurposes.keys) purpose: true,
+                },
+              });
+            case '/account/destiny-history/latest':
+              expect(request.url.queryParameters['expectedOwnerId'], owner);
+              return _response({
+                ..._entry(_snapshot, '已保存的命盘'),
+                'report': {
+                  'version': 1,
+                  'timeKnown': true,
+                  'chartSnapshot': {'version': 1, 'timeKnown': true},
+                  'charts': [
+                    for (final method in ['bazi', 'ziwei', 'western'])
+                      {'method': method, 'rows': []},
+                  ],
+                },
+              });
+            case '/account/reading-history/latest':
+              expect(request.url.queryParameters['expectedOwnerId'], owner);
+              final key = request.url.queryParameters['contextKey'];
+              archiveReads.add(key);
+              if (key == null) return _response(_saved(FortunePeriod.week));
+              final period = (jsonDecode(key) as List)[1];
+              return _response(
+                period == 'month' ? null : _saved(FortunePeriod.day),
+              );
+            default:
+              fail('Unexpected account request ${request.url}');
+          }
+        }),
+      ),
+    );
+    final account = AccountController(accounts, AgreementsApi(accounts));
+    addTearDown(account.dispose);
+    await account.initialize();
+    final service = _FortuneWindowFixture(
+      FortuneReportApi(
+        JsonHttpClient(
+          base: Uri.https('fortune.example.test'),
+          client: MockClient((request) async {
+            expect(request.method, 'GET');
+            expect(request.url.path, '/fortune/reports/latest');
+            expect(request.url.queryParameters['expectedOwnerId'], owner);
+            final period = request.url.queryParameters['periodType'];
+            verification.add(period);
+            return forecastAvailable
+                ? _response(_published(FortunePeriod.values.byName(period!)))
+                : http.Response('{"error":"temporary"}', 503);
+          }),
+        ),
+      ),
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        home: FortunePage(
+          loadDisplay: () async => (zone: 'UTC', clock: (int time) => time),
+          readServerTime: () async => _today,
+          account: account,
+          local: const FortuneLocalFixture(),
+          connectOnline: () => service,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(verification, ['week', 'day']);
+    expect(archiveReads, [null]);
+    expect(find.text('已经保存的正文。'), findsOneWidget);
+    expect(find.text('2026年11月9日 至 2026年11月15日 · UTC'), findsOneWidget);
+    expect(find.text('重试读取'), findsOneWidget);
+    expect(find.text('解读'), findsNothing);
+
+    await tester.tap(find.text('本月'));
+    await tester.pumpAndSettle();
+    expect(verification, ['week', 'day', 'month']);
+    expect((jsonDecode(archiveReads.last!) as List)[1], 'month');
+    expect(find.text('已经保存的正文。'), findsNothing);
+    expect(find.text('重试读取'), findsOneWidget);
+
+    await tester.tap(find.text('今日'));
+    await tester.pumpAndSettle();
+    expect((jsonDecode(archiveReads.last!) as List)[1], 'day');
+    expect(find.text('已经保存的正文。'), findsOneWidget);
+    expect(find.text('2026年11月11日 · UTC'), findsOneWidget);
+
+    forecastAvailable = true;
+    await tester.tap(find.text('重试读取'));
+    await tester.pumpAndSettle();
+    expect(find.text('已发布的 overall'), findsOneWidget);
+    expect(find.text('已经保存的正文。'), findsNothing);
+    expect(find.text('重试读取'), findsNothing);
+  });
+
   testWidgets('an open history refreshes only after the archive is saved', (
     tester,
   ) async {

@@ -1045,6 +1045,7 @@ const englishInterfaceStrings = <String, String>{
       "This profile lacks the chart needed for a reading. Recalculate it on the chart page.",
   "暂时无法读取命理档案。": "Unable to load the chart profile.",
   "暂时无法读取已保存的运势报告。": "Unable to load saved forecasts.",
+  '暂时无法核对运势解读版本。': 'Unable to verify the forecast version right now.',
   "这个地点无法确定可靠的回归上升。可以调整经纬度，或清空后生成常规解读。":
       "The solar return ascendant could not be determined for this location. Adjust the coordinates or clear them for a standard reading.",
   "请在个人中心开启运势在线解读授权。": "Allow online forecast readings in your profile.",

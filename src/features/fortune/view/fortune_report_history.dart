@@ -233,6 +233,42 @@ bool _ownsScope(AccountController account, String scope) =>
 
 const _unavailable = Center(child: UiText('当前账号会话已变化，请返回周期运势。'));
 
+class FortuneArchiveDates extends StatefulWidget {
+  const FortuneArchiveDates({
+    super.key,
+    required this.report,
+    required this.fortune,
+  });
+
+  final ArchivedReport report;
+  final FortunePageController fortune;
+
+  @override
+  State<FortuneArchiveDates> createState() => _FortuneArchiveDatesState();
+}
+
+class _FortuneArchiveDatesState extends State<FortuneArchiveDates> {
+  late final _window = widget.fortune.archivedDates(widget.report);
+
+  @override
+  Widget build(BuildContext context) => FutureBuilder(
+    future: _window,
+    builder: (context, snapshot) {
+      final dates = snapshot.data;
+      if (dates == null) return const SizedBox.shrink();
+      final first = fortuneDateLabel(context, dates.first);
+      final last = fortuneDateLabel(context, dates.last);
+      return Padding(
+        padding: const EdgeInsets.only(top: 4),
+        child: Text(
+          '${fortuneDateRange(context, first, last)} · ${dates.zone}',
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+      );
+    },
+  );
+}
+
 class _SavedFortuneReport extends StatefulWidget {
   const _SavedFortuneReport({
     super.key,
@@ -249,7 +285,6 @@ class _SavedFortuneReport extends StatefulWidget {
 
 class _SavedFortuneReportState extends State<_SavedFortuneReport> {
   final _cancel = Completer<void>();
-  late final _window = widget.fortune.archivedDates(widget.report);
   Future<List<FortuneAdviceGroup>>? _advice;
 
   @override
@@ -273,22 +308,7 @@ class _SavedFortuneReportState extends State<_SavedFortuneReport> {
           header: true,
           child: Text(report.entry.title, style: theme.titleLarge),
         ),
-        FutureBuilder(
-          future: _window,
-          builder: (context, snapshot) {
-            final dates = snapshot.data;
-            if (dates == null) return const SizedBox.shrink();
-            final first = fortuneDateLabel(context, dates.first);
-            final last = fortuneDateLabel(context, dates.last);
-            return Padding(
-              padding: const EdgeInsets.only(top: 4),
-              child: Text(
-                '${fortuneDateRange(context, first, last)} · ${dates.zone}',
-                style: theme.bodySmall,
-              ),
-            );
-          },
-        ),
+        FortuneArchiveDates(report: report, fortune: widget.fortune),
         UiText('已存档', style: theme.bodySmall),
         const SizedBox(height: 12),
         Card(

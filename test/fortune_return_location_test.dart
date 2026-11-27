@@ -108,7 +108,7 @@ void main() {
           base: Uri.https('fortune.example.test'),
           client: MockClient((request) async {
             expect(request.method, 'GET');
-            return http.Response('', 204);
+            return _json(null);
           }),
         ),
       ),
@@ -162,7 +162,7 @@ void main() {
         if (request.url.path.endsWith('/destiny-history/latest'))
           return _json(_chart());
         if (request.url.path.endsWith('/reading-history/latest'))
-          return http.Response('', 204);
+          return _json(null);
         if (request.url.path == '/account/reading-history' &&
             request.method == 'POST')
           return _json({..._entry(_reportId, '运势报告'), 'kind': 'fortune'});
@@ -176,7 +176,7 @@ void main() {
             base: Uri.https('fortune.example.test'),
             client: MockClient((request) async {
               requests.add('${request.method} ${request.url.path}');
-              if (request.method == 'GET') return http.Response('', 204);
+              if (request.method == 'GET') return _json(null);
               expect(request.url.path, '/fortune/interpret');
               expect(jsonDecode(request.body), {
                 'calculationRunId': _runId,
@@ -274,7 +274,7 @@ void main() {
         case '/account/destiny-history/latest':
           return _json(_chart());
         case '/account/reading-history/latest':
-          return http.Response('', 204);
+          return _json(null);
         case '/account/reading-history' when request.method == 'POST':
           archived++;
           return _json({..._entry(_reportId, '运势报告'), 'kind': 'fortune'});
@@ -317,7 +317,7 @@ void main() {
         JsonHttpClient(
           base: Uri.https('fortune.example.test'),
           client: MockClient.streaming((request, _) async {
-            if (request.method == 'GET') return reply(204);
+            if (request.method == 'GET') return reply(200);
             expect(request.url.path, '/fortune/interpret');
             interpretations++;
             if (period == 'year' && !allowAi) {
@@ -518,7 +518,7 @@ class _SolarReturnService extends FortuneOnline {
 AccountController _accountWithChart() => _account(
   (request) => switch (request.url.path) {
     '/account/destiny-history/latest' => _json(_chart()),
-    '/account/reading-history/latest' => http.Response('', 204),
+    '/account/reading-history/latest' => _json(null),
     final path => fail('Unexpected account request $path'),
   },
 );

@@ -234,12 +234,13 @@ class FortunePageController extends ChangeNotifier {
           owner,
           ReportKind.fortune,
           contextKey: key,
+          cancel: job.future,
         );
         if (_current(job)) savedReport = saved;
       }
     } catch (error) {
       if (_closed || revision != _reportRevision) return;
-      reportError = '暂时无法读取已保存的运势报告。';
+      reportError = savedReport == null ? '暂时无法读取已保存的运势报告。' : '暂时无法核对运势解读版本。';
       _recoverIdentity(error);
     } finally {
       if (!_closed && revision == _reportRevision) {
@@ -266,8 +267,17 @@ class FortunePageController extends ChangeNotifier {
     if (!_current(job)) return;
     prepared = plan;
     final key = FortuneWindowKey(active.entry.id, period, zone, plan.start);
+    ArchivedReport? last;
     if (_resumeLatest && archiveId == null) {
-      final last = await accounts.reports.latest(owner, ReportKind.fortune);
+      try {
+        last = await accounts.reports.latest(
+          owner,
+          ReportKind.fortune,
+          cancel: job.future,
+        );
+      } on JsonRequestError catch (error) {
+        if (!_isTemporarilyUnavailable(error)) rethrow;
+      }
       if (!_current(job)) return;
       final prior = last == null
           ? null
@@ -300,15 +310,37 @@ class FortunePageController extends ChangeNotifier {
           return;
         }
       }
-      _resumeLatest = false;
     }
-    final serverReport = await service.api.latest(owner, key, job.future);
-    if (!_current(job) || serverReport == null) return;
+
+    final PublishedFortune? serverReport;
+    try {
+      serverReport = await service.api.latest(owner, key, job.future);
+    } on JsonRequestError catch (error) {
+      if (_current(job) &&
+          _sessionMatches &&
+          _isTemporarilyUnavailable(error)) {
+        final archived =
+            last ??
+            await accounts.reports.latest(
+              owner,
+              ReportKind.fortune,
+              contextKey: plan.contextKey,
+              cancel: job.future,
+            );
+        if (_current(job) && _sessionMatches) savedReport = archived;
+      }
+      rethrow;
+    }
+
+    if (!_current(job)) return;
+    _resumeLatest = false;
+    if (serverReport == null) return;
     published = serverReport;
     final mirrored = await accounts.reports.latest(
       owner,
       ReportKind.fortune,
       contextKey: plan.contextKey,
+      cancel: job.future,
     );
     if (!_current(job)) return;
     if (mirrored?.context['reportId'] == serverReport.id) {
@@ -571,6 +603,11 @@ class FortunePageController extends ChangeNotifier {
     'displayTimezone': zone,
     if (target != null) 'targetPeriod': target,
   };
+
+  bool _isTemporarilyUnavailable(JsonRequestError error) =>
+      error.code == 'network' ||
+      error.code == 'timeout' ||
+      (error.status ?? 0) >= 500;
 
   void _recoverIdentity(Object error) {
     if (error is JsonRequestError &&

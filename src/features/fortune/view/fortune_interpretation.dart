@@ -125,6 +125,7 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
         if (!needsAuthorization &&
             !fortune.loadingReport &&
             !fortune.generating &&
+            fortune.reportError == null &&
             (report == null || hasLocation || fortune.generationError != null))
           Align(
             alignment: AlignmentDirectional.centerStart,

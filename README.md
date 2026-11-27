@@ -1,12 +1,12 @@
 # 木星环 Flutter 版
 
-Flutter 版沿用项目的[目录分工](../FRAMEWORK.md)、[协作协议](../COLLABORATION.md)和 [Flutter 前端开工规范](AGENTS.md)。迁移分支从 `b47e061a` 开始，算事界面对照 `YA` 的 `d12e3f0c`。前端通过现有 API 接入 Node 服务。命理、合盘和运势的本机计算复用原 TypeScript 资源。下文的 Dart 服务和计算对照命令仅用于独立原型，启动 Flutter 前端时使用原 Node 服务。
+Flutter 版沿用项目的[目录分工](../app/FRAMEWORK.md)、[协作协议](../app/COLLABORATION.md)和 [Flutter 前端开工规范](AGENTS.md)。迁移分支从 `b47e061a` 开始，算事界面对照 `YA` 的 `d12e3f0c`。前端通过现有 API 接入 Node 服务。命理、合盘和运势的本机计算复用原 TypeScript 资源。下文的 Dart 服务和计算对照命令仅用于独立原型，启动 Flutter 前端时使用原 Node 服务。
 
 ## 启动 Flutter Web 前端
 
-在本机的 `4546` 工作目录下，`app/` 是原 RN 应用与现有 Node 服务，`app-flutter/` 是独立的 Flutter 项目根目录。此工作树在 Git 内通过 `app/app-flutter` 跟踪同一份源码，Windows 目录联接保留原路径。其他检出可以继续使用仓库内的 `app-flutter/`。文档中的跨模块相对链接以 Git 目录为准。
+将 Flutter 客户端与原项目检出为同级目录。`app-flutter/` 是 Flutter 客户端的 Git 工作树和项目根目录，`app/` 提供原 RN 应用、TypeScript 计算和 Node 服务。Flutter 编辑、Git 提交、测试和构建均在 `app-flutter/` 下进行。本文指向原项目的链接使用该同级布局。
 
-在 Flutter 项目根目录运行 `node tool/legacy_compute/build.mjs`，由原 TypeScript 生成 Web 和原生端共用的计算资源。脚本支持仓库内和同级两种布局。然后运行以下命令，将服务地址和 Web 来源设为已有服务允许的值。使用本机工作树内的 SDK 时，从同级目录运行 `& '..\app\.local\flutter-toolchain\flutter\bin\flutter.bat' run -d chrome --release --target src/app/main.dart`，按需追加服务参数。
+在 Flutter 项目根目录运行 `node tool/legacy_compute/build.mjs`，由原 TypeScript 生成 Web 和原生端共用的计算资源。原项目的 Node 依赖位于另一工作树时，按[本机计算说明](tool/legacy_compute/README.md)设置 `JOVIAN_LEGACY_NODE_ROOT`。然后运行以下命令，将服务地址和 Web 来源设为已有服务允许的值。若使用 `app/.local` 下的 SDK，在 PowerShell 中把 `flutter` 换成 `& '..\app\.local\flutter-toolchain\flutter\bin\flutter.bat'`。
 
 ```sh
 flutter pub get
@@ -164,7 +164,7 @@ Flutter 的「命理」沿用原版出生资料核对流程，通过本机计算
 
 会员打开命理表单时会直接看到已保存的出生资料。确认测算时，通过原账户接口同步出生字段并沿用可见性设置。若账户同时更新，核对界面会显示本次填写与账户最新资料。访客可填写资料进行本次测算。
 
-「基础个人资料」可编辑出生日期、时分、地点和性别。省市区选择沿用原账户目录，也可手动保留境外城市和历史地名。「隐私设置」逐项管理出生资料可见性。遇到同时编辑时，页面保留草稿并提示重新加载账户最新值。[原地点目录与许可](../src/features/account/reading-profile/places/README.md)
+「基础个人资料」可编辑出生日期、时分、地点和性别。省市区选择沿用原账户目录，也可手动保留境外城市和历史地名。「隐私设置」逐项管理出生资料可见性。遇到同时编辑时，页面保留草稿并提示重新加载账户最新值。[原地点目录与许可](../app/src/features/account/reading-profile/places/README.md)
 
 「隐私设置」中的「预览他人可见内容」显示已保存的公开资料。其他已登录用户从消息页找人、关注或粉丝列表进入用户主页时，读取原账户服务提供的公开出生资料。只有本人预览显示每项可见性状态。
 
@@ -204,9 +204,9 @@ Flutter 的「命理」沿用原版出生资料核对流程，通过本机计算
 | 运势 | 命理入口、UTC 校时、四周期和指定日期计算、黄历、历法查询、在线解读与归档恢复、独立每日提运建议、原生会话接线 | 原生平台真机回归 |
 | 命理 | 账户出生资料回填和并发同步、原生本机出生资料、出生资料核对、原 TypeScript 三类排盘、紫微宫位交互、西方星图、现有报告自动归档及回看 | 原生平台真机回归 |
 | 账户 | 密码登录、短信找回密码、密码修改与短信验证后设置密码、手机号绑定和换绑、会话、UID、报告与档案、设置、出生资料与可见性编辑、个人信息申请与审核、注销与回执、实名认证占位表单 | 实名验证服务、正式第三方登录 |
-| 合规 | 现行与历史协议、辅助草案、分用途 AI 授权、隐私权利入口 | 原版合规中心的发布材料仍在 [RN 仓库](../src/features/compliance/README.md) |
+| 合规 | 现行与历史协议、辅助草案、分用途 AI 授权、隐私权利入口 | 原版合规中心的发布材料仍在 [RN 仓库](../app/src/features/compliance/README.md) |
 | 合盘 | 双人排盘和比较、本人档案、在线四类解读与归档 | 原生平台真机回归 |
 | 社交 | 消息通知、关注与粉丝、按 UID 或昵称查找用户、公开资料预览、搜索开关和黑名单 | 原生平台真机回归 |
 | 预览 | Flutter 独立源码入口、Web 与原生端使用原 API | 正式部署、平台回归 |
 
-牌图按旧版[资源清单](../src/features/divination/data/asset_manifest.json)逐张校验。Dart 的 Pro 提示词统一用 LF 换行生成版本摘要，已归档报告沿用原有数据格式。
+牌图按旧版[资源清单](../app/src/features/divination/data/asset_manifest.json)逐张校验。Dart 的 Pro 提示词统一用 LF 换行生成版本摘要，已归档报告沿用原有数据格式。

@@ -6,7 +6,7 @@ Flutter 版沿用项目的[目录分工](FRAMEWORK.md)、[协作协议](COLLABOR
 
 检出本仓库的 `flutter` 分支后，从根目录启动。Flutter 页面、TypeScript 计算和 Node 服务按业务组织在 `src/features/`。Flutter 依赖与 Node 依赖分别通过根目录的锁文件安装。
 
-准备 Flutter SDK、Chrome 和带 npm 的 Node.js（22.13+ 的 22.x、24.3+ 的 24.x，或 26+）。Windows 下可双击 [Start-web.cmd](Start-web.cmd)。启动器首次安装 Node 依赖。打开预览时，从当前源码重新生成计算资源，启动本仓库的五个服务，再打开 Flutter Web。Flutter SDK 可以在 PATH 中，也可以放在 `.local/flutter-toolchain/flutter/`。
+准备 Flutter SDK、Chrome 和带 npm 的 Node.js（22.13+ 的 22.x、24.3+ 的 24.x，或 26+）。Windows 下可双击 [Start-web.cmd](Start-web.cmd)。启动器在首次运行和 Node 锁文件更新后安装依赖。打开预览时，从当前源码重新生成计算资源，启动本仓库的五个服务，再打开 Flutter Web。Flutter SDK 可以在 PATH 中，也可以放在 `.local/flutter-toolchain/flutter/`。
 
 单独准备前端资源及连接已运行的 API 时，可以在根目录执行以下命令。
 
@@ -17,7 +17,7 @@ flutter pub get
 flutter run -d chrome --web-port 8081 --target src/app/main.dart --dart-define-from-file=config/local-web.example.json
 ```
 
-服务优先使用预设端口。端口被占用时，启动器选择可用端口并传给 Flutter。保持启动窗口打开，按 Ctrl+C 或关窗后这次启动的服务会退出。日志位于 `.local/start-web/`，账户、算事与运势数据保存在仓库自己的 `.local/`，资料库索引也由本仓库生成。新检出会从空库启动。
+服务优先使用预设端口。端口被占用时，启动器选择可用端口并传给 Flutter。保持启动窗口打开，按 Ctrl+C 或关窗后这次启动的服务会退出。日志位于 `.local/start-web/`，账户、算事与运势数据保存在仓库自己的 `.local/`，资料库索引也由本仓库生成。新检出会从空库启动。各本地 Flutter 预览端口使用独立的会话 Cookie。此前通过 8081 登录过 Flutter 的用户，需要重新登录一次。
 
 本地开发模式内置模拟微信、QQ 和短信适配器，验证码写入 `src/features/account/server/dev-auth/inbox/`。真实在线解读需要配置 DeepSeek，可以复制 [.env.example](.env.example) 为 `.env`，再设置 `DEEPSEEK_API_KEY` 或 `DEEPSEEK_API_KEY_FILE`。正式短信、邮件与登录渠道按 [Node 后端说明](src/bootstrap/README.md) 单独配置。
 

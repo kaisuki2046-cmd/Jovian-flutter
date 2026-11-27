@@ -103,11 +103,20 @@ function Get-NodeRuntime {
 }
 
 function Initialize-NodeDependencies {
-    if (Test-Path -LiteralPath (Join-Path $project 'node_modules/.package-lock.json') -PathType Leaf) { return }
+    $lock = Join-Path $project 'package-lock.json'
+    $sha256 = [Security.Cryptography.SHA256]::Create()
+    try {
+        $lockHash = [BitConverter]::ToString($sha256.ComputeHash([IO.File]::ReadAllBytes($lock))).Replace("-", "")
+    } finally { $sha256.Dispose() }
+    $installedHash = Join-Path $project 'node_modules/.jovian-lock.sha256'
+    if ((Test-Path -LiteralPath (Join-Path $project 'node_modules/.package-lock.json') -PathType Leaf) -and
+        (Test-Path -LiteralPath $installedHash -PathType Leaf) -and
+        [IO.File]::ReadAllText($installedHash) -eq $lockHash) { return }
     $npm = Get-Command npm.cmd -CommandType Application -ErrorAction Stop | Select-Object -First 1 -ExpandProperty Source
     Write-Host 'Installing the bundled Node dependencies.'
     & $npm ci --include=dev --no-audit --no-fund
     if ($LASTEXITCODE -ne 0) { throw 'Could not install the project Node dependencies.' }
+    [IO.File]::WriteAllText($installedHash, $lockHash)
 }
 
 function Initialize-LocalCompute([string]$node) {
@@ -167,7 +176,7 @@ try {
 
         $env:APP_ACCOUNT_HOST = '127.0.0.1'
         $env:APP_WEB_ORIGIN = $webOrigin
-        $env:APP_ACCOUNT_ISOLATE_WEB_SESSION = if ($picked -eq 8081) { '0' } else { '1' }
+        $env:APP_ACCOUNT_ISOLATE_WEB_SESSION = '1'
         $env:DIVINATION_REPORT_BIND = '127.0.0.1'
         $env:DIVINATION_REPORT_WEB_ORIGIN = $webOrigin
         $env:DIVINATION_REPORT_HOSTS = "localhost:$env:DIVINATION_REPORT_PORT,127.0.0.1:$env:DIVINATION_REPORT_PORT"

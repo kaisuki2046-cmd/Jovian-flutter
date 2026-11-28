@@ -12,11 +12,8 @@ import 'guide_composer.dart';
 import 'guide_ambient_motion.dart';
 import 'guide_conversation.dart';
 import 'legacy_reading_archive_view.dart';
-import 'liuyao_form.dart';
-import 'meihua_page.dart';
-import 'reading_report.dart';
+import 'reading_report_dialog.dart';
 import 'ritual/guide_ritual_dialog.dart';
-import 'tarot_cards.dart';
 
 class GuideForm extends StatefulWidget {
   const GuideForm({
@@ -50,6 +47,8 @@ class _GuideFormState extends State<GuideForm>
   final _ritualChanges = ValueNotifier(0);
   StreamSubscription<void>? _onlineChanges;
   DialogRoute<void>? _ritualRoute;
+  DialogRoute<void>? _reportRoute;
+  String? _reportAfterRitual;
   GuideRitualPresentation? _presentation;
   LegacyGuideConversation? _openLegacyConversation;
   String? _legacyResumeError;
@@ -57,7 +56,6 @@ class _GuideFormState extends State<GuideForm>
   ({String text, TextEditingValue draft, List<ComposerAttachment> attachments})?
   _pendingQuestion;
   int _sentRevision = 0;
-  bool _showCharts = false;
   final _ownedAttachments = <ComposerAttachment>{};
   final _draftAttachments = <ComposerAttachment>[];
   final _offlineAttachments = <List<ComposerAttachment>>[];
@@ -88,6 +86,7 @@ class _GuideFormState extends State<GuideForm>
       _attachOnline();
     }
     if (oldWidget.active && !widget.active) {
+      _removeReportRoute();
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted && !widget.active) _scaffold.currentState?.closeDrawer();
       });
@@ -112,6 +111,7 @@ class _GuideFormState extends State<GuideForm>
         }
       });
       _ritualChanges.value++;
+      _openFinishedReport();
     });
     unawaited(online.restore());
   }
@@ -120,6 +120,7 @@ class _GuideFormState extends State<GuideForm>
   void dispose() {
     unawaited(_onlineChanges?.cancel());
     _removeRitualRoute();
+    _removeReportRoute();
     _ritualChanges.dispose();
     _question.dispose();
     _questionFocus.dispose();
@@ -285,6 +286,7 @@ class _GuideFormState extends State<GuideForm>
     final online = widget.online;
     if (!widget.active ||
         _ritualRoute != null ||
+        _reportRoute != null ||
         _snapshot == null ||
         online == null ||
         !online.canContinue)
@@ -338,21 +340,72 @@ class _GuideFormState extends State<GuideForm>
         pause: () {
           if (route.isCurrent) navigator.pop();
         },
+        onComplete: () {
+          if (!route.isCurrent) return;
+          if (widget.active) _reportAfterRitual = historyId;
+          navigator.pop();
+        },
       ),
     );
     _ritualRoute = route;
     unawaited(
-      navigator.push(route).then((_) {
+      navigator.push(route).then((_) async {
+        await route.completed;
         if (!mounted || _ritualRoute != route) return;
         setState(() => _ritualRoute = null);
+        _openFinishedReport();
       }),
     );
   }
 
   void _removeRitualRoute() {
     final route = _ritualRoute;
-    if (route == null) return;
     _ritualRoute = null;
+    _removeDialogRoute(route);
+  }
+
+  void _openFinishedReport() {
+    final online = widget.online;
+    final reading = online?.reading;
+    if (_reportAfterRitual == null ||
+        _ritualRoute != null ||
+        online == null ||
+        online.activeHistoryId != _reportAfterRitual ||
+        online.busy ||
+        online.needsTarotReveal ||
+        reading == null ||
+        reading.report == null) {
+      return;
+    }
+    _reportAfterRitual = null;
+    if (_scaffold.currentState?.isDrawerOpen != true &&
+        ModalRoute.of(context)?.isCurrent != false) {
+      _openReport(reading);
+    }
+  }
+
+  void _openReport(OnlineReading reading) {
+    if (!widget.active || _reportRoute != null || _ritualRoute != null) return;
+    FocusManager.instance.primaryFocus?.unfocus();
+    final navigator = Navigator.of(context, rootNavigator: true);
+    final route = readingReportRoute(context, reading);
+    _reportRoute = route;
+    unawaited(
+      navigator.push(route).then((_) {
+        if (_reportRoute == route) _reportRoute = null;
+      }),
+    );
+  }
+
+  void _removeReportRoute() {
+    final route = _reportRoute;
+    _reportRoute = null;
+    _reportAfterRitual = null;
+    _removeDialogRoute(route);
+  }
+
+  void _removeDialogRoute(DialogRoute<void>? route) {
+    if (route == null) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (route.isActive) route.navigator?.removeRoute(route);
     });
@@ -435,6 +488,7 @@ class _GuideFormState extends State<GuideForm>
 
   void _clearDraft() {
     _removeRitualRoute();
+    _removeReportRoute();
     _presentation = null;
     _question.clear();
     _followUp.clear();
@@ -447,7 +501,6 @@ class _GuideFormState extends State<GuideForm>
     _sentFollowUpAttachments.clear();
     _sendingFollowUp = null;
     _attachmentError = null;
-    _showCharts = false;
   }
 
   void _setSuggestedQuestion(String question) {
@@ -700,19 +753,23 @@ class _GuideFormState extends State<GuideForm>
       ),
       const SizedBox(height: 8),
       if (turn.reply case final reply?) GuideConversationReply(body: reply),
-      if (previous != null && report != null)
+      if (previous != null &&
+          (report != null || previous.snapshot.chart != null))
+        ReadingReportEntry(
+          label: report != null ? '查看此前解读' : '查看三套盘面',
+          onPressed: () => _openReport(previous),
+        ),
+      if (saved != null &&
+          (saved.reading.followUps.isNotEmpty ||
+              saved.localAttachments.isNotEmpty))
         ExpansionTile(
           key: ValueKey(turn.id),
-          title: const UiText('查看此前解读'),
+          title: const UiText('查看此前追问'),
           expandedCrossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            ReadingReportView(report: report),
-            if (report is ProParagraphReport)
-              if (previous.snapshot.chart case final chart?)
-                ..._chartContent(chart, report),
             GuideFollowUpList(
-              followUps: previous.followUps,
-              evidence: previous.evidence,
+              followUps: saved.reading.followUps,
+              evidence: saved.reading.evidence,
               history: saved,
             ),
           ],
@@ -737,35 +794,7 @@ class _GuideFormState extends State<GuideForm>
     const SizedBox(height: 16),
   ];
 
-  List<Widget> _chartContent(GuideChart chart, ProReport? report) {
-    final text = Theme.of(context).textTheme;
-    final details = report is ProParagraphReport ? report : null;
-    return [
-      const SizedBox(height: 20),
-      UiText('翻开三张塔罗', style: text.titleMedium),
-      const SizedBox(height: 12),
-      TarotReveal(draw: chart.tarot),
-      if (details != null)
-        ReadingChartDetails(report: details, method: 'tarot'),
-      const SizedBox(height: 20),
-      JingfangResult(reading: chart.liuyao),
-      if (details != null)
-        ReadingChartDetails(report: details, method: 'liuyao'),
-      const SizedBox(height: 24),
-      Text(
-        chart.meihuaInputSource == MeihuaInputSource.tarotClick
-            ? '梅花取数来自三次抽牌的点击时刻。'
-            : '梅花取数来自三枚自动生成的数。',
-      ),
-      const SizedBox(height: 8),
-      MeihuaResult(reading: chart.meihua),
-      if (details != null)
-        ReadingChartDetails(report: details, method: 'meihua'),
-    ];
-  }
-
   Widget _buildResult(GuideRitualSnapshot ritual) {
-    final chart = ritual.chart!;
     final online = widget.online;
     final reading = online?.reading;
     final report = reading?.report;
@@ -801,20 +830,12 @@ class _GuideFormState extends State<GuideForm>
             child: const UiText('获取解读'),
           ),
         ],
-        if (report != null) ReadingReportView(report: report),
-        const SizedBox(height: 16),
-        Align(
-          alignment: AlignmentDirectional.centerStart,
-          child: Semantics(
-            expanded: _showCharts,
-            child: OutlinedButton.icon(
-              onPressed: () => setState(() => _showCharts = !_showCharts),
-              icon: Icon(_showCharts ? Icons.expand_less : Icons.expand_more),
-              label: UiText(_showCharts ? '收起盘面' : '查看三套盘面'),
-            ),
+        if (reading != null && (hasReport || (!busy && ritual.chart != null)))
+          ReadingReportEntry(
+            key: ValueKey(online?.activeHistoryId),
+            label: hasReport ? '查看解读报告' : '查看三套盘面',
+            onPressed: () => _openReport(reading),
           ),
-        ),
-        if (_showCharts) ..._chartContent(chart, report),
         if (hasReport) ...[
           const SizedBox(height: 20),
           GuideFollowUpList(

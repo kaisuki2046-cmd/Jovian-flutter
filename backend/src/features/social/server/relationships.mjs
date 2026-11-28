@@ -1,3 +1,5 @@
+import { createMessageControl } from './messages.mjs';
+
 const userId = /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/;
 const publicUid = /^[1-9]\d{7}$/;
 const cursorPattern = /^(\d{1,16})\.([a-f0-9-]{36})$/;
@@ -10,6 +12,9 @@ function receipt({ id, reason, status, createdAt, reviewedAt, conclusion }) {
 
 export function createRelationshipControl({ store, publicFields, findUserByUid, findUsersByNickname, now, fail, limit,
   canModerate = () => false }) {
+  const conversations = createMessageControl({
+    relationships: store, publicFields, findUserByUid, findUsersByNickname, now, fail, limit,
+  });
   function visibleCard(viewer, target, search = false) {
     if (search && viewer !== target && !store.isDiscoverable(target)) return;
     if (!store.available(viewer, target)) return;
@@ -37,6 +42,9 @@ export function createRelationshipControl({ store, publicFields, findUserByUid, 
   }
 
   return async function socialRequest(route, url, viewer, readInput, requireCurrentAccount) {
+    if (url.pathname === '/social/conversations' || url.pathname.startsWith('/social/conversations/')) {
+      return conversations(route, url, viewer, readInput, requireCurrentAccount);
+    }
     if (route === 'GET /social/me') {
       return { ...store.count(viewer), discoverable: store.isDiscoverable(viewer) };
     }
@@ -69,7 +77,9 @@ export function createRelationshipControl({ store, publicFields, findUserByUid, 
       const result = store.list(viewer, direction, ...pageCursor(url));
       return { items: result.items.map(({ id }) => card(viewer, id)), next: result.next };
     }
-    if (route === 'GET /social/notifications/summary') return { unread: store.unread(viewer), canModerate: canModerate(viewer) };
+    if (route === 'GET /social/notifications/summary') return {
+      unread: store.unread(viewer), canModerate: canModerate(viewer), conversations: true,
+    };
     if (route === 'GET /social/notifications') {
       const { items, next } = store.notifications(viewer, ...pageCursor(url));
       return { unread: store.unread(viewer), next, items: items.map(({ id, actorId, createdAt, readAt }) =>

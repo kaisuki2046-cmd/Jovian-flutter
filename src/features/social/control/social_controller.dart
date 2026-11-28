@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 
 import '../../../shared/http/json_client.dart';
@@ -5,7 +8,7 @@ import '../../account/account.dart';
 import '../model/social.dart';
 import '../requests/social_api.dart';
 
-class SocialController {
+class SocialController implements MessageHistory {
   const SocialController(this._api);
 
   SocialController.forMember(AccountController account, String memberId)
@@ -17,6 +20,78 @@ class SocialController {
   bool get isCurrentMember => _api.isCurrentMember;
 
   Future<SocialInboxSummary> inbox() => _api.inbox();
+
+  SocialPaginator<MessageConversation> conversations({
+    bool unreadOnly = false,
+  }) => SocialPaginator(
+    (before) => _api.conversations(before: before, unreadOnly: unreadOnly),
+    (thread) => thread.id,
+  );
+
+  Future<SocialResultPage<MessageConversation>> searchConversations(
+    String term, {
+    String? before,
+  }) => _api.conversations(query: term.trim(), before: before);
+
+  Future<List<SocialProfile>> findChatContacts(String input) async {
+    final text = input.trim().replaceFirst(
+      RegExp(r'^UID\s*[·:：]?\s*', caseSensitive: false),
+      '',
+    );
+    final matches = await search(
+      socialUid.hasMatch(text)
+          ? SocialSearchMode.uid
+          : SocialSearchMode.nickname,
+      text,
+    );
+    return matches.where((profile) => profile.id != memberId).toList();
+  }
+
+  Future<MessageConversation> openDirectChat(SocialProfile recipient) =>
+      _api.startChat({'id': recipient.id});
+
+  Future<MessageConversation> createGroup(
+    String title,
+    List<String> members,
+    String nonce,
+  ) => _api.startChat({
+    'title': title.trim(),
+    'members': members,
+    'nonce': nonce,
+  });
+
+  Future<SocialResultPage<ConversationMessage>> messages(
+    String thread, {
+    String? before,
+  }) => _api.messages(thread, before);
+
+  Future<ConversationMessage> sendMessage(
+    String thread, {
+    required String body,
+    required String nonce,
+    int? replyTo,
+    OutgoingMessageAttachment? attachment,
+  }) => _api.sendMessage(
+    thread,
+    body: body.trim(),
+    nonce: nonce,
+    replyTo: replyTo,
+    attachment: attachment,
+  );
+
+  Future<void> markConversationRead(String thread, int through) =>
+      _api.readConversation(thread, through);
+
+  Future<void> pinConversation(String thread, bool pinned) =>
+      _api.pinConversation(thread, pinned);
+
+  Future<List<ConversationMember>> conversationMembers(String thread) =>
+      _api.conversationMembers(thread);
+
+  Future<Uint8List> loadMessageAttachment(
+    String thread,
+    ConversationMessage message,
+  ) => _api.messageAttachment(thread, message);
 
   Future<SocialCounts> counts() => _api.counts();
 
@@ -131,6 +206,13 @@ class SocialController {
     );
     return saved;
   }
+}
+
+String newMessageNonce() {
+  final random = Random.secure();
+  return base64UrlEncode(
+    List.generate(16, (_) => random.nextInt(256)),
+  ).substring(0, 22);
 }
 
 class SocialInputError implements Exception {

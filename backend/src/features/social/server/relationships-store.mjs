@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { createMessageStore } from './messages-store.mjs';
 
 const pageSize = 30;
 
@@ -128,6 +129,7 @@ export function createRelationshipStore(db, transaction) {
   };
 
   return {
+    messages: createMessageStore(db, transaction),
     isBlocked, isDiscoverable, relation, available,
     count: (id) => counts.get(id, id),
     setDiscoverable: (id, allowed) => setSee.run(id, Number(allowed)),

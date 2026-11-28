@@ -29,10 +29,12 @@ class JovianShell extends StatefulWidget {
     required this.initialTab,
     required this.buildPage,
     this.onTabSelected,
+    this.showDock = true,
   });
 
   final JovianTab initialTab;
   final ValueChanged<JovianTab>? onTabSelected;
+  final bool showDock;
   final Widget Function(
     BuildContext context,
     JovianTab tab,
@@ -136,7 +138,9 @@ class _JovianShellState extends State<JovianShell> {
                       excluding: tab != _active,
                       child: NotificationListener<ScrollUpdateNotification>(
                         onNotification: (event) =>
-                            tab == _active && _trackDockScroll(event),
+                            widget.showDock &&
+                            tab == _active &&
+                            _trackDockScroll(event),
                         child: widget.buildPage(
                           context,
                           tab,
@@ -149,7 +153,7 @@ class _JovianShellState extends State<JovianShell> {
                 : const SizedBox.shrink(),
         ],
       ),
-      bottomNavigationBar: keyboardVisible
+      bottomNavigationBar: keyboardVisible || !widget.showDock
           ? null
           : ValueListenableBuilder(
               valueListenable: _dockCollapse,
@@ -252,10 +256,16 @@ class _JovianTabNavigatorState extends State<JovianTabNavigator> {
       pages: [
         MaterialPage<void>(key: const ValueKey('root'), child: widget.child),
         for (final section in widget.sections)
-          MaterialPage<void>(
-            key: ValueKey(section),
-            child: widget.buildSection!(section),
-          ),
+          if (section.section == AccountSection.reports)
+            _PersonalReportSheetPage(
+              key: ValueKey(section),
+              child: widget.buildSection!(section),
+            )
+          else
+            MaterialPage<void>(
+              key: ValueKey(section),
+              child: widget.buildSection!(section),
+            ),
       ],
       onDidRemovePage: (page) {
         if (page.key case ValueKey<AccountDestination>(value: final section)) {
@@ -264,4 +274,14 @@ class _JovianTabNavigatorState extends State<JovianTabNavigator> {
       },
     ),
   );
+}
+
+class _PersonalReportSheetPage extends Page<void> {
+  const _PersonalReportSheetPage({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Route<void> createRoute(BuildContext context) =>
+      personalReportRoute(context, child, settings: this);
 }

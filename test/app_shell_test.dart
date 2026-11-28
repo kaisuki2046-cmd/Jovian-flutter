@@ -295,7 +295,7 @@ void main() {
     tester.view.physicalSize = const Size(360, 640);
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
-    await tester.pumpWidget(const JovianApp(initialTab: JovianTab.synastry));
+    await tester.pumpWidget(_dockTestApp());
     await tester.pumpAndSettle();
     final lens = find.byKey(const ValueKey('tab-glass-lens'));
     final lensFilters = find.descendant(
@@ -310,7 +310,7 @@ void main() {
     final gesture = await tester.startGesture(start);
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 120));
-    expect(lensFilters, findsNWidgets(5));
+    expect(lensFilters, findsNWidgets(2));
     final pressed = tester.getRect(lens);
     expect(pressed.height, closeTo(resting.height + 20, .01));
     await gesture.moveTo(start.translate(0, -55));
@@ -319,15 +319,12 @@ void main() {
     await gesture.moveTo(target.translate(0, -50));
     await tester.pump();
     final optics = tester.widgetList<BackdropFilter>(lensFilters).toList();
-    expect(optics, hasLength(5));
-    final rims = optics.take(4);
-    final face = optics.last.filter?.debugShortDescription;
-    for (final rim in rims) {
-      expect(rim.filter?.debugShortDescription, contains('matrix([1.34,'));
-      expect(rim.filter?.debugShortDescription, contains('blur(2.0, 2.0'));
-      expect(rim.backdropGroupKey, same(optics.first.backdropGroupKey));
-    }
+    expect(optics, hasLength(2));
+    final face = optics.first.filter?.debugShortDescription;
+    final rim = optics.last.filter?.debugShortDescription;
     expect(face, startsWith('blur(0.65, 0.65'));
+    expect(rim, contains('matrix([1.34,'));
+    expect(rim, contains('blur(2.0, 2.0'));
     expect(tester.getCenter(lens).dx, closeTo(target.dx, 1));
     expect(tester.getCenter(lens).dy, pressed.center.dy);
     expect(tester.getSize(lens).height, closeTo(pressed.height, .01));
@@ -381,7 +378,7 @@ void main() {
   testWidgets('a touch still activates a destination after the pressed frame', (
     tester,
   ) async {
-    await tester.pumpWidget(const JovianApp(initialTab: JovianTab.synastry));
+    await tester.pumpWidget(_dockTestApp());
     await tester.pumpAndSettle();
     final navigation = find.byType(NavigationBar);
     final press = await tester.startGesture(
@@ -402,6 +399,14 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 }
+
+Widget _dockTestApp() => MaterialApp(
+  theme: jovianTheme(Brightness.light),
+  home: JovianShell(
+    initialTab: JovianTab.synastry,
+    buildPage: (_, _, _, _) => const SizedBox.expand(),
+  ),
+);
 
 void _disableContinuousGuideMotion(WidgetTester tester) {
   final dispatcher = tester.binding.platformDispatcher;

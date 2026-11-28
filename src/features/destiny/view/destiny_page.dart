@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:jovian_destiny/jovian_destiny.dart';
+import 'package:jovian_fortune/jovian_fortune.dart' show FortunePeriod;
 import 'package:material_ui/material_ui.dart';
 
 import '../../../ui/interface_language.dart';
@@ -15,6 +16,7 @@ import 'birth_display_labels.dart';
 import 'birth_profile_confirmation.dart';
 import 'birth_profile_editor.dart';
 import 'destiny_chart_dialog.dart';
+import 'destiny_dashboard.dart';
 import 'destiny_report_text.dart';
 import 'destiny_star_visual.dart';
 
@@ -25,6 +27,7 @@ class DestinyPage extends StatefulWidget {
     required this.calculateReading,
     this.requestReport,
     this.openFortune,
+    this.openFortunePeriod,
     this.account,
     this.active = true,
   });
@@ -39,6 +42,7 @@ class DestinyPage extends StatefulWidget {
   final Future<String> Function(Map<String, Object?>, Future<void>)?
   requestReport;
   final void Function(String? archiveId)? openFortune;
+  final ValueChanged<FortunePeriod>? openFortunePeriod;
   final AccountController? account;
   final bool active;
 
@@ -50,6 +54,7 @@ class _DestinyPageState extends State<DestinyPage> {
   late final DestinyPageController _controller;
   late final DestinyBirthController _birth;
   late final String? _chartScope;
+  final _scroll = ScrollController();
   BirthProfile? _draft;
   BirthProfileDraft _prefill = const BirthProfileDraft();
   AccountBirthFields? _baseline;
@@ -91,6 +96,7 @@ class _DestinyPageState extends State<DestinyPage> {
     }
     _birth.dispose();
     _controller.dispose();
+    _scroll.dispose();
     super.dispose();
   }
 
@@ -121,87 +127,90 @@ class _DestinyPageState extends State<DestinyPage> {
       top: false,
       child: ListenableBuilder(
         listenable: Listenable.merge([_controller, _birth, widget.account]),
-        builder: (context, _) => ListView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          padding: jovianPagePadding,
-          children: [
-            if (widget.openFortune case final open?) ...[
-              Card(
-                child: ListTile(
-                  onTap: () => open(null),
-                  leading: const Icon(Icons.calendar_month_outlined),
-                  title: const UiText('周期运势'),
-                  subtitle: const UiText('日、周、月、年'),
-                  trailing: const Icon(Icons.chevron_right),
+        builder: (context, _) {
+          final stage = _controller.saving ? null : _controller.stage;
+          final showDashboard = stage == null && !_editing;
+          return ListView(
+            controller: _scroll,
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            padding: jovianPagePadding,
+            children: [
+              if (showDashboard) ...[
+                _dashboard(context),
+                const SizedBox(height: 12),
+              ] else if (widget.openFortune case final open?) ...[
+                Card(
+                  child: ListTile(
+                    onTap: () => open(null),
+                    leading: const Icon(Icons.calendar_month_outlined),
+                    title: const UiText('周期运势'),
+                    subtitle: const UiText('日、周、月、年'),
+                    trailing: const Icon(Icons.chevron_right),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 18),
-            ],
-            if (_controller.archiveLoading) const LinearProgressIndicator(),
-            if (_controller.archiveError)
-              TextButton(
-                onPressed: _controller.restoreReport,
-                child: const UiText('已存报告读取失败，点此重试'),
-              ),
-            if (_controller.stage case final stage? when !_controller.saving)
-              _progress(context, stage)
-            else if (_editing)
-              _editor(context)
-            else if (_controller.report case final body?)
-              ..._report(context, body)
-            else if (_controller.reading case final reading?) ...[
-              FilledButton.tonal(
-                onPressed: () => _showCharts(context, reading.charts),
-                child: const UiText('查看命盘'),
-              ),
-              ..._reportActions(context),
-              TextButton(
-                onPressed: _canEdit
-                    ? () => _openEditor(useCurrentDraft: true)
-                    : null,
-                child: const UiText('修改出生资料'),
-              ),
-            ] else
-              _entry(context),
-            if (_birth.isCurrent &&
-                !_editing &&
-                !_controller.busy &&
-                _controller.reading == null)
-              if (_birth.localProfile case final profile?)
-                _localProfileSummary(context, profile),
-            if (_birth.loading)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 8),
-                child: LinearProgressIndicator(),
-              ),
-            if (_birth.readError case final error?) ...[
-              _status(context, error),
-              TextButton(
-                onPressed: _birth.refresh,
-                child: const UiText('重试读取账户出生资料'),
-              ),
-            ],
-            if (_controller.calculationError case final error?)
-              _status(context, error),
-            if (_controller.calculationError != null &&
-                !_editing &&
-                !_controller.busy)
-              if (_draft case final draft?)
-                FilledButton.tonal(
-                  onPressed: () => _controller.submit(draft),
-                  child: const UiText('重试测算'),
+                const SizedBox(height: 18),
+              ],
+              if (_controller.archiveLoading) const LinearProgressIndicator(),
+              if (_controller.archiveError)
+                TextButton(
+                  onPressed: _controller.restoreReport,
+                  child: const UiText('已存报告读取失败，点此重试'),
                 ),
-            if (_controller.reportError case final error?)
-              _status(context, error),
-            if (_controller.needsSave)
-              TextButton(
-                onPressed: _controller.saving ? null : _controller.saveReport,
-                child: UiText(_controller.saving ? '正在存档…' : '重试存档'),
-              ),
-            if (_birth.localNotice case final notice?)
-              Semantics(liveRegion: true, child: UiText(notice)),
-          ],
-        ),
+              if (stage != null)
+                _progress(context, stage)
+              else if (_editing)
+                _editor(context)
+              else if (_controller.report case final body?)
+                ..._report(context, body)
+              else if (_controller.reading != null) ...[
+                ..._reportActions(context),
+                TextButton(
+                  onPressed: _canEdit
+                      ? () => _openEditor(useCurrentDraft: true)
+                      : null,
+                  child: const UiText('修改出生资料'),
+                ),
+              ],
+              if (_birth.isCurrent &&
+                  !_editing &&
+                  !_controller.busy &&
+                  _controller.reading == null)
+                if (_birth.localProfile case final profile?)
+                  _localProfileSummary(context, profile),
+              if (_birth.loading)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                  child: LinearProgressIndicator(),
+                ),
+              if (_birth.readError case final error?) ...[
+                _status(context, error),
+                TextButton(
+                  onPressed: _birth.refresh,
+                  child: const UiText('重试读取账户出生资料'),
+                ),
+              ],
+              if (_controller.calculationError case final error?)
+                _status(context, error),
+              if (_controller.calculationError != null &&
+                  !_editing &&
+                  !_controller.busy)
+                if (_draft case final draft?)
+                  FilledButton.tonal(
+                    onPressed: () => _controller.submit(draft),
+                    child: const UiText('重试测算'),
+                  ),
+              if (_controller.reportError case final error?)
+                _status(context, error),
+              if (_controller.needsSave)
+                TextButton(
+                  onPressed: _controller.saving ? null : _controller.saveReport,
+                  child: UiText(_controller.saving ? '正在存档…' : '重试存档'),
+                ),
+              if (_birth.localNotice case final notice?)
+                Semantics(liveRegion: true, child: UiText(notice)),
+            ],
+          );
+        },
       ),
     ),
   );
@@ -232,41 +241,31 @@ class _DestinyPageState extends State<DestinyPage> {
     ];
   }
 
-  Widget _entry(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 8),
-    child: Column(
-      children: [
-        Stack(
-          alignment: Alignment.center,
-          children: [
-            SizedBox(
-              width: double.infinity,
-              height: 170,
-              child: DestinyStarVisual(motion: _motionEnabled && widget.active),
-            ),
-            Image.asset(
-              'src/features/destiny/assets/celestial-orb.png',
-              width: 154,
-              height: 154,
-              excludeFromSemantics: true,
-            ),
-          ],
-        ),
-        UiText('星象手记', style: Theme.of(context).textTheme.headlineMedium),
-        const UiText('从出生资料展开你的命盘'),
-        const SizedBox(height: 16),
-        FilledButton(
-          onPressed: _canEdit ? _openEditor : null,
-          child: UiText(
-            _birth.current?.fields.hasData == true ||
-                    _birth.localProfile != null
-                ? '核对资料'
-                : '开始解读',
-          ),
-        ),
-      ],
-    ),
-  );
+  Widget _dashboard(BuildContext context) {
+    final charts = _controller.reading?.charts ?? _controller.archivedCharts;
+    final hasBirthDetails =
+        _birth.current?.fields.hasData == true || _birth.localProfile != null;
+    final openFortune = widget.openFortune;
+    return DestinyDashboard(
+      motion: _motionEnabled && widget.active,
+      chartAction: charts != null
+          ? '查看命盘'
+          : hasBirthDetails
+          ? '核对资料'
+          : '开始解读',
+      onOpenChart: charts != null
+          ? () => _showCharts(context, charts)
+          : _canEdit
+          ? _openEditor
+          : null,
+      hasBirthDetails: hasBirthDetails || _draft != null,
+      onEditBirthDetails: _canEdit
+          ? () => _openEditor(useCurrentDraft: true)
+          : null,
+      onOpenFortune: openFortune == null ? null : () => openFortune(null),
+      onOpenPeriod: widget.openFortunePeriod,
+    );
+  }
 
   Widget _editor(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -304,6 +303,7 @@ class _DestinyPageState extends State<DestinyPage> {
   void _openEditor({bool useCurrentDraft = false}) {
     final current = _birth.current;
     final fallback = _birth.localProfile;
+    if (_scroll.hasClients) _scroll.jumpTo(0);
     setState(() {
       _baseline = current?.fields;
       _prefill = useCurrentDraft && _draft != null
@@ -494,7 +494,6 @@ class _DestinyPageState extends State<DestinyPage> {
   }
 
   List<Widget> _report(BuildContext context, String body) {
-    final charts = _controller.reading?.charts ?? _controller.archivedCharts;
     final entry = _controller.archiveEntry;
     final fresh = _controller.reading != null;
     return [
@@ -511,11 +510,6 @@ class _DestinyPageState extends State<DestinyPage> {
         const UiText('已保存解读和基础盘面，完整盘面暂未归档。')
       else if (fresh && entry != null)
         Semantics(liveRegion: true, child: const UiText('已保存，下次进入命理页可直接查看。')),
-      if (charts != null)
-        FilledButton.tonal(
-          onPressed: () => _showCharts(context, charts),
-          child: const UiText('查看命盘'),
-        ),
       if ((_controller.fortuneArchiveId, widget.openFortune) case (
         final id?,
         final open?,

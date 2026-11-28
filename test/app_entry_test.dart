@@ -1,6 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart'
+    show debugDefaultTargetPlatformOverride;
+import 'package:flutter/gestures.dart' show PointerDeviceKind;
+import 'package:flutter/services.dart' show LogicalKeyboardKey;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -156,6 +160,400 @@ void main() {
     },
   );
 
+  testWidgets('the report fits a narrow phone and keeps its zodiac motion', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(320, 640);
+    tester.view.padding = const FakeViewPadding(top: 24, bottom: 16);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetPadding);
+    final platform = tester.binding.platformDispatcher;
+    platform.defaultRouteNameTestValue = '/account/reports';
+    addTearDown(platform.clearDefaultRouteNameTestValue);
+    addTearDown(platform.clearAccessibilityFeaturesTestValue);
+    final account = _account(
+      (request) async => switch (request.url.path) {
+        '/account/session' => _json({
+          'user': {'id': 'report-reader', 'displayName': '报告测试'},
+        }),
+        '/account/auth/capabilities' => _json({}),
+        '/account/agreements/catalog' => _json(_catalog),
+        '/account/agreements' => _agreementState(true),
+        _ => _json({}, 404),
+      },
+    );
+    await tester.pumpWidget(JovianApp(account: account));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+    final sheet = find.byKey(const ValueKey('personal-report-sheet'));
+    final bounds = tester.getRect(sheet);
+    expect(bounds, const Rect.fromLTRB(10, 24, 310, 624));
+    expect(find.byType(NavigationBar), findsNothing);
+    expect(tester.hasRunningAnimations, isTrue);
+
+    await tester.tap(find.text('星座'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+    final previous = find.byTooltip('上一张星座卡');
+    expect(previous.hitTestable(), findsOneWidget);
+    expect(tester.getRect(sheet), bounds);
+    await tester.tap(previous);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 2200));
+    expect(find.text('天顶金牛'), findsOneWidget);
+    expect(tester.hasRunningAnimations, isTrue);
+
+    platform.accessibilityFeaturesTestValue = const FakeAccessibilityFeatures(
+      disableAnimations: true,
+    );
+    await tester.pumpAndSettle();
+    expect(tester.hasRunningAnimations, isFalse);
+    await tester.drag(
+      find.byKey(const ValueKey('personal-report-zodiac-deck')),
+      const Offset(-148, 0),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('太阳白羊'), findsOneWidget);
+    final next = find.byTooltip('下一张星座卡');
+    final sampleCards = [
+      ('核心性格与自我认同', '从第一步找到自己'),
+      ('外在气质与第一印象', '用热情打开场面'),
+      ('情绪需求与安全感', '把心安放进日常'),
+      ('喜好与表达爱的方式', '温柔地读懂对方'),
+      ('动力与行动方式', '好奇心带动行动'),
+      ('思考与沟通方式', '先感到整体，再说清细节'),
+      ('未来发展方向', '先为自己作决定'),
+      ('承诺与长期伴侣关系', '共同养出归属感'),
+      ('事业方向与公众形象', '把成果做得经久耐用'),
+    ];
+    for (final (index, (meaning, focus)) in sampleCards.indexed) {
+      if (index > 0) await tester.tap(next);
+      await tester.pumpAndSettle();
+      expect(find.text('（$meaning）').hitTestable(), findsOneWidget);
+      expect(find.text(focus).hitTestable(), findsOneWidget);
+    }
+    expect(find.text('天顶金牛'), findsOneWidget);
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.text('星座'), findsOneWidget);
+    await tester.tap(find.byTooltip('关闭报告'));
+    await tester.pumpAndSettle();
+    expect(find.byType(NavigationBar), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+    'report pages follow drags below the pinned topics and accept taps',
+    (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(320, 680);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPhysicalSize);
+      final platform = tester.binding.platformDispatcher;
+      platform.defaultRouteNameTestValue = '/account/reports';
+      platform.accessibilityFeaturesTestValue = const FakeAccessibilityFeatures(
+        disableAnimations: true,
+      );
+      addTearDown(platform.clearDefaultRouteNameTestValue);
+      addTearDown(platform.clearAccessibilityFeaturesTestValue);
+      final account = _account(
+        (request) async => switch (request.url.path) {
+          '/account/session' => _json({
+            'user': {'id': 'topic-reader', 'displayName': '报告测试'},
+          }),
+          '/account/auth/capabilities' => _json({}),
+          '/account/agreements/catalog' => _json(_catalog),
+          '/account/agreements' => _agreementState(true),
+          _ => _json({}, 404),
+        },
+      );
+      await tester.pumpWidget(JovianApp(account: account));
+      await tester.pumpAndSettle();
+      final sheet = find.byKey(const ValueKey('personal-report-sheet'));
+      final strip = find.byKey(const ValueKey('personal-report-topic-strip'));
+      final thumb = find.byKey(const ValueKey('personal-report-topic-thumb'));
+      final pages = find.byKey(const ValueKey('personal-report-topic-content'));
+      Finder topicLabel(String name) =>
+          find.descendant(of: strip, matching: find.text(name));
+      Offset topicCenter(String name) => tester.getCenter(topicLabel(name));
+
+      final initialTop = tester.getTopLeft(strip).dy;
+      await tester.dragFrom(const Offset(160, 580), const Offset(0, -880));
+      await tester.pumpAndSettle();
+
+      final pinnedTop = tester.getTopLeft(strip).dy;
+      expect(pinnedTop, lessThan(initialTop));
+      expect(pinnedTop, lessThan(tester.getTopLeft(sheet).dy + 68));
+      final overviewTitle = find.text('我的命盘综述');
+      final overviewLeft = tester.getTopLeft(overviewTitle).dx;
+      final bodyDrag = await tester.startGesture(const Offset(250, 225));
+      await bodyDrag.moveBy(const Offset(-110, 0));
+      await tester.pump();
+      expect(
+        tester.getTopLeft(overviewTitle).dx,
+        closeTo(overviewLeft - 110, 1),
+      );
+      expect(find.text('我的恋爱画像'), findsOneWidget);
+      expect(tester.getTopLeft(strip).dy, pinnedTop);
+      await bodyDrag.up();
+      await tester.pumpAndSettle();
+      expect(find.text('我的恋爱画像').hitTestable(), findsOneWidget);
+      expect(tester.getTopLeft(strip).dy, pinnedTop);
+      expect(
+        find.descendant(of: sheet, matching: find.byType(Scrollbar)),
+        findsNothing,
+      );
+      expect(
+        find.descendant(of: sheet, matching: find.byType(RawScrollbar)),
+        findsNothing,
+      );
+      final radar = find.byKey(
+        const ValueKey('personal-report-relationship-radar'),
+      );
+      expect(radar.hitTestable(), findsOneWidget);
+      final dimensions = tester
+          .widget<Semantics>(radar)
+          .properties
+          .label!
+          .split(' · ');
+      expect(dimensions, hasLength(10));
+      expect(dimensions.first, startsWith('冷处理 '));
+      expect(dimensions.last, startsWith('专一 '));
+      await _press(tester, '十维关系雷达');
+      expect(find.text('图上分数用同一个刻度呈现这份命盘中的相对倾向。'), findsOneWidget);
+      expect(find.text('通过语气、行动和回应，让对方感到自己被在乎。'), findsOneWidget);
+      await _press(tester, '返回上一级报告');
+      await _press(tester, '缘分与长期关系');
+      expect(find.text('正缘出现的时机'), findsOneWidget);
+      expect(find.text('婚姻次数与关系走向'), findsOneWidget);
+      expect(find.text('单身与陪伴'), findsOneWidget);
+      await _press(tester, '返回上一级报告');
+
+      final loveTitle = find.text('我的恋爱画像');
+      final loveLeft = tester.getTopLeft(loveTitle).dx;
+      final drag = await tester.startGesture(
+        topicCenter('情感'),
+        kind: PointerDeviceKind.mouse,
+      );
+      final midway = Offset.lerp(topicCenter('情感'), topicCenter('财富'), .25)!;
+      await drag.moveTo(midway);
+      await tester.pump();
+      expect(tester.getCenter(thumb).dx, closeTo(midway.dx, 1));
+      expect(
+        tester.getTopLeft(loveTitle).dx,
+        closeTo(loveLeft - tester.getSize(pages).width / 2, 1),
+      );
+      expect(find.text('我的事业画像'), findsOneWidget);
+      expect(tester.getTopLeft(strip).dy, pinnedTop);
+      final release = Offset.lerp(topicCenter('财富'), topicCenter('学业'), .2)!;
+      await drag.moveTo(release);
+      await tester.pump();
+      final wealthTitle = find.text('我的财富画像');
+      final previewTop = tester.getTopLeft(wealthTitle).dy;
+      await drag.up();
+      await tester.pumpAndSettle();
+      expect(tester.getCenter(thumb).dx, closeTo(topicCenter('财富').dx, 1));
+      expect(tester.getTopLeft(wealthTitle).dy, closeTo(previewTop, 1));
+
+      final funnel = find.text('漏斗');
+      expect(funnel.hitTestable(), findsOneWidget);
+      expect(find.text('容易漏财的地方'), findsNothing);
+      for (final label in ['可用资源', '漏财环节', '人情与共同开支']) {
+        expect(
+          tester.getCenter(find.text(label)).dx,
+          closeTo(tester.getCenter(sheet).dx, 1),
+        );
+      }
+      await tester.ensureVisible(funnel);
+      await tester.pumpAndSettle();
+      final funnelTop = tester.getTopLeft(funnel).dy;
+      await _press(tester, '漏斗');
+      expect(find.text('如何看漏斗'), findsOneWidget);
+      expect(find.text('容易漏财的地方'), findsOneWidget);
+      await _press(tester, '返回上一级报告');
+      expect(tester.getTopLeft(strip).dy, pinnedTop);
+      expect(tester.getTopLeft(funnel).dy, funnelTop);
+      await _press(tester, '收入模式与资源来源');
+      expect(find.text('工资与稳定收入'), findsOneWidget);
+      expect(find.text('家庭资产与共同资源'), findsOneWidget);
+      await _press(tester, '返回上一级报告');
+
+      await tester.tap(topicLabel('事业'));
+      await tester.pumpAndSettle();
+      await _press(tester, '事业阶段趋势');
+      expect(find.text('变化明显的阶段'), findsOneWidget);
+      expect(find.text('示例流年'), findsOneWidget);
+      final year = find.widgetWithText(ChoiceChip, '2024');
+      await tester.ensureVisible(year);
+      await tester.pump();
+      await tester.tap(year);
+      await tester.pumpAndSettle();
+      expect(find.text('2024 · 甲辰'), findsOneWidget);
+      await _press(tester, '返回上一级报告');
+
+      await tester.tap(topicLabel('学业'), kind: PointerDeviceKind.mouse);
+      await tester.pumpAndSettle();
+      expect(find.text('适合尝试的学习方向'), findsOneWidget);
+      await tester.sendKeyEvent(LogicalKeyboardKey.home);
+      await tester.pumpAndSettle();
+      expect(find.text('我的命盘综述'), findsOneWidget);
+      await tester.sendKeyEvent(LogicalKeyboardKey.end);
+      await tester.pumpAndSettle();
+      await _press(tester, '学习方式与卡点');
+      expect(find.text('学习态度与动力'), findsOneWidget);
+      expect(find.text('求学节奏与持续性'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
+    'report uses the latest chart for ten gods and the number of shen sha',
+    (tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(390, 844);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPhysicalSize);
+      final platform = tester.binding.platformDispatcher;
+      platform.defaultRouteNameTestValue = '/account/reports';
+      platform.accessibilityFeaturesTestValue = const FakeAccessibilityFeatures(
+        disableAnimations: true,
+      );
+      addTearDown(platform.clearDefaultRouteNameTestValue);
+      addTearDown(platform.clearAccessibilityFeaturesTestValue);
+      final account = _account((request) async {
+        return switch (request.url.path) {
+          '/account/session' => _json({
+            'user': {'id': 'real-chart-owner', 'displayName': '命盘测试'},
+          }),
+          '/account/auth/capabilities' => _json({}),
+          '/account/agreements/catalog' => _json(_catalog),
+          '/account/agreements' => _agreementState(true),
+          '/account/destiny-history/latest' => _json({
+            'id': 'c' * 64,
+            'title': '命理解读',
+            'calculatedAt': '2026-11-27T00:00:00Z',
+            'savedAt': 1795737600000,
+            'report': {
+              'version': 1,
+              'overview': '已存档的解读。',
+              'chartSnapshot': {
+                'version': 1,
+                'timeKnown': true,
+                'western': {
+                  'rawResult': [
+                    {
+                      'positions': [
+                        {'planet': 'Sun', 'longitude': 200},
+                      ],
+                    },
+                  ],
+                },
+                'bazi': {
+                  'rawResult': [
+                    {
+                      'day': '甲子',
+                      'analysis': {
+                        'L2': {
+                          'assessments': {
+                            'tenGodStrength': {
+                              'scores': [
+                                {'name': '正印', 'score': 55},
+                                {'name': '正财', 'score': 25},
+                                {'name': '比肩', 'score': 20},
+                              ],
+                            },
+                          },
+                        },
+                      },
+                      'shenSha': {
+                        'year': [
+                          {'name': '桃花'},
+                          {'name': '华盖'},
+                          {'name': '空亡'},
+                          {'name': '禄神'},
+                        ],
+                        'day': [
+                          {'name': '桃花'},
+                        ],
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          }),
+          _ => _json({}, 404),
+        };
+      });
+      await tester.pumpWidget(JovianApp(account: account));
+      await tester.pumpAndSettle();
+      expect(find.text('基于最近一次保存的命盘'), findsOneWidget);
+      expect(find.text('太阳 天秤  ·  日主 甲木'), findsOneWidget);
+      await _press(tester, '十神');
+      expect(find.text('55%'), findsOneWidget);
+      expect(find.text('40%'), findsNothing);
+      await _press(tester, '返回上一级报告');
+      await _press(tester, '神煞');
+      expect(find.text('1 / 4'), findsOneWidget);
+      expect(find.text('年柱').hitTestable(), findsOneWidget);
+      expect(find.text('日柱').hitTestable(), findsOneWidget);
+      final sheet = tester.getSize(
+        find.byKey(const ValueKey('personal-report-sheet')),
+      );
+      final pages = find.byKey(const ValueKey('personal-report-shensha-pages'));
+      final pagesSize = tester.getSize(pages);
+      expect(pagesSize.width, greaterThan(sheet.width * .9));
+      expect(pagesSize.height, greaterThan(sheet.height * .72));
+      final deck = tester.getRect(pages);
+      Rect cardBounds(String name) => tester.getRect(
+        find.byKey(ValueKey('personal-report-shensha-card-$name')),
+      );
+      expect(cardBounds('禄神').right, greaterThan(deck.left));
+      expect(cardBounds('华盖').left, lessThan(deck.right));
+      await tester.drag(pages, const Offset(221, 0));
+      await tester.pumpAndSettle();
+      expect(find.text('4 / 4'), findsOneWidget);
+      expect(find.text('禄神').hitTestable(), findsOneWidget);
+      expect(cardBounds('空亡').right, greaterThan(deck.left));
+      expect(cardBounds('桃花').left, lessThan(deck.right));
+      await tester.drag(pages, const Offset(-221, 0));
+      await tester.pumpAndSettle();
+      expect(find.text('1 / 4'), findsOneWidget);
+      for (var step = 1; step <= 12; step++) {
+        await tester.tap(find.byTooltip('上一张神煞'));
+        await tester.pumpAndSettle();
+        expect(find.text('${1 + (-step % 4)} / 4'), findsOneWidget);
+      }
+      await tester.drag(pages, const Offset(-221, 0));
+      await tester.pumpAndSettle();
+      expect(find.text('2 / 4'), findsOneWidget);
+      expect(find.text('华盖'), findsOneWidget);
+      final front = cardBounds('华盖');
+      final left = cardBounds('桃花');
+      final right = cardBounds('空亡');
+      expect(front.width, inExclusiveRange(deck.width * .82, deck.width * .94));
+      expect(left.right, greaterThan(deck.left));
+      expect(right.left, lessThan(deck.right));
+      expect(left.height, lessThan(front.height));
+      expect(right.height, lessThan(front.height));
+      await tester.tap(find.byTooltip('下一张神煞'));
+      await tester.pumpAndSettle();
+      expect(find.text('3 / 4'), findsOneWidget);
+      await _press(tester, '返回上一级报告');
+      await _press(tester, '星座');
+      expect(find.text('太阳天秤'), findsOneWidget);
+      expect(find.text('在双方之间找到尺度'), findsOneWidget);
+      await tester.tap(find.byTooltip('下一张星座卡'));
+      await tester.pumpAndSettle();
+      expect(find.text('这份命盘还缺少这个位置的星座资料。'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   for (final resume in [false, true]) {
     testWidgets(
       resume
@@ -189,6 +587,8 @@ void main() {
               return _json(_catalog);
             case 'GET /account/agreements':
               return _agreementState(true);
+            case 'GET /account/destiny-history/latest':
+              return _json({}, 404);
             case 'GET /account/destiny-history':
               return _json({
                 'entries': owner == 'original-guest' ? [record] : [],
@@ -216,7 +616,12 @@ void main() {
         final platform = tester.binding.platformDispatcher;
         platform.defaultRouteNameTestValue = '/account/reports';
         addTearDown(platform.clearDefaultRouteNameTestValue);
+        platform.accessibilityFeaturesTestValue =
+            const FakeAccessibilityFeatures(disableAnimations: true);
+        addTearDown(platform.clearAccessibilityFeaturesTestValue);
         await tester.pumpWidget(JovianApp(account: account));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byTooltip('已保存的报告'));
         await tester.pumpAndSettle();
         await _press(tester, '原游客的报告');
         expect(find.text('旧游客专属的解读。'), findsOneWidget);
@@ -467,6 +872,7 @@ http.Response _agreementState(bool accepted) => _json({
 Future<void> _press(WidgetTester tester, String label) async {
   final target = find.text(label);
   await tester.ensureVisible(target);
+  await tester.pump();
   await tester.tap(target);
   await tester.pumpAndSettle();
 }

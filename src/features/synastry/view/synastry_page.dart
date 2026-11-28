@@ -4,14 +4,19 @@ import 'package:jovian_destiny/jovian_destiny.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../ui/interface_language.dart';
-
-import '../../../ui/report_body.dart';
 import '../../../ui/theme.dart';
 import '../../account/account.dart';
 import '../../destiny/destiny.dart';
 import '../control/synastry_page_controller.dart';
+import '../model/synastry_relationship.dart';
+import 'synastry_album_selector.dart';
+import 'synastry_pair_header.dart';
+import 'synastry_record_studio.dart';
+import 'synastry_report_page.dart';
 
 const _systems = {'bazi': '八字', 'ziwei': '紫微斗数', 'western': '西方星盘'};
+
+enum _PersonAction { add, edit, own, destiny }
 
 class SynastryPage extends StatefulWidget {
   const SynastryPage({
@@ -38,9 +43,8 @@ class SynastryPage extends StatefulWidget {
 }
 
 class _SynastryPageState extends State<SynastryPage> {
-  final _scroll = ScrollController();
-  bool _historyExpanded = false;
-  MaterialPageRoute<void>? _editorRoute;
+  var _edition = SynastryEdition.family;
+  Route<dynamic>? _entryRoute;
   late final _synastry = SynastryPageController(
     account: widget.account,
     calculate: widget.calculate,
@@ -56,71 +60,255 @@ class _SynastryPageState extends State<SynastryPage> {
 
   @override
   void dispose() {
-    final editor = _editorRoute;
-    if (editor != null) {
+    final route = _entryRoute;
+    if (route != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (editor.isActive) editor.navigator?.removeRoute(editor);
+        if (route.isActive) route.navigator?.removeRoute(route);
       });
     }
-    _scroll.dispose();
     _synastry.dispose();
     super.dispose();
   }
 
-  Future<void> _generateSummary() async {
-    FocusManager.instance.primaryFocus?.unfocus();
-    await _synastry.generateSummary();
-    if (!mounted || _synastry.report == null) return;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted && _scroll.hasClients) _scroll.jumpTo(0);
-    });
-    WidgetsBinding.instance.ensureVisualUpdate();
-  }
+  Future<void> _openRecords({bool library = false, bool start = false}) async {
+    if (_entryRoute != null || (start && !_synastry.canCompare)) return;
+    if (library) {
+      _synastry.openHistory();
+      _synastry.history?.closeDetail();
+    }
+    final links = context.getInheritedWidgetOfExactType<AccountSectionLinks>();
+    final edition = _edition;
+    final navigator = Navigator.of(context);
+    late final TransitionRoute<void> route;
 
-  Future<void> _restoreComparedReport() async {
-    await _synastry.restoreComparedReport();
-    if (_synastry.report != null) _scrollAfterLayout(bottom: false);
-  }
-
-  Future<void> _compare() async {
-    await _synastry.compareCharts();
-    if (_synastry.result != null) _scrollAfterLayout(bottom: true);
-  }
-
-  Future<void> _openSaved(String id) async {
-    await _synastry.openSaved(id);
-    if (!mounted || _synastry.message != null) return;
-    FocusManager.instance.primaryFocus?.unfocus();
-    setState(() => _historyExpanded = false);
-    _scrollAfterLayout(bottom: false);
-  }
-
-  void _scrollAfterLayout({required bool bottom}) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || !_scroll.hasClients) return;
-      final target = bottom ? _scroll.position.maxScrollExtent : 0.0;
-      if (MediaQuery.disableAnimationsOf(context) ||
-          MediaQuery.accessibleNavigationOf(context)) {
-        _scroll.jumpTo(target);
-      } else {
-        unawaited(
-          _scroll.animateTo(
-            target,
-            duration: const Duration(milliseconds: 235),
-            curve: Curves.easeOutCubic,
-          ),
-        );
+    Future<void> compare() async {
+      await _synastry.compareCharts();
+      if (mounted &&
+          route.isCurrent &&
+          _synastry.result != null &&
+          _synastry.canGenerateSummary) {
+        await _synastry.generateSummary(edition: edition);
       }
-    });
-    WidgetsBinding.instance.ensureVisualUpdate();
+    }
+
+    final reading = SynastryCurrentReading(
+      controller: _synastry,
+      edition: edition,
+      comparison: _comparison,
+      retryComparison: start ? compare : null,
+      openAccount: widget.openAccount == null
+          ? null
+          : () {
+              if (route.isCurrent) navigator.pop();
+              widget.openAccount!();
+            },
+      openPermissions: links == null
+          ? null
+          : () => unawaited(
+              links.open(accountDestination(AccountSection.aiPermissions)),
+            ),
+    );
+    route = library
+        ? MaterialPageRoute(
+            builder: (_) => SynastryRecordStudio(
+              controller: _synastry,
+              edition: edition,
+              currentReading: reading,
+            ),
+          )
+        : synastryReportRoute(context, edition: edition, content: reading);
+    _entryRoute = route;
+    final closed = navigator.push<void>(route);
+    if (start) unawaited(compare());
+    await closed;
+    await route.completed;
+    if (mounted) _entryRoute = null;
   }
 
-  Future<void> _edit(SynastrySide side) async {
+  Future<void> _selectPerson(SynastrySide side) async {
+    if (_entryRoute != null || _synastry.busy) return;
+    final selectingA = side == SynastrySide.a;
+    final navigator = Navigator.of(context);
+    final route = ModalBottomSheetRoute<_PersonAction>(
+      capturedThemes: InheritedTheme.capture(
+        from: context,
+        to: navigator.context,
+      ),
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      isScrollControlled: true,
+      showDragHandle: true,
+      useSafeArea: true,
+      constraints: const BoxConstraints(maxWidth: jovianPageWidth),
+      builder: (sheetContext) => ListenableBuilder(
+        listenable: _synastry,
+        builder: (context, _) {
+          final current = _synastry.manualProfile(side);
+          final isOwner = selectingA && _synastry.aIsOwner;
+          final chart = selectingA ? _synastry.a : _synastry.b;
+          final canEdit =
+              (selectingA || _synastry.allowed) &&
+              _synastry.canCalculate &&
+              !_synastry.busy;
+          return SafeArea(
+            top: false,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.sizeOf(sheetContext).height * .78,
+              ),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(18, 0, 18, 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  spacing: 10,
+                  children: [
+                    Semantics(
+                      header: true,
+                      child: UiText(
+                        selectingA ? '选择 A 方' : '选择 B 方',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                    ),
+                    if (selectingA)
+                      _personOption(
+                        context,
+                        selected: isOwner,
+                        title: Text(_ownerName(context)),
+                        onTap: isOwner || _synastry.busy
+                            ? null
+                            : () {
+                                _synastry.selectOwner();
+                                if (_synastry.a != null) navigator.pop();
+                              },
+                      ),
+                    for (final person in _synastry.people(side))
+                      _personOption(
+                        context,
+                        selected: identical(person, current),
+                        title: Text(_personName(side, person)),
+                        subtitle: _ManualProfileSummary(person),
+                        onTap: !canEdit
+                            ? null
+                            : () {
+                                _synastry.selectPerson(side, person);
+                                navigator.pop();
+                              },
+                      ),
+                    if (!selectingA) ...[
+                      const UiText('盘面在本机计算。生成在线解读时，会发送双方的盘面对照结果。'),
+                      CheckboxListTile(
+                        value: _synastry.allowed,
+                        contentPadding: EdgeInsets.zero,
+                        controlAffinity: ListTileControlAffinity.leading,
+                        title: const UiText('我已获准使用 B 方资料进行本次合盘'),
+                        onChanged: (value) =>
+                            _synastry.confirmConsent(value == true),
+                      ),
+                    ],
+                    if (isOwner) ...[
+                      if (_synastry.member) _ownChartStatus(context),
+                      if (current != null) _ManualProfileSummary(current),
+                      if (_synastry.member)
+                        OutlinedButton(
+                          onPressed: _synastry.busy
+                              ? null
+                              : _synastry.readOwnChart,
+                          child: UiText(
+                            _synastry.aFromArchive ? '重新读取本人盘面' : '读取本人盘面',
+                          ),
+                        ),
+                      if (_synastry.member &&
+                          _offersDestiny &&
+                          widget.openDestiny != null)
+                        TextButton(
+                          onPressed: () => navigator.pop(_PersonAction.destiny),
+                          child: const UiText('前往命理'),
+                        ),
+                      OutlinedButton(
+                        onPressed: canEdit
+                            ? () => navigator.pop(_PersonAction.own)
+                            : null,
+                        child: UiText(
+                          current == null ? '手动填写 A 方资料' : '修改 A 方资料',
+                        ),
+                      ),
+                    ],
+                    if (chart != null) _ChartSummary(chart),
+                    FilledButton.icon(
+                      onPressed: canEdit
+                          ? () => navigator.pop(_PersonAction.add)
+                          : null,
+                      icon: const Icon(
+                        Icons.person_add_alt_1_outlined,
+                        size: 18,
+                      ),
+                      label: UiText(selectingA ? '添加其他人' : '添加对象'),
+                    ),
+                    if (!isOwner && current != null)
+                      TextButton(
+                        onPressed: canEdit
+                            ? () => navigator.pop(_PersonAction.edit)
+                            : null,
+                        child: UiText(selectingA ? '修改 A 方资料' : '修改 B 方资料'),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+    _entryRoute = route;
+    final action = await navigator.push(route);
+    if (!mounted) return;
+    _entryRoute = null;
+    if (action == _PersonAction.destiny) {
+      widget.openDestiny?.call();
+    } else if (action != null) {
+      await _edit(side, action);
+    }
+  }
+
+  Widget _personOption(
+    BuildContext context, {
+    required bool selected,
+    required Widget title,
+    Widget? subtitle,
+    VoidCallback? onTap,
+  }) => ListTile(
+    contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    selected: selected,
+    selectedTileColor: Theme.of(context).colorScheme.primaryContainer,
+    leading: const Icon(Icons.person_outline_rounded),
+    title: title,
+    subtitle: subtitle,
+    trailing: Icon(
+      selected ? Icons.check_rounded : Icons.chevron_right_rounded,
+    ),
+    onTap: onTap,
+  );
+
+  String _ownerName(BuildContext context) {
+    final name = _synastry.ownerName;
+    return name.isEmpty ? context.uiLabel('本人') : name;
+  }
+
+  String _personName(SynastrySide side, BirthProfile profile) {
+    final name = _synastry.personName(side, profile);
+    return name.isEmpty ? profile.place.name : name;
+  }
+
+  Future<void> _edit(SynastrySide side, _PersonAction action) async {
     final isA = side == SynastrySide.a;
-    final current = _synastry.manualProfile(side);
+    final owner = action == _PersonAction.own;
+    final addPerson = action == _PersonAction.add;
+    final current = addPerson ? null : _synastry.manualProfile(side);
     final initial = current == null
         ? const BirthProfileDraft()
         : BirthProfileDraft.fromProfile(current);
+    var name = current == null ? '' : _synastry.personName(side, current);
     var submitted = false;
     late final MaterialPageRoute<void> route;
     route = MaterialPageRoute<void>(
@@ -135,6 +323,18 @@ class _SynastryPageState extends State<SynastryPage> {
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               children: [
                 const UiText('资料在本机排盘，用于本次合盘。'),
+                if (isA && !owner) const UiText('请确认已获准使用对方资料。'),
+                const SizedBox(height: 12),
+                TextFormField(
+                  initialValue: name,
+                  maxLength: 24,
+                  enabled: !_synastry.busy,
+                  decoration: InputDecoration(
+                    labelText: context.uiLabel('称呼（选填）'),
+                    counterText: '',
+                  ),
+                  onChanged: (value) => name = value,
+                ),
                 const SizedBox(height: 12),
                 BirthProfileEditor(
                   loadPlaces: widget.loadPlaces,
@@ -144,7 +344,13 @@ class _SynastryPageState extends State<SynastryPage> {
                   submitLabel: isA ? '确认A 方资料' : '确认B 方资料',
                   onSubmit: (profile) async {
                     submitted = true;
-                    final saved = await _synastry.setManual(side, profile);
+                    final saved = await _synastry.setManual(
+                      side,
+                      profile,
+                      addPerson: addPerson,
+                      asOwner: owner,
+                      name: name,
+                    );
                     if (saved && route.isCurrent) route.navigator?.pop();
                   },
                 ),
@@ -163,180 +369,119 @@ class _SynastryPageState extends State<SynastryPage> {
         ),
       ),
     );
-    _editorRoute = route;
+    _entryRoute = route;
     await Navigator.of(context).push(route);
     if (!mounted) return;
-    _editorRoute = null;
+    _entryRoute = null;
     if (submitted) _synastry.cancelManualCalculation();
-  }
-
-  void _history() {
-    final account = widget.account;
-    if (account == null) return;
-    Navigator.of(context).push<void>(
-      MaterialPageRoute(
-        builder: (_) =>
-            ReportsPage(account: account, initialKind: ReportKind.synastry),
-      ),
-    );
   }
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: Listenable.merge([_synastry, widget.account]),
-    builder: (context, _) => Scaffold(
-      appBar: AppBar(
-        title: const UiText('合盘'),
-        actions: [
-          if (_synastry.hasSession)
-            IconButton(
-              tooltip: context.uiLabel('合盘报告历史'),
-              onPressed: _history,
-              icon: const Icon(Icons.history),
-            ),
-        ],
-      ),
-      body: SafeArea(
-        top: false,
-        child: SingleChildScrollView(
-          controller: _scroll,
-          padding: jovianPagePadding,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const UiText('从亲情、友情、爱情和合作四个角度看两人的相处。'),
-              if (_synastry.hasSession && !_synastry.member)
-                const Padding(
-                  padding: EdgeInsets.only(top: 8),
-                  child: UiText('访客可手动填写双方资料，报告保留在当前游客会话。'),
-                ),
-              if (_synastry.busy) ...[
-                const SizedBox(height: 10),
-                LinearProgressIndicator(
-                  semanticsLabel: context.uiLabel('正在处理合盘'),
-                ),
-              ],
-              if (_synastry.report case final report?) ...[
-                const SizedBox(height: 12),
-                _report(context, report),
-              ],
-              if (_synastry.restoringLatest)
-                Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: Semantics(
-                    liveRegion: true,
-                    child: const UiText('正在读取合盘存档…'),
-                  ),
-                ),
-              if (_synastry.latestRestoreFailed)
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    Semantics(
-                      liveRegion: true,
-                      child: const UiText('暂时无法读取已存合盘。'),
-                    ),
-                    TextButton(
-                      onPressed: _synastry.busy
-                          ? null
-                          : _synastry.restoreLatest,
-                      child: const UiText('重试读取'),
-                    ),
-                  ],
-                ),
-              if (_synastry.hasSession) ...[
-                const SizedBox(height: 12),
-                _savedReports(),
-              ],
-              if (!_synastry.canCalculate) ...[
-                const SizedBox(height: 12),
-                const UiText('当前运行环境暂不支持本机合盘。可使用浏览器完成排盘。'),
-              ],
-              const SizedBox(height: 12),
-              _section(context, 'A 方 · 本人盘面', [
-                if (_synastry.member) _ownChartStatus(context),
-                if (_synastry.manualProfile(SynastrySide.a) case final profile?)
-                  _ManualProfileSummary(profile),
-                if (_synastry.a case final chart?) _ChartSummary(chart),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 6,
-                  children: [
-                    if (_synastry.member)
-                      OutlinedButton(
-                        onPressed: _synastry.busy
-                            ? null
-                            : _synastry.readOwnChart,
-                        child: UiText(
-                          _synastry.aFromArchive ? '重新读取本人盘面' : '读取本人盘面',
-                        ),
-                      ),
-                    OutlinedButton(
-                      onPressed: !_synastry.canCalculate || _synastry.busy
-                          ? null
-                          : () => _edit(SynastrySide.a),
-                      child: UiText(
-                        _synastry.a == null ? '手动填写 A 方资料' : '修改 A 方资料',
-                      ),
-                    ),
-                    if (_synastry.member &&
-                        _offersDestiny &&
-                        widget.openDestiny != null)
-                      TextButton(
-                        onPressed: widget.openDestiny,
-                        child: const UiText('前往命理'),
-                      ),
-                  ],
-                ),
-              ]),
-              const SizedBox(height: 10),
-              _section(context, 'B 方 · 对方盘面', [
-                if (_synastry.manualProfile(SynastrySide.b) case final profile?)
-                  _ManualProfileSummary(profile),
-                if (_synastry.b case final chart?) _ChartSummary(chart),
-                const UiText('盘面在本机计算。生成在线解读时，会发送双方的盘面对照结果。'),
-                CheckboxListTile(
-                  value: _synastry.allowed,
-                  contentPadding: EdgeInsets.zero,
-                  controlAffinity: ListTileControlAffinity.leading,
-                  title: const UiText('我已获准使用 B 方资料进行本次合盘'),
-                  onChanged: (value) => _synastry.confirmConsent(value == true),
-                ),
-                OutlinedButton(
-                  onPressed:
-                      !_synastry.allowed ||
-                          !_synastry.canCalculate ||
-                          _synastry.busy
-                      ? null
-                      : () => _edit(SynastrySide.b),
-                  child: UiText(
-                    _synastry.b == null ? '手动填写 B 方资料' : '修改 B 方资料',
-                  ),
-                ),
-              ]),
-              const SizedBox(height: 14),
-              FilledButton(
-                onPressed: _synastry.canCompare ? _compare : null,
-                child: const UiText('比较盘面'),
+    builder: (context, _) {
+      final first = _synastry.manualProfile(SynastrySide.a);
+      final second = _synastry.manualProfile(SynastrySide.b);
+      final stageScale = (MediaQuery.sizeOf(context).height / 780).clamp(
+        1.025,
+        1.10,
+      );
+      return Scaffold(
+        appBar: AppBar(
+          title: const UiText('合盘'),
+          centerTitle: true,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: TextButton.icon(
+                onPressed: () => _openRecords(library: true),
+                icon: const Icon(Icons.inventory_2_outlined, size: 19),
+                label: const UiText('唱片盒'),
               ),
-              if (_synastry.result case final result?) ...[
-                const SizedBox(height: 12),
-                _comparison(context, result),
-                if (_synastry.report == null) ...[
-                  const SizedBox(height: 10),
-                  _interpretAction(context),
-                ],
-              ],
-              if (_synastry.message case final message?)
-                Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Semantics(liveRegion: true, child: UiText(message)),
+            ),
+          ],
+        ),
+        body: SafeArea(
+          top: false,
+          child: LayoutBuilder(
+            builder: (context, viewport) => SingleChildScrollView(
+              padding: jovianPagePadding,
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      SynastryPairHeader(
+                        stageScale: stageScale,
+                        owner: _synastry.aIsOwner || first == null
+                            ? _ownerName(context)
+                            : _personName(SynastrySide.a, first),
+                        partner: second == null
+                            ? null
+                            : _personName(SynastrySide.b, second),
+                        onOwnerPressed: _synastry.busy
+                            ? null
+                            : () => _selectPerson(SynastrySide.a),
+                        onPartnerPressed: _synastry.busy
+                            ? null
+                            : () => _selectPerson(SynastrySide.b),
+                      ),
+                      SizedBox(height: 12 * stageScale),
+                      SynastryAlbumSelector(
+                        selected: _edition,
+                        maxRecordSize:
+                            (viewport.maxHeight * .43).clamp(150.0, 302.0) *
+                            stageScale,
+                        onSelected: (edition) {
+                          if (edition != _edition)
+                            setState(() => _edition = edition);
+                        },
+                      ),
+                      const SizedBox(height: 9),
+                      FilledButton.icon(
+                        onPressed: _synastry.canCompare
+                            ? () => _openRecords(start: true)
+                            : null,
+                        icon: const Icon(Icons.play_arrow_rounded, size: 21),
+                        label: const UiText('开始合盘'),
+                      ),
+                      if (_synastry.report != null || _synastry.result != null)
+                        TextButton(
+                          onPressed: _synastry.busy ? null : _openRecords,
+                          child: const UiText('查看最近报告'),
+                        ),
+                      if (_synastry.latestRestoreFailed)
+                        Wrap(
+                          alignment: WrapAlignment.center,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            Semantics(
+                              liveRegion: true,
+                              child: const UiText('暂时无法读取已存合盘。'),
+                            ),
+                            TextButton(
+                              onPressed: _synastry.busy
+                                  ? null
+                                  : _synastry.restoreLatest,
+                              child: const UiText('重试读取'),
+                            ),
+                          ],
+                        ),
+                      if (!_synastry.canCalculate)
+                        const Padding(
+                          padding: EdgeInsets.only(top: 12),
+                          child: UiText('当前运行环境暂不支持本机合盘。可使用浏览器完成排盘。'),
+                        ),
+                    ],
+                  ),
                 ),
-            ],
+              ),
+            ),
           ),
         ),
-      ),
-    ),
+      );
+    },
   );
 
   bool get _offersDestiny => switch (_synastry.ownChartStatus) {
@@ -367,142 +512,6 @@ class _SynastryPageState extends State<SynastryPage> {
               context.uiLabel(message).replaceFirst('{date}', dateText ?? ''),
             ),
           );
-  }
-
-  Widget _savedReports() => Card(
-    key: const ValueKey('synastry-report-history'),
-    margin: EdgeInsets.zero,
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Semantics(
-          expanded: _historyExpanded,
-          child: ListTile(
-            title: UiText(_historyExpanded ? '收起已存解读' : '查看已存解读'),
-            trailing: Icon(
-              _historyExpanded ? Icons.expand_less : Icons.expand_more,
-            ),
-            onTap: () {
-              if (!_historyExpanded) _synastry.openHistory();
-              setState(() => _historyExpanded = !_historyExpanded);
-            },
-          ),
-        ),
-        if (_synastry.history case final history? when _historyExpanded)
-          ListenableBuilder(
-            listenable: history,
-            builder: (context, _) {
-              final page = history.locked ? null : history.page;
-              return Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (history.loading)
-                      Semantics(
-                        liveRegion: true,
-                        child: LinearProgressIndicator(
-                          semanticsLabel: context.uiLabel('正在读取已存解读…'),
-                        ),
-                      ),
-                    if (history.listError != null || history.locked)
-                      Semantics(
-                        liveRegion: true,
-                        child: const UiText('暂时无法读取存档。'),
-                      ),
-                    if (page != null) ...[
-                      if (page.entries.isEmpty && !history.loading)
-                        const UiText('暂无合盘报告。'),
-                      for (final entry in page.entries)
-                        ListTile(
-                          key: ValueKey(entry.id),
-                          contentPadding: EdgeInsets.zero,
-                          title: Text(entry.title),
-                          subtitle: Text(
-                            _formattedDate(context, entry.savedAt)!,
-                          ),
-                          trailing: const Icon(Icons.chevron_right),
-                          enabled: !_synastry.busy,
-                          onTap: () => _openSaved(entry.id),
-                        ),
-                    ],
-                    Wrap(
-                      children: [
-                        if (page?.nextCursor != null)
-                          TextButton(
-                            onPressed: history.loading ? null : history.more,
-                            child: const UiText('加载更多'),
-                          ),
-                        TextButton(
-                          onPressed: history.loading ? null : history.refresh,
-                          child: const UiText('刷新报告'),
-                        ),
-                        TextButton(
-                          onPressed: _history,
-                          child: const UiText('查看全部合盘报告'),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-      ],
-    ),
-  );
-
-  Widget _interpretAction(BuildContext context) {
-    final links = context.getInheritedWidgetOfExactType<AccountSectionLinks>();
-    final hasSession = _synastry.hasSession;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        if (hasSession &&
-            (!_synastry.summaryConfigured || _synastry.needsPermission))
-          OutlinedButton(
-            onPressed: _synastry.busy ? null : _restoreComparedReport,
-            child: const UiText('查看此组合已存解读'),
-          ),
-        if (!_synastry.summaryConfigured)
-          const UiText('在线解读服务暂未配置。')
-        else if (!hasSession || _synastry.needsPermission)
-          OutlinedButton(
-            onPressed: hasSession && links != null
-                ? () => unawaited(
-                    links.open(
-                      accountDestination(AccountSection.aiPermissions),
-                    ),
-                  )
-                : widget.openAccount,
-            child: UiText(hasSession ? '前往 AI 授权' : '登录或进入游客体验后生成解读'),
-          )
-        else
-          FilledButton(
-            onPressed: _synastry.busy ? null : _generateSummary,
-            child: const UiText('生成合盘解读'),
-          ),
-      ],
-    );
-  }
-
-  Widget _report(BuildContext context, String report) {
-    final savedAt = _synastry.savedAt?.toLocal();
-    final format = MaterialLocalizations.of(context);
-    return _section(context, '合盘解读', [
-      Text(
-        savedAt == null
-            ? context.uiLabel('本次解读暂未存档')
-            : '${context.uiLabel('已存档 · ')}${format.formatMediumDate(savedAt)}',
-      ),
-      if (_synastry.reportFromArchive) const UiText('从合盘存档读取'),
-      _RelationshipReport(key: ValueKey(report), body: report),
-      if (_synastry.needsSave)
-        OutlinedButton(
-          onPressed: _synastry.busy ? null : _synastry.retrySave,
-          child: const UiText('重试存档'),
-        ),
-    ]);
   }
 
   Widget _comparison(BuildContext context, Map<String, Object?> result) {
@@ -538,6 +547,7 @@ class _SynastryPageState extends State<SynastryPage> {
         if (fact case {'observation': final String observation}) observation,
     };
     return ExpansionTile(
+      key: PageStorageKey(name),
       tilePadding: EdgeInsets.zero,
       expandedCrossAxisAlignment: CrossAxisAlignment.start,
       title: Text(
@@ -555,28 +565,30 @@ class _SynastryPageState extends State<SynastryPage> {
   }
 }
 
-Widget _section(BuildContext context, String title, List<Widget> children) =>
-    Card(
-      margin: EdgeInsets.zero,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 8,
-          children: [
-            Semantics(
-              container: true,
-              header: true,
-              child: UiText(
-                title,
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-            ),
-            ...children,
-          ],
+Widget _section(
+  BuildContext context,
+  String title,
+  List<Widget> children, {
+  Key? headingKey,
+}) => Card(
+  margin: EdgeInsets.zero,
+  child: Padding(
+    padding: const EdgeInsets.all(16),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 8,
+      children: [
+        Semantics(
+          key: headingKey,
+          container: true,
+          header: true,
+          child: UiText(title, style: Theme.of(context).textTheme.titleLarge),
         ),
-      ),
-    );
+        ...children,
+      ],
+    ),
+  ),
+);
 
 String? _formattedDate(BuildContext context, Object? value) {
   final time = switch (value) {
@@ -607,89 +619,6 @@ class _ManualProfileSummary extends StatelessWidget {
     return Text(
       '$date $hour:$minute · ${profile.place.name}',
       style: Theme.of(context).textTheme.bodyMedium,
-    );
-  }
-}
-
-class _RelationshipReport extends StatefulWidget {
-  const _RelationshipReport({super.key, required this.body});
-
-  final String body;
-
-  @override
-  State<_RelationshipReport> createState() => _RelationshipReportState();
-}
-
-class _RelationshipReportState extends State<_RelationshipReport> {
-  final _headings = <String, GlobalKey>{};
-
-  static final _sectionHeading = RegExp(
-    r'^## (亲情|友情|爱情|合作)[ \t]*\r?$',
-    multiLine: true,
-  );
-
-  @override
-  Widget build(BuildContext context) {
-    final body = widget.body;
-    final matches = _sectionHeading.allMatches(body).toList(growable: false);
-    final names = matches.map((match) => match[1]!).toList(growable: false);
-    if (names.isEmpty || names.toSet().length != names.length)
-      return ReportBody(body);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Wrap(
-          spacing: 6,
-          runSpacing: 4,
-          children: [
-            for (final name in names)
-              OutlinedButton(
-                onPressed: () {
-                  final target = _headings[name]?.currentContext;
-                  if (target == null) return;
-                  final reduced =
-                      MediaQuery.disableAnimationsOf(context) ||
-                      MediaQuery.accessibleNavigationOf(context);
-                  unawaited(
-                    Scrollable.ensureVisible(
-                      target,
-                      alignment: .04,
-                      duration: reduced
-                          ? Duration.zero
-                          : const Duration(milliseconds: 220),
-                      curve: Curves.easeOut,
-                    ),
-                  );
-                },
-                child: UiText(name),
-              ),
-          ],
-        ),
-        if (matches.first.start > 0)
-          ReportBody(body.substring(0, matches.first.start).trim()),
-        for (var index = 0; index < matches.length; index++)
-          Padding(
-            key: _headings.putIfAbsent(names[index], GlobalKey.new),
-            padding: const EdgeInsets.only(top: 14, bottom: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              spacing: 8,
-              children: [
-                ReportHeading(context.uiLabel(names[index])),
-                ReportBody(
-                  body
-                      .substring(
-                        matches[index].end,
-                        index + 1 < matches.length
-                            ? matches[index + 1].start
-                            : body.length,
-                      )
-                      .trim(),
-                ),
-              ],
-            ),
-          ),
-      ],
     );
   }
 }

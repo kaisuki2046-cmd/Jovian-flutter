@@ -4,6 +4,7 @@ import '../../../ui/interface_language.dart';
 import '../../account/account.dart';
 import '../control/social_controller.dart';
 import '../model/social.dart';
+import 'message_inbox_page.dart';
 import 'social_profile.dart';
 import 'social_records.dart';
 
@@ -14,172 +15,98 @@ class SocialPage extends StatelessWidget {
     this.openAccount,
     this.active = true,
     this.followerAlertReads,
+    this.onDetailVisibilityChanged,
   });
 
   final AccountController? account;
   final VoidCallback? openAccount;
   final bool active;
   final Listenable? followerAlertReads;
+  final ValueChanged<bool>? onDetailVisibilityChanged;
 
   @override
   Widget build(BuildContext context) {
     final current = account;
-    if (current == null) {
-      return const _UnavailableMessages('账号服务暂不可用。');
-    }
+    if (current == null) return _workspace();
     return ListenableBuilder(
       key: ObjectKey(current),
       listenable: current,
       builder: (context, _) {
         final memberId = current.socialMemberId;
-        if (memberId != null) {
-          return TickerMode(
-            enabled: active,
-            child: _MemberNavigator(
-              key: ValueKey(memberId),
-              page: _MessagesHome(
-                controller: SocialController.forMember(current, memberId),
-                followerAlertReads: followerAlertReads,
-              ),
-              active: active,
-            ),
-          );
-        }
-        final awaitingAccount = current.busy && !current.restored;
-        final changingAccount = current.sessionChanging;
-        final needsAgreement =
-            current.session?.kind.name == 'member' &&
-            current.authorizedSession == null;
-        if (awaitingAccount || changingAccount) {
-          return const _UnavailableMessages('正在确认当前账号…');
-        }
-        if (needsAgreement) {
-          return _UnavailableMessages(
-            '请阅读并确认当前的《用户服务协议》和《隐私政策》后继续。',
-            openAccount: openAccount,
-            action: '阅读并确认协议',
-          );
-        }
-
-        Widget signInPage(String title, String message) => _UnavailableMessages(
-          message,
-          title: title,
-          openAccount: openAccount,
-        );
-
-        const memberMessages = '登录后查看当前账户的消息';
-        return _UnavailableMessages(
-          '登录后可按 UID 或昵称找用户，并查看新增粉丝提醒。',
-          openAccount: openAccount,
-          onFindUser: () => AccountSectionLinks.openPage(
-            context,
-            AccountSection.findUser,
-            () => signInPage('找用户', '登录后可按 UID 或昵称找用户。'),
-          ),
-          shortcuts: _MessageShortcuts(
-            openFollowers: () => AccountSectionLinks.openPage(
-              context,
-              AccountSection.newFollowers,
-              () => signInPage('新增粉丝', memberMessages),
-            ),
-            openReports: () => AccountSectionLinks.openPage(
-              context,
-              AccountSection.socialReports,
-              () => signInPage('我的举报', memberMessages),
-            ),
-          ),
+        return _workspace(
+          controller: memberId == null
+              ? null
+              : SocialController.forMember(current, memberId),
+          uid: memberId == null ? null : current.session?.uid,
+          agreementNeeded:
+              current.session?.kind.name == 'member' &&
+              current.authorizedSession == null,
         );
       },
     );
   }
+
+  Widget _workspace({
+    SocialController? controller,
+    String? uid,
+    bool agreementNeeded = false,
+  }) {
+    final scope = controller?.memberId ?? 'preview';
+    return TickerMode(
+      enabled: active,
+      child: _MemberNavigator(
+        key: ValueKey(scope),
+        active: active,
+        onDetailVisibilityChanged: onDetailVisibilityChanged,
+        page: _MessagesHome(
+          scope: scope,
+          controller: controller,
+          uid: uid,
+          followerAlertReads: followerAlertReads,
+          openAccount: controller == null ? openAccount : null,
+          agreementNeeded: agreementNeeded,
+        ),
+      ),
+    );
+  }
 }
 
-class _UnavailableMessages extends StatelessWidget {
-  const _UnavailableMessages(
-    this.message, {
-    this.title = '消息',
-    this.openAccount,
-    this.action = '前往登录',
-    this.onFindUser,
-    this.shortcuts,
+class _MessageSignIn extends StatelessWidget {
+  const _MessageSignIn(
+    this.title, {
+    required this.openAccount,
+    required this.agreementNeeded,
   });
 
-  final String message;
   final String title;
   final VoidCallback? openAccount;
-  final String action;
-  final VoidCallback? onFindUser;
-  final Widget? shortcuts;
+  final bool agreementNeeded;
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      title: UiText(title),
-      actions: _messageHeaderActions(context, onFindUser),
-    ),
-    body: ListView(
-      padding: const EdgeInsets.all(20),
-      children: [
-        if (shortcuts case final entries?) entries,
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 20),
-            child: Column(
-              children: [
-                Icon(
-                  Icons.notifications_none_rounded,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 32,
-                ),
-                const SizedBox(height: 12),
-                UiText(message, textAlign: TextAlign.center),
-                if (openAccount != null) ...[
-                  const SizedBox(height: 12),
-                  FilledButton.tonal(
-                    onPressed: openAccount,
-                    child: UiText(action),
-                  ),
-                ],
-              ],
+    appBar: AppBar(title: UiText(title)),
+    body: Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.lock_outline_rounded),
+            const SizedBox(height: 8),
+            UiText(
+              agreementNeeded ? '请阅读并确认当前的《用户服务协议》和《隐私政策》后继续。' : '登录后查看当前账户的消息',
+              textAlign: TextAlign.center,
             ),
-          ),
+            if (openAccount != null)
+              TextButton(
+                onPressed: openAccount,
+                child: UiText(agreementNeeded ? '阅读并确认协议' : '前往登录'),
+              ),
+          ],
         ),
-      ],
+      ),
     ),
   );
-}
-
-List<Widget> _messageHeaderActions(
-  BuildContext context,
-  VoidCallback? findUser,
-) {
-  if (findUser == null) return const [];
-  return [
-    IconButton(
-      tooltip: context.uiLabel('找用户'),
-      onPressed: findUser,
-      icon: const Icon(Icons.person_search_outlined),
-    ),
-    PopupMenuButton<VoidCallback>(
-      tooltip: context.uiLabel('更多操作'),
-      icon: const Icon(Icons.add_circle_outline),
-      position: PopupMenuPosition.under,
-      constraints: const BoxConstraints(minWidth: 164, maxWidth: 210),
-      onSelected: (action) => action(),
-      itemBuilder: (_) => [
-        PopupMenuItem(
-          value: findUser,
-          child: const Row(
-            children: [
-              Icon(Icons.search),
-              SizedBox(width: 12),
-              Flexible(child: UiText('找用户')),
-            ],
-          ),
-        ),
-      ],
-    ),
-  ];
 }
 
 class SocialConnectionsPage extends StatelessWidget {
@@ -219,10 +146,16 @@ class SocialConnectionsPage extends StatelessWidget {
 }
 
 class _MemberNavigator extends StatefulWidget {
-  const _MemberNavigator({super.key, required this.page, required this.active});
+  const _MemberNavigator({
+    super.key,
+    required this.page,
+    required this.active,
+    this.onDetailVisibilityChanged,
+  });
 
   final Widget page;
   final bool active;
+  final ValueChanged<bool>? onDetailVisibilityChanged;
 
   @override
   State<_MemberNavigator> createState() => _MemberNavigatorState();
@@ -230,6 +163,11 @@ class _MemberNavigator extends StatefulWidget {
 
 class _MemberNavigatorState extends State<_MemberNavigator> {
   final _navigation = GlobalKey<NavigatorState>();
+  late final _observer = _MessagePageObserver((hasDetail) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) widget.onDetailVisibilityChanged?.call(hasDetail);
+    });
+  });
 
   @override
   Widget build(BuildContext context) => NavigatorPopHandler<void>(
@@ -237,20 +175,42 @@ class _MemberNavigatorState extends State<_MemberNavigator> {
     onPopWithResult: (_) => _navigation.currentState?.maybePop(),
     child: Navigator(
       key: _navigation,
+      observers: [if (widget.onDetailVisibilityChanged != null) _observer],
       onGenerateRoute: (_) =>
           MaterialPageRoute<void>(builder: (context) => widget.page),
     ),
   );
 }
 
+class _MessagePageObserver extends NavigatorObserver {
+  _MessagePageObserver(this.onDetailVisibilityChanged);
+
+  final ValueChanged<bool> onDetailVisibilityChanged;
+
+  @override
+  void didChangeTop(Route<dynamic> topRoute, Route<dynamic>? previousTopRoute) {
+    if (topRoute is PageRoute<dynamic>) {
+      onDetailVisibilityChanged(!topRoute.isFirst);
+    }
+  }
+}
+
 class _MessagesHome extends StatefulWidget {
   const _MessagesHome({
+    required this.scope,
     required this.controller,
+    required this.uid,
     required this.followerAlertReads,
+    required this.openAccount,
+    required this.agreementNeeded,
   });
 
-  final SocialController controller;
+  final String scope;
+  final SocialController? controller;
+  final String? uid;
   final Listenable? followerAlertReads;
+  final VoidCallback? openAccount;
+  final bool agreementNeeded;
 
   @override
   State<_MessagesHome> createState() => _MessagesHomeState();
@@ -258,6 +218,7 @@ class _MessagesHome extends StatefulWidget {
 
 class _MessagesHomeState extends State<_MessagesHome> {
   Future<SocialInboxSummary>? _summary;
+  SocialInboxSummary? _lastSummary;
   bool _visible = false;
 
   @override
@@ -284,145 +245,96 @@ class _MessagesHomeState extends State<_MessagesHome> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // The tab and its navigator keep this page mounted when it is covered.
     final visible = TickerMode.valuesOf(context).enabled;
-    if (visible && !_visible) _summary = widget.controller.inbox();
+    if (visible && !_visible) _summary = widget.controller?.inbox();
     _visible = visible;
   }
 
   void _refresh() {
-    final summary = widget.controller.inbox();
+    final controller = widget.controller;
+    if (controller == null) return;
+    final summary = controller.inbox();
     setState(() {
       _summary = summary;
     });
   }
 
   void _refreshAfterRead() {
-    // The inbox can finish marking a notification after returning here.
-    if (mounted && _visible && widget.controller.isCurrentMember) _refresh();
+    if (mounted && _visible && widget.controller?.isCurrentMember == true)
+      _refresh();
   }
 
   Future<void> _open(
-    Widget Function() page, {
-    required AccountSection section,
-  }) async {
+    AccountSection section,
+    Widget Function(SocialController) page,
+    String title,
+  ) async {
     final before = _summary;
-    await AccountSectionLinks.openPage(context, section, page);
-    // A quick return can finish before the covering route pauses this page.
+    final controller = widget.controller;
+    await AccountSectionLinks.openPage(
+      context,
+      section,
+      () => controller == null
+          ? _MessageSignIn(
+              title,
+              openAccount: widget.openAccount,
+              agreementNeeded: widget.agreementNeeded,
+            )
+          : page(controller),
+    );
     if (mounted && _visible && identical(_summary, before)) _refresh();
   }
 
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      title: const UiText('消息'),
-      actions: _messageHeaderActions(
-        context,
-        () => _open(
-          () => SocialSearchPage(controller: widget.controller),
-          section: AccountSection.findUser,
-        ),
-      ),
-    ),
-    body: FutureBuilder<SocialInboxSummary>(
-      future: _summary,
-      builder: (context, snapshot) {
-        final loading = snapshot.connectionState == ConnectionState.waiting;
-        final inbox = loading ? null : snapshot.data;
-        final unread = inbox?.unread ?? 0;
-        return ListView(
-          padding: const EdgeInsets.all(20),
-          children: [
-            if (loading) const LinearProgressIndicator(),
-            _MessageShortcuts(
-              unread: unread,
-              openFollowers: () => _open(
-                () => FollowerAlertsPage(
-                  controller: widget.controller,
-                  onRead: _refreshAfterRead,
-                ),
-                section: AccountSection.newFollowers,
-              ),
-              openReports: () => _open(
-                () => SocialReportsPage(controller: widget.controller),
-                section: AccountSection.socialReports,
-              ),
-              openModeration: inbox?.canModerate == true
-                  ? () => _open(
-                      () => SocialReportsPage(
-                        controller: widget.controller,
-                        moderation: true,
-                      ),
-                      section: AccountSection.socialModeration,
-                    )
-                  : null,
-            ),
-            if (!loading && snapshot.hasError)
-              ListTile(
-                title: UiText(
-                  describeSocialError(snapshot.error!, '暂时无法更新未读消息。'),
-                ),
-                trailing: TextButton(
-                  onPressed: _refresh,
-                  child: const UiText('重试'),
-                ),
-              ),
-          ],
-        );
-      },
-    ),
+  void _followers() => _open(
+    AccountSection.newFollowers,
+    (controller) =>
+        FollowerAlertsPage(controller: controller, onRead: _refreshAfterRead),
+    '新增粉丝',
   );
-}
 
-class _MessageShortcuts extends StatelessWidget {
-  const _MessageShortcuts({
-    required this.openFollowers,
-    required this.openReports,
-    this.openModeration,
-    this.unread = 0,
-  });
+  void _reports() => _open(
+    AccountSection.socialReports,
+    (controller) => SocialReportsPage(controller: controller),
+    '我的举报',
+  );
 
-  final VoidCallback openFollowers;
-  final VoidCallback openReports;
-  final VoidCallback? openModeration;
-  final int unread;
+  void _findUser() => _open(
+    AccountSection.findUser,
+    (controller) => SocialSearchPage(controller: controller),
+    '找用户',
+  );
+
+  void _moderation() => _open(
+    AccountSection.socialModeration,
+    (controller) => SocialReportsPage(controller: controller, moderation: true),
+    '举报处理',
+  );
 
   @override
-  Widget build(BuildContext context) => Card(
-    child: Column(
-      children: [
-        ListTile(
-          leading: const Icon(Icons.person_add_alt_1_outlined),
-          title: const UiText('新增粉丝'),
-          subtitle: unread > 0
-              ? Text(
-                  context.uiLanguage == InterfaceLanguage.english
-                      ? '$unread unread'
-                      : '$unread 条未读',
-                )
-              : const UiText('查看关注提醒'),
-          trailing: const Icon(Icons.chevron_right),
-          onTap: openFollowers,
-        ),
-        const Divider(height: 1, indent: 16, endIndent: 16),
-        ListTile(
-          leading: const Icon(Icons.flag_outlined),
-          title: const UiText('我的举报'),
-          subtitle: const UiText('查看举报处理进度'),
-          trailing: const Icon(Icons.chevron_right),
-          onTap: openReports,
-        ),
-        if (openModeration != null) ...[
-          const Divider(height: 1, indent: 16, endIndent: 16),
-          ListTile(
-            leading: const Icon(Icons.fact_check_outlined),
-            title: const UiText('举报处理'),
-            subtitle: const UiText('处理待办举报'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: openModeration,
-          ),
-        ],
-      ],
-    ),
+  Widget build(BuildContext context) => FutureBuilder<SocialInboxSummary>(
+    future: _summary,
+    builder: (context, snapshot) {
+      if (snapshot.data case final summary?) _lastSummary = summary;
+      final lastSummary = _lastSummary;
+      final waiting = snapshot.connectionState == ConnectionState.waiting;
+      final notifications = waiting || snapshot.hasError ? null : snapshot.data;
+      // Keep the same inbox while checking whether an older server supports chat.
+      return MessageInboxPage(
+        scope: widget.scope,
+        controller: lastSummary?.conversationsEnabled == true
+            ? widget.controller
+            : null,
+        uid: widget.uid,
+        followerUnread: notifications?.unread ?? 0,
+        loadingNotifications: waiting,
+        notificationError: snapshot.error,
+        openFollowers: _followers,
+        openReports: _reports,
+        openFindUser: _findUser,
+        openModeration: notifications?.canModerate == true ? _moderation : null,
+        refreshNotifications: _refresh,
+        openAccount: widget.openAccount,
+      );
+    },
   );
 }

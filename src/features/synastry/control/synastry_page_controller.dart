@@ -6,7 +6,7 @@ import 'package:jovian_destiny/jovian_destiny.dart';
 
 import '../../../shared/http/json_client.dart';
 import '../../account/account.dart';
-import '../requests/synastry_summary_api.dart';
+import '../model/synastry_relationship.dart';
 
 typedef SynastryChartReader =
     Future<Map<String, Object?>> Function(
@@ -63,12 +63,38 @@ class SynastryPageController extends ChangeNotifier {
   String? message;
   Map<String, Object?>? a;
   Map<String, Object?>? b;
+  bool aIsOwner = true;
+  BirthProfile? _ownerProfile;
+  Map<String, Object?>? _ownerChart;
+  String _ownerAlias = '';
   final _manualProfiles = <SynastrySide, BirthProfile>{};
+  final _people = {
+    for (final side in SynastrySide.values)
+      side: <BirthProfile, ({Map<String, Object?> chart, String name})>{},
+  };
+
   BirthProfile? manualProfile(SynastrySide side) => _manualProfiles[side];
+  Iterable<BirthProfile> people(SynastrySide side) => _people[side]!.keys;
+  String personName(SynastrySide side, BirthProfile profile) =>
+      side == SynastrySide.a && identical(profile, _ownerProfile)
+      ? _ownerAlias
+      : _people[side]![profile]?.name ?? '';
+
+  String get ownerName => _ownerAlias.isNotEmpty
+      ? _ownerAlias
+      : (member ? account?.authorizedSession?.displayName.trim() ?? '' : '');
+
+  String _recordName(SynastrySide side) {
+    if (side == SynastrySide.a && aIsOwner) return ownerName;
+    final profile = manualProfile(side);
+    return profile == null ? '' : personName(side, profile);
+  }
+
   OwnSynastryChartStatus ownChartStatus = OwnSynastryChartStatus.idle;
   bool aFromArchive = false;
   Map<String, Object?>? result;
   String? report;
+  SynastryEdition? reportEdition;
   DateTime? savedAt;
   bool reportFromArchive = false;
   ReportHistoryController? _history;
@@ -88,6 +114,8 @@ class SynastryPageController extends ChangeNotifier {
   bool get hasSession => account?.authorizedSession != null;
   bool get canCalculate => calculate != null && compare != null;
   bool get summaryConfigured => summarize != null;
+  bool get canGenerateSummary =>
+      summaryConfigured && hasSession && _canShare && allowed && !busy;
   bool get needsPermission => hasSession && !_canShare;
   bool get _canShare =>
       account?.agreementState?.permissions['synastry.cloud_interpretation'] ==
@@ -110,6 +138,7 @@ class SynastryPageController extends ChangeNotifier {
     _cancelLatestRestore();
     result = null;
     report = null;
+    reportEdition = null;
     savedAt = null;
     reportFromArchive = false;
     _draft = null;
@@ -121,8 +150,51 @@ class SynastryPageController extends ChangeNotifier {
       _invalidate();
       b = null;
       _manualProfiles.remove(SynastrySide.b);
+      _people[SynastrySide.b]!.clear();
     }
     notifyListeners();
+  }
+
+  void selectPerson(SynastrySide side, BirthProfile profile) {
+    final person = _people[side]![profile];
+    if ((side == SynastrySide.b && !allowed) ||
+        busy ||
+        person == null ||
+        identical(profile, _manualProfiles[side])) {
+      return;
+    }
+    _invalidate();
+    _manualProfiles[side] = profile;
+    _setChart(side, person.chart, isOwner: false);
+    notifyListeners();
+  }
+
+  void selectOwner() {
+    if (aIsOwner || busy) return;
+    _invalidate();
+    if (_ownerProfile case final profile?) {
+      _manualProfiles[SynastrySide.a] = profile;
+    } else {
+      _manualProfiles.remove(SynastrySide.a);
+    }
+    _setChart(SynastrySide.a, _ownerChart, isOwner: true);
+    aFromArchive = _ownerChart != null && _ownerProfile == null;
+    if (aFromArchive) ownChartStatus = OwnSynastryChartStatus.available;
+    notifyListeners();
+  }
+
+  void _setChart(
+    SynastrySide side,
+    Map<String, Object?>? chart, {
+    required bool isOwner,
+  }) {
+    if (side == SynastrySide.a) {
+      a = chart;
+      aIsOwner = isOwner;
+      aFromArchive = false;
+    } else {
+      b = chart;
+    }
   }
 
   @override
@@ -139,7 +211,13 @@ class SynastryPageController extends ChangeNotifier {
       account?.sessionChanging == false &&
       account?.authorizedSession?.scope == scope;
 
-  Future<bool> setManual(SynastrySide side, BirthProfile profile) async {
+  Future<bool> setManual(
+    SynastrySide side,
+    BirthProfile profile, {
+    bool addPerson = false,
+    bool? asOwner,
+    String name = '',
+  }) async {
     final read = calculate;
     if (read == null || busy || (side == SynastrySide.b && !allowed))
       return false;
@@ -152,14 +230,21 @@ class SynastryPageController extends ChangeNotifier {
         return false;
       }
       _clearResult();
-      _manualProfiles[side] = profile;
-      if (side == SynastrySide.a) {
-        a = chart;
-        aFromArchive = false;
+      final previous = _manualProfiles[side];
+      final isOwner =
+          side == SynastrySide.a && (asOwner ?? (aIsOwner && !addPerson));
+      if (isOwner) {
+        _ownerProfile = profile;
+        _ownerChart = chart;
+        _ownerAlias = name.trim();
         ownChartStatus = OwnSynastryChartStatus.idle;
       } else {
-        b = chart;
+        final choices = _people[side]!;
+        if (!addPerson) choices.remove(previous);
+        choices[profile] = (chart: chart, name: name.trim());
       }
+      _manualProfiles[side] = profile;
+      _setChart(side, chart, isOwner: isOwner);
       return true;
     } catch (_) {
       if (_current(job)) message = '排盘失败，请核对出生资料后重试。';
@@ -200,7 +285,10 @@ class SynastryPageController extends ChangeNotifier {
           } else {
             _clearResult();
             a = chart;
+            aIsOwner = true;
             aFromArchive = true;
+            _ownerChart = chart;
+            _ownerProfile = null;
             _manualProfiles.remove(SynastrySide.a);
             ownChartStatus = OwnSynastryChartStatus.available;
           }
@@ -213,7 +301,7 @@ class SynastryPageController extends ChangeNotifier {
       }
     } catch (_) {
       if (_current(job) && _scope(session.scope)) {
-        ownChartStatus = OwnSynastryChartStatus.failed;
+        _unavailableOwnChart(OwnSynastryChartStatus.failed);
       }
     } finally {
       if (_current(job) && ownChartStatus == OwnSynastryChartStatus.loading) {
@@ -225,6 +313,9 @@ class SynastryPageController extends ChangeNotifier {
 
   void _unavailableOwnChart(OwnSynastryChartStatus status) {
     ownChartStatus = status;
+    if (status != OwnSynastryChartStatus.loading && _ownerProfile == null) {
+      _ownerChart = null;
+    }
     if (aFromArchive) {
       a = null;
       aFromArchive = false;
@@ -291,27 +382,6 @@ class SynastryPageController extends ChangeNotifier {
     );
     _historyScope = session.scope;
     notifyListeners();
-  }
-
-  Future<void> openSaved(String id) async {
-    final session = account?.authorizedSession;
-    if (session == null || busy || !_scope(session.scope)) return;
-    _cancelLatestRestore();
-    final job = _start();
-    try {
-      final archive = await account!.reports.detail(
-        session.id,
-        ReportKind.synastry,
-        id,
-      );
-      if (_current(job) && _scope(session.scope)) _showSaved(archive);
-    } catch (_) {
-      if (_current(job) && _scope(session.scope)) {
-        message = '暂时无法读取这次合盘存档，请重试。';
-      }
-    } finally {
-      _finish(job);
-    }
   }
 
   Future<void> compareCharts() async {
@@ -382,7 +452,7 @@ class SynastryPageController extends ChangeNotifier {
     }
   }
 
-  Future<void> generateSummary() async {
+  Future<void> generateSummary({SynastryEdition? edition}) async {
     final client = account;
     final scope = client?.authorizedSession;
     final request = result?['summaryRequest'];
@@ -438,23 +508,33 @@ class SynastryPageController extends ChangeNotifier {
       );
       if (!isCurrent()) return;
       final sections = [
-        for (final MapEntry(:key, :value) in synastrySummarySections.entries)
-          if (values[key] case final body? when body.isNotEmpty)
-            {'id': key, 'title': value, 'body': body},
+        for (final relationship in SynastryRelationship.values)
+          if (values[relationship.name] case final body? when body.isNotEmpty)
+            {
+              'id': relationship.name,
+              'title': relationship.label,
+              'body': body,
+            },
       ];
       if (sections.isEmpty) throw const FormatException('Missing report.');
       report = sections
           .map((row) => "## ${row['title']}\n\n${row['body']}")
           .join('\n\n');
+      reportEdition = edition;
       reportFromArchive = false;
-      if (sections.length != synastrySummarySections.length) {
+      if (sections.length != SynastryRelationship.values.length) {
         message = '在线解读尚未包含全部四种关系，暂时无法存档。';
         return;
       }
       _draft = {
         'version': 1,
         'kind': 'synastry',
-        'title': '双人合盘 · 四种关系',
+        'title':
+            edition?.archiveTitleForPair(
+              _recordName(SynastrySide.a),
+              _recordName(SynastrySide.b),
+            ) ??
+            '双人合盘 · 四种关系',
         'contextKey': context,
         'calculatedAt': DateTime.fromMillisecondsSinceEpoch(
           DateTime.now().millisecondsSinceEpoch,
@@ -521,6 +601,7 @@ class SynastryPageController extends ChangeNotifier {
 
   void _showSaved(ArchivedReport archive) {
     report = archive.body;
+    reportEdition = SynastryEdition.fromArchiveTitle(archive.entry.title);
     savedAt = archive.entry.savedAt;
     reportFromArchive = true;
     _draft = null;

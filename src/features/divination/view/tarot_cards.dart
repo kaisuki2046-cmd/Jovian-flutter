@@ -1,6 +1,8 @@
 import 'package:jovian_divination/jovian_divination.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../ui/interface_language.dart';
+
 const _guidePositions = ['现状', '关键影响', '趋势'];
 const _cardAssets = 'src/features/divination/assets/tarot';
 
@@ -112,7 +114,7 @@ class TarotReveal extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
+                  UiText(
                     _guidePositions[card.position.index],
                     textAlign: TextAlign.center,
                     style: text.titleSmall,
@@ -137,7 +139,7 @@ class TarotReveal extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(card.face.card.name, textAlign: TextAlign.center),
-                  Text(
+                  UiText(
                     card.face.orientation == TarotOrientation.reversed
                         ? '逆位'
                         : '正位',

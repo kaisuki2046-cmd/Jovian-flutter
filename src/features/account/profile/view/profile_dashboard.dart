@@ -7,7 +7,7 @@ import '../../../social/social.dart';
 import '../../auth/control/account_controller.dart';
 import '../../auth/model/session.dart';
 import '../../history/view/archived_charts_page.dart';
-import '../../history/view/reports_page.dart';
+import '../../history/view/personal_report_page.dart';
 import '../../model/account_section.dart';
 import '../../view/account_section_links.dart';
 import '../model/profile_details.dart';
@@ -59,128 +59,112 @@ class ProfileDashboard extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  colors.surfaceContainerLow,
-                  colors.surfaceContainerLow,
-                  colors.surface,
-                ],
-                stops: const [0, 0.48, 1],
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(22, 14, 22, 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                spacing: 13,
-                children: [
-                  Align(
-                    alignment: AlignmentDirectional.centerEnd,
-                    child: IconButton.filledTonal(
-                      tooltip: context.uiLabel('设置'),
-                      onPressed: openSettings,
-                      icon: const Icon(Icons.settings_outlined, size: 21),
-                      style: IconButton.styleFrom(
-                        fixedSize: const Size.square(44),
-                        minimumSize: const Size.square(44),
-                        backgroundColor: colors.primaryContainer,
-                        foregroundColor: colors.onSurface,
-                      ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(22, 14, 22, 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              spacing: 13,
+              children: [
+                Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: IconButton.filledTonal(
+                    tooltip: context.uiLabel('设置'),
+                    onPressed: openSettings,
+                    icon: const Icon(Icons.settings_outlined, size: 21),
+                    style: IconButton.styleFrom(
+                      fixedSize: const Size.square(44),
+                      minimumSize: const Size.square(44),
+                      backgroundColor: colors.primaryContainer,
+                      foregroundColor: colors.onSurface,
                     ),
                   ),
-                  ProfileLocalDetails(
-                    key: ValueKey((account, scope)),
-                    account: account,
-                    scope: scope,
-                    builder: (context, details, edit) => Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      spacing: 13,
-                      children: [
-                        _Identity(
-                          avatar: ProfileAvatar(account: account, scope: scope),
-                          name: guest
-                              ? context.uiLabel('访客')
-                              : owner?.displayName ??
-                                    context.uiLabel(
-                                      waiting || auth != null
-                                          ? '账号与隐私'
-                                          : '个人中心',
-                                    ),
-                          uid: owner?.uid,
-                          status: waiting
-                              ? '正在确认当前账号…'
-                              : needsAgreement
-                              ? '请先确认最新协议。'
-                              : owner == null && auth != null
-                              ? '暂时无法确认账号与协议。'
-                              : owner == null
-                              ? '登录后可查看个人资料。'
-                              : guest
-                              ? 'UID · 登录后显示'
-                              : owner.uid == null
-                              ? 'UID 暂不可用'
-                              : null,
-                          signature: details?.signature,
-                          editSignature: edit == null
-                              ? null
-                              : () => edit(ProfileDetailsTab.signature),
-                          openAccount: guest ? onUpgrade : null,
+                ),
+                ProfileLocalDetails(
+                  key: ValueKey((account, scope)),
+                  account: account,
+                  scope: scope,
+                  builder: (context, details, edit) => Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    spacing: 13,
+                    children: [
+                      _Identity(
+                        avatar: ProfileAvatar(account: account, scope: scope),
+                        name: guest
+                            ? context.uiLabel('访客')
+                            : owner?.displayName ??
+                                  context.uiLabel(
+                                    waiting || auth != null ? '账号与隐私' : '个人中心',
+                                  ),
+                        uid: owner?.uid,
+                        status: waiting
+                            ? '正在确认当前账号…'
+                            : needsAgreement
+                            ? '请先确认最新协议。'
+                            : owner == null && auth != null
+                            ? '暂时无法确认账号与协议。'
+                            : owner == null
+                            ? '登录后可查看个人资料。'
+                            : guest
+                            ? 'UID · 登录后显示'
+                            : owner.uid == null
+                            ? 'UID 暂不可用'
+                            : null,
+                        signature: details?.signature,
+                        editSignature: edit == null
+                            ? null
+                            : () => edit(ProfileDetailsTab.signature),
+                        openAccount: guest ? onUpgrade : null,
+                      ),
+                      if (memberId != null)
+                        _Relationships(
+                          key: ValueKey((account, memberId)),
+                          account: account,
+                          memberId: memberId,
+                          active: active,
+                        )
+                      else if (guest)
+                        const _RelationshipRow(),
+                      if (details != null && edit != null)
+                        _ProfileTags(
+                          details: details,
+                          onEdit: () => edit(ProfileDetailsTab.tags),
                         ),
-                        if (memberId != null)
-                          _Relationships(
-                            key: ValueKey((account, memberId)),
-                            account: account,
-                            memberId: memberId,
-                            active: active,
-                          )
-                        else if (guest)
-                          const _RelationshipRow(),
-                        if (details != null && edit != null)
-                          _ProfileTags(
-                            details: details,
-                            onEdit: () => edit(ProfileDetailsTab.tags),
+                    ],
+                  ),
+                ),
+                if (owner != null)
+                  IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      spacing: 7,
+                      children: [
+                        Expanded(
+                          child: _Shortcut(
+                            icon: Icons.description_outlined,
+                            label: '我的报告',
+                            onTap: () => open(
+                              AccountSection.reports,
+                              () => PersonalReportPage(account: account),
+                            ),
+                          ),
+                        ),
+                        if (openMessages != null)
+                          Expanded(
+                            child: _Shortcut(
+                              icon: Icons.people_outline,
+                              label: '消息',
+                              onTap: openMessages!,
+                            ),
                           ),
                       ],
                     ),
                   ),
-                  if (owner != null)
-                    IntrinsicHeight(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        spacing: 7,
-                        children: [
-                          Expanded(
-                            child: _Shortcut(
-                              icon: Icons.description_outlined,
-                              label: '我的报告',
-                              onTap: () => open(
-                                AccountSection.reports,
-                                () => ReportsPage(account: account),
-                              ),
-                            ),
-                          ),
-                          if (openMessages != null)
-                            Expanded(
-                              child: _Shortcut(
-                                icon: Icons.people_outline,
-                                label: '消息',
-                                onTap: openMessages!,
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  if (needsAgreement)
-                    FilledButton.tonal(
-                      onPressed: openSettings,
-                      child: const UiText('前往设置确认协议'),
-                    ),
-                ],
-              ),
+                if (needsAgreement)
+                  FilledButton.tonal(
+                    onPressed: openSettings,
+                    child: const UiText('前往设置确认协议'),
+                  ),
+              ],
             ),
           ),
           if (owner != null)

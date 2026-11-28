@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import '../src/app/app_navigation.dart';
 import '../src/app/main.dart';
 import '../src/features/account/account.dart';
+import '../src/features/social/view/message_components.dart';
 import 'support/birth_picker_fixture.dart';
 
 void main() {
@@ -29,11 +30,58 @@ void main() {
       final restored = parser.restoreRouteInformation(fortune);
       expect(restored.uri.toString(), '/modules/fortune');
       expect(restored.state, archiveId);
+      final monthly = await parser.parseRouteInformation(
+        RouteInformation(
+          uri: Uri.parse('/fortune?period=month'),
+          state: archiveId,
+        ),
+      );
+      expect(monthly.fortunePeriod, FortunePeriod.month);
+      final monthlyRoute = parser.restoreRouteInformation(monthly);
+      expect(monthlyRoute.uri.toString(), '/fortune?period=month');
+      expect(monthlyRoute.state, archiveId);
+      expect(await parser.parseRouteInformation(monthlyRoute), monthly);
       final unknown = await parser.parseRouteInformation(
         RouteInformation(uri: Uri.parse('/missing'), state: archiveId),
       );
       expect(unknown.tab, JovianTab.destiny);
       expect(unknown.archiveId, isNull);
+    },
+  );
+
+  testWidgets(
+    'destiny cards swipe independently and open the chosen forecast',
+    (tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(320, 680);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final platform = tester.binding.platformDispatcher;
+      platform.accessibilityFeaturesTestValue = const FakeAccessibilityFeatures(
+        disableAnimations: true,
+      );
+      addTearDown(platform.clearAccessibilityFeaturesTestValue);
+      await tester.pumpWidget(const JovianApp());
+      await tester.pumpAndSettle();
+
+      expect(find.text('本命命盘'), findsOneWidget);
+      expect(find.text('今日'), findsOneWidget);
+      await tester.drag(find.text('本命命盘'), const Offset(0, -132));
+      await tester.pumpAndSettle();
+      expect(find.text('出生资料'), findsOneWidget);
+      expect(find.text('今日'), findsOneWidget);
+
+      await tester.tap(find.byTooltip('切换运势卡片'));
+      await tester.pumpAndSettle();
+      expect(find.text('本周'), findsOneWidget);
+      expect(find.text('出生资料'), findsOneWidget);
+
+      await tester.tap(find.text('月运'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+      final month = find.widgetWithText(ChoiceChip, '本月');
+      expect(tester.widget<ChoiceChip>(month).selected, isTrue);
+      expect(tester.takeException(), isNull);
     },
   );
 
@@ -218,6 +266,10 @@ void main() {
     'platform history switches tabs without discarding the birth form',
     (tester) async {
       final platform = tester.binding.platformDispatcher;
+      platform.accessibilityFeaturesTestValue = const FakeAccessibilityFeatures(
+        disableAnimations: true,
+      );
+      addTearDown(platform.clearAccessibilityFeaturesTestValue);
       platform.defaultRouteNameTestValue = '/synastry';
       addTearDown(platform.clearDefaultRouteNameTestValue);
       await tester.pumpWidget(const JovianApp());
@@ -235,6 +287,13 @@ void main() {
       await tester.pumpAndSettle();
       expect(_selection(tester), JovianTab.messages.index);
       expect(birthDate, findsNothing);
+
+      await tester.tap(find.widgetWithText(MessageConversationRow, '岑宁'));
+      await tester.pumpAndSettle();
+      expect(find.byType(NavigationBar), findsNothing);
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(_selection(tester), JovianTab.messages.index);
 
       await tester.binding.handlePushRoute('/');
       await tester.pump();

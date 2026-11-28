@@ -48,8 +48,6 @@ class _JovianTabDockState extends State<JovianTabDock>
   final _paintSpace = GlobalKey();
   late List<GlobalKey> _anchors = _makeAnchors();
   final _contact = ValueNotifier<_LensContact?>(null);
-  final _trayBackdrop = BackdropKey();
-  final _rimBackdrop = BackdropKey();
   late final _confirmation = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 270),
@@ -389,7 +387,6 @@ class _JovianTabDockState extends State<JovianTabDock>
                               dark: dark,
                               raised: raised,
                               outline: outline,
-                              rimBackdrop: _rimBackdrop,
                             ),
                           );
                           return Stack(
@@ -400,7 +397,6 @@ class _JovianTabDockState extends State<JovianTabDock>
                                 child: _Tray(
                                   dark: dark,
                                   aperture: raised ? outline : null,
-                                  backdropKey: _trayBackdrop,
                                 ),
                               ),
                               lens,
@@ -581,55 +577,12 @@ class _DockArtwork extends CustomPainter {
 const _capsule = BorderRadius.all(Radius.circular(999));
 
 class _Tray extends StatelessWidget {
-  const _Tray({required this.dark, required this.backdropKey, this.aperture});
+  const _Tray({required this.dark, this.aperture});
 
   final bool dark;
-  final BackdropKey backdropKey;
   final TabLensOutline? aperture;
 
   static final _blur = ui.ImageFilter.blur(sigmaX: 11, sigmaY: 11);
-
-  Widget _background() {
-    final sample = BackdropFilter(
-      filter: _blur,
-      backdropGroupKey: backdropKey,
-      child: const SizedBox.expand(),
-    );
-    final hole = aperture?.bounds;
-    if (hole == null) return sample;
-    // Keep the tray's stronger blur out of the reserved lens sample. A path
-    // clip alone leaves its full rectangular sample in some web renderers.
-    // Inscribe the sample in the capsule so its corners never show through
-    // the frosted tray. The bevel softens the sharper sample toward the edge.
-    final sampleInset = hole.shortestSide * 0.19;
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final size = constraints.biggest;
-        final opening = hole.deflate(sampleInset).intersect(Offset.zero & size);
-        final regions = [
-          Rect.fromLTRB(0, 0, opening.left, size.height),
-          Rect.fromLTRB(opening.right, 0, size.width, size.height),
-          Rect.fromLTRB(opening.left, 0, opening.right, opening.top),
-          Rect.fromLTRB(
-            opening.left,
-            opening.bottom,
-            opening.right,
-            size.height,
-          ),
-        ];
-        return Stack(
-          children: [
-            for (final region in regions)
-              if (!region.isEmpty)
-                Positioned.fromRect(
-                  rect: region,
-                  child: ClipRect(child: sample),
-                ),
-          ],
-        );
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) => CustomPaint(
@@ -643,7 +596,7 @@ class _Tray extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          _background(),
+          BackdropFilter(filter: _blur, child: const SizedBox.expand()),
           ClipPath(
             clipper: _TrayClip(aperture),
             child: DecoratedBox(
@@ -690,13 +643,11 @@ class _Lens extends StatelessWidget {
     required this.dark,
     required this.raised,
     required this.outline,
-    required this.rimBackdrop,
   });
 
   final bool dark;
   final bool raised;
   final TabLensOutline outline;
-  final BackdropKey rimBackdrop;
 
   @override
   Widget build(BuildContext context) => IgnorePointer(
@@ -718,11 +669,7 @@ class _Lens extends StatelessWidget {
         child: ClipPath(
           clipper: _LensBand(outline: outline),
           child: raised
-              ? _RaisedGlass(
-                  outline: outline,
-                  dark: dark,
-                  rimBackdrop: rimBackdrop,
-                )
+              ? _RaisedGlass(outline: outline, dark: dark)
               : BackdropFilter(
                   filter: _restingBlur,
                   child: DecoratedBox(
@@ -748,15 +695,10 @@ class _Lens extends StatelessWidget {
 }
 
 class _RaisedGlass extends StatelessWidget {
-  const _RaisedGlass({
-    required this.outline,
-    required this.dark,
-    required this.rimBackdrop,
-  });
+  const _RaisedGlass({required this.outline, required this.dark});
 
   final TabLensOutline outline;
   final bool dark;
-  final BackdropKey rimBackdrop;
   static final _faceBlur = ui.ImageFilter.blur(sigmaX: .65, sigmaY: .65);
   static final _lightFace = ui.ImageFilter.compose(
     inner: _faceBlur,
@@ -772,37 +714,19 @@ class _RaisedGlass extends StatelessWidget {
     final size = outline.bounds.size;
     final rimWidth = (size.shortestSide * 0.12).clamp(3.0, 6.0);
     final rim = _LensBand(outline: outline, inset: rimWidth, rim: true);
-    final rimFilter = _rimRefraction(size, dark);
-    final opening = (Offset.zero & size).deflate(
-      rimWidth + size.shortestSide * .13,
-    );
-    final rimRegions = [
-      Rect.fromLTRB(0, 0, opening.left, size.height),
-      Rect.fromLTRB(opening.right, 0, size.width, size.height),
-      Rect.fromLTRB(opening.left, 0, opening.right, opening.top),
-      Rect.fromLTRB(opening.left, opening.bottom, opening.right, size.height),
-    ];
     return Stack(
       fit: StackFit.expand,
       children: [
-        // The curved clip shapes the rim. Rectangular sample bounds keep web
-        // renderers from feeding the rim's refraction into the face filter.
-        for (final region in rimRegions)
-          ClipRect(
-            clipper: _LensSampleRect(region),
-            child: ClipPath(
-              clipper: rim,
-              child: BackdropFilter(
-                filter: rimFilter,
-                backdropGroupKey: rimBackdrop,
-                child: const SizedBox.expand(),
-              ),
-            ),
-          ),
+        // Sample across the whole lens before adding the curved rim. Separate
+        // rectangular backdrop regions leave seams in the raised glass.
+        BackdropFilter(
+          filter: dark ? _darkFace : _lightFace,
+          child: const SizedBox.expand(),
+        ),
         ClipPath(
-          clipper: _LensBand(outline: outline, inset: rimWidth),
+          clipper: rim,
           child: BackdropFilter(
-            filter: dark ? _darkFace : _lightFace,
+            filter: _rimRefraction(size, dark),
             child: const SizedBox.expand(),
           ),
         ),
@@ -810,18 +734,6 @@ class _RaisedGlass extends StatelessWidget {
       ],
     );
   }
-}
-
-class _LensSampleRect extends CustomClipper<Rect> {
-  const _LensSampleRect(this.rect);
-
-  final Rect rect;
-
-  @override
-  Rect getClip(Size size) => rect;
-
-  @override
-  bool shouldReclip(_LensSampleRect oldClipper) => rect != oldClipper.rect;
 }
 
 class _LensBand extends CustomClipper<Path> {

@@ -1,6 +1,9 @@
 import 'dart:math' as math;
 
+import 'package:flutter/gestures.dart';
 import 'package:material_ui/material_ui.dart';
+
+import '../../../../ui/interface_language.dart';
 
 const tarotAspectRatio = 2 / 3;
 const tarotDeckControlHeight = 48.0;
@@ -8,8 +11,8 @@ const _backAssets = 'src/features/divination/assets/tarot';
 const tarotBack = '$_backAssets/star-trail-static.webp';
 const tarotHoverLights = '$_backAssets/star-trail-hover.webp';
 
-class TarotTableLayout {
-  TarotTableLayout(this.width, this.slotCount, {this.extraHeight = 0})
+class TarotFanLayout {
+  TarotFanLayout(this.width, this.slotCount, {this.extraHeight = 0})
     : cardWidth = (width / 3).clamp(74.0, 132.0);
 
   final double width;
@@ -23,37 +26,11 @@ class TarotTableLayout {
   double get reach =>
       (cardWidth * math.cos(math.pi / 5) + cardHeight * math.sin(math.pi / 5)) /
       2;
-  double get arcDepth => cardHeight * 0.29 + extraHeight * 0.5;
   double get cardTop => 10 + extraHeight * 0.25;
   double get trackWidth => math.max(width, span + 2 * reach.ceil());
   double get maxScroll => trackWidth - width;
-  double get height => cardHeight + arcDepth + 24 + extraHeight * 0.5;
-  Size get cardSize => Size(cardWidth, cardHeight);
-
-  // Store card centers in this range so a paused spread can resize with the table.
-  Rect get centerBounds {
-    final insetX = math.min(width * .40, cardWidth * .70);
-    final insetY = math.min(height * .40, cardHeight * .59);
-    return Rect.fromLTRB(insetX, insetY, width - insetX, height - insetY);
-  }
-
-  Offset cardCenter(Offset normalized) {
-    final bounds = centerBounds;
-    return bounds.topLeft +
-        Offset(bounds.width * normalized.dx, bounds.height * normalized.dy);
-  }
-
-  Offset normalizeCenter(Offset point) {
-    final bounds = centerBounds;
-    return Offset(
-      ((point.dx - bounds.left) / math.max(bounds.width, 1)).clamp(0, 1),
-      ((point.dy - bounds.top) / math.max(bounds.height, 1)).clamp(0, 1),
-    );
-  }
-
-  static const initialPile = Offset(.19, .62);
-  static const initialAngle = -.09;
-
+  double get height => cardHeight * 1.29 + 24 + extraHeight;
+  double get _radius => width * 0.95 + reach;
   double center(int slot) => (trackWidth - span) / 2 + slot * step;
 
   ({double angle, double depth, double opacity})? pose(
@@ -63,10 +40,11 @@ class TarotTableLayout {
     final distance = center(slot) - scroll - width / 2;
     final visible = width / 2 + reach - distance.abs();
     if (visible <= 0) return null;
-    final ratio = (2 * distance / width).clamp(-1.0, 1.0);
+    // A card's center and rotation share the same circle.
+    final angle = math.asin(distance / _radius);
     return (
-      angle: ratio * math.pi / 5,
-      depth: arcDepth * (1 - math.cos(ratio * math.pi / 2)),
+      angle: angle,
+      depth: _radius * (1 - math.cos(angle)),
       opacity: (visible / math.min(24.0, cardWidth * 0.22)).clamp(0.0, 1.0),
     );
   }
@@ -173,45 +151,214 @@ class _HoverReflection extends StatelessWidget {
 
 typedef TarotCardOrigin = ({Rect frame, double angle, double opacity});
 
-class TarotPileArt extends StatelessWidget {
-  const TarotPileArt({
+class TarotRitualFan extends StatefulWidget {
+  const TarotRitualFan({
     super.key,
-    required this.count,
-    required this.cardWidth,
-    this.animated = false,
+    required this.layout,
+    required this.selectedSlots,
+    required this.busy,
+    required this.reducedMotion,
+    required this.animateBacks,
+    required this.choose,
   });
 
-  final int count;
-  final double cardWidth;
-  final bool animated;
+  final TarotFanLayout layout;
+  final Set<int> selectedSlots;
+  final bool busy;
+  final bool reducedMotion;
+  final bool animateBacks;
+  final void Function(int slot, TarotCardOrigin origin) choose;
+
+  @override
+  State<TarotRitualFan> createState() => _TarotRitualFanState();
+}
+
+class _TarotRitualFanState extends State<TarotRitualFan> {
+  late final _scroll = ScrollController(
+    initialScrollOffset: widget.layout.maxScroll / 2,
+  );
+
+  @override
+  void didUpdateWidget(TarotRitualFan oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!_scroll.hasClients ||
+        widget.layout.maxScroll == oldWidget.layout.maxScroll)
+      return;
+    final former = oldWidget.layout.maxScroll;
+    final fraction = former == 0
+        ? 0.5
+        : (_scroll.offset / former).clamp(0.0, 1.0);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _scroll.hasClients)
+        _scroll.jumpTo(fraction * widget.layout.maxScroll);
+    });
+  }
+
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  void _shift(int direction) {
+    final layout = widget.layout;
+    final target = (_scroll.offset + direction * layout.width * 0.72).clamp(
+      0.0,
+      layout.maxScroll,
+    );
+    if (widget.reducedMotion) {
+      _scroll.jumpTo(target);
+    } else {
+      _scroll.animateTo(
+        target,
+        duration: const Duration(milliseconds: 240),
+        curve: Curves.easeOutCubic,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final layers = math.min(count - 1, 5);
-    final depth = (count - 1) * .10;
-    final colors = Theme.of(context).colorScheme;
-    return Stack(
-      fit: StackFit.expand,
-      clipBehavior: Clip.none,
+    final layout = widget.layout;
+    return Column(
       children: [
-        for (var layer = layers; layer > 0; layer--)
-          Transform.translate(
-            offset: Offset(.35, .94) * (depth * layer / layers),
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(
-                  TarotCardShape.corner(cardWidth),
+        SizedBox(
+          height: tarotDeckControlHeight,
+          child: AnimatedBuilder(
+            animation: _scroll,
+            builder: (context, _) {
+              final offset = _scroll.hasClients
+                  ? _scroll.offset
+                  : layout.maxScroll / 2;
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    tooltip: context.uiLabel('向左浏览牌阵'),
+                    onPressed: widget.busy || offset <= 0
+                        ? null
+                        : () => _shift(-1),
+                    icon: const Icon(Icons.chevron_left),
+                  ),
+                  IconButton(
+                    tooltip: context.uiLabel('向右浏览牌阵'),
+                    onPressed: widget.busy || offset >= layout.maxScroll
+                        ? null
+                        : () => _shift(1),
+                    icon: const Icon(Icons.chevron_right),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+        Semantics(
+          container: true,
+          label: context
+              .uiLabel('{count} 张塔罗牌阵')
+              .replaceFirst('{count}', layout.slotCount.toString()),
+          child: ScrollConfiguration(
+            behavior: ScrollConfiguration.of(context).copyWith(
+              dragDevices: const {
+                PointerDeviceKind.touch,
+                PointerDeviceKind.mouse,
+                PointerDeviceKind.trackpad,
+                PointerDeviceKind.stylus,
+              },
+            ),
+            child: SingleChildScrollView(
+              key: const ValueKey('tarot-fan-scroll'),
+              controller: _scroll,
+              scrollDirection: Axis.horizontal,
+              physics: widget.busy
+                  ? const NeverScrollableScrollPhysics()
+                  : null,
+              child: SizedBox(
+                width: layout.trackWidth,
+                height: layout.height,
+                child: AnimatedBuilder(
+                  animation: _scroll,
+                  builder: (context, _) {
+                    final offset = _scroll.hasClients
+                        ? _scroll.offset
+                        : layout.maxScroll / 2;
+                    return Stack(
+                      children: [
+                        for (var slot = 0; slot < layout.slotCount; slot++)
+                          if (!widget.selectedSlots.contains(slot))
+                            if (layout.pose(slot, offset) case final pose?)
+                              Positioned(
+                                key: ValueKey('tarot-slot-$slot'),
+                                left:
+                                    layout.center(slot) - layout.cardWidth / 2,
+                                top: layout.cardTop + pose.depth,
+                                width: layout.cardWidth,
+                                height: layout.cardHeight,
+                                child: Transform.rotate(
+                                  angle: pose.angle,
+                                  child: Opacity(
+                                    opacity: pose.opacity,
+                                    child: Builder(
+                                      builder: (cardContext) {
+                                        void pick() {
+                                          final box =
+                                              cardContext.findRenderObject()!
+                                                  as RenderBox;
+                                          widget.choose(slot, (
+                                            frame: Rect.fromCenter(
+                                              center: box.localToGlobal(
+                                                box.size.center(Offset.zero),
+                                              ),
+                                              width: box.size.width,
+                                              height: box.size.height,
+                                            ),
+                                            angle: pose.angle,
+                                            opacity: pose.opacity,
+                                          ));
+                                        }
+
+                                        return Semantics(
+                                          button: true,
+                                          label: context
+                                              .uiLabel('选取第 {index} 张牌')
+                                              .replaceFirst(
+                                                '{index}',
+                                                (slot + 1).toString(),
+                                              ),
+                                          enabled: !widget.busy,
+                                          onTap: widget.busy ? null : pick,
+                                          excludeSemantics: true,
+                                          child: Material(
+                                            elevation: 3,
+                                            shape: const TarotCardShape(),
+                                            clipBehavior: Clip.antiAlias,
+                                            child: Stack(
+                                              fit: StackFit.expand,
+                                              children: [
+                                                TarotBackArt(
+                                                  animated: widget.animateBacks,
+                                                ),
+                                                InkWell(
+                                                  onTap: widget.busy
+                                                      ? null
+                                                      : pick,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ),
+                      ],
+                    );
+                  },
                 ),
-                border: Border.all(color: colors.outline.withValues(alpha: .7)),
-                color: colors.surfaceContainerHighest,
               ),
             ),
           ),
-        Material(
-          elevation: 2,
-          shape: const TarotCardShape(),
-          clipBehavior: Clip.antiAlias,
-          child: TarotBackArt(animated: animated),
         ),
       ],
     );

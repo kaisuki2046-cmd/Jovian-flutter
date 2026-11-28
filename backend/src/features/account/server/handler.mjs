@@ -175,7 +175,8 @@ export function createAccountHandler({ store, webOrigin, authProvider, deliverPh
         };
         requireCurrentAccount();
         const run = isSocial ? social : privacyRequests;
-        return reply(response, 200, await run(route, url, user.id, input.readInput, requireCurrentAccount));
+        return reply(response, 200, await run(route, url, user.id,
+          isSocial ? (limit) => readBody(request, limit) : input.readInput, requireCurrentAccount));
       }
       if (route === 'GET /account/auth/guest') return reply(response, 200, auth.restoreGuest(token));
       if (route === 'POST /account/auth/guest') {

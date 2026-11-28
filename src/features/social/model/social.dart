@@ -1,3 +1,7 @@
+import 'dart:typed_data';
+
+part 'messages.dart';
+
 final _userId = RegExp(r'^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$');
 final socialUid = RegExp(r'^[1-9]\d{7}$');
 
@@ -174,13 +178,22 @@ class FollowerAlert {
 }
 
 class SocialInboxSummary {
-  const SocialInboxSummary(this.unread, this.canModerate);
+  const SocialInboxSummary(
+    this.unread,
+    this.canModerate, {
+    this.conversationsEnabled = false,
+  });
 
   factory SocialInboxSummary.fromJson(Map<String, Object?> json) =>
-      SocialInboxSummary(decodeUnread(json), json['canModerate'] == true);
+      SocialInboxSummary(
+        decodeUnread(json),
+        json['canModerate'] == true,
+        conversationsEnabled: json['conversations'] == true,
+      );
 
   final int unread;
   final bool canModerate;
+  final bool conversationsEnabled;
 }
 
 int decodeUnread(Map<String, Object?> json) => _count(json['unread']);

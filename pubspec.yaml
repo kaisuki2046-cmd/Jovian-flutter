@@ -5,12 +5,15 @@ publish_to: none
 environment:
   sdk: ^3.10.0
 dependencies:
+  audioplayers: ^6.8.1
   file_selector: ^1.1.0
   flutter:
     sdk: flutter
   flutter_secure_storage: ^11.2.0
   flutter_timezone: ^5.1.1
   http: ^1.6.0
+  image: ^4.13.1
+  image_picker: ^1.2.4
   jovian_civil_time:
     path: src/shared/time
   jovian_destiny:
@@ -21,8 +24,12 @@ dependencies:
     path: src/features/fortune/control/calculation
   material_ui: ^1.11.1
   path_provider: ^2.1.6
+  qr_flutter: ^4.1.0
+  record: ^7.2.0
+  video_player: ^2.14.1
   web: ^1.1.2
   webview_flutter: ^4.14.1
+  zxing2: ^0.2.4
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -36,6 +43,9 @@ flutter:
     - family: JovianChartSymbols
       fonts:
         - asset: src/features/destiny/assets/NotoSansSymbols-Regular.ttf
+    - family: JovianMessageEmoji
+      fonts:
+        - asset: src/features/social/assets/jovian-message-emoji.ttf
   assets:
     - src/ui/assets/NotoSansSC-OFL.txt
     - src/features/account/reading-profile/assets/
@@ -48,4 +58,7 @@ flutter:
     - src/features/divination/assets/ritual/
     - src/features/divination/assets/assistant/
     - src/features/divination/assets/assistant/motion/
+    - src/features/social/assets/orbit.mp4
+    - src/features/social/assets/message-emoji-OFL.txt
+    - src/features/social/assets/avatars/
     - tool/legacy_compute/native_assets/

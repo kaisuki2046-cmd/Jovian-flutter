@@ -618,20 +618,7 @@ class GuideAssistantMessage extends StatelessWidget {
           ),
           child: Padding(
             padding: const EdgeInsets.all(14),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                UiText(
-                  'AI 助手',
-                  style: theme.textTheme.labelMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: colors.onSurfaceVariant,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                content,
-              ],
-            ),
+            child: SizedBox(width: double.infinity, child: content),
           ),
         ),
       ),

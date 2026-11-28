@@ -12,9 +12,16 @@ import '../src/app/main.dart' show JovianApp;
 import '../src/features/account/account.dart';
 import '../src/features/account/auth/model/session.dart';
 import '../src/features/account/settings/model/agreements.dart';
+import '../src/features/social/control/message_workspace_controller.dart';
+import '../src/features/social/model/social.dart';
 import '../src/features/social/social.dart';
+import '../src/features/social/view/message_components.dart';
+import '../src/features/social/view/message_design.dart';
+import '../src/features/social/view/message_stories.dart';
+import '../src/features/social/view/message_thread_page.dart';
 import '../src/shared/http/json_client.dart';
 import '../src/ui/interface_language.dart';
+import '../src/ui/theme.dart';
 
 const _memberId = '00000000-0000-0000-0000-000000000001';
 const _actorId = '00000000-0000-0000-0000-000000000002';
@@ -33,6 +40,75 @@ class _Storage implements NativeSessionStorage {
 
   @override
   Future<void> write(String? token) async => this.token = token;
+}
+
+class _GroupHistory extends Fake implements MessageHistory {
+  _GroupHistory(this.image) {
+    final start = DateTime(2026, 11, 28, 20);
+    messagesNewestFirst = [
+      for (final (id, body) in [
+        (4, '🫶🫶'),
+        (3, '集合时间我记下了。'),
+        (2, '先看北面的星图。'),
+        (1, ''),
+      ])
+        ConversationMessage(
+          id: id,
+          senderId: _actorId,
+          senderName: '阿岚',
+          sentAt: start.add(Duration(seconds: id)),
+          body: body,
+          attachment: id == 1
+              ? MessageAttachment(
+                  kind: MessageMediaKind.image,
+                  name: '星图.jpg',
+                  type: 'image/jpeg',
+                  size: image.length,
+                )
+              : null,
+          reply: null,
+        ),
+    ];
+  }
+
+  final Uint8List image;
+  late final List<ConversationMessage> messagesNewestFirst;
+
+  @override
+  String get memberId => _memberId;
+
+  @override
+  bool get isCurrentMember => true;
+
+  @override
+  Future<List<ConversationMember>> conversationMembers(String thread) async => [
+    const ConversationMember(_memberId, '我'),
+    const ConversationMember(_actorId, '阿岚'),
+    const ConversationMember(_alertId, '小禾'),
+  ];
+
+  @override
+  Future<SocialResultPage<ConversationMessage>> messages(
+    String thread, {
+    String? before,
+  }) async {
+    final cursor = int.tryParse(before ?? '');
+    return SocialResultPage(
+      messagesNewestFirst
+          .where((message) => cursor == null || message.id < cursor)
+          .toList(),
+      null,
+    );
+  }
+
+  @override
+  Future<void> markConversationRead(String thread, int through) async {}
+
+  @override
+  Future<Uint8List> loadMessageAttachment(
+    String thread,
+    ConversationMessage message,
+  ) async => image;
 }
 
 const _profile = <String, Object?>{
@@ -119,7 +195,455 @@ AccountController _account(
   return AccountController(api, AgreementsApi(api));
 }
 
+Future<void> _openMessageTool(WidgetTester tester, String label) async {
+  final chinese = find.byTooltip('消息菜单');
+  await tester.tap(
+    chinese.evaluate().isEmpty ? find.byTooltip('Messages menu') : chinese,
+  );
+  await tester.pumpAndSettle();
+  final drawer = find.byType(Drawer);
+  final item = find
+      .descendant(of: drawer, matching: find.text(label))
+      .hitTestable();
+  final list = find.descendant(of: drawer, matching: find.byType(Scrollable));
+  await tester.scrollUntilVisible(item, 170, scrollable: list.first);
+  await tester.pumpAndSettle();
+  await tester.tap(item);
+  await tester.pumpAndSettle();
+}
+
 void main() {
+  setUp(() {
+    final dispatcher =
+        TestWidgetsFlutterBinding.ensureInitialized().platformDispatcher;
+    dispatcher.accessibilityFeaturesTestValue = const FakeAccessibilityFeatures(
+      disableAnimations: true,
+    );
+    addTearDown(dispatcher.clearAccessibilityFeaturesTestValue);
+  });
+
+  testWidgets('new story rings animate until the story opens', (tester) async {
+    tester.binding.platformDispatcher.accessibilityFeaturesTestValue =
+        const FakeAccessibilityFeatures();
+    await tester.pumpWidget(const MaterialApp(home: SocialPage()));
+    await tester.pump();
+    final strip = find.byType(MessageStoryStrip);
+    final rings = find.descendant(
+      of: strip,
+      matching: find.byType(RotationTransition),
+    );
+    final unread = rings.evaluate().length;
+    final initial = tester.widget<RotationTransition>(rings.first).turns.value;
+    await tester.pump(const Duration(milliseconds: 450));
+    expect(
+      tester.widget<RotationTransition>(rings.first).turns.value,
+      isNot(initial),
+    );
+
+    await tester.tap(find.descendant(of: strip, matching: find.text('岑宁')));
+    await tester.pump();
+    final sweep = tester.widget<RotationTransition>(rings.first).turns;
+    await tester.pump(const Duration(milliseconds: 120));
+    expect(sweep.value, closeTo(1 / 3, .02));
+    expect(find.byTooltip('关闭'), findsNothing);
+    await tester.pump(const Duration(milliseconds: 260));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+    await tester.tap(find.byTooltip('关闭'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(rings, findsNWidgets(unread - 1));
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('signed-out inbox opens demo chats and applies chat appearance', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 3;
+    tester.view.physicalSize = const Size(1170, 2340);
+    tester.view.padding = const FakeViewPadding(top: 96, bottom: 72);
+    tester.view.viewPadding = tester.view.padding;
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetPadding);
+    addTearDown(tester.view.resetViewPadding);
+    addTearDown(tester.view.resetViewInsets);
+    final mode = ValueNotifier(ThemeMode.light);
+    final light = jovianTheme(Brightness.light);
+    final dark = jovianTheme(Brightness.dark);
+    addTearDown(mode.dispose);
+    await tester.pumpWidget(
+      ValueListenableBuilder(
+        valueListenable: mode,
+        builder: (_, themeMode, home) => MaterialApp(
+          theme: light,
+          darkTheme: dark,
+          themeMode: themeMode,
+          home: home,
+        ),
+        child: const SocialPage(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final header = tester.widget<AppBar>(find.byType(AppBar));
+    const referenceScale = 390 / 576;
+    expect(header.centerTitle, isTrue);
+    expect(header.toolbarHeight, closeTo(64 * referenceScale, .1));
+    expect(header.backgroundColor, light.scaffoldBackgroundColor);
+    final stories = find.byType(MessageStoryStrip);
+    expect(tester.getSize(stories).height, closeTo(144 * referenceScale, .5));
+    final firstAvatar = find
+        .descendant(of: stories, matching: find.byType(MessageAvatar))
+        .first;
+    expect(tester.getSize(firstAvatar).width, closeTo(82 * referenceScale, .1));
+    expect(tester.widget<MessageAvatar>(firstAvatar).asset, messageSelfAvatar);
+    expect(find.text('会话'), findsNothing);
+    expect(find.text('体验会话'), findsNothing);
+    expect(find.text('互动消息'), findsOneWidget);
+    expect(find.byType(MessageConversationRow), findsAtLeastNWidgets(4));
+    final row = find.widgetWithText(MessageConversationRow, '岑宁');
+    expect(tester.getSize(row).height, closeTo(105 * referenceScale, .1));
+    final rowPhoto = find
+        .descendant(of: row, matching: find.byType(Image))
+        .first;
+    expect(
+      tester.widget<Image>(rowPhoto).image,
+      AssetImage(messageDemoAvatar('demo-cen')!),
+    );
+    await tester.tap(row);
+    await tester.pumpAndSettle();
+    expect(find.text('星轨片段.mp4'), findsOneWidget);
+    final firstMessage = find.text('今天傍晚的云像一层薄薄的纸。');
+    final toolbarBottom = tester.getBottomLeft(find.byType(AppBar)).dy;
+    expect(
+      tester.getTopLeft(firstMessage).dy - toolbarBottom,
+      inInclusiveRange(0, 75),
+    );
+    final ownPhoto = find.byWidgetPredicate(
+      (widget) =>
+          widget is Image &&
+          widget.image == const AssetImage(messageSelfAvatar),
+    );
+    expect(ownPhoto, findsOneWidget);
+    final input = find.byType(TextField);
+    final microphone = find.byTooltip('录音');
+    final attachments = find.byTooltip('添加附件');
+    expect(tester.getSize(microphone).height, closeTo(64 * referenceScale, .1));
+    expect(
+      tester.getCenter(attachments).dy,
+      closeTo(tester.getCenter(input).dy, .1),
+    );
+    expect(tester.getBottomRight(attachments).dy, lessThan(780 - 24));
+    await tester.tap(find.byTooltip('表情'));
+    await tester.pumpAndSettle();
+    expect(
+      tester.widget<GridView>(find.byType(GridView)).gridDelegate,
+      isA<SliverGridDelegateWithFixedCrossAxisCount>().having(
+        (delegate) => delegate.crossAxisCount,
+        'column count',
+        4,
+      ),
+    );
+    await tester.tap(find.byTooltip('表情'));
+    await tester.pumpAndSettle();
+    final composerBottom = tester.getBottomRight(attachments).dy;
+    tester.view.padding = const FakeViewPadding(top: 96);
+    tester.view.viewInsets = const FakeViewPadding(bottom: 840);
+    await tester.pumpAndSettle();
+    expect(
+      composerBottom - tester.getBottomRight(attachments).dy,
+      closeTo(256, .5),
+    );
+    await tester.enterText(find.byType(TextField), '本地演示消息');
+    await tester.pump();
+    await tester.tap(find.byTooltip('发送'));
+    await tester.pumpAndSettle();
+    tester.view.resetViewInsets();
+    tester.view.padding = tester.view.viewPadding;
+    await tester.pumpAndSettle();
+    expect(find.text('本地演示消息'), findsOneWidget);
+    final bubble = find
+        .ancestor(
+          of: find.text('本地演示消息'),
+          matching: find.byWidgetPredicate(
+            (widget) =>
+                widget is Material && widget.shape is RoundedRectangleBorder,
+          ),
+        )
+        .first;
+    final previousBubbleColor = tester.widget<Material>(bubble).color;
+
+    await tester.tap(find.byTooltip('会话设置'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('聊天装扮'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('苔青'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byType(BackButton));
+    await tester.pumpAndSettle();
+    Finder chatWithBackground(Color color) => find.byWidgetPredicate(
+      (widget) => widget is Scaffold && widget.backgroundColor == color,
+    );
+    expect(chatWithBackground(light.scaffoldBackgroundColor), findsOneWidget);
+    expect(tester.widget<Material>(bubble).color, isNot(previousBubbleColor));
+    mode.value = ThemeMode.dark;
+    await tester.pumpAndSettle();
+    expect(chatWithBackground(dark.scaffoldBackgroundColor), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('group tabs keep a narrow chat draft and organize its messages', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(320, 720);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetViewInsets);
+    final bytes = (await tester.runAsync(
+      () => rootBundle.load('src/features/social/assets/avatars/cen.jpg'),
+    ))!;
+    final workspace = MessageWorkspaceController('group-layout-test');
+    addTearDown(workspace.dispose);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: jovianTheme(Brightness.light),
+        home: MessageThreadPage(
+          controller: _GroupHistory(
+            bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes),
+          ),
+          thread: workspace.conversation('demo-sky')!,
+          workspace: workspace,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('晚风观星组'), findsOneWidget);
+    expect(find.text('3'), findsOneWidget);
+    expect(find.text('阿岚'), findsOneWidget);
+    expect(
+      find.byWidgetPredicate(
+        (widget) => widget is Image && widget.semanticLabel == '星图.jpg',
+      ),
+      findsOneWidget,
+    );
+    final first = find.text('先看北面的星图。');
+    final second = find.text('集合时间我记下了。');
+    expect(
+      tester.getTopLeft(first).dx,
+      closeTo(tester.getTopLeft(second).dx, .1),
+    );
+
+    final draft = find.byType(TextField);
+    await tester.enterText(draft, '这条草稿还没有发送');
+    tester.view.viewInsets = const FakeViewPadding(bottom: 310);
+    await tester.pumpAndSettle();
+    expect(draft.hitTestable(), findsOneWidget);
+    expect(find.byTooltip('发送').hitTestable(), findsOneWidget);
+    tester.view.resetViewInsets();
+
+    await tester.tap(find.text('公告'));
+    await tester.pumpAndSettle();
+    expect(find.text('周五晚八点在北岸天台集合。'), findsOneWidget);
+    expect(draft.hitTestable(), findsNothing);
+    await tester.tap(find.text('设置'));
+    await tester.pumpAndSettle();
+    expect(find.text('会话成员'), findsOneWidget);
+    await tester.tap(find.text('聊天'));
+    await tester.pumpAndSettle();
+    expect(tester.widget<TextField>(draft).controller!.text, '这条草稿还没有发送');
+
+    await tester.tap(find.text('回复'));
+    await tester.pumpAndSettle();
+    expect(find.byTooltip('取消引用'), findsOneWidget);
+    await tester.tap(find.byTooltip('取消引用'));
+    await tester.pumpAndSettle();
+
+    await tester.longPress(second);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('置顶消息'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('置顶'));
+    await tester.pumpAndSettle();
+    expect(second.hitTestable(), findsOneWidget);
+    await tester.tap(second);
+    await tester.pumpAndSettle();
+    expect(find.text('回到最新'), findsOneWidget);
+    await tester.tap(find.text('回到最新'));
+    await tester.pumpAndSettle();
+
+    await tester.longPress(first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('收藏消息'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('收藏'));
+    await tester.pumpAndSettle();
+    expect(first.hitTestable(), findsOneWidget);
+    await tester.tap(find.byTooltip('取消收藏消息'));
+    await tester.pumpAndSettle();
+    expect(find.text('长按聊天消息，即可收藏到这里。'), findsOneWidget);
+
+    await tester.tap(find.text('聊天'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('收起群聊导航'));
+    await tester.pumpAndSettle();
+    expect(find.text('公告'), findsNothing);
+    expect(draft.hitTestable(), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('long message history still opens at the latest message', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(360, 680);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPhysicalSize);
+    final workspace = MessageWorkspaceController('long-message-history-test');
+    addTearDown(workspace.dispose);
+    for (var i = 1; i <= 34; i++) {
+      await workspace.sendMessage('demo-cen', body: '演示长会话 $i', nonce: '$i');
+    }
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MessageThreadPage(
+          controller: workspace,
+          thread: workspace.conversation('demo-cen')!,
+          workspace: workspace,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final latest = find.text('演示长会话 34');
+    final oldest = find.text('演示长会话 1');
+    expect(latest.hitTestable(), findsOneWidget);
+    expect(oldest.hitTestable(), findsNothing);
+    final history = find.byWidgetPredicate(
+      (widget) => widget is ListView && widget.reverse,
+    );
+    final scrollable = find
+        .descendant(of: history, matching: find.byType(Scrollable))
+        .first;
+    final loadOlder = find.text('加载更早的消息');
+    await tester.scrollUntilVisible(loadOlder, 320, scrollable: scrollable);
+    await tester.tap(loadOlder);
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(oldest, 320, scrollable: scrollable);
+    expect(oldest.hitTestable(), findsOneWidget);
+    await tester.tap(find.text('回到最新'));
+    await tester.pumpAndSettle();
+    expect(latest.hitTestable(), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('opens an unread chat, keeps a failed draft and retries once', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(320, 700);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPhysicalSize);
+    const threadId = '00000000-0000-0000-0000-000000000004';
+    const received = {
+      'id': 8,
+      'senderId': _actorId,
+      'senderName': '联调用户',
+      'createdAt': 1700000000000,
+      'body': '图书已经归还。',
+    };
+    var unread = 1;
+    final bodies = <Map<String, Object?>>[];
+    Map<String, Object?>? sent;
+    final account = _account(_Storage(), (request) async {
+      switch (request.url.path) {
+        case '/social/notifications/summary':
+          return _json({
+            'unread': 0,
+            'canModerate': false,
+            'conversations': true,
+          });
+        case '/social/conversations':
+          return _json({
+            'items': [
+              if (request.url.queryParameters['unread'] != '1' || unread > 0)
+                {
+                  'id': threadId,
+                  'kind': 'direct',
+                  'title': '联调用户',
+                  'updatedAt': 1700000000000,
+                  'preview': received['body'],
+                  'pinned': false,
+                  'unread': unread,
+                },
+            ],
+          });
+        case '/social/conversations/$threadId/messages':
+          if (request.method == 'GET') {
+            return _json({
+              'items': [if (sent != null) sent, received],
+            });
+          }
+          final body = (jsonDecode(request.body) as Map)
+              .cast<String, Object?>();
+          bodies.add(body);
+          if (bodies.length == 1) return _json({'error': 'temporary'}, 503);
+          sent = {
+            'id': 9,
+            'senderId': _memberId,
+            'createdAt': 1700000001000,
+            'body': body['body'],
+          };
+          return _json({'message': sent});
+        case '/social/conversations/$threadId/read':
+          final body = (jsonDecode(request.body) as Map)
+              .cast<String, Object?>();
+          expect(body['through'], anyOf(8, 9));
+          unread = 0;
+          return _json({});
+        default:
+          fail('Unexpected account route ${request.method} ${request.url}');
+      }
+    });
+    addTearDown(account.dispose);
+    await account.initialize();
+    await tester.pumpWidget(MaterialApp(home: SocialPage(account: account)));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('新建会话'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('未读'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('联调用户'));
+    await tester.pumpAndSettle();
+    expect(unread, 0);
+    expect(find.text('图书已经归还。'), findsOneWidget);
+
+    await tester.enterText(find.byType(TextField), '谢谢提醒。');
+    await tester.pump();
+    await tester.tap(find.byTooltip('发送'));
+    await tester.pumpAndSettle();
+    expect(find.text('消息发送失败，请重试。'), findsOneWidget);
+    expect(find.text('谢谢提醒。'), findsOneWidget);
+    await tester.tap(find.byTooltip('发送'));
+    await tester.pumpAndSettle();
+    expect(bodies[0], bodies[1]);
+    expect(bodies[0]['body'], '谢谢提醒。');
+    expect(find.text('谢谢提醒。'), findsOneWidget);
+    expect(
+      tester.widget<TextField>(find.byType(TextField)).controller!.text,
+      isEmpty,
+    );
+
+    await tester.tap(find.byType(BackButton));
+    await tester.pumpAndSettle();
+    expect(find.text('联调用户'), findsNothing);
+    expect(find.byType(MessageConversationRow), findsWidgets);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   testWidgets('inbox pagination retries the same cursor and can refresh', (
     tester,
   ) async {
@@ -154,7 +678,7 @@ void main() {
     await tester.pumpWidget(MaterialApp(home: SocialPage(account: account)));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('新增粉丝'));
+    await _openMessageTool(tester, '新增粉丝');
     await tester.pumpAndSettle();
     expect(find.text('明月关注了你'), findsOneWidget);
     await tester.tap(find.text('加载更多'));
@@ -211,7 +735,7 @@ void main() {
     await tester.pumpWidget(MaterialApp(home: SocialPage(account: account)));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('举报处理'));
+    await _openMessageTool(tester, '举报处理');
     await tester.pumpAndSettle();
     expect(find.text('案件 $_alertId'), findsOneWidget);
     await tester.tap(find.text('处理举报'));
@@ -279,7 +803,19 @@ void main() {
     await openTab(JovianTab.messages);
     expect(reads, 1);
     expect(find.text('1 unread'), findsOneWidget);
+    await tester.tap(find.byTooltip('Messages menu'));
+    await tester.pumpAndSettle();
+    final drawerList = find
+        .descendant(of: find.byType(Drawer), matching: find.byType(Scrollable))
+        .first;
+    await tester.scrollUntilVisible(
+      find.text('Moderation queue'),
+      170,
+      scrollable: drawerList,
+    );
     expect(find.text('Moderation queue'), findsOneWidget);
+    Scaffold.of(tester.element(find.byType(Drawer))).closeDrawer();
+    await tester.pumpAndSettle();
 
     await openTab(JovianTab.destiny);
     expect(reads, 1);
@@ -356,7 +892,7 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await tester.tap(find.text('新增粉丝'));
+      await _openMessageTool(tester, '新增粉丝');
       await tester.pumpAndSettle();
       await tester.tap(find.text('查看主页'));
       await tester.pump();
@@ -378,7 +914,7 @@ void main() {
         await tester.tap(find.byKey(const ValueKey(JovianTab.messages)));
       } else {
         expect(find.text('1 条未读'), findsNothing);
-        await tester.tap(find.text('新增粉丝'));
+        await _openMessageTool(tester, '新增粉丝');
       }
       await tester.pumpAndSettle();
       expect(find.text('明月关注了你'), findsOneWidget);
@@ -410,7 +946,7 @@ void main() {
     await tester.pumpAndSettle();
 
     for (final destination in ['新增粉丝', '我的举报']) {
-      await tester.tap(find.text(destination));
+      await _openMessageTool(tester, destination);
       await tester.pumpAndSettle();
       expect(find.text(destination), findsOneWidget);
       expect(find.text('登录后查看当前账户的消息'), findsOneWidget);
@@ -468,7 +1004,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('1 条未读'), findsOneWidget);
     expect(find.text('举报处理'), findsNothing);
-    await tester.tap(find.text('新增粉丝'));
+    await _openMessageTool(tester, '新增粉丝');
     await tester.pumpAndSettle();
     expect(find.text('明月关注了你'), findsOneWidget);
     await tester.tap(find.text('查看主页'));
@@ -552,7 +1088,7 @@ void main() {
       expect(profileRequests, 0);
       expect(find.text('1 条未读'), findsNothing);
 
-      await tester.tap(find.text('新增粉丝'));
+      await _openMessageTool(tester, '新增粉丝');
       await tester.pumpAndSettle();
       expect(find.textContaining(' · 已读'), findsOneWidget);
       await tester.tap(find.text('查看主页'));
@@ -593,8 +1129,8 @@ void main() {
       await account.initialize();
       await tester.pumpWidget(MaterialApp(home: SocialPage(account: account)));
       await tester.pumpAndSettle();
-      final more = find.byTooltip('更多操作');
-      final findUser = find.widgetWithText(PopupMenuItem<VoidCallback>, '找用户');
+      final more = find.byTooltip('新建会话');
+      final findUser = find.widgetWithText(PopupMenuItem<VoidCallback>, '添加好友');
       await tester.tap(more);
       await tester.pumpAndSettle();
       expect(findUser, findsOneWidget);
@@ -606,10 +1142,7 @@ void main() {
       await tester.tapAt(const Offset(12, 400));
       await tester.pumpAndSettle();
       expect(findUser, findsNothing);
-      await tester.tap(more);
-      await tester.pumpAndSettle();
-      await tester.tap(findUser);
-      await tester.pumpAndSettle();
+      await _openMessageTool(tester, '找用户');
       expect(findUser, findsNothing);
       expect(find.text('找用户'), findsOneWidget);
       expect(tester.takeException(), isNull);
@@ -638,7 +1171,7 @@ void main() {
       await account.signOut();
       await tester.pumpAndSettle();
       expect(find.text('明月'), findsNothing);
-      expect(find.text('登录后可按 UID 或昵称找用户，并查看新增粉丝提醒。'), findsOneWidget);
+      expect(find.byType(MessageConversationRow), findsWidgets);
       await tester.pumpWidget(const SizedBox.shrink());
       account.dispose();
     },
@@ -756,17 +1289,14 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.byTooltip('更多操作'));
+    await tester.tap(find.byTooltip('新建会话'));
     await tester.pumpAndSettle();
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
     expect(find.text('消息'), findsOneWidget);
     expect(find.text('找用户'), findsNothing);
 
-    await tester.tap(find.byTooltip('更多操作'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(PopupMenuItem<VoidCallback>, '找用户'));
-    await tester.pumpAndSettle();
+    await _openMessageTool(tester, '找用户');
     expect(find.text('找用户'), findsOneWidget);
     expect(find.byType(TextField), findsNothing);
     await tester.tap(find.text('前往登录'));
@@ -865,7 +1395,7 @@ void main() {
       await account.initialize();
       await tester.pumpWidget(MaterialApp(home: SocialPage(account: account)));
       await tester.pumpAndSettle();
-      await tester.tap(find.byTooltip('找用户'));
+      await _openMessageTool(tester, '找用户');
       await tester.pumpAndSettle();
       await tester.tap(find.text('按昵称搜索'));
       await tester.pumpAndSettle();

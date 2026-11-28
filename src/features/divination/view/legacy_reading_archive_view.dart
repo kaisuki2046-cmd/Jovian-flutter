@@ -5,9 +5,9 @@ import '../../../ui/chat_time_label.dart';
 import '../../../ui/interface_language.dart';
 import 'guide_conversation.dart';
 import 'hexagram_card.dart';
-import 'liuyao_form.dart';
 import 'meihua_page.dart';
 import 'reading_report.dart';
+import 'reading_report_dialog.dart';
 import 'tarot_cards.dart';
 
 class LegacyGuideConversationView extends StatelessWidget {
@@ -240,7 +240,6 @@ class _CombinedReport extends StatelessWidget {
   Widget build(BuildContext context) {
     final snapshot = reading.snapshot;
     final report = reading.report;
-    final details = report is ProParagraphReport ? report : null;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       spacing: 12,
@@ -251,19 +250,14 @@ class _CombinedReport extends StatelessWidget {
             heading: context.uiLabel('确认的关注点'),
             body: snapshot.focus,
           ),
-        if (report != null) ReadingReportView(report: report),
-        if (snapshot.chart case final chart?) ...[
-          const UiText('塔罗结果'),
-          TarotReveal(draw: chart.tarot),
-          if (details != null)
-            ReadingChartDetails(report: details, method: 'tarot'),
-          JingfangResult(reading: chart.liuyao),
-          if (details != null)
-            ReadingChartDetails(report: details, method: 'liuyao'),
-          MeihuaResult(reading: chart.meihua),
-          if (details != null)
-            ReadingChartDetails(report: details, method: 'meihua'),
-        ],
+        if (report != null || snapshot.chart != null)
+          ReadingReportEntry(
+            label: report != null ? '查看解读报告' : '查看三套盘面',
+            onPressed: () => Navigator.of(
+              context,
+              rootNavigator: true,
+            ).push(readingReportRoute(context, reading)),
+          ),
         if (reading.followUps.isNotEmpty)
           GuideFollowUpList(
             followUps: reading.followUps,

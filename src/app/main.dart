@@ -246,6 +246,8 @@ class _JovianAppState extends State<JovianApp> with WidgetsBindingObserver {
         account: widget.account,
         onlineGuide: widget.onlineGuide,
         tab: location.tab,
+        showDock:
+            location.sections.lastOrNull?.section != AccountSection.reports,
         onTabSelected: _navigation.selectTab,
         openFortune: _navigation.openFortune,
         openWelcome: _navigation.openWelcome,
@@ -256,9 +258,15 @@ class _JovianAppState extends State<JovianApp> with WidgetsBindingObserver {
       ),
     ),
     welcome: location.welcome,
+    allowMessageDemo:
+        location.tab == JovianTab.messages && location.sections.isEmpty,
   );
 
-  Widget _accountEntry(Widget child, {bool welcome = false}) {
+  Widget _accountEntry(
+    Widget child, {
+    bool welcome = false,
+    bool allowMessageDemo = false,
+  }) {
     final account = widget.account;
     if (account == null) return child;
     return ListenableBuilder(
@@ -268,6 +276,11 @@ class _JovianAppState extends State<JovianApp> with WidgetsBindingObserver {
       builder: (context, admitted) {
         final authorized = account.authorizedSession;
         if (authorized != null && !welcome) return admitted!;
+        if (allowMessageDemo &&
+            !welcome &&
+            (account.restored || account.notice != null)) {
+          return admitted!;
+        }
         if (welcome && account.memberId != null) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (context.mounted) {
@@ -331,6 +344,7 @@ class _AppHome extends StatefulWidget {
     required this.account,
     required this.onlineGuide,
     required this.tab,
+    required this.showDock,
     required this.onTabSelected,
     required this.openFortune,
     required this.openWelcome,
@@ -343,8 +357,9 @@ class _AppHome extends StatefulWidget {
   final AccountController? account;
   final OnlineGuideController? onlineGuide;
   final JovianTab tab;
+  final bool showDock;
   final ValueChanged<JovianTab> onTabSelected;
-  final ValueChanged<String?> openFortune;
+  final void Function(String? archiveId, {FortunePeriod? period}) openFortune;
   final VoidCallback openWelcome;
   final List<AccountDestination> Function(JovianTab) sectionsFor;
   final void Function(JovianTab, AccountDestination) onSectionPopped;
@@ -359,6 +374,12 @@ class _AppHomeState extends State<_AppHome> {
   String? _scope;
   OnlineGuideController? _guide;
   final _socialReads = ValueNotifier(0);
+  bool _messageDetailsVisible = false;
+
+  void _updateMessageDock(bool hasDetail) {
+    if (!mounted || _messageDetailsVisible == hasDetail) return;
+    setState(() => _messageDetailsVisible = hasDetail);
+  }
 
   @override
   void initState() {
@@ -409,6 +430,9 @@ class _AppHomeState extends State<_AppHome> {
   @override
   Widget build(BuildContext context) => JovianShell(
     initialTab: widget.tab,
+    showDock:
+        widget.showDock &&
+        (widget.tab != JovianTab.messages || !_messageDetailsVisible),
     onTabSelected: widget.onTabSelected,
     buildPage: (context, tab, active, selectTab) => switch (tab) {
       JovianTab.destiny => DestinyPage(
@@ -421,6 +445,7 @@ class _AppHomeState extends State<_AppHome> {
         account: widget.account,
         active: active,
         openFortune: widget.openFortune,
+        openFortunePeriod: (period) => widget.openFortune(null, period: period),
       ),
       JovianTab.synastry => SynastryPage(
         key: ValueKey(_scope),
@@ -454,6 +479,7 @@ class _AppHomeState extends State<_AppHome> {
           active: active,
           openAccount: widget.openWelcome,
           followerAlertReads: _socialReads,
+          onDetailVisibilityChanged: _updateMessageDock,
         ),
       ),
       JovianTab.account => switch (widget.account) {

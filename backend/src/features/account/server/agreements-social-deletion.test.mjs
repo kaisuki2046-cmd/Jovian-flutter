@@ -182,8 +182,8 @@ test('new follower notifications are deduplicated and scoped, and reports close 
   const inbox = (await bob(notificationPath)).data;
   assert.equal(inbox.items.length, 1);
   assert.equal(inbox.items[0].actor.id, a);
-  assert.deepEqual((await bob(summaryPath)).data, { unread: 1, canModerate: false });
-  assert.deepEqual((await operator(summaryPath)).data, { unread: 0, canModerate: true });
+  assert.deepEqual((await bob(summaryPath)).data, { unread: 1, canModerate: false, conversations: true });
+  assert.deepEqual((await operator(summaryPath)).data, { unread: 0, canModerate: true, conversations: true });
   assert.equal((await alice(readPath, { id: inbox.items[0].id })).status, 404);
   assert.equal((await bob(readPath, { id: inbox.items[0].id })).data.unread, 0);
   assert.ok((await bob(notificationPath)).data.items[0].readAt);

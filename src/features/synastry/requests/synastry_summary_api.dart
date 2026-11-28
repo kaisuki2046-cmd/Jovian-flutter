@@ -1,11 +1,5 @@
 import '../../../shared/http/json_client.dart';
-
-const synastrySummarySections = <String, String>{
-  'family': '亲情',
-  'friendship': '友情',
-  'romance': '爱情',
-  'collaboration': '合作',
-};
+import '../model/synastry_relationship.dart';
 
 class SynastrySummaryApi {
   const SynastrySummaryApi(this._http, {this.readNativeSession});
@@ -35,9 +29,10 @@ class SynastrySummaryApi {
     );
     _ensureCurrent(isCurrent);
     final sections = {
-      for (final id in synastrySummarySections.keys)
-        if (response[id] case final String text when text.trim().isNotEmpty)
-          id: text,
+      for (final relationship in SynastryRelationship.values)
+        if (response[relationship.name] case final String text
+            when text.trim().isNotEmpty)
+          relationship.name: text,
     };
     if (sections.isEmpty) throw const JsonRequestError('invalid_response');
     return sections;

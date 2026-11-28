@@ -10,7 +10,7 @@ import '../auth/view/identity_preview_page.dart';
 import '../auth/view/password_security_page.dart';
 import '../auth/view/phone_security_page.dart';
 import '../history/view/archived_charts_page.dart';
-import '../history/view/reports_page.dart';
+import '../history/view/personal_report_page.dart';
 import '../model/account_section.dart';
 import '../profile/view/profile_editor_page.dart';
 import '../profile/view/profile_preview_page.dart';
@@ -86,7 +86,7 @@ class AccountSectionPage extends StatelessWidget {
       case AccountSection.charts:
         return ArchivedChartsPage(account: account);
       case AccountSection.reports:
-        return ReportsPage(account: account);
+        return PersonalReportPage(account: account);
       default:
         final owner = account.memberId;
         if (owner == null) {

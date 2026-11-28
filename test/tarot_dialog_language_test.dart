@@ -6,7 +6,6 @@ import 'package:material_ui/material_ui.dart';
 import '../src/features/divination/view/ritual/guide_ritual_dialog.dart';
 import '../src/ui/interface_language.dart';
 import 'support/divination_service_fixture.dart';
-import 'support/tarot_gestures.dart';
 
 void main() {
   testWidgets('the narrow Tarot ritual localizes labels and reveal actions', (
@@ -66,10 +65,11 @@ void main() {
     expect(find.text('Step 2 · Tarot selection'), findsOneWidget);
     expect(find.text('Choose three Tarot cards'), findsOneWidget);
     expect(
-      find.text('Hold and drag the deck in any direction'),
+      find.text('Swipe sideways and choose the cards that feel right'),
       findsOneWidget,
     );
-    expect(find.bySemanticsLabel('Spread the deck'), findsOneWidget);
+    expect(find.byTooltip('Browse left'), findsOneWidget);
+    expect(find.byTooltip('Browse right'), findsOneWidget);
     expect(find.byTooltip('Pause ritual').hitTestable(), findsOneWidget);
     expect(find.bySemanticsLabel('78-card deck'), findsOneWidget);
     expect(
@@ -79,9 +79,9 @@ void main() {
     expect(find.text('Selected 0 / 3'), findsOneWidget);
 
     for (final (index, slot) in [40, 39, 38].indexed) {
-      final card = await openTarotCard(tester, slot, english: true);
+      final card = find.bySemanticsLabel('Choose card $slot');
       await tester.ensureVisible(card);
-      await confirmTarotCard(tester, card);
+      tester.widget<Semantics>(card).properties.onTap!();
       await tester.pumpAndSettle();
       if (index == 0) {
         expect(
@@ -93,6 +93,8 @@ void main() {
     }
     expect(find.text('Step 2 · Tarot reveal'), findsOneWidget);
     expect(find.text('Reveal three Tarot cards'), findsOneWidget);
+    final quickReading = find.text('Quick card reading');
+    expect(quickReading, findsNothing);
     expect(
       find.text('Tap each card to reveal it, or reveal all three'),
       findsOneWidget,
@@ -103,6 +105,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(first, findsNothing);
     expect(revealed.single, {39});
+    expect(quickReading, findsNothing);
 
     final all = find.text('Reveal all');
     await tester.ensureVisible(all);
@@ -112,6 +115,19 @@ void main() {
       {39},
       {39, 38, 37},
     ]);
+    expect(quickReading, findsOneWidget);
+    final draw = online.reading!.snapshot.tarotDraw!;
+    for (final (index, card) in draw.cards.indexed) {
+      final position = [
+        'Present situation',
+        'Key influence',
+        'Direction',
+      ][index];
+      expect(
+        find.text('$position  ${card.face.traditionalMeaning}'),
+        findsOneWidget,
+      );
+    }
     final reading = find.text('View reading');
     await tester.ensureVisible(reading);
     await tester.tap(reading);

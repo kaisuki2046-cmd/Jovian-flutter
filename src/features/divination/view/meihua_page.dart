@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:jovian_divination/jovian_divination.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../ui/interface_language.dart';
 import 'cast_content.dart';
 import 'hexagram_card.dart';
 
@@ -98,35 +99,60 @@ class _MeihuaFormState extends State<MeihuaForm>
 }
 
 class MeihuaResult extends StatelessWidget {
-  const MeihuaResult({super.key, required this.reading});
+  const MeihuaResult({super.key, required this.reading, this.compact = false});
 
   final MeihuaReading reading;
+  final bool compact;
 
   @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      Semantics(
-        header: true,
-        child: Text('梅花易数结果', style: Theme.of(context).textTheme.titleLarge),
-      ),
-      const SizedBox(height: 8),
-      Text('取数 ${reading.inputs.join('、')} · 第 ${reading.moving} 爻动'),
-      const SizedBox(height: 12),
-      HexagramCard(
-        label: '本卦',
-        hexagram: reading.primary,
-        moving: [reading.moving],
-      ),
-      HexagramCard(label: '互卦', hexagram: reading.nuclear),
-      HexagramCard(label: '变卦', hexagram: reading.changed),
-      const SizedBox(height: 12),
-      Text(
-        '体卦 ${reading.body.name} · 用卦 ${reading.use.name} · 变用 ${reading.changedUse.name}',
-      ),
-      Text('${reading.relation} → ${reading.changedRelation}'),
-      const SizedBox(height: 8),
-      Text(reading.interpretation),
-    ],
-  );
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final caption = compact
+        ? theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          )
+        : null;
+    final alignment = compact ? TextAlign.center : TextAlign.start;
+    final figures = <HexagramFigure>[
+      (label: '本卦', hexagram: reading.primary, moving: [reading.moving]),
+      (label: '互卦', hexagram: reading.nuclear, moving: const []),
+      (label: '变卦', hexagram: reading.changed, moving: const []),
+    ];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (!compact) ...[
+          Semantics(
+            header: true,
+            child: UiText('梅花易数结果', style: theme.textTheme.titleLarge),
+          ),
+          const SizedBox(height: 8),
+        ],
+        Text(
+          '取数 ${reading.inputs.join('、')} · 第 ${reading.moving} 爻动',
+          style: caption,
+          textAlign: alignment,
+        ),
+        const SizedBox(height: 12),
+        HexagramGroup(
+          figures: figures,
+          style: compact ? HexagramStyle.ripples : null,
+        ),
+        const SizedBox(height: 12),
+        Text(
+          '体卦 ${reading.body.name} · 用卦 ${reading.use.name} · 变用 ${reading.changedUse.name}',
+          style: caption,
+          textAlign: alignment,
+        ),
+        Text(
+          '${reading.relation} → ${reading.changedRelation}',
+          textAlign: alignment,
+        ),
+        if (!compact) ...[
+          const SizedBox(height: 8),
+          Text(reading.interpretation),
+        ],
+      ],
+    );
+  }
 }

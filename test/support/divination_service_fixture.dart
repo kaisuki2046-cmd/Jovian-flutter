@@ -72,7 +72,6 @@ class DivinationServiceFixture {
   bool denyUnderstandingPermission = false;
   bool expired = false;
   bool extendedFollowUp = false;
-  bool longReport = false;
   Map<String, Object?>? reportPayload;
   int? losePickResponseAtStep;
   Future<void>? understanding;
@@ -228,11 +227,7 @@ class DivinationServiceFixture {
     if (_hasReport)
       'proReport':
           reportPayload ??
-          {
-            'tarot': longReport ? '留意这次面试的后续通知。' * 60 : '塔罗对照报告。',
-            'meihua': '梅花对照报告。',
-            'liuyao': '六爻对照报告。',
-          },
+          {'tarot': '塔罗对照报告。', 'meihua': '梅花对照报告。', 'liuyao': '六爻对照报告。'},
   };
 
   http.Response _json(Object value, {int status = 200}) => http.Response.bytes(

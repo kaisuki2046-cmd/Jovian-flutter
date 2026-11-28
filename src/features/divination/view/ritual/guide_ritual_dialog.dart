@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:jovian_divination/jovian_divination.dart' hide TarotSpread;
+import 'package:jovian_divination/jovian_divination.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../ui/interface_language.dart';
@@ -8,20 +8,12 @@ import '../../../../ui/interface_language.dart';
 import 'coin_cast_ritual.dart';
 import 'tarot_preparation.dart';
 import 'tarot_ritual.dart';
-import 'tarot_spread.dart';
 
 class GuideRitualPresentation {
   final seed = math.Random().nextInt(1 << 30);
   final revealed = <int>{};
   double preparation = 0;
   bool tappedShell = false;
-  TarotSpread? _spread;
-
-  TarotSpread spreadFor(int slotCount) {
-    final spread = _spread;
-    if (spread != null && spread.slotCount == slotCount) return spread;
-    return _spread = TarotSpread(slotCount, seed: seed);
-  }
 }
 
 class GuideRitualDialog extends StatefulWidget {
@@ -41,6 +33,7 @@ class GuideRitualDialog extends StatefulWidget {
     this.finishTarot,
     this.onRevealChanged,
     this.openAiPermissions,
+    this.onComplete,
   });
 
   final GuideRitualPresentation presentation;
@@ -57,6 +50,7 @@ class GuideRitualDialog extends StatefulWidget {
   final ValueChanged<int> choose;
   final VoidCallback pause;
   final ValueChanged<Set<int>>? onRevealChanged;
+  final VoidCallback? onComplete;
 
   @override
   State<GuideRitualDialog> createState() => _GuideRitualDialogState();
@@ -96,7 +90,7 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
         snapshot.tarotFirst &&
         snapshot.stage == GuideStage.reading &&
         count == snapshot.tosses.length) {
-      widget.pause();
+      (widget.onComplete ?? widget.pause)();
     }
   }
 
@@ -225,7 +219,7 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
           Expanded(
             child: SingleChildScrollView(
               key: ValueKey(casting ? 'cast' : 'cards'),
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.fromLTRB(16, casting ? 16 : 8, 16, 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -263,6 +257,7 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
                     )
                   else
                     Material(
+                      clipBehavior: Clip.antiAlias,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18),
                         side: BorderSide(
@@ -273,7 +268,7 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
                       child: Padding(
                         padding: const EdgeInsets.all(12),
                         child: TarotRitualPanel(
-                          spread: presentation.spreadFor(slotCount),
+                          slotCount: slotCount,
                           selectedSlots: selected,
                           draw: flipping ? snapshot.tarotDraw : null,
                           revealed: presentation.revealed,
@@ -327,7 +322,7 @@ class _GuideRitualDialogState extends State<GuideRitualDialog>
                           },
                           finish: flippingEarly
                               ? widget.finishTarot ?? widget.pause
-                              : widget.pause,
+                              : widget.onComplete ?? widget.pause,
                           finishLabel: flippingEarly ? '继续六爻起卦' : '查看解读',
                         ),
                       ),

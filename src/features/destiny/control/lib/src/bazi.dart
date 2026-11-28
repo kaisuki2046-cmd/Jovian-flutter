@@ -27,6 +27,10 @@ bool isBaZiPillar(String value) {
   return stem >= 0 && branch >= 0 && stem.isEven == branch.isEven;
 }
 
+// A midyear date identifies the solar year after its Li Chun boundary.
+String baziAnnualPillar(int year) =>
+    Solar.fromYmd(year, 7, 1).getLunar().getYearInGanZhiExact();
+
 List<Map<String, Object?>> _shenSha(
   FourPillars pillars,
   Pillar target,

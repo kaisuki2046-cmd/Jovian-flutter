@@ -13,6 +13,7 @@ class JovianLocation {
     this.tab, {
     this.fortunePath,
     this.archiveId,
+    this.fortunePeriod,
     this.fortunePermissionsPeriod,
     this.legacyFortuneLink = false,
     this.welcome = false,
@@ -22,6 +23,7 @@ class JovianLocation {
   final JovianTab tab;
   final String? fortunePath;
   final String? archiveId;
+  final FortunePeriod? fortunePeriod;
   final FortunePeriod? fortunePermissionsPeriod;
   final bool legacyFortuneLink;
   final bool welcome;
@@ -33,6 +35,7 @@ class JovianLocation {
       tab == other.tab &&
       fortunePath == other.fortunePath &&
       archiveId == other.archiveId &&
+      fortunePeriod == other.fortunePeriod &&
       fortunePermissionsPeriod == other.fortunePermissionsPeriod &&
       legacyFortuneLink == other.legacyFortuneLink &&
       welcome == other.welcome &&
@@ -43,6 +46,7 @@ class JovianLocation {
     tab,
     fortunePath,
     archiveId,
+    fortunePeriod,
     fortunePermissionsPeriod,
     legacyFortuneLink,
     welcome,
@@ -162,18 +166,21 @@ class JovianRouteParser extends RouteInformationParser<JovianLocation> {
     final path = _routePath(information.uri);
     final state = information.state;
     if (_fortunePaths.contains(path)) {
-      final permissionPeriod =
-          information.uri.queryParametersAll['aiPermissions']?.singleOrNull;
+      final query = information.uri.queryParametersAll;
+      FortunePeriod? readPeriod(String key) {
+        final name = query[key]?.singleOrNull;
+        return FortunePeriod.values
+            .where((period) => period.name == name)
+            .firstOrNull;
+      }
+
       return JovianLocation(
         JovianTab.destiny,
         fortunePath: path,
         archiveId: _readFortuneArchive(information),
-        fortunePermissionsPeriod: FortunePeriod.values
-            .where((period) => period.name == permissionPeriod)
-            .firstOrNull,
-        legacyFortuneLink: information.uri.queryParameters.containsKey(
-          'snapshotId',
-        ),
+        fortunePeriod: readPeriod('period'),
+        fortunePermissionsPeriod: readPeriod('aiPermissions'),
+        legacyFortuneLink: query.containsKey('snapshotId'),
       );
     }
     if (path == '/welcome')
@@ -264,6 +271,7 @@ class JovianRouteParser extends RouteInformationParser<JovianLocation> {
     final query = {
       if (configuration.legacyFortuneLink)
         'snapshotId': configuration.archiveId,
+      if (configuration.fortunePeriod case final period?) 'period': period.name,
       if (configuration.fortunePermissionsPeriod case final period?)
         'aiPermissions': period.name,
     };
@@ -449,11 +457,12 @@ class JovianRouter extends RouterDelegate<JovianLocation>
   void selectTab(JovianTab tab) =>
       _navigate(JovianLocation(tab, sections: sectionsFor(tab)));
 
-  void openFortune(String? archiveId) => _navigate(
+  void openFortune(String? archiveId, {FortunePeriod? period}) => _navigate(
     JovianLocation(
       JovianTab.destiny,
       fortunePath: '/fortune',
       archiveId: archiveId,
+      fortunePeriod: period,
     ),
   );
 
@@ -469,6 +478,9 @@ class JovianRouter extends RouterDelegate<JovianLocation>
         fortunePath: path,
         archiveId: _location.archiveId,
         legacyFortuneLink: _location.legacyFortuneLink,
+        fortunePeriod: period == null
+            ? _location.fortunePermissionsPeriod ?? _location.fortunePeriod
+            : _location.fortunePeriod,
         fortunePermissionsPeriod: period,
       ),
     );
@@ -578,7 +590,7 @@ class JovianRouter extends RouterDelegate<JovianLocation>
             name: path,
             child: fortune(
               underneath.archiveId,
-              underneath.fortunePermissionsPeriod,
+              underneath.fortunePermissionsPeriod ?? underneath.fortunePeriod,
             ),
           ),
         if (underneath.fortunePermissionsPeriod != null)

@@ -192,8 +192,9 @@ void main() {
 
     final completed = service.connect(store);
     await _open(tester, completed);
-    expect(find.text('塔罗对照报告。'), findsOneWidget);
     expect(find.text(_resume), findsNothing);
+    await _tap(tester, '查看解读报告');
+    expect(find.text('塔罗对照报告。'), findsOneWidget);
     expect(service.calls, ['GET /reading', 'GET /reading']);
     expect(tester.takeException(), isNull);
     await _close(tester, completed);
@@ -216,14 +217,15 @@ void main() {
     expect((await store.readHistory()).single.revealedTarotSlots, {
       _selected.first,
     });
-    expect(find.text('塔罗对照报告。'), findsOneWidget);
     expect(find.text(_resume), findsNothing);
+    await _tap(tester, '查看解读报告');
+    expect(find.text('塔罗对照报告。'), findsOneWidget);
     expect(tester.takeException(), isNull);
     await _close(tester, restored);
   });
 
   testWidgets(
-    'history without recognized reveal data directly opens its report',
+    'history without recognized reveal data offers its report directly',
     (tester) async {
       final service = DivinationServiceFixture()..failReport = false;
       final store = DivinationRecoveryFixture();
@@ -251,8 +253,9 @@ void main() {
 
       final restored = service.connect(store);
       await _open(tester, restored);
-      expect(find.text('塔罗对照报告。'), findsOneWidget);
       expect(find.text(_resume), findsNothing);
+      await _tap(tester, '查看解读报告');
+      expect(find.text('塔罗对照报告。'), findsOneWidget);
       expect(tester.takeException(), isNull);
       await _close(tester, restored);
     },

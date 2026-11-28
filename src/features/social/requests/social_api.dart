@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 
 import '../../account/account.dart';
@@ -19,6 +21,104 @@ class SocialApi {
 
   Future<SocialInboxSummary> inbox() async =>
       SocialInboxSummary.fromJson(await _request(['notifications', 'summary']));
+
+  Future<SocialResultPage<MessageConversation>> conversations({
+    String? before,
+    String query = '',
+    bool unreadOnly = false,
+  }) async => SocialResultPage.fromJson(
+    await _request(
+      ['conversations'],
+      query: {
+        if (before != null) 'before': before,
+        if (query.isNotEmpty) 'q': query,
+        if (unreadOnly) 'unread': '1',
+      },
+    ),
+    MessageConversation.fromJson,
+  );
+
+  Future<MessageConversation> startChat(Map<String, Object?> details) async =>
+      MessageConversation.fromJson(
+        (await _request(['conversations'], body: details))['thread'],
+      );
+
+  Future<SocialResultPage<ConversationMessage>> messages(
+    String id,
+    String? before,
+  ) async => SocialResultPage.fromJson(
+    await _request([
+      'conversations',
+      id,
+      'messages',
+    ], query: before == null ? null : {'before': before}),
+    ConversationMessage.fromJson,
+  );
+
+  Future<ConversationMessage> sendMessage(
+    String id, {
+    required String body,
+    required String nonce,
+    int? replyTo,
+    OutgoingMessageAttachment? attachment,
+  }) async => ConversationMessage.fromJson(
+    (await _request(
+      ['conversations', id, 'messages'],
+      body: {
+        'body': body,
+        'nonce': nonce,
+        if (replyTo != null) 'replyTo': replyTo,
+        if (attachment != null)
+          'attachment': {
+            'kind': attachment.details.kind.name,
+            'name': attachment.details.name,
+            'type': attachment.details.type,
+            'data': base64Encode(attachment.bytes),
+          },
+      },
+    ))['message'],
+  );
+
+  Future<void> readConversation(String id, int through) async {
+    await _request(['conversations', id, 'read'], body: {'through': through});
+  }
+
+  Future<void> pinConversation(String id, bool pinned) async {
+    final response = await _request(
+      ['conversations', id, 'pin'],
+      body: {'pinned': pinned},
+    );
+    if (response['pinned'] != pinned)
+      throw const FormatException('Invalid pin result');
+  }
+
+  Future<List<ConversationMember>> conversationMembers(String id) async =>
+      decodeSocialItems(
+        await _request(['conversations', id, 'members']),
+        ConversationMember.fromJson,
+      );
+
+  Future<Uint8List> messageAttachment(
+    String id,
+    ConversationMessage message,
+  ) async {
+    final meta = message.attachment;
+    if (meta == null) throw const FormatException('Missing attachment');
+    final response = await _request([
+      'conversations',
+      id,
+      'attachment',
+      message.id.toString(),
+    ]);
+    final data = response['data'];
+    if (data is! String || data.length != (meta.size + 2) ~/ 3 * 4) {
+      throw const FormatException('Invalid attachment payload');
+    }
+    final bytes = base64Decode(data);
+    if (bytes.length != meta.size)
+      throw const FormatException('Invalid attachment length');
+    return bytes;
+  }
 
   Future<SocialCounts> counts() async =>
       decodeSocialCounts(await _request(['me']));

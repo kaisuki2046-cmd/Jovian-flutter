@@ -2,15 +2,15 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui' show lerpDouble;
 
-import 'package:jovian_divination/jovian_divination.dart' hide TarotSpread;
+import 'package:jovian_divination/jovian_divination.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../ui/interface_language.dart';
 import 'tarot_deck.dart';
-import 'tarot_spread.dart';
 
 const _positions = ['现状', '关键影响', '趋势'];
 const _approachMs = 400;
+const _flashMs = 160;
 const _hoverMs = 1000;
 const _dropMs = 165;
 const _transferMs = _approachMs + _hoverMs + _dropMs;
@@ -26,7 +26,7 @@ typedef _CardPose = ({
 class TarotRitualPanel extends StatefulWidget {
   const TarotRitualPanel({
     super.key,
-    required this.spread,
+    required this.slotCount,
     required this.selectedSlots,
     required this.draw,
     required this.revealed,
@@ -43,7 +43,7 @@ class TarotRitualPanel extends StatefulWidget {
     this.fanExtraHeight = 0,
   });
 
-  final TarotSpread spread;
+  final int slotCount;
   final List<int> selectedSlots;
   final TarotDraw? draw;
   final Set<int> revealed;
@@ -244,12 +244,37 @@ class _TarotRitualPanelState extends State<TarotRitualPanel>
               ],
             ),
             const SizedBox(height: 14),
-            if (draw != null)
+            if (draw != null) ...[
               FilledButton(
                 onPressed: revealed ? widget.finish : () => widget.reveal(null),
                 child: UiText(revealed ? widget.finishLabel : '一键翻牌'),
-              )
-            else ...[
+              ),
+              if (revealed) ...[
+                const SizedBox(height: 14),
+                const Divider(height: 1),
+                const SizedBox(height: 12),
+                Semantics(
+                  header: true,
+                  child: UiText('三张牌简读', style: theme.textTheme.titleSmall),
+                ),
+                for (final (index, card) in draw.cards.indexed)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: '${context.uiLabel(_positions[index])}  ',
+                            style: const TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                          TextSpan(text: card.face.traditionalMeaning),
+                        ],
+                      ),
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                  ),
+              ],
+            ] else ...[
               Semantics(
                 liveRegion: true,
                 child: Text(
@@ -259,16 +284,21 @@ class _TarotRitualPanelState extends State<TarotRitualPanel>
                   textAlign: TextAlign.center,
                 ),
               ),
+              const SizedBox(height: 10),
+              UiText(
+                '左右滑动，凭感觉选出你的牌',
+                style: theme.textTheme.titleMedium,
+                textAlign: TextAlign.center,
+              ),
               widget.preparation ??
                   LayoutBuilder(
-                    builder: (context, size) => TarotSpreadTable(
-                      layout: TarotTableLayout(
+                    builder: (context, size) => TarotRitualFan(
+                      layout: TarotFanLayout(
                         size.maxWidth,
-                        widget.spread.slotCount,
+                        widget.slotCount,
                         extraHeight: widget.fanExtraHeight,
                       ),
-                      spread: widget.spread,
-                      held: {
+                      selectedSlots: {
                         ...widget.selectedSlots,
                         if (flight != null) flight.slot,
                       },
@@ -292,6 +322,7 @@ class _TarotRitualPanelState extends State<TarotRitualPanel>
                 child: AnimatedBuilder(
                   animation: _motion,
                   builder: (context, _) {
+                    final flash = _motion.value * _transferMs / _flashMs;
                     final pose = switch (_returning) {
                       final returning? => flight.returnToFan(
                         returning.pose,
@@ -320,9 +351,21 @@ class _TarotRitualPanelState extends State<TarotRitualPanel>
                                   elevation: 3,
                                   shape: const TarotCardShape(),
                                   clipBehavior: Clip.antiAlias,
-                                  child: TarotBackArt(
-                                    animated: true,
-                                    hoverProgress: pose.hoverProgress,
+                                  child: Stack(
+                                    fit: StackFit.expand,
+                                    children: [
+                                      TarotBackArt(
+                                        animated: true,
+                                        hoverProgress: pose.hoverProgress,
+                                      ),
+                                      if (_returning == null && flash < 1)
+                                        CustomPaint(
+                                          key: const ValueKey(
+                                            'tarot-card-flash',
+                                          ),
+                                          painter: _CardFlash(flash),
+                                        ),
+                                    ],
                                   ),
                                 ),
                               ),
@@ -339,6 +382,38 @@ class _TarotRitualPanelState extends State<TarotRitualPanel>
       ],
     );
   }
+}
+
+class _CardFlash extends CustomPainter {
+  const _CardFlash(this.progress);
+
+  final double progress;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width, size.height) * (progress * 1.84 - .42);
+    final band = Rect.fromCenter(
+      center: center,
+      width: size.width * .66,
+      height: size.height * .52,
+    );
+    final shader = const LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [
+        Color(0x00ffe0a0),
+        Color(0xb8ffdfa0),
+        Color(0xfafff4d5),
+        Color(0x00ffe0a0),
+      ],
+      stops: [0, .37, .53, 1],
+    ).createShader(band);
+    canvas.drawRect(Offset.zero & size, Paint()..shader = shader);
+  }
+
+  @override
+  bool shouldRepaint(_CardFlash oldDelegate) =>
+      progress != oldDelegate.progress;
 }
 
 class _CardFlight {
@@ -368,9 +443,16 @@ class _CardFlight {
 
   _CardPose poseAt(double t) {
     final elapsed = t * _transferMs;
-    final hover = to.shift(Offset(0, -(to.width * .12).clamp(8.0, 14.0)));
+    // Reserve room for the near edge to grow under perspective during the sway.
+    final hover = Rect.fromCenter(
+      center: to.center - Offset(0, to.height * .014),
+      width: to.width * .86,
+      height: to.height * .86,
+    );
     if (elapsed < _approachMs) {
-      final approach = _flightCurve.transform(elapsed / _approachMs);
+      final approach = _flightCurve.transform(
+        ((elapsed - _flashMs) / (_approachMs - _flashMs)).clamp(0.0, 1.0),
+      );
       final bend = approach * (1 - approach);
       final delta = hover.center - from.center;
       return (

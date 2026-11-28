@@ -4,10 +4,16 @@ import 'package:material_ui/material_ui.dart';
 
 /// Decorative counterpart to the original RN constellation and reading rings.
 class DestinyStarVisual extends StatefulWidget {
-  const DestinyStarVisual({super.key, required this.motion, this.step});
+  const DestinyStarVisual({
+    super.key,
+    required this.motion,
+    this.step,
+    this.accent,
+  });
 
   final bool motion;
   final int? step;
+  final Color? accent;
 
   @override
   State<DestinyStarVisual> createState() => _DestinyStarVisualState();
@@ -71,7 +77,7 @@ class _DestinyStarVisualState extends State<DestinyStarVisual>
       child: RepaintBoundary(
         child: CustomPaint(
           painter: _ConstellationPainter(
-            accent: Theme.of(context).colorScheme.primary,
+            accent: widget.accent ?? Theme.of(context).colorScheme.primary,
             step: widget.step,
             pulse: _pulse,
           ),

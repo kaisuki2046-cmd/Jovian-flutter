@@ -133,7 +133,7 @@ class _CoinCastSceneState extends State<CoinCastScene>
                     children: [
                       RepaintBoundary(
                         child: CustomPaint(
-                          painter: _CastingFloor(colors, layout.baseHeight),
+                          painter: _CastingPlate(layout.baseHeight),
                         ),
                       ),
                       if (widget.flowing)
@@ -346,82 +346,228 @@ class _CoinArt extends StatelessWidget {
   );
 }
 
-final _rim = _octagon(146.0);
-final _innerRim = _octagon(117.0);
-final _rimTrack = _rim.computeMetrics().single;
+const _rimRise = 22.0;
+final _rimCorners = _octagonCorners(146, _rimRise);
+final _footCorners = _octagonCorners(130, -5);
+final _rim = _roundedPolygon(_rimCorners);
+final _foot = _roundedPolygon(_footCorners);
+// The raised rim hides the rear half of the plate's foot.
+final _plateBody = _roundedPolygon([
+  ..._rimCorners.take(4),
+  ..._footCorners.getRange(3, 6),
+  ..._rimCorners.skip(5),
+]);
+final _rimCrest = _octagon(143, rise: _rimRise);
+final _opening = _octagon(135, rise: _rimRise);
+final _basin = _octagon(110);
+final _rimTrack = _rimCrest.computeMetrics().single;
 final _goldRing = Rect.fromCircle(center: _floorCenter, radius: 82);
+final _rings = _octagon(106)
+  ..addOval(_goldRing)
+  ..addOval(Rect.fromCircle(center: _floorCenter, radius: 70));
+final _trigrams = _engravedTrigrams();
 
-Path _octagon(double radius) => Path()
-  ..addPolygon([
-    for (var index = 0; index < 8; index++)
-      _floorCenter +
-          Offset(
-                math.sin(index * math.pi / 4),
-                -math.cos(index * math.pi / 4),
-              ) *
-              radius,
-  ], true);
+List<Offset> _octagonCorners(double radius, double rise) => [
+  for (var index = 0; index < 8; index++)
+    _floorCenter +
+        Offset(
+          radius * math.sin(index * math.pi / 4),
+          -radius * math.cos(index * math.pi / 4) - rise,
+        ),
+];
+
+Path _octagon(double radius, {double rise = 0}) =>
+    _roundedPolygon(_octagonCorners(radius, rise));
+
+Path _roundedPolygon(List<Offset> corners) {
+  final path = Path();
+  const inset = 5.0;
+  for (var index = 0; index < corners.length; index++) {
+    final corner = corners[index];
+    final before = corners[(index + corners.length - 1) % corners.length];
+    final after = corners[(index + 1) % corners.length];
+    final entry =
+        corner + (before - corner) * (inset / (before - corner).distance);
+    final exit =
+        corner + (after - corner) * (inset / (after - corner).distance);
+    if (index == 0) {
+      path.moveTo(entry.dx, entry.dy);
+    } else {
+      path.lineTo(entry.dx, entry.dy);
+    }
+    path.quadraticBezierTo(corner.dx, corner.dy, exit.dx, exit.dy);
+  }
+  return path..close();
+}
+
+Path _engravedTrigrams() {
+  final path = Path();
+  for (var index = 0; index < 8; index++) {
+    final angle = index * math.pi / 4;
+    final across = Offset(math.cos(angle), math.sin(angle));
+    final outward = Offset(math.sin(angle), -math.cos(angle));
+    for (var line = 0; line < 3; line++) {
+      final center = _floorCenter + outward * (100 - line * 6);
+      path.moveTo(center.dx - 10 * across.dx, center.dy - 10 * across.dy);
+      if ((index >> line) & 1 == 0) {
+        path.relativeLineTo(8 * across.dx, 8 * across.dy);
+        path.relativeMoveTo(4 * across.dx, 4 * across.dy);
+        path.relativeLineTo(8 * across.dx, 8 * across.dy);
+      } else {
+        path.relativeLineTo(20 * across.dx, 20 * across.dy);
+      }
+    }
+  }
+  return path;
+}
 
 void _placeFloor(Canvas canvas, Size size, double baseHeight) {
   canvas.translate(0, size.height - baseHeight * 0.50);
   canvas.scale(size.width / 320, baseHeight * 0.48 / 320);
 }
 
-class _CastingFloor extends CustomPainter {
-  const _CastingFloor(this.colors, this.baseHeight);
+class _CastingPlate extends CustomPainter {
+  const _CastingPlate(this.baseHeight);
 
-  final ColorScheme colors;
   final double baseHeight;
+  static final _bounds = _plateBody.getBounds();
+  static final _grain = _metalGrain();
 
   @override
   void paint(Canvas canvas, Size size) {
     canvas.save();
     _placeFloor(canvas, size, baseHeight);
-    final floor = Rect.fromCenter(
-      center: _floorCenter,
-      width: 320,
-      height: 310,
+    canvas.drawPath(
+      _foot.shift(const Offset(2, 9)),
+      Paint()
+        ..color = const Color(0x78412a18)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 9),
     );
-    final cream = RadialGradient(
-      colors: [
-        colors.primaryContainer.withValues(alpha: 0.85),
-        colors.surface.withValues(alpha: 0),
-      ],
+    canvas.drawPath(
+      _plateBody,
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.centerLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xff93683b), Color(0xffac7d4a), Color(0xff664224)],
+          stops: [0, 0.42, 1],
+        ).createShader(_bounds),
     );
-    canvas.drawOval(floor, Paint()..shader = cream.createShader(floor));
-    final outline = Paint()
-      ..color = colors.primary.withValues(alpha: 0.32)
-      ..strokeWidth = 0.9
-      ..style = PaintingStyle.stroke;
-    canvas.drawPath(_rim, outline);
-    canvas.drawPath(_innerRim, outline);
-    canvas.drawCircle(_floorCenter, 82, outline);
-    canvas.drawCircle(_floorCenter, 70, outline);
+    canvas.drawPath(
+      _rim,
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xffc09961),
+            Color(0xffedd0a1),
+            Color(0xffbd935d),
+            Color(0xffd2a774),
+            Color(0xff9b6c3f),
+          ],
+          stops: [0, 0.23, 0.53, 0.78, 1],
+        ).createShader(_bounds),
+    );
+    canvas.drawPath(
+      _opening,
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color(0xff6c4629),
+            Color(0xff966b42),
+            Color(0xffba8e5c),
+            Color(0xffd8ae75),
+          ],
+          stops: [0, 0.26, 0.62, 1],
+        ).createShader(_bounds),
+    );
+    canvas.drawPath(
+      _basin,
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xffa57a4c),
+            Color(0xffbd955f),
+            Color(0xffc6a16c),
+            Color(0xffa47a4b),
+          ],
+          stops: [0, 0.33, 0.68, 1],
+        ).createShader(_basin.getBounds()),
+    );
+    canvas.drawPath(
+      _rimCrest,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.6
+        ..shader = const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xaaffebbf), Color(0x38fff1ce), Color(0x68ffdda5)],
+        ).createShader(_bounds),
+    );
 
-    final bars = Paint()
-      ..color = colors.primary.withValues(alpha: 0.32)
-      ..strokeWidth = 3;
-    for (var index = 0; index < 8; index++) {
-      canvas.save();
-      canvas.translate(160, 160);
-      canvas.rotate(index * math.pi / 4);
-      for (var line = 0; line < 3; line++) {
-        final y = -121.0 + line * 7;
-        if ((index >> line) & 1 != 0) {
-          canvas.drawLine(Offset(-14, y), Offset(14, y), bars);
-        } else {
-          canvas.drawLine(Offset(-14, y), Offset(-3, y), bars);
-          canvas.drawLine(Offset(3, y), Offset(14, y), bars);
-        }
-      }
-      canvas.restore();
-    }
+    canvas.save();
+    canvas.clipPath(_plateBody);
+    canvas.drawRect(
+      _bounds,
+      Paint()
+        ..shader = const RadialGradient(
+          center: Alignment(-0.38, -0.46),
+          radius: 0.65,
+          colors: [Color(0x26fff0c3), Color(0x00fff0c3)],
+        ).createShader(_bounds),
+    );
+    final (pits, flecks) = _grain;
+    canvas.drawPath(pits, Paint()..color = const Color(0x70482514));
+    canvas.drawPath(flecks, Paint()..color = const Color(0x68ffe5a8));
+    canvas.restore();
+
+    _engrave(canvas, _rings, 1.4);
+    _engrave(canvas, _trigrams, 2.6);
     canvas.restore();
   }
 
+  static (Path, Path) _metalGrain() {
+    final random = math.Random(35);
+    final pits = Path();
+    final flecks = Path();
+    for (var index = 0; index < 3400; index++) {
+      final point = Offset(
+        _bounds.left + random.nextDouble() * _bounds.width,
+        _bounds.top + random.nextDouble() * _bounds.height,
+      );
+      final width = 0.25 + random.nextDouble() * 1.05;
+      final spot = Rect.fromCenter(
+        center: point,
+        width: index % 13 == 0 ? width * 2.7 : width,
+        height: 0.35 + random.nextDouble() * 1.2,
+      );
+      pits.addOval(spot);
+      flecks.addOval(spot.shift(const Offset(.42, .85)).deflate(.12));
+    }
+    return (pits, flecks);
+  }
+
+  static void _engrave(Canvas canvas, Path shape, double width) {
+    final groove = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round
+      ..strokeWidth = width;
+    canvas.drawPath(
+      shape.shift(const Offset(.45, 1.45)),
+      groove..color = const Color(0xaaf7d397),
+    );
+    canvas.drawPath(shape, groove..color = const Color(0xc65b391f));
+  }
+
   @override
-  bool shouldRepaint(_CastingFloor old) =>
-      colors != old.colors || baseHeight != old.baseHeight;
+  bool shouldRepaint(_CastingPlate old) => baseHeight != old.baseHeight;
 }
 
 class _CastingFlow extends CustomPainter {
@@ -437,7 +583,8 @@ class _CastingFlow extends CustomPainter {
     canvas.save();
     _placeFloor(canvas, size, baseHeight);
     final progress = flow.value;
-    final brightness = tossing ? 1.0 : 0.90;
+    final brightness = tossing ? 1.0 : 0.72;
+    const reflection = Color(0xffffe5ad);
     final ink = Paint()
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round
@@ -446,22 +593,20 @@ class _CastingFlow extends CustomPainter {
       final from = (progress + half) * 2 * math.pi;
       final start = ((1 - progress + half) % 1) * _rimTrack.length;
       for (final (weight, alpha, length) in const [
-        (8.0, 0.16, 104.0),
-        (4.4, 0.28, 76.0),
-        (2.7, 0.46, 46.0),
+        (3.4, 0.15, 104.0),
+        (1.4, 0.46, 70.0),
       ]) {
         ink
-          ..color = _brass.withValues(alpha: alpha * brightness)
+          ..color = reflection.withValues(alpha: alpha * brightness)
           ..strokeWidth = weight;
         canvas.drawArc(_goldRing, from, length / 82, false, ink);
       }
       for (final (weight, alpha, length) in const [
-        (8.0, 0.14, 164.0),
-        (4.0, 0.30, 124.0),
-        (2.2, 0.46, 82.0),
+        (3.8, 0.14, 164.0),
+        (1.6, 0.45, 108.0),
       ]) {
         ink
-          ..color = _brass.withValues(alpha: alpha * brightness)
+          ..color = reflection.withValues(alpha: alpha * brightness)
           ..strokeWidth = weight;
         final end = start + length;
         canvas.drawPath(

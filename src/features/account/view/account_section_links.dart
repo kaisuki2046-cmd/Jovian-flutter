@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../history/view/personal_report_page.dart' show personalReportRoute;
 import '../model/account_section.dart';
 
 typedef AccountLeaveGuard = Future<bool> Function();
@@ -40,9 +41,11 @@ class AccountSectionLinks extends InheritedWidget {
     if (links != null) {
       return links.open(accountDestination(section, profileId: profileId));
     }
-    return Navigator.of(
-      context,
-    ).push<void>(MaterialPageRoute(builder: (_) => build()));
+    return Navigator.of(context).push<void>(
+      section == AccountSection.reports
+          ? personalReportRoute(context, build())
+          : MaterialPageRoute(builder: (_) => build()),
+    );
   }
 
   @override

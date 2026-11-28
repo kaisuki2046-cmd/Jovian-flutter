@@ -1,6 +1,7 @@
 import 'package:jovian_divination/jovian_divination.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../ui/interface_language.dart';
 import 'cast_content.dart';
 import 'hexagram_card.dart';
 import 'ritual/coin_cast_ritual.dart';
@@ -109,31 +110,59 @@ class CoinCastProgress extends StatelessWidget {
 }
 
 class JingfangResult extends StatelessWidget {
-  const JingfangResult({super.key, required this.reading});
+  const JingfangResult({
+    super.key,
+    required this.reading,
+    this.compact = false,
+  });
 
   final JingfangReading reading;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
     final base = reading.base;
+    final theme = Theme.of(context);
+    final caption = compact
+        ? theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          )
+        : null;
+    final figures = <HexagramFigure>[
+      (label: '本卦', hexagram: base.primary, moving: base.moving),
+      if (base.moving.isNotEmpty)
+        (label: '变卦', hexagram: base.changed, moving: const []),
+    ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Semantics(
-          header: true,
-          child: Text('六爻结果', style: Theme.of(context).textTheme.titleLarge),
-        ),
+        if (!compact)
+          Semantics(
+            header: true,
+            child: UiText('六爻结果', style: theme.textTheme.titleLarge),
+          ),
         Text(
           '${base.palace.name}宫 · 世在${_lineNames[base.shi - 1]} · 应在${_lineNames[base.ying - 1]}',
+          style: caption,
+          textAlign: compact ? TextAlign.center : TextAlign.start,
         ),
-        const SizedBox(height: 8),
-        HexagramCard(label: '本卦', hexagram: base.primary, moving: base.moving),
-        if (base.moving.isNotEmpty)
-          HexagramCard(label: '变卦', hexagram: base.changed),
+        SizedBox(height: compact ? 14 : 8),
+        HexagramGroup(
+          figures: figures,
+          style: compact ? HexagramStyle.paper : null,
+        ),
+        if (compact) ...[const SizedBox(height: 12), const Divider(height: 1)],
         ExpansionTile(
-          title: const Text('查看京房排盘'),
+          key: compact ? const PageStorageKey('report-jingfang-chart') : null,
+          title: const UiText('查看京房排盘'),
+          tilePadding: compact ? EdgeInsets.zero : null,
           expandedCrossAxisAlignment: CrossAxisAlignment.start,
-          childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+          childrenPadding: EdgeInsets.fromLTRB(
+            compact ? 0 : 16,
+            0,
+            compact ? 0 : 16,
+            12,
+          ),
           children: [
             Text(
               '月柱 ${reading.calendar.month} · 日辰 ${reading.calendar.day}'
@@ -155,8 +184,7 @@ class JingfangResult extends StatelessWidget {
               ),
           ],
         ),
-        const SizedBox(height: 6),
-        Text(base.interpretation),
+        if (!compact) ...[const SizedBox(height: 6), Text(base.interpretation)],
       ],
     );
   }
